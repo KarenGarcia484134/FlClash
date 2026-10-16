@@ -905,5 +905,21 @@
   "required": "必填",
   "ageSecretKey": "age 私钥",
   "ageEncryptedProfile": "配置已加密",
-  "ageSecretKeyRequiredTip": "该配置已用 age 加密，需要 age 私钥才能解密"
+  "ageSecretKeyRequiredTip": "该配置已用 age 加密，需要 age 私钥才能解密",
+  "customRouting": "自定义分流",
+  "customRoutingDesc": "选中的分流按顺序插入到当前配置所有规则的最前面，标准和脚本模式均生效",
+  "goToConfigureCustomRouting": "前往配置自定义分流",
+  "addCustomRouting": "添加自定义分流",
+  "editCustomRouting": "编辑自定义分流",
+  "routingCondition": "条件",
+  "addRoutingCondition": "添加条件",
+  "routingLogic": "匹配逻辑",
+  "routingLogicOr": "满足任一条件 (OR)",
+  "routingLogicAnd": "满足全部条件 (AND)",
+  "routingTarget": "出口",
+  "routingValuesHint": "每行一个值",
+  "routingValueCommaTip": "值不能包含逗号",
+  "routingTargetMissingTip": "当前配置中没有 {target}，该分流会被跳过",
+  "routingConditionsEmptyTip": "请至少添加一个有值的条件",
+  "routingTargetEmptyTip": "请选择出口"
 }

@@ -156,30 +156,32 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m61(label) =>
       "${label} はこのプロファイルのルール、プロキシグループ、ダイヤラープロキシ、DNS または NTP からまだ参照されており、削除するとそれらの参照は無効になります。削除してもよろしいですか？";
 
-  static String m62(count, label) =>
+  static String m62(target) => "現在のプロファイルに ${target} がないため、この項目はスキップされます";
+
+  static String m63(count, label) =>
       "${Intl.plural(count, other: 'ルール ${label} 件')}";
 
-  static String m63(appName) => "${appName}（セーフモード）";
+  static String m64(appName) => "${appName}（セーフモード）";
 
-  static String m64(count) => "${count} 秒";
+  static String m65(count) => "${count} 秒";
 
-  static String m65(count) => "${count} 件が有効";
+  static String m66(count) => "${count} 件が有効";
 
-  static String m66(count) => "${count} 件選択中";
+  static String m67(count) => "${count} 件選択中";
 
-  static String m67(time) => "${time} に検査";
+  static String m68(time) => "${time} に検査";
 
-  static String m68(count) => "設定 ${count} 件";
+  static String m69(count) => "設定 ${count} 件";
 
-  static String m69(link) => "${link} からプロキシを読み取れませんでした";
+  static String m70(link) => "${link} からプロキシを読み取れませんでした";
 
-  static String m70(label) => "${label}は1項目のみ指定できます";
+  static String m71(label) => "${label}は1項目のみ指定できます";
 
-  static String m71(label) => "${label}はURLである必要があります";
-
-  static String m72(count) => "${count} 年前";
+  static String m72(label) => "${label}はURLである必要があります";
 
   static String m73(count) => "${count} 年前";
+
+  static String m74(count) => "${count} 年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -212,12 +214,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "actionView": MessageLookupByLibrary.simpleMessage("表示/非表示"),
     "add": MessageLookupByLibrary.simpleMessage("追加"),
     "addCustomProxy": MessageLookupByLibrary.simpleMessage("プロキシを追加"),
+    "addCustomRouting": MessageLookupByLibrary.simpleMessage("カスタムルーティングを追加"),
     "addFilters": MessageLookupByLibrary.simpleMessage("フィルターを追加"),
     "addNodes": MessageLookupByLibrary.simpleMessage("ノードを追加"),
     "addOverrideEntry": MessageLookupByLibrary.simpleMessage("上書き項目を追加"),
     "addProfile": MessageLookupByLibrary.simpleMessage("プロファイルを追加"),
     "addProxyGroup": MessageLookupByLibrary.simpleMessage("プロキシグループを追加"),
     "addProxyProviders": MessageLookupByLibrary.simpleMessage("プロキシプロバイダーを追加"),
+    "addRoutingCondition": MessageLookupByLibrary.simpleMessage("条件を追加"),
     "addRule": MessageLookupByLibrary.simpleMessage("ルールを追加"),
     "addSettingEntry": MessageLookupByLibrary.simpleMessage("設定項目を追加"),
     "addSsid": MessageLookupByLibrary.simpleMessage("SSIDを追加"),
@@ -440,6 +444,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "customProfileResourcesDesc": MessageLookupByLibrary.simpleMessage(
       "プロキシ、ルールプロバイダー、フィルター、アイコンセット",
     ),
+    "customRouting": MessageLookupByLibrary.simpleMessage("カスタムルーティング"),
+    "customRoutingDesc": MessageLookupByLibrary.simpleMessage(
+      "選択した項目は順番にこのプロファイルの全ルールの先頭へ挿入され、標準・スクリプトの両モードで有効です",
+    ),
     "cut": MessageLookupByLibrary.simpleMessage("切り取り"),
     "dark": MessageLookupByLibrary.simpleMessage("ダーク"),
     "dashboard": MessageLookupByLibrary.simpleMessage("ダッシュボード"),
@@ -596,6 +604,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "download": MessageLookupByLibrary.simpleMessage("ダウンロード"),
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage("ダウンロード帯域幅"),
     "edit": MessageLookupByLibrary.simpleMessage("編集"),
+    "editCustomRouting": MessageLookupByLibrary.simpleMessage("カスタムルーティングを編集"),
     "editGlobalRules": MessageLookupByLibrary.simpleMessage("グローバルルールを編集"),
     "editProxy": MessageLookupByLibrary.simpleMessage("プロキシを編集"),
     "editProxyGroup": MessageLookupByLibrary.simpleMessage("プロキシグループを編集"),
@@ -691,6 +700,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "goDownload": MessageLookupByLibrary.simpleMessage("ダウンロードへ"),
     "goToConfigureAddedRules": MessageLookupByLibrary.simpleMessage(
       "追加ルール設定へ移動",
+    ),
+    "goToConfigureCustomRouting": MessageLookupByLibrary.simpleMessage(
+      "カスタムルーティング設定へ移動",
     ),
     "goToConfigureScript": MessageLookupByLibrary.simpleMessage("スクリプト設定へ移動"),
     "hasCacheChange": MessageLookupByLibrary.simpleMessage("変更をキャッシュしますか？"),
@@ -1179,7 +1191,23 @@ class MessageLookup extends MessageLookupByLibrary {
     "retry": MessageLookupByLibrary.simpleMessage("再試行"),
     "routeAddress": MessageLookupByLibrary.simpleMessage("ルートアドレス"),
     "routeExcludeAddress": MessageLookupByLibrary.simpleMessage("ルート除外アドレス"),
+    "routingCondition": MessageLookupByLibrary.simpleMessage("条件"),
+    "routingConditionsEmptyTip": MessageLookupByLibrary.simpleMessage(
+      "値のある条件を 1 つ以上追加してください",
+    ),
+    "routingLogic": MessageLookupByLibrary.simpleMessage("マッチ方法"),
+    "routingLogicAnd": MessageLookupByLibrary.simpleMessage("すべての条件 (AND)"),
+    "routingLogicOr": MessageLookupByLibrary.simpleMessage("いずれかの条件 (OR)"),
     "routingMark": MessageLookupByLibrary.simpleMessage("ルーティングマーク"),
+    "routingTarget": MessageLookupByLibrary.simpleMessage("出口"),
+    "routingTargetEmptyTip": MessageLookupByLibrary.simpleMessage(
+      "出口を選択してください",
+    ),
+    "routingTargetMissingTip": m62,
+    "routingValueCommaTip": MessageLookupByLibrary.simpleMessage(
+      "値にカンマを含めることはできません",
+    ),
+    "routingValuesHint": MessageLookupByLibrary.simpleMessage("1 行に 1 つの値"),
     "ru": MessageLookupByLibrary.simpleMessage("ロシア語"),
     "rule": MessageLookupByLibrary.simpleMessage("ルール"),
     "ruleActionAndDesc": MessageLookupByLibrary.simpleMessage("論理ルール AND"),
@@ -1317,10 +1345,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "ルールは対応する種類で始めてください。例：DOMAIN,example.com,DIRECT",
     ),
     "rules": MessageLookupByLibrary.simpleMessage("ルール"),
-    "rulesCount": m62,
+    "rulesCount": m63,
     "runTime": MessageLookupByLibrary.simpleMessage("起動時間"),
     "safeMode": MessageLookupByLibrary.simpleMessage("セーフモード"),
-    "safeModeAppTitle": m63,
+    "safeModeAppTitle": m64,
     "save": MessageLookupByLibrary.simpleMessage("保存"),
     "saveChanges": MessageLookupByLibrary.simpleMessage("変更を保存しますか？"),
     "script": MessageLookupByLibrary.simpleMessage("スクリプト"),
@@ -1330,9 +1358,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "scrollToSelected": MessageLookupByLibrary.simpleMessage("選択項目へスクロール"),
     "search": MessageLookupByLibrary.simpleMessage("検索"),
     "seconds": MessageLookupByLibrary.simpleMessage("秒"),
-    "secondsCount": m64,
+    "secondsCount": m65,
     "secretKey": MessageLookupByLibrary.simpleMessage("キー"),
-    "sectionsInEffect": m65,
+    "sectionsInEffect": m66,
     "selectAll": MessageLookupByLibrary.simpleMessage("すべて選択"),
     "selectProxies": MessageLookupByLibrary.simpleMessage("プロキシを選択"),
     "selectProxyProviders": MessageLookupByLibrary.simpleMessage(
@@ -1344,13 +1372,13 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "selectSubRule": MessageLookupByLibrary.simpleMessage("サブルールを選択してください"),
     "selected": MessageLookupByLibrary.simpleMessage("選択済み"),
-    "selectedCountTitle": m66,
+    "selectedCountTitle": m67,
     "server": MessageLookupByLibrary.simpleMessage("サーバー"),
     "serviceAvailable": MessageLookupByLibrary.simpleMessage("利用可能"),
     "serviceBlocked": MessageLookupByLibrary.simpleMessage("ブロック済み"),
     "serviceCheck": MessageLookupByLibrary.simpleMessage("検査"),
     "serviceCheckAll": MessageLookupByLibrary.simpleMessage("すべて検査"),
-    "serviceCheckedAt": m67,
+    "serviceCheckedAt": m68,
     "serviceComingSoon": MessageLookupByLibrary.simpleMessage("近日提供予定"),
     "serviceDisallowedIsp": MessageLookupByLibrary.simpleMessage(
       "許可されていない ISP",
@@ -1365,8 +1393,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "serviceUnsupportedRegion": MessageLookupByLibrary.simpleMessage("対象外の地域"),
     "settingEntries": MessageLookupByLibrary.simpleMessage("設定項目"),
     "settings": MessageLookupByLibrary.simpleMessage("設定"),
-    "settingsCount": m68,
-    "shareLinkUnreadable": m69,
+    "settingsCount": m69,
+    "shareLinkUnreadable": m70,
     "shareLinksInvalid": MessageLookupByLibrary.simpleMessage(
       "リンクからプロキシを読み取れませんでした",
     ),
@@ -1391,7 +1419,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "singleShareLinkOnly": MessageLookupByLibrary.simpleMessage(
       "ここにはリンクを 1 つだけ入力してください。複数の場合は一覧のクイック編集を使ってください",
     ),
-    "singleValueTip": m70,
+    "singleValueTip": m71,
     "size": MessageLookupByLibrary.simpleMessage("サイズ"),
     "skipCertVerify": MessageLookupByLibrary.simpleMessage("証明書の検証をスキップ"),
     "skipDomain": MessageLookupByLibrary.simpleMessage("スキップするドメイン"),
@@ -1500,7 +1528,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "upload": MessageLookupByLibrary.simpleMessage("アップロード"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("アップロード帯域幅"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m71,
+    "urlTip": m72,
     "useHosts": MessageLookupByLibrary.simpleMessage("Hostsを使用"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("システムのHostsを使用"),
     "usedTraffic": MessageLookupByLibrary.simpleMessage("使用済みトラフィック"),
@@ -1523,8 +1551,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "システムに書き込むを有効にするとシステムクロックも設定します。Android では無視されます。",
     ),
-    "yearsAgo": m72,
-    "yearsAgoShort": m73,
+    "yearsAgo": m73,
+    "yearsAgoShort": m74,
     "yes": MessageLookupByLibrary.simpleMessage("はい"),
     "zhCN": MessageLookupByLibrary.simpleMessage("簡体字中国語"),
   };

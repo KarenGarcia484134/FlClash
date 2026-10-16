@@ -905,5 +905,21 @@
   "required": "Required",
   "ageSecretKey": "Age secret key",
   "ageEncryptedProfile": "Encrypted profile",
-  "ageSecretKeyRequiredTip": "This profile is encrypted with age and needs an age secret key to decrypt"
+  "ageSecretKeyRequiredTip": "This profile is encrypted with age and needs an age secret key to decrypt",
+  "customRouting": "Custom routing",
+  "customRoutingDesc": "Selected entries go in order ahead of every rule of this profile, in both standard and script mode",
+  "goToConfigureCustomRouting": "Go to custom routing configuration",
+  "addCustomRouting": "Add custom routing",
+  "editCustomRouting": "Edit custom routing",
+  "routingCondition": "Condition",
+  "addRoutingCondition": "Add condition",
+  "routingLogic": "Match logic",
+  "routingLogicOr": "Any condition (OR)",
+  "routingLogicAnd": "All conditions (AND)",
+  "routingTarget": "Outbound",
+  "routingValuesHint": "One value per line",
+  "routingValueCommaTip": "A value cannot contain a comma",
+  "routingTargetMissingTip": "{target} is not in the current profile, so this entry is skipped",
+  "routingConditionsEmptyTip": "Add at least one condition with a value",
+  "routingTargetEmptyTip": "Choose an outbound"
 }

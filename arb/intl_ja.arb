@@ -905,5 +905,21 @@
   "required": "必須",
   "ageSecretKey": "age 秘密鍵",
   "ageEncryptedProfile": "暗号化されたプロファイル",
-  "ageSecretKeyRequiredTip": "このプロファイルは age で暗号化されており、復号には age 秘密鍵が必要です"
+  "ageSecretKeyRequiredTip": "このプロファイルは age で暗号化されており、復号には age 秘密鍵が必要です",
+  "customRouting": "カスタムルーティング",
+  "customRoutingDesc": "選択した項目は順番にこのプロファイルの全ルールの先頭へ挿入され、標準・スクリプトの両モードで有効です",
+  "goToConfigureCustomRouting": "カスタムルーティング設定へ移動",
+  "addCustomRouting": "カスタムルーティングを追加",
+  "editCustomRouting": "カスタムルーティングを編集",
+  "routingCondition": "条件",
+  "addRoutingCondition": "条件を追加",
+  "routingLogic": "マッチ方法",
+  "routingLogicOr": "いずれかの条件 (OR)",
+  "routingLogicAnd": "すべての条件 (AND)",
+  "routingTarget": "出口",
+  "routingValuesHint": "1 行に 1 つの値",
+  "routingValueCommaTip": "値にカンマを含めることはできません",
+  "routingTargetMissingTip": "現在のプロファイルに {target} がないため、この項目はスキップされます",
+  "routingConditionsEmptyTip": "値のある条件を 1 つ以上追加してください",
+  "routingTargetEmptyTip": "出口を選択してください"
 }

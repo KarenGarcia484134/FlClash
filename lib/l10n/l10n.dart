@@ -7586,6 +7586,161 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Custom routing`
+  String get customRouting {
+    return Intl.message(
+      'Custom routing',
+      name: 'customRouting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Selected entries go in order ahead of every rule of this profile, in both standard and script mode`
+  String get customRoutingDesc {
+    return Intl.message(
+      'Selected entries go in order ahead of every rule of this profile, in both standard and script mode',
+      name: 'customRoutingDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Go to custom routing configuration`
+  String get goToConfigureCustomRouting {
+    return Intl.message(
+      'Go to custom routing configuration',
+      name: 'goToConfigureCustomRouting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add custom routing`
+  String get addCustomRouting {
+    return Intl.message(
+      'Add custom routing',
+      name: 'addCustomRouting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit custom routing`
+  String get editCustomRouting {
+    return Intl.message(
+      'Edit custom routing',
+      name: 'editCustomRouting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Condition`
+  String get routingCondition {
+    return Intl.message(
+      'Condition',
+      name: 'routingCondition',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add condition`
+  String get addRoutingCondition {
+    return Intl.message(
+      'Add condition',
+      name: 'addRoutingCondition',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Match logic`
+  String get routingLogic {
+    return Intl.message(
+      'Match logic',
+      name: 'routingLogic',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Any condition (OR)`
+  String get routingLogicOr {
+    return Intl.message(
+      'Any condition (OR)',
+      name: 'routingLogicOr',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All conditions (AND)`
+  String get routingLogicAnd {
+    return Intl.message(
+      'All conditions (AND)',
+      name: 'routingLogicAnd',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Outbound`
+  String get routingTarget {
+    return Intl.message('Outbound', name: 'routingTarget', desc: '', args: []);
+  }
+
+  /// `One value per line`
+  String get routingValuesHint {
+    return Intl.message(
+      'One value per line',
+      name: 'routingValuesHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A value cannot contain a comma`
+  String get routingValueCommaTip {
+    return Intl.message(
+      'A value cannot contain a comma',
+      name: 'routingValueCommaTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{target} is not in the current profile, so this entry is skipped`
+  String routingTargetMissingTip(Object target) {
+    return Intl.message(
+      '$target is not in the current profile, so this entry is skipped',
+      name: 'routingTargetMissingTip',
+      desc: '',
+      args: [target],
+    );
+  }
+
+  /// `Add at least one condition with a value`
+  String get routingConditionsEmptyTip {
+    return Intl.message(
+      'Add at least one condition with a value',
+      name: 'routingConditionsEmptyTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose an outbound`
+  String get routingTargetEmptyTip {
+    return Intl.message(
+      'Choose an outbound',
+      name: 'routingTargetEmptyTip',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -905,5 +905,21 @@
   "required": "Обязательно",
   "ageSecretKey": "Секретный ключ age",
   "ageEncryptedProfile": "Зашифрованный профиль",
-  "ageSecretKeyRequiredTip": "Профиль зашифрован с помощью age, для расшифровки нужен секретный ключ age"
+  "ageSecretKeyRequiredTip": "Профиль зашифрован с помощью age, для расшифровки нужен секретный ключ age",
+  "customRouting": "Пользовательская маршрутизация",
+  "customRoutingDesc": "Выбранные записи по порядку вставляются перед всеми правилами профиля в стандартном и скриптовом режимах",
+  "goToConfigureCustomRouting": "Перейти к настройке маршрутизации",
+  "addCustomRouting": "Добавить маршрутизацию",
+  "editCustomRouting": "Изменить маршрутизацию",
+  "routingCondition": "Условие",
+  "addRoutingCondition": "Добавить условие",
+  "routingLogic": "Логика совпадения",
+  "routingLogicOr": "Любое условие (OR)",
+  "routingLogicAnd": "Все условия (AND)",
+  "routingTarget": "Выход",
+  "routingValuesHint": "Одно значение на строку",
+  "routingValueCommaTip": "Значение не может содержать запятую",
+  "routingTargetMissingTip": "{target} отсутствует в текущем профиле, запись будет пропущена",
+  "routingConditionsEmptyTip": "Добавьте хотя бы одно условие со значением",
+  "routingTargetEmptyTip": "Выберите выход"
 }
