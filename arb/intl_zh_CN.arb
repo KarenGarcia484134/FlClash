@@ -921,5 +921,6 @@
   "routingValueCommaTip": "值不能包含逗号",
   "routingTargetMissingTip": "当前配置中没有 {target}，该分流会被跳过",
   "routingConditionsEmptyTip": "请至少添加一个有值的条件",
-  "routingTargetEmptyTip": "请选择出口"
+  "routingTargetEmptyTip": "请选择出口",
+  "currentExtendMode": "当前扩展模式：{mode}"
 }

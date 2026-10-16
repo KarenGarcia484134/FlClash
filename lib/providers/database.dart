@@ -1095,6 +1095,23 @@ class CustomRoutings extends _$CustomRoutings
     optimistic(next, () => database.customRoutingsDao.put(placed));
   }
 
+  void duplicate(CustomRouting routing) {
+    final index = value.indexWhere((item) => item.id == routing.id);
+    if (index == -1) {
+      return;
+    }
+    final copy = routing.duplicated().copyWith(
+      order: indexing.generateKeyBetween(
+        value[index].order,
+        value.safeGet(index + 1)?.order,
+      ),
+    );
+    optimistic(
+      [...value]..insert(index + 1, copy),
+      () => database.customRoutingsDao.put(copy),
+    );
+  }
+
   void del(int id) {
     optimistic(
       value.where((item) => item.id != id).toList(),

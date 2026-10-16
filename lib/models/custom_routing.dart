@@ -67,6 +67,9 @@ extension CustomRoutingConditionExt on CustomRoutingCondition {
 }
 
 extension CustomRoutingExt on CustomRouting {
+  CustomRouting duplicated() =>
+      copyWith(id: snowflake.id, label: '$label copy', order: null);
+
   bool get hasTarget => target?.trim().isNotEmpty == true;
 
   bool get hasInvalidValue => conditions.any(

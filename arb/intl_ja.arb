@@ -921,5 +921,6 @@
   "routingValueCommaTip": "値にカンマを含めることはできません",
   "routingTargetMissingTip": "現在のプロファイルに {target} がないため、この項目はスキップされます",
   "routingConditionsEmptyTip": "値のある条件を 1 つ以上追加してください",
-  "routingTargetEmptyTip": "出口を選択してください"
+  "routingTargetEmptyTip": "出口を選択してください",
+  "currentExtendMode": "現在の拡張モード：{mode}"
 }

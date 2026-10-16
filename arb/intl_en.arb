@@ -921,5 +921,6 @@
   "routingValueCommaTip": "A value cannot contain a comma",
   "routingTargetMissingTip": "{target} is not in the current profile, so this entry is skipped",
   "routingConditionsEmptyTip": "Add at least one condition with a value",
-  "routingTargetEmptyTip": "Choose an outbound"
+  "routingTargetEmptyTip": "Choose an outbound",
+  "currentExtendMode": "Current extend mode: {mode}"
 }

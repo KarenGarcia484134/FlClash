@@ -5,6 +5,7 @@ import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/config/custom_routings.dart';
+import 'package:fl_clash/views/profiles/extend/extend.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -107,5 +108,40 @@ void main() {
       10,
     ]);
     expect(tester.widget<Checkbox>(find.byType(Checkbox)).value, isTrue);
+  });
+
+  testWidgets('the extend page opens on custom routing without changing mode', (
+    tester,
+  ) async {
+    container
+        .read(profilesProvider.notifier)
+        .updateProfile(
+          _profileId,
+          (state) => state.copyWith(extendType: ExtendType.script),
+        );
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const TestApp(child: ExtendView(profileId: _profileId)),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CustomRoutingContent), findsOneWidget);
+    expect(find.text('alpha'), findsOneWidget);
+    final chips = find.byType(CommonCard);
+    expect(
+      tester
+          .getTopLeft(find.text(currentAppLocalizations.customRouting).first)
+          .dx,
+      lessThan(
+        tester.getTopLeft(find.text(currentAppLocalizations.standard)).dx,
+      ),
+    );
+    expect(chips, findsWidgets);
+    expect(
+      container.read(profilesProvider).getProfile(_profileId)?.extendType,
+      ExtendType.script,
+    );
   });
 }

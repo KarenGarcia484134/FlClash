@@ -921,5 +921,6 @@
   "routingValueCommaTip": "Значение не может содержать запятую",
   "routingTargetMissingTip": "{target} отсутствует в текущем профиле, запись будет пропущена",
   "routingConditionsEmptyTip": "Добавьте хотя бы одно условие со значением",
-  "routingTargetEmptyTip": "Выберите выход"
+  "routingTargetEmptyTip": "Выберите выход",
+  "currentExtendMode": "Текущий режим расширения: {mode}"
 }

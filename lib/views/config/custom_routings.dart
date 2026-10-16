@@ -144,6 +144,13 @@ class _CustomRoutingsViewState extends ConsumerState<CustomRoutingsView> {
             },
           ),
           CommonPopupMenuItem(
+            glyph: AppGlyphs.copy,
+            label: appLocalizations.copy,
+            onPressed: () {
+              ref.read(customRoutingsProvider.notifier).duplicate(routing);
+            },
+          ),
+          CommonPopupMenuItem(
             danger: true,
             glyph: AppGlyphs.delete,
             label: appLocalizations.delete,
@@ -619,17 +626,6 @@ class CustomRoutingContent extends ConsumerWidget {
         const SliverToBoxAdapter(child: SizedBox(height: 24)),
         SliverToBoxAdapter(
           child: InfoHeader(info: Info(label: appLocalizations.customRouting)),
-        ),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              appLocalizations.customRoutingDesc,
-              style: context.textTheme.bodySmall?.copyWith(
-                color: context.colorScheme.onSurfaceVariant.opacity80,
-              ),
-            ),
-          ),
         ),
         const SliverToBoxAdapter(child: SizedBox(height: 8)),
         SliverToBoxAdapter(

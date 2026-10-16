@@ -7741,6 +7741,16 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Current extend mode: {mode}`
+  String currentExtendMode(Object mode) {
+    return Intl.message(
+      'Current extend mode: $mode',
+      name: 'currentExtendMode',
+      desc: '',
+      args: [mode],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

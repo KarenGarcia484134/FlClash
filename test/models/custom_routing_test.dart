@@ -141,4 +141,18 @@ void main() {
       routing,
     );
   });
+
+  test('a duplicate keeps everything but its identity and order', () {
+    final original = _routing(logic: CustomRoutingLogic.and, [
+      const CustomRoutingCondition(values: ['a.com']),
+    ]).copyWith(label: '指纹1', order: 'a0');
+    final copy = original.duplicated();
+    expect(copy.id, isNot(original.id));
+    expect(copy.label, '指纹1 copy');
+    expect(copy.order, isNull);
+    expect(
+      copy.copyWith(id: original.id, label: original.label, order: 'a0'),
+      original,
+    );
+  });
 }
