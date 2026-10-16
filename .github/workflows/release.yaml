@@ -14,6 +14,10 @@ on:
         description: 'Also build Windows / Linux / macOS'
         type: boolean
         default: true
+      version:
+        description: 'Version override, e.g. 0.9.1 or 0.9.1+2026101601 (blank = pubspec.yaml)'
+        type: string
+        required: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -166,6 +170,18 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ninja-build libgtk-3-dev libayatana-appindicator3-dev libsecret-1-dev rpm patchelf locate libfuse2
 
+      - name: Override version
+        if: steps.gate.outputs.skip != 'true' && inputs.version != ''
+        shell: bash
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          current="$(sed -n 's/^version: *//p' pubspec.yaml)"
+          if [[ "$VERSION" != *+* ]]; then VERSION="$VERSION+${current#*+}"; fi
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+\+[0-9]+$ ]] || { echo "Bad version: $VERSION" >&2; exit 1; }
+          sed -i.bak "s/^version: .*/version: $VERSION/" pubspec.yaml && rm pubspec.yaml.bak
+          grep '^version:' pubspec.yaml
+
       - name: Get Flutter dependencies
         if: steps.gate.outputs.skip != 'true'
         run: |
@@ -177,6 +193,23 @@ jobs:
         env:
           ANDROID_NDK_HOME: ${{ steps.ndk.outputs.ndk-path }}
         run: dart setup.dart ${{ matrix.platform }} --env ${{ needs.meta.outputs.app_env }} -v
+
+      - name: Verify APK signatures
+        if: steps.gate.outputs.skip != 'true' && matrix.platform == 'android'
+        run: |
+          apksigner="$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)apksigner"
+          shopt -s nullglob
+          apks=(dist/*.apk)
+          test ${#apks[@]} -gt 0 || { echo "No APK in dist" >&2; exit 1; }
+          for apk in "${apks[@]}"; do
+            echo "== $apk"
+            out="$("$apksigner" verify -v --print-certs "$apk")" || { echo "$out"; exit 1; }
+            echo "$out" | grep -E 'Verified using v[123] scheme|certificate DN|SHA-256 digest'
+            for scheme in v1 v2 v3; do
+              echo "$out" | grep -q "Verified using $scheme scheme.*: true" || {
+                echo "::error::$apk is not signed with the $scheme scheme" >&2; exit 1; }
+            done
+          done
 
       - name: Upload artifact
         if: steps.gate.outputs.skip != 'true'
