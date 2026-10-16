@@ -372,6 +372,12 @@ Future<({String yaml, String md5})> _makeRealProfileTask(
         .map((item) => item.definition)
         .toList();
   }
+  if (data.customRoutings.isNotEmpty) {
+    rules = [
+      ...buildCustomRoutingRulesForConfig(rawConfig, data.customRoutings),
+      ...rules,
+    ];
+  }
   rawConfig['rules'] = rules;
   final yaml = await _encodeYaml(Map<String, dynamic>.from(rawConfig));
   return (yaml: yaml, md5: yaml.toMd5());

@@ -456,6 +456,7 @@ class SetupAction extends _$SetupAction {
         keepEmptyDnsOverrides: setupState.profileType != ProfileType.custom,
         appendSystemDns: appendSystemDns,
         addedRules: setupState.addedRules,
+        customRoutings: setupState.customRoutings,
         defaultUA: defaultUA,
         authentication: networkSetting.authentication.credentials,
         matchTarget: setupState.matchTarget,

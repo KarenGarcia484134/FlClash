@@ -8,6 +8,7 @@ import 'clash_config.dart';
 import 'common.dart';
 import 'config.dart';
 import 'core.dart';
+import 'custom_routing.dart';
 import 'profile.dart';
 
 part 'generated/state.freezed.dart';
@@ -341,6 +342,7 @@ abstract class MakeRealProfileState with _$MakeRealProfileState {
     required List<ProxyGroup> proxyGroups,
     required List<Rule> rules,
     required List<Rule> addedRules,
+    @Default([]) List<CustomRouting> customRoutings,
     required String defaultUA,
     @Default([]) List<String> authentication,
     @Default({}) Map<String, dynamic> injectedProxyProviders,
@@ -381,6 +383,7 @@ abstract class SetupState with _$SetupState {
     @Default({}) Map<String, int> profileProviders,
     @Default([]) List<CustomProxy> appProxies,
     @Default({}) Map<int, String> proxyDialers,
+    @Default([]) List<CustomRouting> customRoutings,
     String? matchTarget,
   }) = _SetupState;
 }

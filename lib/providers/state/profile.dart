@@ -69,7 +69,13 @@ Future<SetupState> setupState(Ref ref, int? profileId) async {
   List<CustomProxy> appProxies = [];
   Map<int, String> proxyDialers = const {};
   Script? script;
+  List<CustomRouting> customRoutings = [];
   if (profileId != null) {
+    if (profileType != ProfileType.custom) {
+      customRoutings = await database.customRoutingsDao
+          .queryApplied(profileId)
+          .get();
+    }
     if (profileType == ProfileType.custom) {
       rules = await database.rulesDao.queryProfileRules(profileId).get();
       proxyGroups = await database.proxyGroupsDao.query(profileId).get();
@@ -101,6 +107,7 @@ Future<SetupState> setupState(Ref ref, int? profileId) async {
     profileType: profileType,
     extendType: extendType,
     addedRules: addedRules,
+    customRoutings: customRoutings,
     script: script,
     overrides: overrides,
     matchTarget:

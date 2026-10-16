@@ -296,6 +296,71 @@ void main() {
     },
   );
 
+  test(
+    'makeRealProfileTask puts custom routings ahead of added rules',
+    () async {
+      final rawConfig = await decodeJSONTask<Map<String, dynamic>>(
+        await encodeJSONTask({
+          'proxies': [
+            {'name': 'HK', 'type': 'direct'},
+          ],
+          'rules': ['MATCH,DIRECT'],
+        }),
+      );
+      final result = await makeRealProfileTask(
+        MakeRealProfileState(
+          profilesPath: '/profiles',
+          profileId: 7,
+          rawConfig: rawConfig,
+          realPatchConfig: const PatchClashConfig(),
+          appendSystemDns: false,
+          proxyGroups: const [],
+          rules: const [],
+          addedRules: const [
+            Rule(
+              ruleAction: RuleAction.DOMAIN,
+              content: 'added.example',
+              ruleTarget: 'DIRECT',
+            ),
+          ],
+          customRoutings: const [
+            CustomRouting(
+              id: 1,
+              target: 'HK',
+              conditions: [
+                CustomRoutingCondition(values: ['first.example']),
+              ],
+            ),
+            CustomRouting(
+              id: 2,
+              target: 'Missing',
+              conditions: [
+                CustomRoutingCondition(values: ['skipped.example']),
+              ],
+            ),
+            CustomRouting(
+              id: 3,
+              target: 'REJECT',
+              conditions: [
+                CustomRoutingCondition(
+                  ruleAction: RuleAction.GEOSITE,
+                  values: ['category-ads-all'],
+                ),
+              ],
+            ),
+          ],
+          defaultUA: 'FlClash-Test',
+        ),
+      );
+      expect((loadYaml(result.yaml) as YamlMap)['rules'], [
+        'DOMAIN-SUFFIX,first.example,HK',
+        'GEOSITE,category-ads-all,REJECT',
+        'DOMAIN,added.example,DIRECT',
+        'MATCH,DIRECT',
+      ]);
+    },
+  );
+
   // The core re-reads these two keys out of the generated config on every
   // profile apply and adopts whatever it finds, so a subscription that ships
   // them would otherwise decide whether GEO databases auto-update — including
