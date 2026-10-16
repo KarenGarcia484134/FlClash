@@ -953,5 +953,9 @@
   "tailscaleAddRouting": "Add to custom routing",
   "tailscaleRoutingAdded": "Added to custom routing",
   "tailscaleRefresh": "Refresh",
-  "tailscaleAuthKeyNotAccepted": "The control server did not accept the auth key (expired, already used, revoked or mistyped). Create a new key, or log in with the URL above."
+  "tailscaleAuthKeyNotAccepted": "The control server did not accept the auth key (expired, already used, revoked or mistyped). Create a new key, or log in with the URL above.",
+  "tailscaleDialerProxy": "Connection proxy",
+  "tailscaleDialerProxyDesc": "Tailscale's own traffic to its control server, DERP relays and peers goes through this proxy or group. Choose one if the control server cannot be reached directly.",
+  "tailscaleNetworkIssue": "The control server could not be reached (network timeout). This is a network problem, not the auth key: choose a connection proxy above and connect again.",
+  "recommended": "Recommended"
 }

@@ -1343,6 +1343,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "quickEdit": MessageLookupByLibrary.simpleMessage("Quick edit"),
     "rainbowScheme": MessageLookupByLibrary.simpleMessage("Rainbow"),
     "recentRequests": MessageLookupByLibrary.simpleMessage("Recent requests"),
+    "recommended": MessageLookupByLibrary.simpleMessage("Recommended"),
     "recommendedIcons": MessageLookupByLibrary.simpleMessage("Suggested"),
     "recordType": MessageLookupByLibrary.simpleMessage("Record type"),
     "redirPort": MessageLookupByLibrary.simpleMessage("Redir port"),
@@ -1765,6 +1766,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
       "Adds a Tailscale node to every profile and sends tailnet addresses (100.64.0.0/10, fd7a:115c:a1e9::/48) and MagicDNS names to it, ahead of all other rules. Changes apply when you leave this page.",
     ),
+    "tailscaleDialerProxy": MessageLookupByLibrary.simpleMessage(
+      "Connection proxy",
+    ),
+    "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
+      "Tailscale\'s own traffic to its control server, DERP relays and peers goes through this proxy or group. Choose one if the control server cannot be reached directly.",
+    ),
     "tailscaleDnsSuffixes": MessageLookupByLibrary.simpleMessage(
       "Tailnet DNS suffixes",
     ),
@@ -1782,6 +1789,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Without an auth key, tap Connect: the node starts and shows a login link here. After you approve it in the browser the login is kept across restarts.",
     ),
     "tailscaleNetwork": MessageLookupByLibrary.simpleMessage("Tailnet"),
+    "tailscaleNetworkIssue": MessageLookupByLibrary.simpleMessage(
+      "The control server could not be reached (network timeout). This is a network problem, not the auth key: choose a connection proxy above and connect again.",
+    ),
     "tailscaleNode": MessageLookupByLibrary.simpleMessage("Node"),
     "tailscaleNotStarted": MessageLookupByLibrary.simpleMessage(
       "The node is not running yet. Connect to load the device list.",

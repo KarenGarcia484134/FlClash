@@ -1402,6 +1402,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "quickEdit": MessageLookupByLibrary.simpleMessage("Быстрое редактирование"),
     "rainbowScheme": MessageLookupByLibrary.simpleMessage("Радуга"),
     "recentRequests": MessageLookupByLibrary.simpleMessage("Последние запросы"),
+    "recommended": MessageLookupByLibrary.simpleMessage("Рекомендуется"),
     "recommendedIcons": MessageLookupByLibrary.simpleMessage("Рекомендуемые"),
     "recordType": MessageLookupByLibrary.simpleMessage("Тип записи"),
     "redirPort": MessageLookupByLibrary.simpleMessage("Порт Redir"),
@@ -1848,6 +1849,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
       "Добавляет узел Tailscale во все профили и направляет на него адреса tailnet (100.64.0.0/10, fd7a:115c:a1e9::/48) и имена MagicDNS раньше всех правил. Применяется при выходе со страницы.",
     ),
+    "tailscaleDialerProxy": MessageLookupByLibrary.simpleMessage(
+      "Прокси подключения",
+    ),
+    "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
+      "Собственный трафик Tailscale к серверу управления, ретрансляторам DERP и узлам идёт через этот прокси или группу. Выберите его, если сервер недоступен напрямую.",
+    ),
     "tailscaleDnsSuffixes": MessageLookupByLibrary.simpleMessage(
       "DNS-суффиксы tailnet",
     ),
@@ -1869,6 +1876,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Без ключа нажмите «Подключить»: узел запустится и покажет здесь ссылку для входа. После подтверждения в браузере вход сохраняется и после перезапуска.",
     ),
     "tailscaleNetwork": MessageLookupByLibrary.simpleMessage("Сеть Tailnet"),
+    "tailscaleNetworkIssue": MessageLookupByLibrary.simpleMessage(
+      "Не удалось связаться с сервером управления (тайм-аут сети). Это проблема сети, а не ключа: выберите прокси подключения выше и подключитесь снова.",
+    ),
     "tailscaleNode": MessageLookupByLibrary.simpleMessage("Узел"),
     "tailscaleNotStarted": MessageLookupByLibrary.simpleMessage(
       "Узел ещё не запущен. Подключитесь, чтобы загрузить список устройств.",

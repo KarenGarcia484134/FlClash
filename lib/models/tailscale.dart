@@ -29,6 +29,7 @@ abstract class TailscaleProps with _$TailscaleProps {
     @Default(false) bool ephemeral,
     @Default(true) bool udp,
     @Default([]) List<String> dnsSuffixes,
+    @Default('') String dialerProxy,
   }) = _TailscaleProps;
 
   factory TailscaleProps.fromJson(Map<String, Object?> json) =>
@@ -86,7 +87,7 @@ extension TailscalePropsExt on TailscaleProps {
       if (_cleanSuffix(suffix) case final text when text.isNotEmpty) text,
   }.toList();
 
-  Map<String, Object> proxyDefinition(String name) => {
+  Map<String, Object> proxyDefinition(String name, {String? dialerProxy}) => {
     'name': name,
     'type': 'tailscale',
     if (hostname.trim().isNotEmpty) 'hostname': hostname.trim(),
@@ -97,6 +98,7 @@ extension TailscalePropsExt on TailscaleProps {
     'udp': udp,
     'accept-routes': acceptRoutes,
     if (exitNode.trim().isNotEmpty) 'exit-node': exitNode.trim(),
+    'dialer-proxy': ?dialerProxy,
   };
 }
 
@@ -146,9 +148,21 @@ List<String> injectTailscale(
   }
   final name = tailscaleProxyNameFor(rawConfig);
   final proxies = rawConfig['proxies'];
+  final via = props.dialerProxy.trim();
+  final known = {
+    ..._namesIn(rawConfig['proxies']),
+    ..._namesIn(rawConfig['proxy-groups']),
+  };
   rawConfig['proxies'] = [
     if (proxies is List) ...proxies,
-    props.proxyDefinition(name),
+    props.proxyDefinition(
+      name,
+      // A profile without that node would make every control dial fail, so
+      // fall back to dialing directly.
+      dialerProxy: via.isNotEmpty && via != name && known.contains(via)
+          ? via
+          : null,
+    ),
   ];
   final suffixes = props.realDnsSuffixes;
   final dns = rawConfig['dns'];
@@ -230,24 +244,36 @@ extension TailscalePeerExt on TailscalePeer {
   }
 }
 
-/// A rule value for one peer: its DNS name when it has one, so a changed
-/// address keeps matching, else a single-host CIDR of its IPv4.
-CustomRoutingCondition? tailscalePeerCondition(TailscalePeer peer) {
-  if (peer.shortDnsName.isNotEmpty) {
-    return CustomRoutingCondition(
-      ruleAction: RuleAction.DOMAIN,
-      values: [peer.shortDnsName],
-    );
-  }
-  final ip = peer.ipv4 ?? peer.ipv6;
-  if (ip == null) {
-    return null;
-  }
-  return CustomRoutingCondition(
-    ruleAction: ip.contains(':') ? RuleAction.IP_CIDR6 : RuleAction.IP_CIDR,
-    values: [ip.contains(':') ? '$ip/128' : '$ip/32'],
-    noResolve: true,
-  );
+/// The conditions matching one peer, OR-ed in one routing: its MagicDNS
+/// name and each of its addresses as a single-host CIDR.
+List<CustomRoutingCondition> tailscalePeerConditions(TailscalePeer peer) {
+  final v4 = [
+    for (final ip in peer.ips)
+      if (!ip.contains(':')) '$ip/32',
+  ];
+  final v6 = [
+    for (final ip in peer.ips)
+      if (ip.contains(':')) '$ip/128',
+  ];
+  return [
+    if (peer.shortDnsName.isNotEmpty)
+      CustomRoutingCondition(
+        ruleAction: RuleAction.DOMAIN,
+        values: [peer.shortDnsName],
+      ),
+    if (v4.isNotEmpty)
+      CustomRoutingCondition(
+        ruleAction: RuleAction.IP_CIDR,
+        values: v4,
+        noResolve: true,
+      ),
+    if (v6.isNotEmpty)
+      CustomRoutingCondition(
+        ruleAction: RuleAction.IP_CIDR6,
+        values: v6,
+        noResolve: true,
+      ),
+  ];
 }
 
 /// Folds a status read from the node into the phase the page shows, so it
@@ -276,4 +302,35 @@ TailscaleStatus applyTailscaleNetStatus(
     ),
     _ => current.copyWith(proxyName: proxyName, health: net.health),
   };
+}
+
+enum TailscaleIssue { none, authKey, network }
+
+final _authIssuePattern = RegExp(
+  r'invalid key|auth ?key|expired|revoked|not valid|unauthori[sz]ed|'
+  r'forbidden|not authorized|key has been|reusable|ephemeral key',
+  caseSensitive: false,
+);
+
+final _networkIssuePattern = RegExp(
+  r'deadline exceeded|timeout|timed out|connection|dial|no route|refused|'
+  r'reset by peer|EOF|tls|handshake|network is unreachable|no such host|'
+  r'i/o',
+  caseSensitive: false,
+);
+
+/// Tells a rejected key apart from a control server that cannot be reached,
+/// so the page only blames the key when the server actually refused it.
+TailscaleIssue classifyTailscaleHealth(List<String> messages) {
+  final text = messages.join('\n');
+  if (text.isEmpty) {
+    return TailscaleIssue.none;
+  }
+  if (_networkIssuePattern.hasMatch(text)) {
+    return TailscaleIssue.network;
+  }
+  if (_authIssuePattern.hasMatch(text)) {
+    return TailscaleIssue.authKey;
+  }
+  return TailscaleIssue.none;
 }

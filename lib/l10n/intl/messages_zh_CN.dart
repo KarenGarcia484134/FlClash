@@ -1040,6 +1040,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "quickEdit": MessageLookupByLibrary.simpleMessage("快速编辑"),
     "rainbowScheme": MessageLookupByLibrary.simpleMessage("彩虹"),
     "recentRequests": MessageLookupByLibrary.simpleMessage("最近请求"),
+    "recommended": MessageLookupByLibrary.simpleMessage("推荐"),
     "recommendedIcons": MessageLookupByLibrary.simpleMessage("推荐"),
     "recordType": MessageLookupByLibrary.simpleMessage("记录类型"),
     "redirPort": MessageLookupByLibrary.simpleMessage("Redir端口"),
@@ -1344,6 +1345,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
       "为所有配置加入一个 Tailscale 节点，并把 tailnet 地址（100.64.0.0/10、fd7a:115c:a1e9::/48）和 MagicDNS 域名优先路由到它，排在所有规则之前。离开本页时生效。",
     ),
+    "tailscaleDialerProxy": MessageLookupByLibrary.simpleMessage("连接代理"),
+    "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
+      "Tailscale 自身连接控制服务器、DERP 中继和其他设备的流量会经过这里选择的代理或代理组。直连无法访问控制服务器时请选择一个。",
+    ),
     "tailscaleDnsSuffixes": MessageLookupByLibrary.simpleMessage(
       "Tailnet 域名后缀",
     ),
@@ -1357,6 +1362,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "没有认证密钥时点“连接”：节点启动后会在这里显示登录链接，在浏览器中授权后登录状态会一直保留，重启也不会丢失。",
     ),
     "tailscaleNetwork": MessageLookupByLibrary.simpleMessage("网络"),
+    "tailscaleNetworkIssue": MessageLookupByLibrary.simpleMessage(
+      "无法连接到控制服务器（网络超时）。这是网络问题，不是认证密钥的问题：请在上方选择一个连接代理后重新连接。",
+    ),
     "tailscaleNode": MessageLookupByLibrary.simpleMessage("节点"),
     "tailscaleNotStarted": MessageLookupByLibrary.simpleMessage(
       "节点尚未启动，连接后即可查看设备列表。",

@@ -953,5 +953,9 @@
   "tailscaleAddRouting": "カスタムルーティングに追加",
   "tailscaleRoutingAdded": "カスタムルーティングに追加しました",
   "tailscaleRefresh": "更新",
-  "tailscaleAuthKeyNotAccepted": "コントロールサーバーが認証キーを受け付けませんでした（期限切れ、使用済み、失効、または入力ミス）。新しいキーを作成するか、上の URL でログインしてください。"
+  "tailscaleAuthKeyNotAccepted": "コントロールサーバーが認証キーを受け付けませんでした（期限切れ、使用済み、失効、または入力ミス）。新しいキーを作成するか、上の URL でログインしてください。",
+  "tailscaleDialerProxy": "接続プロキシ",
+  "tailscaleDialerProxyDesc": "コントロールサーバー、DERP リレー、ピアへの Tailscale 自身の通信はこのプロキシまたはグループを経由します。直接接続できない場合に選択してください。",
+  "tailscaleNetworkIssue": "コントロールサーバーに接続できませんでした（ネットワークのタイムアウト）。認証キーではなくネットワークの問題です。上で接続プロキシを選んで再接続してください。",
+  "recommended": "おすすめ"
 }

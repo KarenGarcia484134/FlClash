@@ -1147,6 +1147,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "quickEdit": MessageLookupByLibrary.simpleMessage("クイック編集"),
     "rainbowScheme": MessageLookupByLibrary.simpleMessage("レインボー"),
     "recentRequests": MessageLookupByLibrary.simpleMessage("最近のリクエスト"),
+    "recommended": MessageLookupByLibrary.simpleMessage("おすすめ"),
     "recommendedIcons": MessageLookupByLibrary.simpleMessage("おすすめ"),
     "recordType": MessageLookupByLibrary.simpleMessage("レコードタイプ"),
     "redirPort": MessageLookupByLibrary.simpleMessage("Redirポート"),
@@ -1503,6 +1504,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
       "すべてのプロファイルに Tailscale ノードを追加し、tailnet のアドレス（100.64.0.0/10、fd7a:115c:a1e9::/48）と MagicDNS 名を他のすべてのルールより先にそこへ送ります。このページを離れると適用されます。",
     ),
+    "tailscaleDialerProxy": MessageLookupByLibrary.simpleMessage("接続プロキシ"),
+    "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
+      "コントロールサーバー、DERP リレー、ピアへの Tailscale 自身の通信はこのプロキシまたはグループを経由します。直接接続できない場合に選択してください。",
+    ),
     "tailscaleDnsSuffixes": MessageLookupByLibrary.simpleMessage(
       "Tailnet DNS サフィックス",
     ),
@@ -1516,6 +1521,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "認証キーがない場合は「接続」をタップすると、ノードが起動してここにログインリンクが表示されます。ブラウザで承認すると再起動後もログインが保持されます。",
     ),
     "tailscaleNetwork": MessageLookupByLibrary.simpleMessage("Tailnet"),
+    "tailscaleNetworkIssue": MessageLookupByLibrary.simpleMessage(
+      "コントロールサーバーに接続できませんでした（ネットワークのタイムアウト）。認証キーではなくネットワークの問題です。上で接続プロキシを選んで再接続してください。",
+    ),
     "tailscaleNode": MessageLookupByLibrary.simpleMessage("ノード"),
     "tailscaleNotStarted": MessageLookupByLibrary.simpleMessage(
       "ノードはまだ起動していません。接続するとデバイス一覧を表示します。",

@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TailscaleProps {
 
- bool get enable; String get hostname; String get authKey; String get controlUrl; bool get acceptRoutes; String get exitNode; bool get ephemeral; bool get udp; List<String> get dnsSuffixes;
+ bool get enable; String get hostname; String get authKey; String get controlUrl; bool get acceptRoutes; String get exitNode; bool get ephemeral; bool get udp; List<String> get dnsSuffixes; String get dialerProxy;
 /// Create a copy of TailscaleProps
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,20 +30,20 @@ $TailscalePropsCopyWith<TailscaleProps> get copyWith => _$TailscalePropsCopyWith
 @override
 bool operator ==(Object other) {
   final _this = this as TailscaleProps;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TailscaleProps&&(identical(other.enable, _this.enable) || other.enable == _this.enable)&&(identical(other.hostname, _this.hostname) || other.hostname == _this.hostname)&&(identical(other.authKey, _this.authKey) || other.authKey == _this.authKey)&&(identical(other.controlUrl, _this.controlUrl) || other.controlUrl == _this.controlUrl)&&(identical(other.acceptRoutes, _this.acceptRoutes) || other.acceptRoutes == _this.acceptRoutes)&&(identical(other.exitNode, _this.exitNode) || other.exitNode == _this.exitNode)&&(identical(other.ephemeral, _this.ephemeral) || other.ephemeral == _this.ephemeral)&&(identical(other.udp, _this.udp) || other.udp == _this.udp)&&const DeepCollectionEquality().equals(other.dnsSuffixes, _this.dnsSuffixes));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TailscaleProps&&(identical(other.enable, _this.enable) || other.enable == _this.enable)&&(identical(other.hostname, _this.hostname) || other.hostname == _this.hostname)&&(identical(other.authKey, _this.authKey) || other.authKey == _this.authKey)&&(identical(other.controlUrl, _this.controlUrl) || other.controlUrl == _this.controlUrl)&&(identical(other.acceptRoutes, _this.acceptRoutes) || other.acceptRoutes == _this.acceptRoutes)&&(identical(other.exitNode, _this.exitNode) || other.exitNode == _this.exitNode)&&(identical(other.ephemeral, _this.ephemeral) || other.ephemeral == _this.ephemeral)&&(identical(other.udp, _this.udp) || other.udp == _this.udp)&&const DeepCollectionEquality().equals(other.dnsSuffixes, _this.dnsSuffixes)&&(identical(other.dialerProxy, _this.dialerProxy) || other.dialerProxy == _this.dialerProxy));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as TailscaleProps;
-  return Object.hash(runtimeType,_this.enable,_this.hostname,_this.authKey,_this.controlUrl,_this.acceptRoutes,_this.exitNode,_this.ephemeral,_this.udp,const DeepCollectionEquality().hash(_this.dnsSuffixes));
+  return Object.hash(runtimeType,_this.enable,_this.hostname,_this.authKey,_this.controlUrl,_this.acceptRoutes,_this.exitNode,_this.ephemeral,_this.udp,const DeepCollectionEquality().hash(_this.dnsSuffixes),_this.dialerProxy);
 }
 
 @override
 String toString() {
   final _this = this as TailscaleProps;
-  return 'TailscaleProps(enable: ${_this.enable}, hostname: ${_this.hostname}, authKey: ${_this.authKey}, controlUrl: ${_this.controlUrl}, acceptRoutes: ${_this.acceptRoutes}, exitNode: ${_this.exitNode}, ephemeral: ${_this.ephemeral}, udp: ${_this.udp}, dnsSuffixes: ${_this.dnsSuffixes})';
+  return 'TailscaleProps(enable: ${_this.enable}, hostname: ${_this.hostname}, authKey: ${_this.authKey}, controlUrl: ${_this.controlUrl}, acceptRoutes: ${_this.acceptRoutes}, exitNode: ${_this.exitNode}, ephemeral: ${_this.ephemeral}, udp: ${_this.udp}, dnsSuffixes: ${_this.dnsSuffixes}, dialerProxy: ${_this.dialerProxy})';
 }
 
 
@@ -54,7 +54,7 @@ abstract mixin class $TailscalePropsCopyWith<$Res>  {
   factory $TailscalePropsCopyWith(TailscaleProps value, $Res Function(TailscaleProps) _then) = _$TailscalePropsCopyWithImpl;
 @useResult
 $Res call({
- bool enable, String hostname, String authKey, String controlUrl, bool acceptRoutes, String exitNode, bool ephemeral, bool udp, List<String> dnsSuffixes
+ bool enable, String hostname, String authKey, String controlUrl, bool acceptRoutes, String exitNode, bool ephemeral, bool udp, List<String> dnsSuffixes, String dialerProxy
 });
 
 
@@ -71,7 +71,7 @@ class _$TailscalePropsCopyWithImpl<$Res>
 
 /// Create a copy of TailscaleProps
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? enable = null,Object? hostname = null,Object? authKey = null,Object? controlUrl = null,Object? acceptRoutes = null,Object? exitNode = null,Object? ephemeral = null,Object? udp = null,Object? dnsSuffixes = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? enable = null,Object? hostname = null,Object? authKey = null,Object? controlUrl = null,Object? acceptRoutes = null,Object? exitNode = null,Object? ephemeral = null,Object? udp = null,Object? dnsSuffixes = null,Object? dialerProxy = null,}) {
   return _then(TailscaleProps(
 enable: null == enable ? _self.enable : enable // ignore: cast_nullable_to_non_nullable
 as bool,hostname: null == hostname ? _self.hostname : hostname // ignore: cast_nullable_to_non_nullable
@@ -82,7 +82,8 @@ as bool,exitNode: null == exitNode ? _self.exitNode : exitNode // ignore: cast_n
 as String,ephemeral: null == ephemeral ? _self.ephemeral : ephemeral // ignore: cast_nullable_to_non_nullable
 as bool,udp: null == udp ? _self.udp : udp // ignore: cast_nullable_to_non_nullable
 as bool,dnsSuffixes: null == dnsSuffixes ? _self.dnsSuffixes : dnsSuffixes // ignore: cast_nullable_to_non_nullable
-as List<String>,
+as List<String>,dialerProxy: null == dialerProxy ? _self.dialerProxy : dialerProxy // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 
@@ -167,10 +168,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool enable,  String hostname,  String authKey,  String controlUrl,  bool acceptRoutes,  String exitNode,  bool ephemeral,  bool udp,  List<String> dnsSuffixes)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool enable,  String hostname,  String authKey,  String controlUrl,  bool acceptRoutes,  String exitNode,  bool ephemeral,  bool udp,  List<String> dnsSuffixes,  String dialerProxy)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TailscaleProps() when $default != null:
-return $default(_that.enable,_that.hostname,_that.authKey,_that.controlUrl,_that.acceptRoutes,_that.exitNode,_that.ephemeral,_that.udp,_that.dnsSuffixes);case _:
+return $default(_that.enable,_that.hostname,_that.authKey,_that.controlUrl,_that.acceptRoutes,_that.exitNode,_that.ephemeral,_that.udp,_that.dnsSuffixes,_that.dialerProxy);case _:
   return orElse();
 
 }
@@ -188,10 +189,10 @@ return $default(_that.enable,_that.hostname,_that.authKey,_that.controlUrl,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool enable,  String hostname,  String authKey,  String controlUrl,  bool acceptRoutes,  String exitNode,  bool ephemeral,  bool udp,  List<String> dnsSuffixes)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool enable,  String hostname,  String authKey,  String controlUrl,  bool acceptRoutes,  String exitNode,  bool ephemeral,  bool udp,  List<String> dnsSuffixes,  String dialerProxy)  $default,) {final _that = this;
 switch (_that) {
 case _TailscaleProps():
-return $default(_that.enable,_that.hostname,_that.authKey,_that.controlUrl,_that.acceptRoutes,_that.exitNode,_that.ephemeral,_that.udp,_that.dnsSuffixes);case _:
+return $default(_that.enable,_that.hostname,_that.authKey,_that.controlUrl,_that.acceptRoutes,_that.exitNode,_that.ephemeral,_that.udp,_that.dnsSuffixes,_that.dialerProxy);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -208,10 +209,10 @@ return $default(_that.enable,_that.hostname,_that.authKey,_that.controlUrl,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool enable,  String hostname,  String authKey,  String controlUrl,  bool acceptRoutes,  String exitNode,  bool ephemeral,  bool udp,  List<String> dnsSuffixes)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool enable,  String hostname,  String authKey,  String controlUrl,  bool acceptRoutes,  String exitNode,  bool ephemeral,  bool udp,  List<String> dnsSuffixes,  String dialerProxy)?  $default,) {final _that = this;
 switch (_that) {
 case _TailscaleProps() when $default != null:
-return $default(_that.enable,_that.hostname,_that.authKey,_that.controlUrl,_that.acceptRoutes,_that.exitNode,_that.ephemeral,_that.udp,_that.dnsSuffixes);case _:
+return $default(_that.enable,_that.hostname,_that.authKey,_that.controlUrl,_that.acceptRoutes,_that.exitNode,_that.ephemeral,_that.udp,_that.dnsSuffixes,_that.dialerProxy);case _:
   return null;
 
 }
@@ -223,7 +224,7 @@ return $default(_that.enable,_that.hostname,_that.authKey,_that.controlUrl,_that
 @JsonSerializable()
 
 class _TailscaleProps implements TailscaleProps {
-  const _TailscaleProps({this.enable = false, this.hostname = '', this.authKey = '', this.controlUrl = '', this.acceptRoutes = true, this.exitNode = '', this.ephemeral = false, this.udp = true,  List<String> dnsSuffixes = const []}): _dnsSuffixes = dnsSuffixes;
+  const _TailscaleProps({this.enable = false, this.hostname = '', this.authKey = '', this.controlUrl = '', this.acceptRoutes = true, this.exitNode = '', this.ephemeral = false, this.udp = true,  List<String> dnsSuffixes = const [], this.dialerProxy = ''}): _dnsSuffixes = dnsSuffixes;
   factory _TailscaleProps.fromJson(Map<String, dynamic> json) => _$TailscalePropsFromJson(json);
 
 @override@JsonKey() final  bool enable;
@@ -241,6 +242,7 @@ class _TailscaleProps implements TailscaleProps {
   return EqualUnmodifiableListView(_dnsSuffixes);
 }
 
+@override@JsonKey() final  String dialerProxy;
 
 /// Create a copy of TailscaleProps
 /// with the given fields replaced by the non-null parameter values.
@@ -255,18 +257,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TailscaleProps&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.hostname, hostname) || other.hostname == hostname)&&(identical(other.authKey, authKey) || other.authKey == authKey)&&(identical(other.controlUrl, controlUrl) || other.controlUrl == controlUrl)&&(identical(other.acceptRoutes, acceptRoutes) || other.acceptRoutes == acceptRoutes)&&(identical(other.exitNode, exitNode) || other.exitNode == exitNode)&&(identical(other.ephemeral, ephemeral) || other.ephemeral == ephemeral)&&(identical(other.udp, udp) || other.udp == udp)&&const DeepCollectionEquality().equals(other.dnsSuffixes, _dnsSuffixes));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TailscaleProps&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.hostname, hostname) || other.hostname == hostname)&&(identical(other.authKey, authKey) || other.authKey == authKey)&&(identical(other.controlUrl, controlUrl) || other.controlUrl == controlUrl)&&(identical(other.acceptRoutes, acceptRoutes) || other.acceptRoutes == acceptRoutes)&&(identical(other.exitNode, exitNode) || other.exitNode == exitNode)&&(identical(other.ephemeral, ephemeral) || other.ephemeral == ephemeral)&&(identical(other.udp, udp) || other.udp == udp)&&const DeepCollectionEquality().equals(other.dnsSuffixes, _dnsSuffixes)&&(identical(other.dialerProxy, dialerProxy) || other.dialerProxy == dialerProxy));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,enable,hostname,authKey,controlUrl,acceptRoutes,exitNode,ephemeral,udp,const DeepCollectionEquality().hash(_dnsSuffixes));
+    return Object.hash(runtimeType,enable,hostname,authKey,controlUrl,acceptRoutes,exitNode,ephemeral,udp,const DeepCollectionEquality().hash(_dnsSuffixes),dialerProxy);
 }
 
 @override
 String toString() {
-    return 'TailscaleProps(enable: $enable, hostname: $hostname, authKey: $authKey, controlUrl: $controlUrl, acceptRoutes: $acceptRoutes, exitNode: $exitNode, ephemeral: $ephemeral, udp: $udp, dnsSuffixes: $dnsSuffixes)';
+    return 'TailscaleProps(enable: $enable, hostname: $hostname, authKey: $authKey, controlUrl: $controlUrl, acceptRoutes: $acceptRoutes, exitNode: $exitNode, ephemeral: $ephemeral, udp: $udp, dnsSuffixes: $dnsSuffixes, dialerProxy: $dialerProxy)';
 }
 
 
@@ -277,7 +279,7 @@ abstract mixin class _$TailscalePropsCopyWith<$Res> implements $TailscalePropsCo
   factory _$TailscalePropsCopyWith(_TailscaleProps value, $Res Function(_TailscaleProps) _then) = __$TailscalePropsCopyWithImpl;
 @override @useResult
 $Res call({
- bool enable, String hostname, String authKey, String controlUrl, bool acceptRoutes, String exitNode, bool ephemeral, bool udp, List<String> dnsSuffixes
+ bool enable, String hostname, String authKey, String controlUrl, bool acceptRoutes, String exitNode, bool ephemeral, bool udp, List<String> dnsSuffixes, String dialerProxy
 });
 
 
@@ -294,7 +296,7 @@ class __$TailscalePropsCopyWithImpl<$Res>
 
 /// Create a copy of TailscaleProps
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? enable = null,Object? hostname = null,Object? authKey = null,Object? controlUrl = null,Object? acceptRoutes = null,Object? exitNode = null,Object? ephemeral = null,Object? udp = null,Object? dnsSuffixes = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? enable = null,Object? hostname = null,Object? authKey = null,Object? controlUrl = null,Object? acceptRoutes = null,Object? exitNode = null,Object? ephemeral = null,Object? udp = null,Object? dnsSuffixes = null,Object? dialerProxy = null,}) {
   return _then(_TailscaleProps(
 enable: null == enable ? _self.enable : enable // ignore: cast_nullable_to_non_nullable
 as bool,hostname: null == hostname ? _self.hostname : hostname // ignore: cast_nullable_to_non_nullable
@@ -305,7 +307,8 @@ as bool,exitNode: null == exitNode ? _self.exitNode : exitNode // ignore: cast_n
 as String,ephemeral: null == ephemeral ? _self.ephemeral : ephemeral // ignore: cast_nullable_to_non_nullable
 as bool,udp: null == udp ? _self.udp : udp // ignore: cast_nullable_to_non_nullable
 as bool,dnsSuffixes: null == dnsSuffixes ? _self._dnsSuffixes : dnsSuffixes // ignore: cast_nullable_to_non_nullable
-as List<String>,
+as List<String>,dialerProxy: null == dialerProxy ? _self.dialerProxy : dialerProxy // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 

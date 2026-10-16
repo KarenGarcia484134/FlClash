@@ -109,27 +109,75 @@ void main() {
     expect(peer.matches('mac'), isFalse);
   });
 
-  test('peer routing prefers the DNS name, else a host CIDR', () {
-    final byName = tailscalePeerCondition(
-      const TailscalePeer(dnsName: 'nas.tail.ts.net.', ips: ['100.64.0.2']),
-    )!;
-    expect(byName.ruleAction, RuleAction.DOMAIN);
-    expect(byName.values, ['nas.tail.ts.net']);
-    final byIp = tailscalePeerCondition(
-      const TailscalePeer(ips: ['100.64.0.2']),
-    )!;
-    expect(byIp.ruleAction, RuleAction.IP_CIDR);
-    expect(byIp.values, ['100.64.0.2/32']);
-    expect(byIp.noResolve, isTrue);
-    final byIp6 = tailscalePeerCondition(
-      const TailscalePeer(ips: ['fd7a:115c:a1e9::2']),
-    )!;
-    expect(byIp6.values, ['fd7a:115c:a1e9::2/128']);
-    expect(tailscalePeerCondition(const TailscalePeer()), isNull);
-    expect(
-      CustomRouting(id: 1, target: 'Tailscale', conditions: [byIp]).toRule(),
-      'IP-CIDR,100.64.0.2/32,Tailscale,no-resolve',
+  test('peer routing ORs the DNS name with every address', () {
+    final conditions = tailscalePeerConditions(
+      const TailscalePeer(
+        dnsName: 'nas.tail.ts.net.',
+        ips: ['100.64.0.2', 'fd7a:115c:a1e9::2'],
+      ),
     );
+    expect(conditions.map((item) => item.ruleAction), [
+      RuleAction.DOMAIN,
+      RuleAction.IP_CIDR,
+      RuleAction.IP_CIDR6,
+    ]);
+    expect(conditions[1].values, ['100.64.0.2/32']);
+    expect(conditions[2].values, ['fd7a:115c:a1e9::2/128']);
+    expect(conditions.skip(1).every((item) => item.noResolve), isTrue);
+    final rule = CustomRouting(
+      id: 1,
+      target: 'Tailscale',
+      conditions: conditions,
+    ).toRule();
+    expect(rule, contains('DOMAIN,nas.tail.ts.net'));
+    expect(rule, contains('IP-CIDR,100.64.0.2/32,no-resolve'));
+    expect(rule, contains('IP-CIDR6,fd7a:115c:a1e9::2/128,no-resolve'));
+    expect(rule, startsWith('OR,'));
+    expect(rule, endsWith(',Tailscale'));
+    expect(
+      tailscalePeerConditions(
+        const TailscalePeer(ips: ['100.64.0.3']),
+      ).single.values,
+      ['100.64.0.3/32'],
+    );
+    expect(tailscalePeerConditions(const TailscalePeer()), isEmpty);
+  });
+
+  test('connection proxy is set only when the profile has it', () {
+    Map<dynamic, dynamic> nodeFor(String via) {
+      final raw = <String, dynamic>{
+        'proxies': [
+          {'name': 'HK', 'type': 'ss'},
+        ],
+        'proxy-groups': [
+          {'name': 'Proxy', 'type': 'select'},
+        ],
+      };
+      injectTailscale(raw, TailscaleProps(enable: true, dialerProxy: via));
+      return (raw['proxies'] as List).last as Map;
+    }
+
+    expect(nodeFor('Proxy')['dialer-proxy'], 'Proxy');
+    expect(nodeFor('HK')['dialer-proxy'], 'HK');
+    expect(nodeFor('Gone').containsKey('dialer-proxy'), isFalse);
+    expect(nodeFor('').containsKey('dialer-proxy'), isFalse);
+  });
+
+  test('only a refused key is blamed on the key', () {
+    expect(
+      classifyTailscaleHealth([
+        // ignore: no_adjacent_strings_in_list
+        'You are logged out. The last login error was: register request: '
+            'Post "https://controlplane.tailscale.com/machine/register": '
+            'connection attempts aborted by context: context deadline exceeded',
+      ]),
+      TailscaleIssue.network,
+    );
+    expect(
+      classifyTailscaleHealth(['register request: invalid key: not found']),
+      TailscaleIssue.authKey,
+    );
+    expect(classifyTailscaleHealth(const []), TailscaleIssue.none);
   });
 
   test('the auth key survives the saved config', () {

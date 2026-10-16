@@ -8046,6 +8046,41 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Connection proxy`
+  String get tailscaleDialerProxy {
+    return Intl.message(
+      'Connection proxy',
+      name: 'tailscaleDialerProxy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tailscale's own traffic to its control server, DERP relays and peers goes through this proxy or group. Choose one if the control server cannot be reached directly.`
+  String get tailscaleDialerProxyDesc {
+    return Intl.message(
+      'Tailscale\'s own traffic to its control server, DERP relays and peers goes through this proxy or group. Choose one if the control server cannot be reached directly.',
+      name: 'tailscaleDialerProxyDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The control server could not be reached (network timeout). This is a network problem, not the auth key: choose a connection proxy above and connect again.`
+  String get tailscaleNetworkIssue {
+    return Intl.message(
+      'The control server could not be reached (network timeout). This is a network problem, not the auth key: choose a connection proxy above and connect again.',
+      name: 'tailscaleNetworkIssue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recommended`
+  String get recommended {
+    return Intl.message('Recommended', name: 'recommended', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

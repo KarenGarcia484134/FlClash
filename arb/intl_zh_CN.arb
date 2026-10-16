@@ -953,5 +953,9 @@
   "tailscaleAddRouting": "添加到自定义分流",
   "tailscaleRoutingAdded": "已添加到自定义分流",
   "tailscaleRefresh": "刷新",
-  "tailscaleAuthKeyNotAccepted": "控制服务器没有接受认证密钥（可能已过期、一次性密钥已被使用、已撤销或填写有误）。请生成新密钥，或使用上面的链接登录。"
+  "tailscaleAuthKeyNotAccepted": "控制服务器没有接受认证密钥（可能已过期、一次性密钥已被使用、已撤销或填写有误）。请生成新密钥，或使用上面的链接登录。",
+  "tailscaleDialerProxy": "连接代理",
+  "tailscaleDialerProxyDesc": "Tailscale 自身连接控制服务器、DERP 中继和其他设备的流量会经过这里选择的代理或代理组。直连无法访问控制服务器时请选择一个。",
+  "tailscaleNetworkIssue": "无法连接到控制服务器（网络超时）。这是网络问题，不是认证密钥的问题：请在上方选择一个连接代理后重新连接。",
+  "recommended": "推荐"
 }

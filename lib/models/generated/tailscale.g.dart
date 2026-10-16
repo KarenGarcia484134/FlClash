@@ -21,6 +21,7 @@ _TailscaleProps _$TailscalePropsFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toList() ??
           const [],
+      dialerProxy: json['dialerProxy'] as String? ?? '',
     );
 
 Map<String, dynamic> _$TailscalePropsToJson(_TailscaleProps instance) =>
@@ -34,6 +35,7 @@ Map<String, dynamic> _$TailscalePropsToJson(_TailscaleProps instance) =>
       'ephemeral': instance.ephemeral,
       'udp': instance.udp,
       'dnsSuffixes': instance.dnsSuffixes,
+      'dialerProxy': instance.dialerProxy,
     };
 
 _TailscalePeer _$TailscalePeerFromJson(Map<String, dynamic> json) =>

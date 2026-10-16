@@ -128,14 +128,15 @@ class TailscaleNetworkSectionState
   Future<void> _addRouting(TailscalePeer peer) async {
     final appLocalizations = context.appLocalizations;
     final target = widget.proxyName;
-    final condition = tailscalePeerCondition(peer);
-    if (target == null || condition == null) {
+    final conditions = tailscalePeerConditions(peer);
+    if (target == null || conditions.isEmpty) {
       return;
     }
     final routing = CustomRouting(
       id: snowflake.id,
       label: 'Tailscale ${peer.displayName}',
-      conditions: [condition],
+      logic: CustomRoutingLogic.or,
+      conditions: conditions,
       target: target,
     );
     await ref.read(customRoutingsProvider.notifier).append(routing);
@@ -147,8 +148,7 @@ class TailscaleNetworkSectionState
     }
     if (mounted) {
       context.showNotifier(
-        '${appLocalizations.tailscaleRoutingAdded}: '
-        '${condition.values.first}',
+        '${appLocalizations.tailscaleRoutingAdded}: ${peer.displayName}',
         level: MessageLevel.success,
       );
     }

@@ -32,6 +32,64 @@ String? currentTailscaleProxyName(WidgetRef ref) {
   });
 }
 
+/// Picks what the node's own control, DERP and UDP traffic goes through.
+/// An empty answer means dialing directly.
+Future<String?> showTailscaleDialerSheet(
+  BuildContext context, {
+  required String selected,
+}) {
+  return showSheet<String>(
+    context: context,
+    builder: (context) => Consumer(
+      builder: (_, ref, _) {
+        final appLocalizations = context.appLocalizations;
+        final profileId = ref.watch(currentProfileIdProvider);
+        final config = profileId == null
+            ? null
+            : ref.watch(clashConfigProvider(profileId)).value;
+        final own = currentTailscaleProxyName(ref);
+        final groups = {
+          for (final item in config?.proxyGroups ?? const <ProxyGroup>[])
+            if (item.name != own) item.name: item.type,
+        };
+        final suggested = groups.entries
+            .where((entry) => entry.value == GroupType.Selector)
+            .firstOrNull
+            ?.key;
+        final proxies = {
+          for (final item in config?.proxies ?? const <Proxy>[])
+            if (item.name != own && item.type.toLowerCase() != 'tailscale')
+              item.name: item.type,
+        };
+        return SelectionSheet<String>(
+          title: appLocalizations.tailscaleDialerProxy,
+          sections: [
+            SelectionSection(
+              label: appLocalizations.basicStrategy,
+              items: [''],
+            ),
+            SelectionSection(
+              label: appLocalizations.proxyGroup,
+              items: groups.keys.toList(),
+              subtitleBuilder: (_, name) => name == suggested
+                  ? '${groups[name]!.name} · ${appLocalizations.recommended}'
+                  : groups[name]?.name ?? '',
+            ),
+            SelectionSection(
+              label: appLocalizations.proxies,
+              items: proxies.keys.toList(),
+              subtitleBuilder: (_, name) => proxies[name] ?? '',
+            ),
+          ],
+          labelBuilder: (item) => item.isEmpty ? 'DIRECT' : item,
+          selectedOf: (_) => selected,
+          onSelected: (item) => Navigator.of(context).pop(item),
+        );
+      },
+    ),
+  );
+}
+
 class TailscaleView extends ConsumerStatefulWidget {
   const TailscaleView({super.key});
 
@@ -192,17 +250,24 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
               ),
             ),
           ),
-        if (status.phase == TailscalePhase.needsLogin &&
-            props.authKey.trim().isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: Text(
-              appLocalizations.tailscaleAuthKeyNotAccepted,
-              style: context.listCaptionStyle?.copyWith(
-                color: context.colorScheme.error,
+        if (status.phase == TailscalePhase.needsLogin)
+          if (switch (classifyTailscaleHealth(status.health)) {
+                TailscaleIssue.network =>
+                  appLocalizations.tailscaleNetworkIssue,
+                TailscaleIssue.authKey when props.authKey.trim().isNotEmpty =>
+                  appLocalizations.tailscaleAuthKeyNotAccepted,
+                _ => null,
+              }
+              case final hint?)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: Text(
+                hint,
+                style: context.listCaptionStyle?.copyWith(
+                  color: context.colorScheme.error,
+                ),
               ),
             ),
-          ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
@@ -293,6 +358,21 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
                   onChanged: (value) =>
                       _update((state) => state.copyWith(controlUrl: value)),
                 ),
+                FormRow(
+                  title: appLocalizations.tailscaleDialerProxy,
+                  onPressed: () async {
+                    final res = await showTailscaleDialerSheet(
+                      context,
+                      selected: props.dialerProxy,
+                    );
+                    if (res != null) {
+                      _update((state) => state.copyWith(dialerProxy: res));
+                    }
+                  },
+                  trailing: Text(
+                    props.dialerProxy.isEmpty ? 'DIRECT' : props.dialerProxy,
+                  ),
+                ),
                 _textRow(
                   title: appLocalizations.tailscaleExitNode,
                   value: props.exitNode,
@@ -332,7 +412,14 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(
+                appLocalizations.tailscaleDialerProxyDesc,
+                style: context.listCaptionStyle,
+              ),
+            ),
+            const SizedBox(height: 8),
             _buildStatus(props),
             const SizedBox(height: 24),
             TailscaleNetworkSection(

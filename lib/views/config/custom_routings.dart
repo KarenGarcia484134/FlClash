@@ -13,9 +13,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// The proxies and groups a profile defines before its script runs, so a
 /// target only a script adds still reads as missing here.
-bool isRoutingTargetMissing(ClashConfig? config, String? target) {
+/// [injected] is a node the app adds to the running config on its own, the
+/// Tailscale one, which the profile's own config does not list.
+bool isRoutingTargetMissing(
+  ClashConfig? config,
+  String? target, {
+  String? injected,
+}) {
   final name = target?.trim() ?? '';
-  if (name.isEmpty || config == null) {
+  if (name.isEmpty || config == null || name == injected) {
     return false;
   }
   return !RuleTarget.ruleTargets.contains(name) &&
@@ -248,7 +254,11 @@ class _CustomRoutingItem extends ConsumerWidget {
         ? null
         : ref.watch(clashConfigProvider(profileId)).value;
     final target = routing.target?.trim() ?? '';
-    final missing = isRoutingTargetMissing(clashConfig, target);
+    final missing = isRoutingTargetMissing(
+      clashConfig,
+      target,
+      injected: currentTailscaleProxyName(ref),
+    );
     final captionStyle = context.listCaptionStyle;
     return DecorationListItem(
       isSelected: isSelected,
@@ -579,7 +589,11 @@ class _TargetRow extends ConsumerWidget {
         ? null
         : ref.watch(clashConfigProvider(profileId)).value;
     final name = target?.trim() ?? '';
-    final missing = isRoutingTargetMissing(clashConfig, name);
+    final missing = isRoutingTargetMissing(
+      clashConfig,
+      name,
+      injected: currentTailscaleProxyName(ref),
+    );
     return ItemPositionProvider(
       position: ItemPosition.startAndEnd,
       child: FormRow(
