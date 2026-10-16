@@ -84,3 +84,21 @@ class IconSetIconsConverter extends TypeConverter<List<IconSetIcon>, String> {
     return json.encode([for (final icon in value) icon.toJson()]);
   }
 }
+
+class CustomRoutingConditionsConverter
+    extends TypeConverter<List<CustomRoutingCondition>, String> {
+  const CustomRoutingConditionsConverter();
+
+  @override
+  List<CustomRoutingCondition> fromSql(String fromDb) {
+    return [
+      for (final item in json.decode(fromDb) as List)
+        CustomRoutingCondition.fromJson(Map<String, Object?>.from(item as Map)),
+    ];
+  }
+
+  @override
+  String toSql(List<CustomRoutingCondition> value) {
+    return json.encode([for (final item in value) item.toJson()]);
+  }
+}

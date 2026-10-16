@@ -7586,6 +7586,501 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Custom routing`
+  String get customRouting {
+    return Intl.message(
+      'Custom routing',
+      name: 'customRouting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Selected entries go in order ahead of every rule of this profile, in both standard and script mode`
+  String get customRoutingDesc {
+    return Intl.message(
+      'Selected entries go in order ahead of every rule of this profile, in both standard and script mode',
+      name: 'customRoutingDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Go to custom routing configuration`
+  String get goToConfigureCustomRouting {
+    return Intl.message(
+      'Go to custom routing configuration',
+      name: 'goToConfigureCustomRouting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add custom routing`
+  String get addCustomRouting {
+    return Intl.message(
+      'Add custom routing',
+      name: 'addCustomRouting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit custom routing`
+  String get editCustomRouting {
+    return Intl.message(
+      'Edit custom routing',
+      name: 'editCustomRouting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Condition`
+  String get routingCondition {
+    return Intl.message(
+      'Condition',
+      name: 'routingCondition',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add condition`
+  String get addRoutingCondition {
+    return Intl.message(
+      'Add condition',
+      name: 'addRoutingCondition',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Match logic`
+  String get routingLogic {
+    return Intl.message(
+      'Match logic',
+      name: 'routingLogic',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Any condition (OR)`
+  String get routingLogicOr {
+    return Intl.message(
+      'Any condition (OR)',
+      name: 'routingLogicOr',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All conditions (AND)`
+  String get routingLogicAnd {
+    return Intl.message(
+      'All conditions (AND)',
+      name: 'routingLogicAnd',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Outbound`
+  String get routingTarget {
+    return Intl.message('Outbound', name: 'routingTarget', desc: '', args: []);
+  }
+
+  /// `One value per line`
+  String get routingValuesHint {
+    return Intl.message(
+      'One value per line',
+      name: 'routingValuesHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A value cannot contain a comma`
+  String get routingValueCommaTip {
+    return Intl.message(
+      'A value cannot contain a comma',
+      name: 'routingValueCommaTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{target} is not in the current profile, so this entry is skipped`
+  String routingTargetMissingTip(Object target) {
+    return Intl.message(
+      '$target is not in the current profile, so this entry is skipped',
+      name: 'routingTargetMissingTip',
+      desc: '',
+      args: [target],
+    );
+  }
+
+  /// `Add at least one condition with a value`
+  String get routingConditionsEmptyTip {
+    return Intl.message(
+      'Add at least one condition with a value',
+      name: 'routingConditionsEmptyTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose an outbound`
+  String get routingTargetEmptyTip {
+    return Intl.message(
+      'Choose an outbound',
+      name: 'routingTargetEmptyTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current extend mode: {mode}`
+  String currentExtendMode(Object mode) {
+    return Intl.message(
+      'Current extend mode: $mode',
+      name: 'currentExtendMode',
+      desc: '',
+      args: [mode],
+    );
+  }
+
+  /// `Adds a Tailscale node to every profile and sends tailnet addresses (100.64.0.0/10, fd7a:115c:a1e9::/48) and MagicDNS names to it, ahead of all other rules. Changes apply when you leave this page.`
+  String get tailscaleDesc {
+    return Intl.message(
+      'Adds a Tailscale node to every profile and sends tailnet addresses (100.64.0.0/10, fd7a:115c:a1e9::/48) and MagicDNS names to it, ahead of all other rules. Changes apply when you leave this page.',
+      name: 'tailscaleDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Node`
+  String get tailscaleNode {
+    return Intl.message('Node', name: 'tailscaleNode', desc: '', args: []);
+  }
+
+  /// `Hostname`
+  String get tailscaleHostname {
+    return Intl.message(
+      'Hostname',
+      name: 'tailscaleHostname',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Auth key`
+  String get tailscaleAuthKey {
+    return Intl.message(
+      'Auth key',
+      name: 'tailscaleAuthKey',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Control URL (Headscale)`
+  String get tailscaleControlUrl {
+    return Intl.message(
+      'Control URL (Headscale)',
+      name: 'tailscaleControlUrl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exit node`
+  String get tailscaleExitNode {
+    return Intl.message(
+      'Exit node',
+      name: 'tailscaleExitNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tailnet DNS suffixes`
+  String get tailscaleDnsSuffixes {
+    return Intl.message(
+      'Tailnet DNS suffixes',
+      name: 'tailscaleDnsSuffixes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Accept routes`
+  String get tailscaleAcceptRoutes {
+    return Intl.message(
+      'Accept routes',
+      name: 'tailscaleAcceptRoutes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ephemeral node`
+  String get tailscaleEphemeral {
+    return Intl.message(
+      'Ephemeral node',
+      name: 'tailscaleEphemeral',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not started`
+  String get tailscaleStatusIdle {
+    return Intl.message(
+      'Not started',
+      name: 'tailscaleStatusIdle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Needs login`
+  String get tailscaleStatusNeedsLogin {
+    return Intl.message(
+      'Needs login',
+      name: 'tailscaleStatusNeedsLogin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connected`
+  String get tailscaleStatusRunning {
+    return Intl.message(
+      'Connected',
+      name: 'tailscaleStatusRunning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open login page`
+  String get tailscaleOpenLogin {
+    return Intl.message(
+      'Open login page',
+      name: 'tailscaleOpenLogin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Without an auth key, tap Connect: the node starts and shows a login link here. After you approve it in the browser the login is kept across restarts.`
+  String get tailscaleLoginDesc {
+    return Intl.message(
+      'Without an auth key, tap Connect: the node starts and shows a login link here. After you approve it in the browser the login is kept across restarts.',
+      name: 'tailscaleLoginDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The log level is silent, so the login link cannot be read. Choose another log level.`
+  String get tailscaleSilentLogTip {
+    return Intl.message(
+      'The log level is silent, so the login link cannot be read. Choose another log level.',
+      name: 'tailscaleSilentLogTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connect`
+  String get tailscaleConnect {
+    return Intl.message(
+      'Connect',
+      name: 'tailscaleConnect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Log out and reset`
+  String get tailscaleReset {
+    return Intl.message(
+      'Log out and reset',
+      name: 'tailscaleReset',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This deletes the saved Tailscale login of this device, so it has to log in again. Continue?`
+  String get tailscaleResetTip {
+    return Intl.message(
+      'This deletes the saved Tailscale login of this device, so it has to log in again. Continue?',
+      name: 'tailscaleResetTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable Tailscale`
+  String get tailscaleEnable {
+    return Intl.message(
+      'Enable Tailscale',
+      name: 'tailscaleEnable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tailnet`
+  String get tailscaleNetwork {
+    return Intl.message(
+      'Tailnet',
+      name: 'tailscaleNetwork',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This device`
+  String get tailscaleLocalNode {
+    return Intl.message(
+      'This device',
+      name: 'tailscaleLocalNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Devices`
+  String get tailscalePeers {
+    return Intl.message('Devices', name: 'tailscalePeers', desc: '', args: []);
+  }
+
+  /// `The node is not running yet. Connect to load the device list.`
+  String get tailscaleNotStarted {
+    return Intl.message(
+      'The node is not running yet. Connect to load the device list.',
+      name: 'tailscaleNotStarted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Online`
+  String get tailscaleOnline {
+    return Intl.message('Online', name: 'tailscaleOnline', desc: '', args: []);
+  }
+
+  /// `Offline`
+  String get tailscaleOffline {
+    return Intl.message(
+      'Offline',
+      name: 'tailscaleOffline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Can be exit node`
+  String get tailscaleExitNodeOption {
+    return Intl.message(
+      'Can be exit node',
+      name: 'tailscaleExitNodeOption',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current exit node`
+  String get tailscaleCurrentExitNode {
+    return Intl.message(
+      'Current exit node',
+      name: 'tailscaleCurrentExitNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add to custom routing`
+  String get tailscaleAddRouting {
+    return Intl.message(
+      'Add to custom routing',
+      name: 'tailscaleAddRouting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Added to custom routing`
+  String get tailscaleRoutingAdded {
+    return Intl.message(
+      'Added to custom routing',
+      name: 'tailscaleRoutingAdded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Refresh`
+  String get tailscaleRefresh {
+    return Intl.message(
+      'Refresh',
+      name: 'tailscaleRefresh',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The control server did not accept the auth key (expired, already used, revoked or mistyped). Create a new key, or log in with the URL above.`
+  String get tailscaleAuthKeyNotAccepted {
+    return Intl.message(
+      'The control server did not accept the auth key (expired, already used, revoked or mistyped). Create a new key, or log in with the URL above.',
+      name: 'tailscaleAuthKeyNotAccepted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connection proxy`
+  String get tailscaleDialerProxy {
+    return Intl.message(
+      'Connection proxy',
+      name: 'tailscaleDialerProxy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tailscale's own traffic to its control server, DERP relays and peers goes through this proxy or group. Choose one if the control server cannot be reached directly.`
+  String get tailscaleDialerProxyDesc {
+    return Intl.message(
+      'Tailscale\'s own traffic to its control server, DERP relays and peers goes through this proxy or group. Choose one if the control server cannot be reached directly.',
+      name: 'tailscaleDialerProxyDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The control server could not be reached (network timeout). This is a network problem, not the auth key: choose a connection proxy above and connect again.`
+  String get tailscaleNetworkIssue {
+    return Intl.message(
+      'The control server could not be reached (network timeout). This is a network problem, not the auth key: choose a connection proxy above and connect again.',
+      name: 'tailscaleNetworkIssue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recommended`
+  String get recommended {
+    return Intl.message('Recommended', name: 'recommended', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

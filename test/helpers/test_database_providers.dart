@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 
@@ -35,4 +36,31 @@ class TestClashProviders extends ClashProviders {
 
   @override
   Stream<List<ClashProvider>> build() => Stream.value(initial);
+}
+
+class TestCustomRoutings extends CustomRoutings {
+  final List<CustomRouting> initial;
+
+  TestCustomRoutings([this.initial = const []]);
+
+  @override
+  Stream<List<CustomRouting>> build() => Stream.value(initial);
+}
+
+class TestProfileCustomRoutingIds extends ProfileCustomRoutingIds {
+  final List<int> initial;
+
+  TestProfileCustomRoutingIds([this.initial = const []]);
+
+  @override
+  Stream<List<int>> build(int profileId) => Stream.value(initial);
+
+  @override
+  void toggle(int routingId) {
+    state = AsyncData(
+      value.contains(routingId)
+          ? value.where((item) => item != routingId).toList()
+          : [...value, routingId],
+    );
+  }
 }

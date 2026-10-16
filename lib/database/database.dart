@@ -13,6 +13,7 @@ import 'package:flutter/foundation.dart' show visibleForTesting;
 part 'clash_providers.dart';
 part 'converter.dart';
 part 'custom_proxies.dart';
+part 'custom_routings.dart';
 part 'dialers.dart';
 part 'generated/database.g.dart';
 part 'groups.dart';
@@ -33,6 +34,8 @@ part 'scripts.dart';
     ClashProviders,
     CustomProxies,
     ProxyDialers,
+    CustomRoutings,
+    ProfileCustomRoutings,
   ],
   daos: [
     ProfilesDao,
@@ -44,13 +47,14 @@ part 'scripts.dart';
     ClashProvidersDao,
     CustomProxiesDao,
     ProxyDialersDao,
+    CustomRoutingsDao,
   ],
 )
 class Database extends _$Database {
   Database([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 20;
+  int get schemaVersion => 21;
 
   static LazyDatabase _openConnection() {
     return LazyDatabase(() async {
@@ -110,6 +114,10 @@ class Database extends _$Database {
             customProxies,
             customProxies.emptyOptions,
           );
+        }
+        if (from < 21) {
+          await _createTableIfMissing(m, customRoutings);
+          await _createTableIfMissing(m, profileCustomRoutings);
         }
       }),
       beforeOpen: (_) => customStatement('PRAGMA foreign_keys = ON'),

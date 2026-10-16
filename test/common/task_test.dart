@@ -296,6 +296,118 @@ void main() {
     },
   );
 
+  test(
+    'makeRealProfileTask puts custom routings ahead of added rules',
+    () async {
+      final rawConfig = await decodeJSONTask<Map<String, dynamic>>(
+        await encodeJSONTask({
+          'proxies': [
+            {'name': 'HK', 'type': 'direct'},
+          ],
+          'rules': ['MATCH,DIRECT'],
+        }),
+      );
+      final result = await makeRealProfileTask(
+        MakeRealProfileState(
+          profilesPath: '/profiles',
+          profileId: 7,
+          rawConfig: rawConfig,
+          realPatchConfig: const PatchClashConfig(),
+          appendSystemDns: false,
+          proxyGroups: const [],
+          rules: const [],
+          addedRules: const [
+            Rule(
+              ruleAction: RuleAction.DOMAIN,
+              content: 'added.example',
+              ruleTarget: 'DIRECT',
+            ),
+          ],
+          customRoutings: const [
+            CustomRouting(
+              id: 1,
+              target: 'HK',
+              conditions: [
+                CustomRoutingCondition(values: ['first.example']),
+              ],
+            ),
+            CustomRouting(
+              id: 2,
+              target: 'Missing',
+              conditions: [
+                CustomRoutingCondition(values: ['skipped.example']),
+              ],
+            ),
+            CustomRouting(
+              id: 3,
+              target: 'REJECT',
+              conditions: [
+                CustomRoutingCondition(
+                  ruleAction: RuleAction.GEOSITE,
+                  values: ['category-ads-all'],
+                ),
+              ],
+            ),
+          ],
+          defaultUA: 'FlClash-Test',
+        ),
+      );
+      expect((loadYaml(result.yaml) as YamlMap)['rules'], [
+        'DOMAIN-SUFFIX,first.example,HK',
+        'GEOSITE,category-ads-all,REJECT',
+        'DOMAIN,added.example,DIRECT',
+        'MATCH,DIRECT',
+      ]);
+    },
+  );
+
+  test('makeRealProfileTask puts tailscale rules first', () async {
+    final rawConfig = await decodeJSONTask<Map<String, dynamic>>(
+      await encodeJSONTask({
+        'proxies': [],
+        'rules': ['MATCH,DIRECT'],
+      }),
+    );
+    final result = await makeRealProfileTask(
+      MakeRealProfileState(
+        profilesPath: '/profiles',
+        profileId: 7,
+        rawConfig: rawConfig,
+        realPatchConfig: const PatchClashConfig(),
+        appendSystemDns: false,
+        proxyGroups: const [],
+        rules: const [],
+        addedRules: const [],
+        customRoutings: const [
+          CustomRouting(
+            id: 1,
+            target: 'Tailscale',
+            conditions: [
+              CustomRoutingCondition(values: ['home.example']),
+            ],
+          ),
+        ],
+        tailscale: const TailscaleProps(
+          enable: true,
+          authKey: ' tskey-auth-1 ',
+        ),
+        defaultUA: 'FlClash-Test',
+      ),
+    );
+    final yaml = loadYaml(result.yaml) as YamlMap;
+    expect(yaml['rules'], [
+      'IP-CIDR,100.64.0.0/10,Tailscale,no-resolve',
+      'IP-CIDR6,fd7a:115c:a1e9::/48,Tailscale,no-resolve',
+      'DOMAIN-SUFFIX,ts.net,Tailscale',
+      'DOMAIN-SUFFIX,home.example,Tailscale',
+      'MATCH,DIRECT',
+    ]);
+    final node = (yaml['proxies'] as YamlList).single as YamlMap;
+    expect(node['type'], 'tailscale');
+    expect(node['auth-key'], 'tskey-auth-1');
+    expect(node['state-dir'], tailscaleStateDir);
+  });
+
   // The core re-reads these two keys out of the generated config on every
   // profile apply and adopts whatever it finds, so a subscription that ships
   // them would otherwise decide whether GEO databases auto-update — including

@@ -4332,6 +4332,698 @@ class ProxyDialersCompanion extends UpdateCompanion<RawProxyDialer> {
   }
 }
 
+class $CustomRoutingsTable extends CustomRoutings
+    with TableInfo<$CustomRoutingsTable, RawCustomRouting> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CustomRoutingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _labelMeta = const VerificationMeta('label');
+  @override
+  late final GeneratedColumn<String> label = GeneratedColumn<String>(
+    'label',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _enabledMeta = const VerificationMeta(
+    'enabled',
+  );
+  @override
+  late final GeneratedColumn<bool> enabled = GeneratedColumn<bool>(
+    'enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<CustomRoutingLogic, String>
+  logic = GeneratedColumn<String>(
+    'logic',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  ).withConverter<CustomRoutingLogic>($CustomRoutingsTable.$converterlogic);
+  @override
+  late final GeneratedColumnWithTypeConverter<
+    List<CustomRoutingCondition>,
+    String
+  >
+  conditions =
+      GeneratedColumn<String>(
+        'conditions',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<List<CustomRoutingCondition>>(
+        $CustomRoutingsTable.$converterconditions,
+      );
+  static const VerificationMeta _targetMeta = const VerificationMeta('target');
+  @override
+  late final GeneratedColumn<String> target = GeneratedColumn<String>(
+    'target',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _orderMeta = const VerificationMeta('order');
+  @override
+  late final GeneratedColumn<String> order = GeneratedColumn<String>(
+    'order',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    label,
+    enabled,
+    logic,
+    conditions,
+    target,
+    order,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'custom_routings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<RawCustomRouting> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('label')) {
+      context.handle(
+        _labelMeta,
+        label.isAcceptableOrUnknown(data['label']!, _labelMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_labelMeta);
+    }
+    if (data.containsKey('enabled')) {
+      context.handle(
+        _enabledMeta,
+        enabled.isAcceptableOrUnknown(data['enabled']!, _enabledMeta),
+      );
+    }
+    if (data.containsKey('target')) {
+      context.handle(
+        _targetMeta,
+        target.isAcceptableOrUnknown(data['target']!, _targetMeta),
+      );
+    }
+    if (data.containsKey('order')) {
+      context.handle(
+        _orderMeta,
+        order.isAcceptableOrUnknown(data['order']!, _orderMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  RawCustomRouting map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RawCustomRouting(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      label: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}label'],
+      )!,
+      enabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}enabled'],
+      )!,
+      logic: $CustomRoutingsTable.$converterlogic.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}logic'],
+        )!,
+      ),
+      conditions: $CustomRoutingsTable.$converterconditions.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}conditions'],
+        )!,
+      ),
+      target: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}target'],
+      ),
+      order: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}order'],
+      ),
+    );
+  }
+
+  @override
+  $CustomRoutingsTable createAlias(String alias) {
+    return $CustomRoutingsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<CustomRoutingLogic, String, String>
+  $converterlogic = const EnumNameConverter<CustomRoutingLogic>(
+    CustomRoutingLogic.values,
+  );
+  static TypeConverter<List<CustomRoutingCondition>, String>
+  $converterconditions = const CustomRoutingConditionsConverter();
+}
+
+class RawCustomRouting extends DataClass
+    implements Insertable<RawCustomRouting> {
+  final int id;
+  final String label;
+  final bool enabled;
+  final CustomRoutingLogic logic;
+  final List<CustomRoutingCondition> conditions;
+  final String? target;
+  final String? order;
+  const RawCustomRouting({
+    required this.id,
+    required this.label,
+    required this.enabled,
+    required this.logic,
+    required this.conditions,
+    this.target,
+    this.order,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['label'] = Variable<String>(label);
+    map['enabled'] = Variable<bool>(enabled);
+    {
+      map['logic'] = Variable<String>(
+        $CustomRoutingsTable.$converterlogic.toSql(logic),
+      );
+    }
+    {
+      map['conditions'] = Variable<String>(
+        $CustomRoutingsTable.$converterconditions.toSql(conditions),
+      );
+    }
+    if (!nullToAbsent || target != null) {
+      map['target'] = Variable<String>(target);
+    }
+    if (!nullToAbsent || order != null) {
+      map['order'] = Variable<String>(order);
+    }
+    return map;
+  }
+
+  CustomRoutingsCompanion toCompanion(bool nullToAbsent) {
+    return CustomRoutingsCompanion(
+      id: Value(id),
+      label: Value(label),
+      enabled: Value(enabled),
+      logic: Value(logic),
+      conditions: Value(conditions),
+      target: target == null && nullToAbsent
+          ? const Value.absent()
+          : Value(target),
+      order: order == null && nullToAbsent
+          ? const Value.absent()
+          : Value(order),
+    );
+  }
+
+  factory RawCustomRouting.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RawCustomRouting(
+      id: serializer.fromJson<int>(json['id']),
+      label: serializer.fromJson<String>(json['label']),
+      enabled: serializer.fromJson<bool>(json['enabled']),
+      logic: $CustomRoutingsTable.$converterlogic.fromJson(
+        serializer.fromJson<String>(json['logic']),
+      ),
+      conditions: serializer.fromJson<List<CustomRoutingCondition>>(
+        json['conditions'],
+      ),
+      target: serializer.fromJson<String?>(json['target']),
+      order: serializer.fromJson<String?>(json['order']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'label': serializer.toJson<String>(label),
+      'enabled': serializer.toJson<bool>(enabled),
+      'logic': serializer.toJson<String>(
+        $CustomRoutingsTable.$converterlogic.toJson(logic),
+      ),
+      'conditions': serializer.toJson<List<CustomRoutingCondition>>(conditions),
+      'target': serializer.toJson<String?>(target),
+      'order': serializer.toJson<String?>(order),
+    };
+  }
+
+  RawCustomRouting copyWith({
+    int? id,
+    String? label,
+    bool? enabled,
+    CustomRoutingLogic? logic,
+    List<CustomRoutingCondition>? conditions,
+    Value<String?> target = const Value.absent(),
+    Value<String?> order = const Value.absent(),
+  }) => RawCustomRouting(
+    id: id ?? this.id,
+    label: label ?? this.label,
+    enabled: enabled ?? this.enabled,
+    logic: logic ?? this.logic,
+    conditions: conditions ?? this.conditions,
+    target: target.present ? target.value : this.target,
+    order: order.present ? order.value : this.order,
+  );
+  RawCustomRouting copyWithCompanion(CustomRoutingsCompanion data) {
+    return RawCustomRouting(
+      id: data.id.present ? data.id.value : this.id,
+      label: data.label.present ? data.label.value : this.label,
+      enabled: data.enabled.present ? data.enabled.value : this.enabled,
+      logic: data.logic.present ? data.logic.value : this.logic,
+      conditions: data.conditions.present
+          ? data.conditions.value
+          : this.conditions,
+      target: data.target.present ? data.target.value : this.target,
+      order: data.order.present ? data.order.value : this.order,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RawCustomRouting(')
+          ..write('id: $id, ')
+          ..write('label: $label, ')
+          ..write('enabled: $enabled, ')
+          ..write('logic: $logic, ')
+          ..write('conditions: $conditions, ')
+          ..write('target: $target, ')
+          ..write('order: $order')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, label, enabled, logic, conditions, target, order);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RawCustomRouting &&
+          other.id == this.id &&
+          other.label == this.label &&
+          other.enabled == this.enabled &&
+          other.logic == this.logic &&
+          other.conditions == this.conditions &&
+          other.target == this.target &&
+          other.order == this.order);
+}
+
+class CustomRoutingsCompanion extends UpdateCompanion<RawCustomRouting> {
+  final Value<int> id;
+  final Value<String> label;
+  final Value<bool> enabled;
+  final Value<CustomRoutingLogic> logic;
+  final Value<List<CustomRoutingCondition>> conditions;
+  final Value<String?> target;
+  final Value<String?> order;
+  const CustomRoutingsCompanion({
+    this.id = const Value.absent(),
+    this.label = const Value.absent(),
+    this.enabled = const Value.absent(),
+    this.logic = const Value.absent(),
+    this.conditions = const Value.absent(),
+    this.target = const Value.absent(),
+    this.order = const Value.absent(),
+  });
+  CustomRoutingsCompanion.insert({
+    this.id = const Value.absent(),
+    required String label,
+    this.enabled = const Value.absent(),
+    required CustomRoutingLogic logic,
+    required List<CustomRoutingCondition> conditions,
+    this.target = const Value.absent(),
+    this.order = const Value.absent(),
+  }) : label = Value(label),
+       logic = Value(logic),
+       conditions = Value(conditions);
+  static Insertable<RawCustomRouting> custom({
+    Expression<int>? id,
+    Expression<String>? label,
+    Expression<bool>? enabled,
+    Expression<String>? logic,
+    Expression<String>? conditions,
+    Expression<String>? target,
+    Expression<String>? order,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (label != null) 'label': label,
+      if (enabled != null) 'enabled': enabled,
+      if (logic != null) 'logic': logic,
+      if (conditions != null) 'conditions': conditions,
+      if (target != null) 'target': target,
+      if (order != null) 'order': order,
+    });
+  }
+
+  CustomRoutingsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? label,
+    Value<bool>? enabled,
+    Value<CustomRoutingLogic>? logic,
+    Value<List<CustomRoutingCondition>>? conditions,
+    Value<String?>? target,
+    Value<String?>? order,
+  }) {
+    return CustomRoutingsCompanion(
+      id: id ?? this.id,
+      label: label ?? this.label,
+      enabled: enabled ?? this.enabled,
+      logic: logic ?? this.logic,
+      conditions: conditions ?? this.conditions,
+      target: target ?? this.target,
+      order: order ?? this.order,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (label.present) {
+      map['label'] = Variable<String>(label.value);
+    }
+    if (enabled.present) {
+      map['enabled'] = Variable<bool>(enabled.value);
+    }
+    if (logic.present) {
+      map['logic'] = Variable<String>(
+        $CustomRoutingsTable.$converterlogic.toSql(logic.value),
+      );
+    }
+    if (conditions.present) {
+      map['conditions'] = Variable<String>(
+        $CustomRoutingsTable.$converterconditions.toSql(conditions.value),
+      );
+    }
+    if (target.present) {
+      map['target'] = Variable<String>(target.value);
+    }
+    if (order.present) {
+      map['order'] = Variable<String>(order.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CustomRoutingsCompanion(')
+          ..write('id: $id, ')
+          ..write('label: $label, ')
+          ..write('enabled: $enabled, ')
+          ..write('logic: $logic, ')
+          ..write('conditions: $conditions, ')
+          ..write('target: $target, ')
+          ..write('order: $order')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ProfileCustomRoutingsTable extends ProfileCustomRoutings
+    with TableInfo<$ProfileCustomRoutingsTable, RawProfileCustomRouting> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ProfileCustomRoutingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _profileIdMeta = const VerificationMeta(
+    'profileId',
+  );
+  @override
+  late final GeneratedColumn<int> profileId = GeneratedColumn<int>(
+    'profile_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES profiles (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _routingIdMeta = const VerificationMeta(
+    'routingId',
+  );
+  @override
+  late final GeneratedColumn<int> routingId = GeneratedColumn<int>(
+    'routing_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES custom_routings (id) ON DELETE CASCADE',
+    ),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [profileId, routingId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'profile_custom_routings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<RawProfileCustomRouting> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('profile_id')) {
+      context.handle(
+        _profileIdMeta,
+        profileId.isAcceptableOrUnknown(data['profile_id']!, _profileIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_profileIdMeta);
+    }
+    if (data.containsKey('routing_id')) {
+      context.handle(
+        _routingIdMeta,
+        routingId.isAcceptableOrUnknown(data['routing_id']!, _routingIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_routingIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {profileId, routingId};
+  @override
+  RawProfileCustomRouting map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RawProfileCustomRouting(
+      profileId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}profile_id'],
+      )!,
+      routingId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}routing_id'],
+      )!,
+    );
+  }
+
+  @override
+  $ProfileCustomRoutingsTable createAlias(String alias) {
+    return $ProfileCustomRoutingsTable(attachedDatabase, alias);
+  }
+}
+
+class RawProfileCustomRouting extends DataClass
+    implements Insertable<RawProfileCustomRouting> {
+  final int profileId;
+  final int routingId;
+  const RawProfileCustomRouting({
+    required this.profileId,
+    required this.routingId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['profile_id'] = Variable<int>(profileId);
+    map['routing_id'] = Variable<int>(routingId);
+    return map;
+  }
+
+  ProfileCustomRoutingsCompanion toCompanion(bool nullToAbsent) {
+    return ProfileCustomRoutingsCompanion(
+      profileId: Value(profileId),
+      routingId: Value(routingId),
+    );
+  }
+
+  factory RawProfileCustomRouting.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RawProfileCustomRouting(
+      profileId: serializer.fromJson<int>(json['profileId']),
+      routingId: serializer.fromJson<int>(json['routingId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'profileId': serializer.toJson<int>(profileId),
+      'routingId': serializer.toJson<int>(routingId),
+    };
+  }
+
+  RawProfileCustomRouting copyWith({int? profileId, int? routingId}) =>
+      RawProfileCustomRouting(
+        profileId: profileId ?? this.profileId,
+        routingId: routingId ?? this.routingId,
+      );
+  RawProfileCustomRouting copyWithCompanion(
+    ProfileCustomRoutingsCompanion data,
+  ) {
+    return RawProfileCustomRouting(
+      profileId: data.profileId.present ? data.profileId.value : this.profileId,
+      routingId: data.routingId.present ? data.routingId.value : this.routingId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RawProfileCustomRouting(')
+          ..write('profileId: $profileId, ')
+          ..write('routingId: $routingId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(profileId, routingId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RawProfileCustomRouting &&
+          other.profileId == this.profileId &&
+          other.routingId == this.routingId);
+}
+
+class ProfileCustomRoutingsCompanion
+    extends UpdateCompanion<RawProfileCustomRouting> {
+  final Value<int> profileId;
+  final Value<int> routingId;
+  final Value<int> rowid;
+  const ProfileCustomRoutingsCompanion({
+    this.profileId = const Value.absent(),
+    this.routingId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ProfileCustomRoutingsCompanion.insert({
+    required int profileId,
+    required int routingId,
+    this.rowid = const Value.absent(),
+  }) : profileId = Value(profileId),
+       routingId = Value(routingId);
+  static Insertable<RawProfileCustomRouting> custom({
+    Expression<int>? profileId,
+    Expression<int>? routingId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (profileId != null) 'profile_id': profileId,
+      if (routingId != null) 'routing_id': routingId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ProfileCustomRoutingsCompanion copyWith({
+    Value<int>? profileId,
+    Value<int>? routingId,
+    Value<int>? rowid,
+  }) {
+    return ProfileCustomRoutingsCompanion(
+      profileId: profileId ?? this.profileId,
+      routingId: routingId ?? this.routingId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (profileId.present) {
+      map['profile_id'] = Variable<int>(profileId.value);
+    }
+    if (routingId.present) {
+      map['routing_id'] = Variable<int>(routingId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProfileCustomRoutingsCompanion(')
+          ..write('profileId: $profileId, ')
+          ..write('routingId: $routingId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$Database extends GeneratedDatabase {
   _$Database(QueryExecutor e) : super(e);
   $DatabaseManager get managers => $DatabaseManager(this);
@@ -4345,6 +5037,9 @@ abstract class _$Database extends GeneratedDatabase {
   late final $ClashProvidersTable clashProviders = $ClashProvidersTable(this);
   late final $CustomProxiesTable customProxies = $CustomProxiesTable(this);
   late final $ProxyDialersTable proxyDialers = $ProxyDialersTable(this);
+  late final $CustomRoutingsTable customRoutings = $CustomRoutingsTable(this);
+  late final $ProfileCustomRoutingsTable profileCustomRoutings =
+      $ProfileCustomRoutingsTable(this);
   late final Index idxRuleTarget = Index(
     'idx_rule_target',
     'CREATE INDEX idx_rule_target ON rules (rule_target)',
@@ -4376,6 +5071,9 @@ abstract class _$Database extends GeneratedDatabase {
   late final ProxyDialersDao proxyDialersDao = ProxyDialersDao(
     this as Database,
   );
+  late final CustomRoutingsDao customRoutingsDao = CustomRoutingsDao(
+    this as Database,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4391,6 +5089,8 @@ abstract class _$Database extends GeneratedDatabase {
     clashProviders,
     customProxies,
     proxyDialers,
+    customRoutings,
+    profileCustomRoutings,
     idxRuleTarget,
     idxRulesProfileOrder,
     idxProxyGroupsProfileOrder,
@@ -4439,6 +5139,20 @@ abstract class _$Database extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('proxy_dialers', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'profiles',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('profile_custom_routings', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'custom_routings',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('profile_custom_routings', kind: UpdateKind.delete)],
     ),
   ]);
 }
@@ -4556,6 +5270,31 @@ final class $$ProfilesTableReferences
     ).filter((f) => f.profileId.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_proxyDialersRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $ProfileCustomRoutingsTable,
+    List<RawProfileCustomRouting>
+  >
+  _profileCustomRoutingsRefsTable(_$Database db) =>
+      MultiTypedResultKey.fromTable(
+        db.profileCustomRoutings,
+        aliasName: 'profiles__id__profile_custom_routings__profile_id',
+      );
+
+  $$ProfileCustomRoutingsTableProcessedTableManager
+  get profileCustomRoutingsRefs {
+    final manager = $$ProfileCustomRoutingsTableTableManager(
+      $_db,
+      $_db.profileCustomRoutings,
+    ).filter((f) => f.profileId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _profileCustomRoutingsRefsTable($_db),
+    );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -4763,6 +5502,32 @@ class $$ProfilesTableFilterComposer
                 $removeJoinBuilderFromRootComposer,
           ),
     );
+    return f(composer);
+  }
+
+  Expression<bool> profileCustomRoutingsRefs(
+    Expression<bool> Function($$ProfileCustomRoutingsTableFilterComposer f) f,
+  ) {
+    final $$ProfileCustomRoutingsTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.profileCustomRoutings,
+          getReferencedColumn: (t) => t.profileId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ProfileCustomRoutingsTableFilterComposer(
+                $db: $db,
+                $table: $db.profileCustomRoutings,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 }
@@ -5042,6 +5807,32 @@ class $$ProfilesTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> profileCustomRoutingsRefs<T extends Object>(
+    Expression<T> Function($$ProfileCustomRoutingsTableAnnotationComposer a) f,
+  ) {
+    final $$ProfileCustomRoutingsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.profileCustomRoutings,
+          getReferencedColumn: (t) => t.profileId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ProfileCustomRoutingsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.profileCustomRoutings,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$ProfilesTableTableManager
@@ -5062,6 +5853,7 @@ class $$ProfilesTableTableManager
             bool disabledRulesRefs,
             bool proxyGroupsRefs,
             bool proxyDialersRefs,
+            bool profileCustomRoutingsRefs,
           })
         > {
   $$ProfilesTableTableManager(_$Database db, $ProfilesTable table)
@@ -5167,6 +5959,7 @@ class $$ProfilesTableTableManager
                 disabledRulesRefs = false,
                 proxyGroupsRefs = false,
                 proxyDialersRefs = false,
+                profileCustomRoutingsRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
@@ -5175,6 +5968,7 @@ class $$ProfilesTableTableManager
                     if (disabledRulesRefs) db.disabledRules,
                     if (proxyGroupsRefs) db.proxyGroups,
                     if (proxyDialersRefs) db.proxyDialers,
+                    if (profileCustomRoutingsRefs) db.profileCustomRoutings,
                   ],
                   addJoins: null,
                   getPrefetchedDataCallback: (items) async {
@@ -5263,6 +6057,27 @@ class $$ProfilesTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (profileCustomRoutingsRefs)
+                        await $_getPrefetchedData<
+                          RawProfile,
+                          $ProfilesTable,
+                          RawProfileCustomRouting
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ProfilesTableReferences
+                              ._profileCustomRoutingsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ProfilesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).profileCustomRoutingsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.profileId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -5288,6 +6103,7 @@ typedef $$ProfilesTableProcessedTableManager =
         bool disabledRulesRefs,
         bool proxyGroupsRefs,
         bool proxyDialersRefs,
+        bool profileCustomRoutingsRefs,
       })
     >;
 typedef $$ScriptsTableCreateCompanionBuilder =
@@ -7994,6 +8810,738 @@ typedef $$ProxyDialersTableProcessedTableManager =
       RawProxyDialer,
       PrefetchHooks Function({bool profileId, bool proxyId})
     >;
+typedef $$CustomRoutingsTableCreateCompanionBuilder =
+    CustomRoutingsCompanion Function({
+      Value<int> id,
+      required String label,
+      Value<bool> enabled,
+      required CustomRoutingLogic logic,
+      required List<CustomRoutingCondition> conditions,
+      Value<String?> target,
+      Value<String?> order,
+    });
+typedef $$CustomRoutingsTableUpdateCompanionBuilder =
+    CustomRoutingsCompanion Function({
+      Value<int> id,
+      Value<String> label,
+      Value<bool> enabled,
+      Value<CustomRoutingLogic> logic,
+      Value<List<CustomRoutingCondition>> conditions,
+      Value<String?> target,
+      Value<String?> order,
+    });
+
+final class $$CustomRoutingsTableReferences
+    extends BaseReferences<_$Database, $CustomRoutingsTable, RawCustomRouting> {
+  $$CustomRoutingsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static MultiTypedResultKey<
+    $ProfileCustomRoutingsTable,
+    List<RawProfileCustomRouting>
+  >
+  _profileCustomRoutingsRefsTable(_$Database db) =>
+      MultiTypedResultKey.fromTable(
+        db.profileCustomRoutings,
+        aliasName: 'custom_routings__id__profile_custom_routings__routing_id',
+      );
+
+  $$ProfileCustomRoutingsTableProcessedTableManager
+  get profileCustomRoutingsRefs {
+    final manager = $$ProfileCustomRoutingsTableTableManager(
+      $_db,
+      $_db.profileCustomRoutings,
+    ).filter((f) => f.routingId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _profileCustomRoutingsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$CustomRoutingsTableFilterComposer
+    extends Composer<_$Database, $CustomRoutingsTable> {
+  $$CustomRoutingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get label => $composableBuilder(
+    column: $table.label,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get enabled => $composableBuilder(
+    column: $table.enabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<CustomRoutingLogic, CustomRoutingLogic, String>
+  get logic => $composableBuilder(
+    column: $table.logic,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<
+    List<CustomRoutingCondition>,
+    List<CustomRoutingCondition>,
+    String
+  >
+  get conditions => $composableBuilder(
+    column: $table.conditions,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<String> get target => $composableBuilder(
+    column: $table.target,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get order => $composableBuilder(
+    column: $table.order,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> profileCustomRoutingsRefs(
+    Expression<bool> Function($$ProfileCustomRoutingsTableFilterComposer f) f,
+  ) {
+    final $$ProfileCustomRoutingsTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.profileCustomRoutings,
+          getReferencedColumn: (t) => t.routingId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ProfileCustomRoutingsTableFilterComposer(
+                $db: $db,
+                $table: $db.profileCustomRoutings,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+}
+
+class $$CustomRoutingsTableOrderingComposer
+    extends Composer<_$Database, $CustomRoutingsTable> {
+  $$CustomRoutingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get label => $composableBuilder(
+    column: $table.label,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get enabled => $composableBuilder(
+    column: $table.enabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get logic => $composableBuilder(
+    column: $table.logic,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get conditions => $composableBuilder(
+    column: $table.conditions,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get target => $composableBuilder(
+    column: $table.target,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get order => $composableBuilder(
+    column: $table.order,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CustomRoutingsTableAnnotationComposer
+    extends Composer<_$Database, $CustomRoutingsTable> {
+  $$CustomRoutingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get label =>
+      $composableBuilder(column: $table.label, builder: (column) => column);
+
+  GeneratedColumn<bool> get enabled =>
+      $composableBuilder(column: $table.enabled, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<CustomRoutingLogic, String> get logic =>
+      $composableBuilder(column: $table.logic, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<List<CustomRoutingCondition>, String>
+  get conditions => $composableBuilder(
+    column: $table.conditions,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get target =>
+      $composableBuilder(column: $table.target, builder: (column) => column);
+
+  GeneratedColumn<String> get order =>
+      $composableBuilder(column: $table.order, builder: (column) => column);
+
+  Expression<T> profileCustomRoutingsRefs<T extends Object>(
+    Expression<T> Function($$ProfileCustomRoutingsTableAnnotationComposer a) f,
+  ) {
+    final $$ProfileCustomRoutingsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.profileCustomRoutings,
+          getReferencedColumn: (t) => t.routingId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ProfileCustomRoutingsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.profileCustomRoutings,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+}
+
+class $$CustomRoutingsTableTableManager
+    extends
+        RootTableManager<
+          _$Database,
+          $CustomRoutingsTable,
+          RawCustomRouting,
+          $$CustomRoutingsTableFilterComposer,
+          $$CustomRoutingsTableOrderingComposer,
+          $$CustomRoutingsTableAnnotationComposer,
+          $$CustomRoutingsTableCreateCompanionBuilder,
+          $$CustomRoutingsTableUpdateCompanionBuilder,
+          (RawCustomRouting, $$CustomRoutingsTableReferences),
+          RawCustomRouting,
+          PrefetchHooks Function({bool profileCustomRoutingsRefs})
+        > {
+  $$CustomRoutingsTableTableManager(_$Database db, $CustomRoutingsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CustomRoutingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CustomRoutingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CustomRoutingsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> label = const Value.absent(),
+                Value<bool> enabled = const Value.absent(),
+                Value<CustomRoutingLogic> logic = const Value.absent(),
+                Value<List<CustomRoutingCondition>> conditions =
+                    const Value.absent(),
+                Value<String?> target = const Value.absent(),
+                Value<String?> order = const Value.absent(),
+              }) => CustomRoutingsCompanion(
+                id: id,
+                label: label,
+                enabled: enabled,
+                logic: logic,
+                conditions: conditions,
+                target: target,
+                order: order,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String label,
+                Value<bool> enabled = const Value.absent(),
+                required CustomRoutingLogic logic,
+                required List<CustomRoutingCondition> conditions,
+                Value<String?> target = const Value.absent(),
+                Value<String?> order = const Value.absent(),
+              }) => CustomRoutingsCompanion.insert(
+                id: id,
+                label: label,
+                enabled: enabled,
+                logic: logic,
+                conditions: conditions,
+                target: target,
+                order: order,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$CustomRoutingsTable, RawCustomRouting>(table),
+                  $$CustomRoutingsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({profileCustomRoutingsRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (profileCustomRoutingsRefs) db.profileCustomRoutings,
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (profileCustomRoutingsRefs)
+                    await $_getPrefetchedData<
+                      RawCustomRouting,
+                      $CustomRoutingsTable,
+                      RawProfileCustomRouting
+                    >(
+                      currentTable: table,
+                      referencedTable: $$CustomRoutingsTableReferences
+                          ._profileCustomRoutingsRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$CustomRoutingsTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).profileCustomRoutingsRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.routingId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$CustomRoutingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$Database,
+      $CustomRoutingsTable,
+      RawCustomRouting,
+      $$CustomRoutingsTableFilterComposer,
+      $$CustomRoutingsTableOrderingComposer,
+      $$CustomRoutingsTableAnnotationComposer,
+      $$CustomRoutingsTableCreateCompanionBuilder,
+      $$CustomRoutingsTableUpdateCompanionBuilder,
+      (RawCustomRouting, $$CustomRoutingsTableReferences),
+      RawCustomRouting,
+      PrefetchHooks Function({bool profileCustomRoutingsRefs})
+    >;
+typedef $$ProfileCustomRoutingsTableCreateCompanionBuilder =
+    ProfileCustomRoutingsCompanion Function({
+      required int profileId,
+      required int routingId,
+      Value<int> rowid,
+    });
+typedef $$ProfileCustomRoutingsTableUpdateCompanionBuilder =
+    ProfileCustomRoutingsCompanion Function({
+      Value<int> profileId,
+      Value<int> routingId,
+      Value<int> rowid,
+    });
+
+final class $$ProfileCustomRoutingsTableReferences
+    extends
+        BaseReferences<
+          _$Database,
+          $ProfileCustomRoutingsTable,
+          RawProfileCustomRouting
+        > {
+  $$ProfileCustomRoutingsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $ProfilesTable _profileIdTable(_$Database db) => db.profiles
+      .createAlias('profile_custom_routings__profile_id__profiles__id');
+
+  $$ProfilesTableProcessedTableManager get profileId {
+    final $_column = $_itemColumn<int>('profile_id')!;
+
+    final manager = $$ProfilesTableTableManager(
+      $_db,
+      $_db.profiles,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_profileIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $CustomRoutingsTable _routingIdTable(_$Database db) => db
+      .customRoutings
+      .createAlias('profile_custom_routings__routing_id__custom_routings__id');
+
+  $$CustomRoutingsTableProcessedTableManager get routingId {
+    final $_column = $_itemColumn<int>('routing_id')!;
+
+    final manager = $$CustomRoutingsTableTableManager(
+      $_db,
+      $_db.customRoutings,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_routingIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ProfileCustomRoutingsTableFilterComposer
+    extends Composer<_$Database, $ProfileCustomRoutingsTable> {
+  $$ProfileCustomRoutingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  $$ProfilesTableFilterComposer get profileId {
+    final $$ProfilesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.profileId,
+      referencedTable: $db.profiles,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProfilesTableFilterComposer(
+            $db: $db,
+            $table: $db.profiles,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$CustomRoutingsTableFilterComposer get routingId {
+    final $$CustomRoutingsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.routingId,
+      referencedTable: $db.customRoutings,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CustomRoutingsTableFilterComposer(
+            $db: $db,
+            $table: $db.customRoutings,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ProfileCustomRoutingsTableOrderingComposer
+    extends Composer<_$Database, $ProfileCustomRoutingsTable> {
+  $$ProfileCustomRoutingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  $$ProfilesTableOrderingComposer get profileId {
+    final $$ProfilesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.profileId,
+      referencedTable: $db.profiles,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProfilesTableOrderingComposer(
+            $db: $db,
+            $table: $db.profiles,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$CustomRoutingsTableOrderingComposer get routingId {
+    final $$CustomRoutingsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.routingId,
+      referencedTable: $db.customRoutings,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CustomRoutingsTableOrderingComposer(
+            $db: $db,
+            $table: $db.customRoutings,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ProfileCustomRoutingsTableAnnotationComposer
+    extends Composer<_$Database, $ProfileCustomRoutingsTable> {
+  $$ProfileCustomRoutingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  $$ProfilesTableAnnotationComposer get profileId {
+    final $$ProfilesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.profileId,
+      referencedTable: $db.profiles,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProfilesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.profiles,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$CustomRoutingsTableAnnotationComposer get routingId {
+    final $$CustomRoutingsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.routingId,
+      referencedTable: $db.customRoutings,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CustomRoutingsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.customRoutings,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ProfileCustomRoutingsTableTableManager
+    extends
+        RootTableManager<
+          _$Database,
+          $ProfileCustomRoutingsTable,
+          RawProfileCustomRouting,
+          $$ProfileCustomRoutingsTableFilterComposer,
+          $$ProfileCustomRoutingsTableOrderingComposer,
+          $$ProfileCustomRoutingsTableAnnotationComposer,
+          $$ProfileCustomRoutingsTableCreateCompanionBuilder,
+          $$ProfileCustomRoutingsTableUpdateCompanionBuilder,
+          (RawProfileCustomRouting, $$ProfileCustomRoutingsTableReferences),
+          RawProfileCustomRouting,
+          PrefetchHooks Function({bool profileId, bool routingId})
+        > {
+  $$ProfileCustomRoutingsTableTableManager(
+    _$Database db,
+    $ProfileCustomRoutingsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ProfileCustomRoutingsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$ProfileCustomRoutingsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$ProfileCustomRoutingsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> profileId = const Value.absent(),
+                Value<int> routingId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ProfileCustomRoutingsCompanion(
+                profileId: profileId,
+                routingId: routingId,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required int profileId,
+                required int routingId,
+                Value<int> rowid = const Value.absent(),
+              }) => ProfileCustomRoutingsCompanion.insert(
+                profileId: profileId,
+                routingId: routingId,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<
+                    $ProfileCustomRoutingsTable,
+                    RawProfileCustomRouting
+                  >(table),
+                  $$ProfileCustomRoutingsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({profileId = false, routingId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (profileId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.profileId,
+                                referencedTable:
+                                    $$ProfileCustomRoutingsTableReferences
+                                        ._profileIdTable(db),
+                                referencedColumn:
+                                    $$ProfileCustomRoutingsTableReferences
+                                        ._profileIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+                    if (routingId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.routingId,
+                                referencedTable:
+                                    $$ProfileCustomRoutingsTableReferences
+                                        ._routingIdTable(db),
+                                referencedColumn:
+                                    $$ProfileCustomRoutingsTableReferences
+                                        ._routingIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$ProfileCustomRoutingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$Database,
+      $ProfileCustomRoutingsTable,
+      RawProfileCustomRouting,
+      $$ProfileCustomRoutingsTableFilterComposer,
+      $$ProfileCustomRoutingsTableOrderingComposer,
+      $$ProfileCustomRoutingsTableAnnotationComposer,
+      $$ProfileCustomRoutingsTableCreateCompanionBuilder,
+      $$ProfileCustomRoutingsTableUpdateCompanionBuilder,
+      (RawProfileCustomRouting, $$ProfileCustomRoutingsTableReferences),
+      RawProfileCustomRouting,
+      PrefetchHooks Function({bool profileId, bool routingId})
+    >;
 
 class $DatabaseManager {
   final _$Database _db;
@@ -8018,6 +9566,10 @@ class $DatabaseManager {
       $$CustomProxiesTableTableManager(_db, _db.customProxies);
   $$ProxyDialersTableTableManager get proxyDialers =>
       $$ProxyDialersTableTableManager(_db, _db.proxyDialers);
+  $$CustomRoutingsTableTableManager get customRoutings =>
+      $$CustomRoutingsTableTableManager(_db, _db.customRoutings);
+  $$ProfileCustomRoutingsTableTableManager get profileCustomRoutings =>
+      $$ProfileCustomRoutingsTableTableManager(_db, _db.profileCustomRoutings);
 }
 
 mixin _$ProfilesDaoMixin on DatabaseAccessor<Database> {
@@ -8144,4 +9696,29 @@ class ProxyDialersDaoManager {
       $$CustomProxiesTableTableManager(_db.attachedDatabase, _db.customProxies);
   $$ProxyDialersTableTableManager get proxyDialers =>
       $$ProxyDialersTableTableManager(_db.attachedDatabase, _db.proxyDialers);
+}
+
+mixin _$CustomRoutingsDaoMixin on DatabaseAccessor<Database> {
+  $CustomRoutingsTable get customRoutings => attachedDatabase.customRoutings;
+  $ProfilesTable get profiles => attachedDatabase.profiles;
+  $ProfileCustomRoutingsTable get profileCustomRoutings =>
+      attachedDatabase.profileCustomRoutings;
+  CustomRoutingsDaoManager get managers => CustomRoutingsDaoManager(this);
+}
+
+class CustomRoutingsDaoManager {
+  final _$CustomRoutingsDaoMixin _db;
+  CustomRoutingsDaoManager(this._db);
+  $$CustomRoutingsTableTableManager get customRoutings =>
+      $$CustomRoutingsTableTableManager(
+        _db.attachedDatabase,
+        _db.customRoutings,
+      );
+  $$ProfilesTableTableManager get profiles =>
+      $$ProfilesTableTableManager(_db.attachedDatabase, _db.profiles);
+  $$ProfileCustomRoutingsTableTableManager get profileCustomRoutings =>
+      $$ProfileCustomRoutingsTableTableManager(
+        _db.attachedDatabase,
+        _db.profileCustomRoutings,
+      );
 }

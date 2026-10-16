@@ -283,6 +283,12 @@ class CoreController {
   Future<OutboundIpResult?> outboundIp(OutboundIpParams params) =>
       _interface.outboundIp(params);
 
+  Future<TailscaleNetStatus> tailscaleStatus(
+    String name, {
+    bool start = false,
+    bool reset = false,
+  }) => _interface.tailscaleStatus(name, start: start, reset: reset);
+
   Future<List<ServiceCheckItem>> serviceCheck(ServiceCheckParams params) =>
       _interface.serviceCheck(params);
 

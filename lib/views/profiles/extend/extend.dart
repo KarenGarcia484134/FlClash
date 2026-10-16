@@ -2,6 +2,7 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/views/config/custom_routings.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,8 +19,19 @@ class ExtendView extends ConsumerStatefulWidget {
   ConsumerState<ExtendView> createState() => _ExtendViewState();
 }
 
+/// Custom routing is a view of its own rather than a mode: it applies on top
+/// of whichever of standard or script the profile uses.
+enum _ExtendTab { customRouting, standard, script }
+
 class _ExtendViewState extends ConsumerState<ExtendView> {
   late SetupAction _setupAction;
+  var _tab = _ExtendTab.customRouting;
+
+  void _handleTab(_ExtendTab tab) {
+    setState(() {
+      _tab = tab;
+    });
+  }
 
   @override
   void initState() {
@@ -40,8 +52,8 @@ class _ExtendViewState extends ConsumerState<ExtendView> {
           child: CustomScrollView(
             slivers: [
               SliverToBoxAdapter(child: SizedBox(height: context.appBarInset)),
-              const _Title(),
-              const _Content(),
+              _Title(tab: _tab, onTab: _handleTab),
+              _Content(tab: _tab),
             ],
           ),
         ),
@@ -57,32 +69,61 @@ class _ExtendViewState extends ConsumerState<ExtendView> {
 }
 
 class _Title extends ConsumerWidget {
-  const _Title();
+  final _ExtendTab tab;
+  final ValueChanged<_ExtendTab> onTab;
 
-  String _getTitle(BuildContext context, ExtendType type) {
+  const _Title({required this.tab, required this.onTab});
+
+  String _getModeTitle(BuildContext context, ExtendType type) {
     return switch (type) {
       ExtendType.standard => context.appLocalizations.standard,
       ExtendType.script => context.appLocalizations.script,
     };
   }
 
-  Glyph _getIcon(ExtendType type) {
-    return switch (type) {
-      ExtendType.standard => AppGlyphs.star,
-      ExtendType.script => AppGlyphs.code,
+  String _getTitle(BuildContext context, _ExtendTab tab) {
+    return switch (tab) {
+      _ExtendTab.customRouting => context.appLocalizations.customRouting,
+      _ExtendTab.standard => context.appLocalizations.standard,
+      _ExtendTab.script => context.appLocalizations.script,
     };
   }
 
-  String _getDesc(BuildContext context, ExtendType type) {
-    return switch (type) {
-      ExtendType.standard => context.appLocalizations.standardModeDesc,
-      ExtendType.script => context.appLocalizations.scriptModeDesc,
+  Glyph _getIcon(_ExtendTab tab) {
+    return switch (tab) {
+      _ExtendTab.customRouting => AppGlyphs.split,
+      _ExtendTab.standard => AppGlyphs.star,
+      _ExtendTab.script => AppGlyphs.code,
     };
   }
 
-  void _handleChangeType(WidgetRef ref, int profileId, ExtendType type) {
+  ExtendType? _modeOf(_ExtendTab tab) {
+    return switch (tab) {
+      _ExtendTab.customRouting => null,
+      _ExtendTab.standard => ExtendType.standard,
+      _ExtendTab.script => ExtendType.script,
+    };
+  }
+
+  String _getDesc(BuildContext context, ExtendType extendType) {
+    final appLocalizations = context.appLocalizations;
+    return switch (tab) {
+      _ExtendTab.customRouting =>
+        '${appLocalizations.customRoutingDesc}\n'
+            '${appLocalizations.currentExtendMode(_getModeTitle(context, extendType))}',
+      _ExtendTab.standard => appLocalizations.standardModeDesc,
+      _ExtendTab.script => appLocalizations.scriptModeDesc,
+    };
+  }
+
+  void _handleSelect(WidgetRef ref, int profileId, _ExtendTab tab) {
+    onTab(tab);
+    final mode = _modeOf(tab);
+    if (mode == null) {
+      return;
+    }
     ref.read(profilesProvider.notifier).updateProfile(profileId, (state) {
-      return state.copyWith(extendType: type);
+      return state.copyWith(extendType: mode);
     });
   }
 
@@ -102,11 +143,11 @@ class _Title extends ConsumerWidget {
             child: Wrap(
               spacing: 16,
               children: [
-                for (final type in ExtendType.values)
+                for (final item in _ExtendTab.values)
                   CommonCard(
-                    isSelected: extendType == type,
+                    isSelected: tab == item,
                     onPressed: () {
-                      _handleChangeType(ref, profileId, type);
+                      _handleSelect(ref, profileId, item);
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(16),
@@ -114,9 +155,18 @@ class _Title extends ConsumerWidget {
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          GlyphIcon(_getIcon(type)),
+                          GlyphIcon(_getIcon(item)),
                           const SizedBox(width: 8),
-                          Flexible(child: Text(_getTitle(context, type))),
+                          Flexible(child: Text(_getTitle(context, item))),
+                          if (_modeOf(item) == extendType) ...[
+                            const SizedBox(width: 8),
+                            GlyphIcon(
+                              AppGlyphs.checkCircle,
+                              fill: 1,
+                              size: 18,
+                              color: context.colorScheme.primary,
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -140,16 +190,17 @@ class _Title extends ConsumerWidget {
   }
 }
 
-class _Content extends ConsumerWidget {
-  const _Content();
+class _Content extends StatelessWidget {
+  final _ExtendTab tab;
+
+  const _Content({required this.tab});
 
   @override
-  Widget build(BuildContext context, ref) {
-    final profileId = ProfileIdProvider.of(context)!.profileId;
-    final extendType = ref.watch(extendTypeProvider(profileId));
-    return switch (extendType) {
-      ExtendType.standard => const StandardContent(),
-      ExtendType.script => const ScriptContent(),
+  Widget build(BuildContext context) {
+    return switch (tab) {
+      _ExtendTab.customRouting => const CustomRoutingContent(),
+      _ExtendTab.standard => const StandardContent(),
+      _ExtendTab.script => const ScriptContent(),
     };
   }
 }

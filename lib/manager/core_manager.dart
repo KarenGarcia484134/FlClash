@@ -56,6 +56,14 @@ class _CoreContainerState extends ConsumerState<CoreManager>
             .applyProfileDebounce(silence: true);
       }
     });
+    ref.listenManual(tailscaleSettingProvider.select((state) => state.enable), (
+      prev,
+      next,
+    ) {
+      if (prev != next) {
+        _syncLogStream();
+      }
+    });
     ref.listenManual(appSettingProvider.select((state) => state.openLogs), (
       prev,
       next,
@@ -76,7 +84,8 @@ class _CoreContainerState extends ConsumerState<CoreManager>
     if (ref.read(coreStatusProvider) != CoreStatus.connected) {
       return;
     }
-    if (ref.read(appSettingProvider).openLogs) {
+    if (ref.read(appSettingProvider).openLogs ||
+        ref.read(tailscaleSettingProvider).enable) {
       _core.startLog();
     } else {
       _core.stopLog();
@@ -101,6 +110,11 @@ class _CoreContainerState extends ConsumerState<CoreManager>
 
   @override
   void onLog(Log log) {
+    ref.read(tailscaleStateProvider.notifier).onLog(log.payload);
+    if (!ref.read(appSettingProvider).openLogs) {
+      super.onLog(log);
+      return;
+    }
     ref.read(logsProvider.notifier).add(log);
     if (log.logLevel == LogLevel.error) {
       throttler.call(

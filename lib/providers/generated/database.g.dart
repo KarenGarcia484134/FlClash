@@ -942,3 +942,139 @@ abstract class _$ProfileDisabledRuleIds extends $StreamNotifier<List<int>> {
     return element.handleCreate(ref, () => build(_$args));
   }
 }
+
+@ProviderFor(CustomRoutings)
+final customRoutingsProvider = CustomRoutingsProvider._();
+
+final class CustomRoutingsProvider
+    extends $StreamNotifierProvider<CustomRoutings, List<CustomRouting>> {
+  CustomRoutingsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'customRoutingsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$customRoutingsHash();
+
+  @$internal
+  @override
+  CustomRoutings create() => CustomRoutings();
+}
+
+String _$customRoutingsHash() => r'd9cd567720fc811083f70cf480e4b339715b3f9c';
+
+abstract class _$CustomRoutings extends $StreamNotifier<List<CustomRouting>> {
+  Stream<List<CustomRouting>> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref =
+        this.ref as $Ref<AsyncValue<List<CustomRouting>>, List<CustomRouting>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<CustomRouting>>, List<CustomRouting>>,
+              AsyncValue<List<CustomRouting>>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(ProfileCustomRoutingIds)
+final profileCustomRoutingIdsProvider = ProfileCustomRoutingIdsFamily._();
+
+final class ProfileCustomRoutingIdsProvider
+    extends $StreamNotifierProvider<ProfileCustomRoutingIds, List<int>> {
+  ProfileCustomRoutingIdsProvider._({
+    required ProfileCustomRoutingIdsFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'profileCustomRoutingIdsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$profileCustomRoutingIdsHash();
+
+  @override
+  String toString() {
+    return r'profileCustomRoutingIdsProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  ProfileCustomRoutingIds create() => ProfileCustomRoutingIds();
+
+  @override
+  bool operator ==(Object other) {
+    return other is ProfileCustomRoutingIdsProvider &&
+        other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$profileCustomRoutingIdsHash() =>
+    r'19cde242ee63c0cf03f1524e72fc3cd5a32432b6';
+
+final class ProfileCustomRoutingIdsFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          ProfileCustomRoutingIds,
+          AsyncValue<List<int>>,
+          List<int>,
+          Stream<List<int>>,
+          int
+        > {
+  ProfileCustomRoutingIdsFamily._()
+    : super(
+        retry: null,
+        name: r'profileCustomRoutingIdsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  ProfileCustomRoutingIdsProvider call(int profileId) =>
+      ProfileCustomRoutingIdsProvider._(argument: profileId, from: this);
+
+  @override
+  String toString() => r'profileCustomRoutingIdsProvider';
+}
+
+abstract class _$ProfileCustomRoutingIds extends $StreamNotifier<List<int>> {
+  late final _$args = ref.$arg as int;
+  int get profileId => _$args;
+
+  Stream<List<int>> build(int profileId);
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<AsyncValue<List<int>>, List<int>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<int>>, List<int>>,
+              AsyncValue<List<int>>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, () => build(_$args));
+  }
+}

@@ -1066,3 +1066,115 @@ class ProfileDisabledRuleIds extends _$ProfileDisabledRuleIds
     optimistic(next, () => database.rulesDao.putDisabled(profileId, ruleId));
   }
 }
+
+@riverpod
+class CustomRoutings extends _$CustomRoutings
+    with AsyncNotifierMixin, OptimisticMixin {
+  @override
+  Stream<List<CustomRouting>> build() {
+    final query = database.customRoutingsDao.query();
+    return settled(query.watch(), query.get);
+  }
+
+  @override
+  List<CustomRouting> get value => state.value ?? [];
+
+  void put(CustomRouting routing) {
+    final next = List<CustomRouting>.from(value);
+    final index = next.indexWhere((item) => item.id == routing.id);
+    final CustomRouting placed;
+    if (index != -1) {
+      placed = routing;
+      next[index] = placed;
+    } else {
+      placed = routing.copyWith(
+        order: indexing.generateKeyBetween(next.lastOrNull?.order, null),
+      );
+      next.add(placed);
+    }
+    optimistic(next, () => database.customRoutingsDao.put(placed));
+  }
+
+  Future<void> append(CustomRouting routing) {
+    final placed = routing.copyWith(
+      order: indexing.generateKeyBetween(value.lastOrNull?.order, null),
+    );
+    return optimisticAsync([
+      ...value,
+      placed,
+    ], () => database.customRoutingsDao.put(placed));
+  }
+
+  void duplicate(CustomRouting routing) {
+    final index = value.indexWhere((item) => item.id == routing.id);
+    if (index == -1) {
+      return;
+    }
+    final copy = routing.duplicated().copyWith(
+      order: indexing.generateKeyBetween(
+        value[index].order,
+        value.safeGet(index + 1)?.order,
+      ),
+    );
+    optimistic(
+      [...value]..insert(index + 1, copy),
+      () => database.customRoutingsDao.put(copy),
+    );
+  }
+
+  void del(int id) {
+    optimistic(
+      value.where((item) => item.id != id).toList(),
+      () => database.customRoutingsDao.del(id),
+    );
+  }
+
+  void order(int oldIndex, int newIndex) {
+    final item = value[oldIndex];
+    final next = value.copyAndReorder(oldIndex, newIndex);
+    final newOrder = indexing.generateKeyBetween(
+      next.safeGet(newIndex - 1)?.order,
+      next.safeGet(newIndex + 1)?.order,
+    )!;
+    next[newIndex] = item.copyWith(order: newOrder);
+    optimistic(
+      next,
+      () => database.customRoutingsDao.order(id: item.id, order: newOrder),
+    );
+  }
+}
+
+@riverpod
+class ProfileCustomRoutingIds extends _$ProfileCustomRoutingIds
+    with AsyncNotifierMixin, OptimisticMixin {
+  @override
+  List<int> get value => state.value ?? [];
+
+  @override
+  Stream<List<int>> build(int profileId) {
+    final query = database.customRoutingsDao.querySelectedIds(profileId);
+    return settled(query.watch(), query.get);
+  }
+
+  @override
+  bool updateShouldNotify(
+    AsyncValue<List<int>> previous,
+    AsyncValue<List<int>> next,
+  ) {
+    return !intListEquality.equals(previous.value, next.value);
+  }
+
+  void toggle(int routingId) {
+    if (value.contains(routingId)) {
+      optimistic(
+        value.where((item) => item != routingId).toList(),
+        () => database.customRoutingsDao.delSelected(profileId, routingId),
+      );
+      return;
+    }
+    optimistic([
+      ...value,
+      routingId,
+    ], () => database.customRoutingsDao.putSelected(profileId, routingId));
+  }
+}
