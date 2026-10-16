@@ -1,0 +1,227 @@
+name: release
+
+# Fork release pipeline: builds installable packages and publishes them to
+# this repository's GitHub Releases. Needs no upstream-only secrets; Android
+# uses the KEYSTORE/KEY_ALIAS/STORE_PASSWORD/KEY_PASSWORD secrets when present
+# and otherwise falls back to the debug key (package com.follow.clash.dev).
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      desktop:
+        description: 'Also build Windows / Linux / macOS'
+        type: boolean
+        default: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  FLUTTER_VERSION: '3.47.6'
+  GO_VERSION: '1.27.1'
+  NDK_VERSION: r28c
+
+jobs:
+  meta:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.meta.outputs.tag }}
+      prerelease: ${{ steps.meta.outputs.prerelease }}
+      app_env: ${{ steps.meta.outputs.app_env }}
+    steps:
+      - id: meta
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            tag="$GITHUB_REF_NAME"
+            if [[ "$tag" == *-* ]]; then pre=true; env=pre; else pre=false; env=stable; fi
+          else
+            branch="${GITHUB_REF_NAME//\//-}"
+            tag="build-${branch}-$(date -u +%Y%m%d)-${GITHUB_SHA::7}"
+            pre=true; env=pre
+          fi
+          {
+            echo "tag=$tag"
+            echo "prerelease=$pre"
+            echo "app_env=$env"
+          } >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: meta
+    name: Build ${{ matrix.platform }}${{ matrix.arch && format(' {0}', matrix.arch) || '' }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: android
+            os: ubuntu-latest
+          - platform: windows
+            os: windows-2022
+            arch: amd64
+            desktop: true
+          - platform: linux
+            os: ubuntu-22.04
+            arch: amd64
+            desktop: true
+          - platform: macos
+            os: macos-latest
+            arch: arm64
+            desktop: true
+    steps:
+      - name: Skip desktop
+        id: gate
+        shell: bash
+        run: |
+          if [[ "${{ matrix.desktop }}" == "true" && "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.desktop }}" != "true" ]]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout
+        if: steps.gate.outputs.skip != 'true'
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Android signing
+        if: steps.gate.outputs.skip != 'true' && matrix.platform == 'android'
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE" ]; then
+            echo "::warning::No KEYSTORE secret, the APK is signed with a debug key"
+            exit 0
+          fi
+          echo "$KEYSTORE" | base64 --decode > android/app/keystore.jks
+          {
+            echo "keyAlias=$KEY_ALIAS"
+            echo "storePassword=$STORE_PASSWORD"
+            echo "keyPassword=$KEY_PASSWORD"
+          } >> android/local.properties
+
+      - name: Setup Go
+        if: steps.gate.outputs.skip != 'true'
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: core/go.sum
+
+      - name: Setup Rust cache
+        if: steps.gate.outputs.skip != 'true'
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: release-${{ matrix.platform }}-${{ matrix.arch || 'all' }}
+          workspaces: |
+            services/helper
+            plugins/rust_api/rust
+          cache-directories: .dart_tool/hooks_runner
+
+      - name: Setup Java
+        if: steps.gate.outputs.skip != 'true' && matrix.platform == 'android'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Gradle
+        if: steps.gate.outputs.skip != 'true' && matrix.platform == 'android'
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Setup NDK
+        if: steps.gate.outputs.skip != 'true' && matrix.platform == 'android'
+        uses: nttld/setup-ndk@v1
+        id: ndk
+        with:
+          ndk-version: ${{ env.NDK_VERSION }}
+          add-to-path: true
+          link-to-sdk: true
+
+      - name: Enable git long paths (Windows)
+        if: steps.gate.outputs.skip != 'true' && matrix.platform == 'windows'
+        run: git config --global core.longpaths true
+
+      - name: Setup Flutter
+        if: steps.gate.outputs.skip != 'true'
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Setup Xcode
+        if: steps.gate.outputs.skip != 'true' && matrix.platform == 'macos'
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.3.app || sudo xcode-select -s /Applications/Xcode_26.2.app
+          xcodebuild -version
+
+      - name: Install Linux build dependencies
+        if: steps.gate.outputs.skip != 'true' && matrix.platform == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build libgtk-3-dev libayatana-appindicator3-dev libsecret-1-dev rpm patchelf locate libfuse2
+
+      - name: Get Flutter dependencies
+        if: steps.gate.outputs.skip != 'true'
+        run: |
+          flutter --version
+          flutter pub get
+
+      - name: Build
+        if: steps.gate.outputs.skip != 'true'
+        env:
+          ANDROID_NDK_HOME: ${{ steps.ndk.outputs.ndk-path }}
+        run: dart setup.dart ${{ matrix.platform }} --env ${{ needs.meta.outputs.app_env }} -v
+
+      - name: Upload artifact
+        if: steps.gate.outputs.skip != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-${{ matrix.platform }}${{ matrix.arch && format('-{0}', matrix.arch) || '' }}
+          path: ./dist
+          if-no-files-found: error
+
+  release:
+    needs: [ meta, build ]
+    if: ${{ !cancelled() && needs.meta.result == 'success' }}
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download
+        uses: actions/download-artifact@v4
+        with:
+          path: ./dist/
+          pattern: artifact-*
+          merge-multiple: true
+
+      - name: Check artifacts
+        run: |
+          ls -la dist
+          test -n "$(ls dist)" || { echo "No artifacts were built" >&2; exit 1; }
+          cd dist && sha256sum ./* > SHA256SUMS
+
+      - name: Release notes
+        run: |
+          {
+            echo "Automated build of \`${GITHUB_REF_NAME}\` @ \`${GITHUB_SHA::7}\`."
+            echo
+            echo "Android: use \`*-android-arm64-v8a.apk\` for most phones."
+            echo
+            echo "Build log: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          } > notes.md
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.meta.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: ${{ needs.meta.outputs.tag }}
+          prerelease: ${{ needs.meta.outputs.prerelease == 'true' }}
+          body_path: notes.md
+          files: ./dist/*
