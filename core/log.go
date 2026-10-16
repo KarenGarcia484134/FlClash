@@ -29,7 +29,7 @@ type logPump struct {
 
 func (pump *logPump) run() {
 	for event := range pump.subscription {
-		if pump.stopped.Load() || event.LogLevel < log.Level() {
+		if pump.stopped.Load() || (event.LogLevel < log.Level() && !isTailscaleAuthEvent(event)) {
 			continue
 		}
 		sendMessage(LogMessage, event)
