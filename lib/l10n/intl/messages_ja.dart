@@ -717,6 +717,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "hideFromList": MessageLookupByLibrary.simpleMessage("リストから隠す"),
     "hideIp": MessageLookupByLibrary.simpleMessage("IP を隠す"),
     "hidePassword": MessageLookupByLibrary.simpleMessage("パスワードを隠す"),
+    "hideTimeoutNodes": MessageLookupByLibrary.simpleMessage("タイムアウトを隠す"),
     "hideTimeoutProxies": MessageLookupByLibrary.simpleMessage(
       "タイムアウトしたプロキシを隠す",
     ),
@@ -1440,6 +1441,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "socksPort": MessageLookupByLibrary.simpleMessage("SOCKSポート"),
     "sort": MessageLookupByLibrary.simpleMessage("並べ替え"),
+    "sortByDelay": MessageLookupByLibrary.simpleMessage("遅延順"),
     "source": MessageLookupByLibrary.simpleMessage("ソース"),
     "sourceIp": MessageLookupByLibrary.simpleMessage("送信元IP"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("特殊プロキシ"),
@@ -1550,6 +1552,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleStatusRunning": MessageLookupByLibrary.simpleMessage("接続済み"),
     "tapToAuthorize": MessageLookupByLibrary.simpleMessage("タップして許可"),
     "tcpConcurrent": MessageLookupByLibrary.simpleMessage("TCP同時接続"),
+    "testAllDelays": MessageLookupByLibrary.simpleMessage("すべてテスト"),
     "testInterval": MessageLookupByLibrary.simpleMessage("テスト間隔"),
     "testUrl": MessageLookupByLibrary.simpleMessage("テストURL"),
     "testWhenUsed": MessageLookupByLibrary.simpleMessage("使用時にテスト"),

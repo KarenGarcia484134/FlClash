@@ -895,6 +895,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "hideFromList": MessageLookupByLibrary.simpleMessage("Скрыть из списка"),
     "hideIp": MessageLookupByLibrary.simpleMessage("Скрыть IP"),
     "hidePassword": MessageLookupByLibrary.simpleMessage("Скрыть пароль"),
+    "hideTimeoutNodes": MessageLookupByLibrary.simpleMessage(
+      "Скрыть тайм-ауты",
+    ),
     "hideTimeoutProxies": MessageLookupByLibrary.simpleMessage(
       "Скрывать прокси с таймаутом",
     ),
@@ -1767,6 +1770,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "socksPort": MessageLookupByLibrary.simpleMessage("Порт SOCKS"),
     "sort": MessageLookupByLibrary.simpleMessage("Сортировка"),
+    "sortByDelay": MessageLookupByLibrary.simpleMessage("По задержке"),
     "source": MessageLookupByLibrary.simpleMessage("Источник"),
     "sourceIp": MessageLookupByLibrary.simpleMessage("IP источника"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("Специальный прокси"),
@@ -1911,6 +1915,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Нажмите, чтобы разрешить",
     ),
     "tcpConcurrent": MessageLookupByLibrary.simpleMessage("Параллельный TCP"),
+    "testAllDelays": MessageLookupByLibrary.simpleMessage("Проверить все"),
     "testInterval": MessageLookupByLibrary.simpleMessage(
       "Интервал тестирования",
     ),

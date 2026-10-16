@@ -8081,6 +8081,31 @@ class AppLocalizations {
   String get recommended {
     return Intl.message('Recommended', name: 'recommended', desc: '', args: []);
   }
+
+  /// `Test all`
+  String get testAllDelays {
+    return Intl.message('Test all', name: 'testAllDelays', desc: '', args: []);
+  }
+
+  /// `Sort by latency`
+  String get sortByDelay {
+    return Intl.message(
+      'Sort by latency',
+      name: 'sortByDelay',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hide timeouts`
+  String get hideTimeoutNodes {
+    return Intl.message(
+      'Hide timeouts',
+      name: 'hideTimeoutNodes',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

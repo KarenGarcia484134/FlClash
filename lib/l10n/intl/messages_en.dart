@@ -856,6 +856,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "hideFromList": MessageLookupByLibrary.simpleMessage("Hide from list"),
     "hideIp": MessageLookupByLibrary.simpleMessage("Hide IP"),
     "hidePassword": MessageLookupByLibrary.simpleMessage("Hide password"),
+    "hideTimeoutNodes": MessageLookupByLibrary.simpleMessage("Hide timeouts"),
     "hideTimeoutProxies": MessageLookupByLibrary.simpleMessage(
       "Hide timed-out proxies",
     ),
@@ -1690,6 +1691,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "socksPort": MessageLookupByLibrary.simpleMessage("SOCKS port"),
     "sort": MessageLookupByLibrary.simpleMessage("Sort"),
+    "sortByDelay": MessageLookupByLibrary.simpleMessage("Sort by latency"),
     "source": MessageLookupByLibrary.simpleMessage("Source"),
     "sourceIp": MessageLookupByLibrary.simpleMessage("Source IP"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("Special proxy"),
@@ -1820,6 +1822,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleStatusRunning": MessageLookupByLibrary.simpleMessage("Connected"),
     "tapToAuthorize": MessageLookupByLibrary.simpleMessage("Tap to authorize"),
     "tcpConcurrent": MessageLookupByLibrary.simpleMessage("TCP concurrent"),
+    "testAllDelays": MessageLookupByLibrary.simpleMessage("Test all"),
     "testInterval": MessageLookupByLibrary.simpleMessage("Test interval"),
     "testUrl": MessageLookupByLibrary.simpleMessage("Test URL"),
     "testWhenUsed": MessageLookupByLibrary.simpleMessage("Test when used"),

@@ -957,5 +957,8 @@
   "tailscaleDialerProxy": "接続プロキシ",
   "tailscaleDialerProxyDesc": "コントロールサーバー、DERP リレー、ピアへの Tailscale 自身の通信はこのプロキシまたはグループを経由します。直接接続できない場合に選択してください。",
   "tailscaleNetworkIssue": "コントロールサーバーに接続できませんでした（ネットワークのタイムアウト）。認証キーではなくネットワークの問題です。上で接続プロキシを選んで再接続してください。",
-  "recommended": "おすすめ"
+  "recommended": "おすすめ",
+  "testAllDelays": "すべてテスト",
+  "sortByDelay": "遅延順",
+  "hideTimeoutNodes": "タイムアウトを隠す"
 }
