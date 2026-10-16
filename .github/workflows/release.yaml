@@ -194,6 +194,26 @@ jobs:
           ANDROID_NDK_HOME: ${{ steps.ndk.outputs.ndk-path }}
         run: dart setup.dart ${{ matrix.platform }} --env ${{ needs.meta.outputs.app_env }} -v
 
+      # AGP drops JAR (v1) signing whenever minSdk >= 24, and some Android
+      # installers then report the APK as unsigned, so re-sign with all schemes.
+      - name: Re-sign APKs with v1+v2+v3
+        if: steps.gate.outputs.skip != 'true' && matrix.platform == 'android' && hashFiles('android/app/keystore.jks') != ''
+        env:
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          apksigner="$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)apksigner"
+          for apk in dist/*.apk; do
+            "$apksigner" sign --ks android/app/keystore.jks --ks-key-alias "$KEY_ALIAS" \
+              --ks-pass env:STORE_PASSWORD --key-pass env:KEY_PASSWORD \
+              --min-sdk-version 21 --v1-signing-enabled true \
+              --v2-signing-enabled true --v3-signing-enabled true \
+              --out "$apk.signed" "$apk"
+            mv "$apk.signed" "$apk"
+            rm -f "$apk.signed.idsig"
+          done
+
       - name: Verify APK signatures
         if: steps.gate.outputs.skip != 'true' && matrix.platform == 'android'
         run: |
@@ -203,7 +223,7 @@ jobs:
           test ${#apks[@]} -gt 0 || { echo "No APK in dist" >&2; exit 1; }
           for apk in "${apks[@]}"; do
             echo "== $apk"
-            out="$("$apksigner" verify -v --print-certs "$apk")" || { echo "$out"; exit 1; }
+            out="$("$apksigner" verify -v --print-certs --min-sdk-version 21 "$apk")" || { echo "$out"; exit 1; }
             echo "$out" | grep -E 'Verified using v[123] scheme|certificate DN|SHA-256 digest'
             for scheme in v1 v2 v3; do
               echo "$out" | grep -q "Verified using $scheme scheme.*: true" || {
@@ -221,7 +241,7 @@ jobs:
 
   release:
     needs: [ meta, build ]
-    if: ${{ !cancelled() && needs.meta.result == 'success' }}
+    if: ${{ !cancelled() && needs.meta.result == 'success' && needs.build.result == 'success' }}
     permissions:
       contents: write
     runs-on: ubuntu-latest
