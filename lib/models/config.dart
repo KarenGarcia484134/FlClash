@@ -116,7 +116,35 @@ const List<DashboardWidget> defaultDashboardWidgets = [
   DashboardWidget.networkDetection,
   DashboardWidget.trafficUsage,
   DashboardWidget.intranetIp,
+  DashboardWidget.customRouting,
 ];
+
+/// Cards added to the dashboard of existing users once, by an update. Each
+/// is recorded in [AppSettingProps.seededDashboardWidgets], so a card the user
+/// removes afterwards stays removed.
+const seededDashboardWidgetNames = ['customRouting'];
+
+Object? _readDashboardWidgets(Map<dynamic, dynamic> json, String key) {
+  final value = json[key];
+  if (value is! List) {
+    return value;
+  }
+  final seeded = json['seededDashboardWidgets'];
+  final done = seeded is List ? seeded : const [];
+  return [
+    ...value,
+    for (final name in seededDashboardWidgetNames)
+      if (!done.contains(name) && !value.contains(name)) name,
+  ];
+}
+
+Object? _readSeededDashboardWidgets(Map<dynamic, dynamic> json, String key) {
+  final value = json[key];
+  return {
+    if (value is List) ...value.whereType<String>(),
+    ...seededDashboardWidgetNames,
+  }.toList();
+}
 
 const _legacyOutboundModeV2 = 'outboundModeV2';
 
@@ -176,8 +204,14 @@ abstract class AppSettingProps with _$AppSettingProps {
   const factory AppSettingProps({
     String? locale,
     @Default(defaultDashboardWidgets)
-    @JsonKey(fromJson: dashboardWidgetsFromJson)
+    @JsonKey(
+      fromJson: dashboardWidgetsFromJson,
+      readValue: _readDashboardWidgets,
+    )
     List<DashboardWidget> dashboardWidgets,
+    @Default(seededDashboardWidgetNames)
+    @JsonKey(readValue: _readSeededDashboardWidgets)
+    List<String> seededDashboardWidgets,
     @Default(false) bool onlyStatisticsProxy,
     @Default(true) bool showNotificationStopAction,
     @Default(false) bool autoLaunch,

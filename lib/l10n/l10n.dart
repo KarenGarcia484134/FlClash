@@ -8106,6 +8106,36 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `{applied} of {total} active`
+  String customRoutingCardCount(int applied, int total) {
+    return Intl.message(
+      '$applied of $total active',
+      name: 'customRoutingCardCount',
+      desc: '',
+      args: [applied, total],
+    );
+  }
+
+  /// `No profile selected`
+  String get customRoutingCardNoProfile {
+    return Intl.message(
+      'No profile selected',
+      name: 'customRoutingCardNoProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use in current profile`
+  String get customRoutingUseInProfile {
+    return Intl.message(
+      'Use in current profile',
+      name: 'customRoutingUseInProfile',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

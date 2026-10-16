@@ -18,9 +18,17 @@ _AppSettingProps _$AppSettingPropsFromJson(
   Map<String, dynamic> json,
 ) => _AppSettingProps(
   locale: json['locale'] as String?,
-  dashboardWidgets: json['dashboardWidgets'] == null
+  dashboardWidgets: _readDashboardWidgets(json, 'dashboardWidgets') == null
       ? defaultDashboardWidgets
-      : dashboardWidgetsFromJson(json['dashboardWidgets'] as List?),
+      : dashboardWidgetsFromJson(
+          _readDashboardWidgets(json, 'dashboardWidgets') as List?,
+        ),
+  seededDashboardWidgets:
+      (_readSeededDashboardWidgets(json, 'seededDashboardWidgets')
+              as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList() ??
+      seededDashboardWidgetNames,
   onlyStatisticsProxy: json['onlyStatisticsProxy'] as bool? ?? false,
   showNotificationStopAction:
       json['showNotificationStopAction'] as bool? ?? true,
@@ -86,6 +94,7 @@ Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
       'dashboardWidgets': instance.dashboardWidgets
           .map((e) => _$DashboardWidgetEnumMap[e]!)
           .toList(),
+      'seededDashboardWidgets': instance.seededDashboardWidgets,
       'onlyStatisticsProxy': instance.onlyStatisticsProxy,
       'showNotificationStopAction': instance.showNotificationStopAction,
       'autoLaunch': instance.autoLaunch,
@@ -150,6 +159,7 @@ const _$DashboardWidgetEnumMap = {
   DashboardWidget.runTime: 'runTime',
   DashboardWidget.proxyGroups: 'proxyGroups',
   DashboardWidget.profiles: 'profiles',
+  DashboardWidget.customRouting: 'customRouting',
 };
 
 _AccessControlProps _$AccessControlPropsFromJson(Map<String, dynamic> json) =>
