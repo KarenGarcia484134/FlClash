@@ -658,6 +658,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "hideFromList": MessageLookupByLibrary.simpleMessage("从列表中隐藏"),
     "hideIp": MessageLookupByLibrary.simpleMessage("隐藏 IP"),
     "hidePassword": MessageLookupByLibrary.simpleMessage("隐藏密码"),
+    "hideTimeoutNodes": MessageLookupByLibrary.simpleMessage("隐藏超时"),
     "hideTimeoutProxies": MessageLookupByLibrary.simpleMessage("隐藏超时代理"),
     "hideTimeoutProxiesDesc": MessageLookupByLibrary.simpleMessage(
       "不显示上次延迟测试超时的代理",
@@ -1289,6 +1290,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "socksPort": MessageLookupByLibrary.simpleMessage("Socks端口"),
     "sort": MessageLookupByLibrary.simpleMessage("排序"),
+    "sortByDelay": MessageLookupByLibrary.simpleMessage("按延迟排序"),
     "source": MessageLookupByLibrary.simpleMessage("来源"),
     "sourceIp": MessageLookupByLibrary.simpleMessage("源IP"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("特殊代理"),
@@ -1387,6 +1389,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleStatusRunning": MessageLookupByLibrary.simpleMessage("已连接"),
     "tapToAuthorize": MessageLookupByLibrary.simpleMessage("点击授权"),
     "tcpConcurrent": MessageLookupByLibrary.simpleMessage("TCP并发"),
+    "testAllDelays": MessageLookupByLibrary.simpleMessage("全部测速"),
     "testInterval": MessageLookupByLibrary.simpleMessage("测试间隔"),
     "testUrl": MessageLookupByLibrary.simpleMessage("测速链接"),
     "testWhenUsed": MessageLookupByLibrary.simpleMessage("使用时测试"),

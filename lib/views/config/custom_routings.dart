@@ -6,6 +6,7 @@ import 'package:fl_clash/features/form/form.dart';
 import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/views/config/outbound_delay.dart';
 import 'package:fl_clash/views/config/tailscale.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
@@ -45,49 +46,119 @@ Future<String?> showRoutingTargetSheet(
 }) {
   return showSheet<String>(
     context: context,
-    builder: (context) => Consumer(
-      builder: (_, ref, _) {
-        final appLocalizations = context.appLocalizations;
-        final profileId = ref.watch(currentProfileIdProvider);
-        final clashConfig = profileId == null
-            ? null
-            : ref.watch(clashConfigProvider(profileId)).value;
-        final groups = clashConfig?.proxyGroups ?? const [];
-        final proxies = clashConfig?.proxies ?? const [];
-        final groupTypes = {
-          for (final item in groups) item.name: item.type.name,
-        };
-        final proxyTypes = {for (final item in proxies) item.name: item.type};
-        final tailscale = currentTailscaleProxyName(ref);
-        return SelectionSheet<String>(
-          title: appLocalizations.routingTarget,
-          sections: [
-            SelectionSection(
-              label: appLocalizations.basicStrategy,
-              items: [
-                for (final name in RuleTarget.ruleTargetNames)
-                  if (!groupTypes.containsKey(name)) name,
-                ?tailscale,
-              ],
-            ),
-            SelectionSection(
-              label: appLocalizations.proxyGroup,
-              items: groupTypes.keys.toList(),
-              subtitleBuilder: (_, name) => groupTypes[name] ?? '',
-            ),
-            SelectionSection(
-              label: appLocalizations.proxies,
-              items: proxyTypes.keys.toList(),
-              subtitleBuilder: (_, name) => proxyTypes[name] ?? '',
-            ),
-          ],
-          labelBuilder: (item) => item,
-          selectedOf: (_) => selected,
-          onSelected: (item) => Navigator.of(context).pop(item),
-        );
-      },
-    ),
+    builder: (context) => _RoutingTargetSheet(selected: selected),
   );
+}
+
+class _RoutingTargetSheet extends ConsumerStatefulWidget {
+  const _RoutingTargetSheet({required this.selected});
+
+  final String? selected;
+
+  @override
+  ConsumerState<_RoutingTargetSheet> createState() =>
+      _RoutingTargetSheetState();
+}
+
+class _RoutingTargetSheetState extends ConsumerState<_RoutingTargetSheet> {
+  bool _sortByDelay = false;
+  bool _hideTimeout = false;
+
+  List<String> _arrange(List<String> names) {
+    if (!_sortByDelay && !_hideTimeout) {
+      return names;
+    }
+    final delays = {
+      for (final name in names) name: ref.watch(delayProvider(proxyName: name)),
+    };
+    return sortedOutbounds(
+      names,
+      delays,
+      sortByDelay: _sortByDelay,
+      hideTimeout: _hideTimeout,
+      keep: widget.selected,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final appLocalizations = context.appLocalizations;
+    final profileId = ref.watch(currentProfileIdProvider);
+    final clashConfig = profileId == null
+        ? null
+        : ref.watch(clashConfigProvider(profileId)).value;
+    final groups = clashConfig?.proxyGroups ?? const [];
+    final proxies = clashConfig?.proxies ?? const [];
+    final groupTypes = {for (final item in groups) item.name: item.type.name};
+    final proxyTypes = {for (final item in proxies) item.name: item.type};
+    final tailscale = currentTailscaleProxyName(ref);
+    final testable = [...groupTypes.keys, ...proxyTypes.keys, ?tailscale];
+    final groupNow = {
+      for (final name in groupTypes.keys)
+        name: ref.watch(realSelectedProxyStateProvider(name)).proxyName,
+    };
+    final testing = testable.any(
+      (name) => ref.watch(delayTestPhaseProvider(proxyName: name)) != null,
+    );
+    return SelectionSheet<String>(
+      title: appLocalizations.routingTarget,
+      actions: [
+        AppBarActionButton(
+          data: IconButtonData(
+            glyph: AppGlyphs.bolt,
+            tooltip: appLocalizations.testAllDelays,
+            isLoading: testing,
+            onPressed: () => testOutboundDelays(ref, testable),
+          ),
+        ),
+      ],
+      header: Wrap(
+        spacing: 8,
+        children: [
+          FilterChip(
+            label: Text(appLocalizations.sortByDelay),
+            selected: _sortByDelay,
+            onSelected: (value) => setState(() => _sortByDelay = value),
+          ),
+          FilterChip(
+            label: Text(appLocalizations.hideTimeoutNodes),
+            selected: _hideTimeout,
+            onSelected: (value) => setState(() => _hideTimeout = value),
+          ),
+        ],
+      ),
+      sections: [
+        SelectionSection(
+          label: appLocalizations.basicStrategy,
+          items: [
+            for (final name in RuleTarget.ruleTargetNames)
+              if (!groupTypes.containsKey(name)) name,
+            ?tailscale,
+          ],
+        ),
+        SelectionSection(
+          label: appLocalizations.proxyGroup,
+          items: _arrange(groupTypes.keys.toList()),
+          subtitleBuilder: (_, name) {
+            final now = groupNow[name] ?? '';
+            final type = groupTypes[name] ?? '';
+            return now.isEmpty || now == name ? type : '$type → $now';
+          },
+        ),
+        SelectionSection(
+          label: appLocalizations.proxies,
+          items: _arrange(proxyTypes.keys.toList()),
+          subtitleBuilder: (_, name) => proxyTypes[name] ?? '',
+        ),
+      ],
+      labelBuilder: (item) => item,
+      trailingBuilder: (item) =>
+          hasOutboundDelay(item) ? OutboundDelayBadge(name: item) : null,
+      onLongPress: (item) => testOutboundDelay(ref, item),
+      selectedOf: (_) => widget.selected,
+      onSelected: (item) => Navigator.of(context).pop(item),
+    );
+  }
 }
 
 class CustomRoutingsView extends ConsumerStatefulWidget {
@@ -277,6 +348,11 @@ class _CustomRoutingItem extends ConsumerWidget {
                     : context.colorScheme.tertiary,
               ),
             ),
+            if (!missing && hasOutboundDelay(target))
+              WidgetSpan(
+                alignment: PlaceholderAlignment.middle,
+                child: OutboundDelayBadge(name: target),
+              ),
             TextSpan(text: '  ${customRoutingSummary(routing)}'),
           ],
         ),

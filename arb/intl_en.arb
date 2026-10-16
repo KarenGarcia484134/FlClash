@@ -957,5 +957,8 @@
   "tailscaleDialerProxy": "Connection proxy",
   "tailscaleDialerProxyDesc": "Tailscale's own traffic to its control server, DERP relays and peers goes through this proxy or group. Choose one if the control server cannot be reached directly.",
   "tailscaleNetworkIssue": "The control server could not be reached (network timeout). This is a network problem, not the auth key: choose a connection proxy above and connect again.",
-  "recommended": "Recommended"
+  "recommended": "Recommended",
+  "testAllDelays": "Test all",
+  "sortByDelay": "Sort by latency",
+  "hideTimeoutNodes": "Hide timeouts"
 }

@@ -30,6 +30,17 @@ class SelectionSheet<T> extends ConsumerStatefulWidget {
   final String? emptyLabel;
   final NullStatus? loadingStatus;
 
+  /// Extra trailing content for an item, shown before the selection check.
+  final Widget? Function(T item)? trailingBuilder;
+
+  /// A long press runs this instead of selecting the item.
+  final ValueChanged<T>? onLongPress;
+
+  /// Shown above the first section, for controls such as sorting.
+  final Widget? header;
+
+  final List<Widget>? actions;
+
   /// A picked item collapses out instead of the sheet closing, which it does
   /// once the last item is picked.
   final bool removeOnSelect;
@@ -45,6 +56,10 @@ class SelectionSheet<T> extends ConsumerStatefulWidget {
     this.emptyLabel,
     this.loadingStatus,
     this.removeOnSelect = false,
+    this.trailingBuilder,
+    this.onLongPress,
+    this.header,
+    this.actions,
   });
 
   @override
@@ -244,16 +259,24 @@ class _SelectionSheetState<T> extends ConsumerState<SelectionSheet<T>>
         overflow: TextOverflow.ellipsis,
       ),
     );
+    final extra = widget.trailingBuilder?.call(item);
+    final check = isSelected ? const GlyphIcon(AppGlyphs.check) : null;
+    final onLongPress = widget.onLongPress;
+    final Widget tile = DecorationListItem(
+      onPressed: () => _handleSelected(item),
+      subtitle: subtitle != null ? TooltipLabel(subtitle) : null,
+      title: widget.titleBuilder?.call(item, title) ?? title,
+      isSelected: isSelected,
+      trailing: extra == null
+          ? check
+          : Row(mainAxisSize: MainAxisSize.min, children: [extra, ?check]),
+    );
     final row = ItemPositionProvider(
       key: isRevealTarget ? _selectedKey : null,
       position: position,
-      child: DecorationListItem(
-        onPressed: () => _handleSelected(item),
-        subtitle: subtitle != null ? TooltipLabel(subtitle) : null,
-        title: widget.titleBuilder?.call(item, title) ?? title,
-        isSelected: isSelected,
-        trailing: isSelected ? const GlyphIcon(AppGlyphs.check) : null,
-      ),
+      child: onLongPress == null
+          ? tile
+          : GestureDetector(onLongPress: () => onLongPress(item), child: tile),
     );
     if (!widget.removeOnSelect) {
       return row;
@@ -288,6 +311,7 @@ class _SelectionSheetState<T> extends ConsumerState<SelectionSheet<T>>
         _countOf(widget.sections) >= sheetSearchMinItemCount;
     return CommonScaffold(
       title: widget.title,
+      actions: widget.actions,
       searchState: searchable
           ? AppBarSearchState(onSearch: _handleSearch)
           : null,
@@ -306,6 +330,11 @@ class _SelectionSheetState<T> extends ConsumerState<SelectionSheet<T>>
               SliverToBoxAdapter(
                 child: SizedBox(height: context.contentTopPadding),
               ),
+              if (widget.header case final header?)
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  sliver: SliverToBoxAdapter(child: header),
+                ),
               for (final (sectionIndex, section) in sections.indexed) ...[
                 if (section.label != null)
                   SliverPadding(

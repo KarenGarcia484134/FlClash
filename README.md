@@ -20,6 +20,7 @@ Based on [chen08209/FlClash](https://github.com/chen08209/FlClash). Thanks to th
 - Visual rule editor: domain suffix / keyword / exact domain, IP-CIDR / IP-CIDR6, GEOSITE, GEOIP, process name, rule sets and more, combined with OR / AND
 - A separate outbound per entry: a policy (DIRECT / REJECT …), a group, a single node or the Tailscale node; a missing outbound is marked red and skipped when the config is generated
 - Injected **in front of** the profile's rules in list order; drag to reorder, toggle, and duplicate (the copy is named "name copy")
+- Outbound latency: the outbound picker shows each node's delay (green / yellow / red / timeout, shared with the proxies page), with test all, tap or **long-press** a node to test it (long-press does not select), sort by latency and hide timeouts; groups show their current node and its delay; each entry in the routing list shows its outbound's delay, tap or long-press to retest
 
 ### Extend tab layout
 
