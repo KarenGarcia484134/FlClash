@@ -85,6 +85,11 @@ extension DashboardWidgetView on DashboardWidget {
       crossAxisCellCount: 4,
       child: ProfilesCard(),
     ),
+    DashboardWidget.customRouting => const GridItem(
+      key: ValueKey(DashboardWidget.customRouting),
+      crossAxisCellCount: 4,
+      child: CustomRoutingCard(),
+    ),
   };
 }
 

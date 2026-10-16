@@ -960,5 +960,8 @@
   "recommended": "おすすめ",
   "testAllDelays": "すべてテスト",
   "sortByDelay": "遅延順",
-  "hideTimeoutNodes": "タイムアウトを隠す"
+  "hideTimeoutNodes": "タイムアウトを隠す",
+  "customRoutingCardCount": "{total} 件中 {applied} 件が有効",
+  "customRoutingCardNoProfile": "プロファイル未選択",
+  "customRoutingUseInProfile": "現在のプロファイルで使用"
 }

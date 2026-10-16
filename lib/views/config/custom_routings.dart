@@ -211,6 +211,11 @@ class _CustomRoutingsViewState extends ConsumerState<CustomRoutingsView> {
   Widget _buildItem(List<CustomRouting> routings, int index) {
     final routing = routings[index];
     final appLocalizations = context.appLocalizations;
+    final profileId = ref.watch(currentProfileIdProvider);
+    final applied =
+        profileId != null &&
+        (ref.watch(profileCustomRoutingIdsProvider(profileId)).value ?? [])
+            .contains(routing.id);
     return SortableItem(
       key: ValueKey(routing.id),
       index: index,
@@ -243,6 +248,21 @@ class _CustomRoutingsViewState extends ConsumerState<CustomRoutingsView> {
           position: ItemPosition.get(index, routings.length),
           child: _CustomRoutingItem(
             routing: routing,
+            leading: profileId == null
+                ? null
+                : Tooltip(
+                    message: appLocalizations.customRoutingUseInProfile,
+                    child: Checkbox(
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      visualDensity: VisualDensity.compact,
+                      value: applied,
+                      onChanged: (_) => ref
+                          .read(
+                            profileCustomRoutingIdsProvider(profileId).notifier,
+                          )
+                          .toggle(routing.id),
+                    ),
+                  ),
             trailing: Switch(
               value: routing.enabled,
               onChanged: (value) {

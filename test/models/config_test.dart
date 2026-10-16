@@ -147,6 +147,7 @@ void main() {
     test('a saved outboundModeV2 card folds into outboundMode', () {
       final restored = AppSettingProps.fromJson({
         'dashboardWidgets': ['networkSpeed', 'outboundModeV2', 'outboundMode'],
+        'seededDashboardWidgets': seededDashboardWidgetNames,
       });
       expect(restored.dashboardWidgets, [
         DashboardWidget.networkSpeed,
@@ -155,6 +156,7 @@ void main() {
 
       final alone = AppSettingProps.fromJson({
         'dashboardWidgets': ['outboundModeV2', 'trafficUsage'],
+        'seededDashboardWidgets': seededDashboardWidgetNames,
       });
       expect(alone.dashboardWidgets, [
         DashboardWidget.outboundMode,
@@ -743,6 +745,7 @@ void main() {
     test('drops only the dashboard cards it does not know', () {
       final props = AppSettingProps.safeFromJson({
         'dashboardWidgets': ['runTime', 'futureCard', 'requests'],
+        'seededDashboardWidgets': seededDashboardWidgetNames,
         'hideIp': true,
       });
 

@@ -960,5 +960,18 @@
   "recommended": "Recommended",
   "testAllDelays": "Test all",
   "sortByDelay": "Sort by latency",
-  "hideTimeoutNodes": "Hide timeouts"
+  "hideTimeoutNodes": "Hide timeouts",
+  "customRoutingCardCount": "{applied} of {total} active",
+  "@customRoutingCardCount": {
+    "placeholders": {
+      "applied": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "customRoutingCardNoProfile": "No profile selected",
+  "customRoutingUseInProfile": "Use in current profile"
 }

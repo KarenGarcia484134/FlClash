@@ -960,5 +960,8 @@
   "recommended": "推荐",
   "testAllDelays": "全部测速",
   "sortByDelay": "按延迟排序",
-  "hideTimeoutNodes": "隐藏超时"
+  "hideTimeoutNodes": "隐藏超时",
+  "customRoutingCardCount": "已启用 {applied} / {total}",
+  "customRoutingCardNoProfile": "未选择配置",
+  "customRoutingUseInProfile": "在当前配置中使用"
 }

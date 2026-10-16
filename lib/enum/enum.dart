@@ -493,7 +493,8 @@ enum DashboardWidget {
   connections,
   runTime,
   proxyGroups,
-  profiles;
+  profiles,
+  customRouting;
 
   final List<SupportPlatform> platforms;
 
