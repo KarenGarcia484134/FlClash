@@ -35,17 +35,18 @@ jobs:
       tag: ${{ steps.meta.outputs.tag }}
       prerelease: ${{ steps.meta.outputs.prerelease }}
       app_env: ${{ steps.meta.outputs.app_env }}
+    # APP_ENV only drives the corner banner, which a fork release should not show.
     steps:
       - id: meta
         shell: bash
         run: |
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             tag="$GITHUB_REF_NAME"
-            if [[ "$tag" == *-* ]]; then pre=true; env=pre; else pre=false; env=stable; fi
+            if [[ "$tag" == *-* ]]; then pre=true; env=stable; else pre=false; env=stable; fi
           else
             branch="${GITHUB_REF_NAME//\//-}"
             tag="build-${branch}-$(date -u +%Y%m%d)-${GITHUB_SHA::7}"
-            pre=true; env=pre
+            pre=true; env=stable
           fi
           {
             echo "tag=$tag"
