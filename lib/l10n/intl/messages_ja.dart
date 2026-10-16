@@ -1485,6 +1485,39 @@ class MessageLookup extends MessageLookupByLibrary {
     "systemProxy": MessageLookupByLibrary.simpleMessage("システムプロキシ"),
     "tab": MessageLookupByLibrary.simpleMessage("タブ"),
     "tabAnimation": MessageLookupByLibrary.simpleMessage("タブアニメーション"),
+    "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage("ルートを受け入れる"),
+    "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("認証キー"),
+    "tailscaleConnect": MessageLookupByLibrary.simpleMessage("接続"),
+    "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage(
+      "コントロール URL (Headscale)",
+    ),
+    "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
+      "すべてのプロファイルに Tailscale ノードを追加し、tailnet のアドレス（100.64.0.0/10、fd7a:115c:a1e9::/48）と MagicDNS 名を他のすべてのルールより先にそこへ送ります。このページを離れると適用されます。",
+    ),
+    "tailscaleDnsSuffixes": MessageLookupByLibrary.simpleMessage(
+      "Tailnet DNS サフィックス",
+    ),
+    "tailscaleEnable": MessageLookupByLibrary.simpleMessage("Tailscale を有効化"),
+    "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage("エフェメラルノード"),
+    "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("出口ノード"),
+    "tailscaleHostname": MessageLookupByLibrary.simpleMessage("ホスト名"),
+    "tailscaleLoginDesc": MessageLookupByLibrary.simpleMessage(
+      "認証キーがない場合は「接続」をタップすると、ノードが起動してここにログインリンクが表示されます。ブラウザで承認すると再起動後もログインが保持されます。",
+    ),
+    "tailscaleNode": MessageLookupByLibrary.simpleMessage("ノード"),
+    "tailscaleOpenLogin": MessageLookupByLibrary.simpleMessage("ログインページを開く"),
+    "tailscaleReset": MessageLookupByLibrary.simpleMessage("ログアウトしてリセット"),
+    "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
+      "このデバイスに保存された Tailscale のログイン状態を削除し、再ログインが必要になります。続行しますか？",
+    ),
+    "tailscaleSilentLogTip": MessageLookupByLibrary.simpleMessage(
+      "ログレベルが silent のため、ログインリンクを読み取れません。別のログレベルを選んでください。",
+    ),
+    "tailscaleStatusIdle": MessageLookupByLibrary.simpleMessage("未起動"),
+    "tailscaleStatusNeedsLogin": MessageLookupByLibrary.simpleMessage(
+      "ログインが必要",
+    ),
+    "tailscaleStatusRunning": MessageLookupByLibrary.simpleMessage("接続済み"),
     "tapToAuthorize": MessageLookupByLibrary.simpleMessage("タップして許可"),
     "tcpConcurrent": MessageLookupByLibrary.simpleMessage("TCP同時接続"),
     "testInterval": MessageLookupByLibrary.simpleMessage("テスト間隔"),

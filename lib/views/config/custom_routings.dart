@@ -6,6 +6,7 @@ import 'package:fl_clash/features/form/form.dart';
 import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/views/config/tailscale.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -51,6 +52,7 @@ Future<String?> showRoutingTargetSheet(
           for (final item in groups) item.name: item.type.name,
         };
         final proxyTypes = {for (final item in proxies) item.name: item.type};
+        final tailscale = currentTailscaleProxyName(ref);
         return SelectionSheet<String>(
           title: appLocalizations.routingTarget,
           sections: [
@@ -59,6 +61,7 @@ Future<String?> showRoutingTargetSheet(
               items: [
                 for (final name in RuleTarget.ruleTargetNames)
                   if (!groupTypes.containsKey(name)) name,
+                ?tailscale,
               ],
             ),
             SelectionSection(

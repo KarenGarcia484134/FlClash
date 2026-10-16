@@ -967,7 +967,7 @@ final class CustomRoutingsProvider
   CustomRoutings create() => CustomRoutings();
 }
 
-String _$customRoutingsHash() => r'baadd32112b3c5ab9c0fcae70a9091caec267891';
+String _$customRoutingsHash() => r'be959ec3d866647c1bf82e176211b1fc2cd57024';
 
 abstract class _$CustomRoutings extends $StreamNotifier<List<CustomRouting>> {
   Stream<List<CustomRouting>> build();
@@ -1031,7 +1031,7 @@ final class ProfileCustomRoutingIdsProvider
 }
 
 String _$profileCustomRoutingIdsHash() =>
-    r'793aae6b2a73d68be0c0f06fd7ecdbb19d63c111';
+    r'19cde242ee63c0cf03f1524e72fc3cd5a32432b6';
 
 final class ProfileCustomRoutingIdsFamily extends $Family
     with

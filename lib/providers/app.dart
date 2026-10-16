@@ -24,6 +24,25 @@ class AuthorizedTunEnable extends _$AuthorizedTunEnable
   }
 }
 
+/// What the Core last logged about the injected Tailscale node.
+@Riverpod(keepAlive: true)
+class TailscaleState extends _$TailscaleState with AutoDisposeNotifierMixin {
+  @override
+  TailscaleStatus build() {
+    return const TailscaleStatus();
+  }
+
+  void onLog(String payload) {
+    if (parseTailscaleLog(payload, state) case final next?) {
+      update((_) => next);
+    }
+  }
+
+  void reset() {
+    value = const TailscaleStatus();
+  }
+}
+
 @Riverpod(keepAlive: true)
 class Logs extends _$Logs with AutoDisposeNotifierMixin {
   @override

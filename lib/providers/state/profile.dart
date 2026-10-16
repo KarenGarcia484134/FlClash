@@ -61,6 +61,7 @@ Future<SetupState> setupState(Ref ref, int? profileId) async {
           ),
         );
   final allProfileProviders = ref.watch(profileProvidersProvider);
+  final tailscale = ref.watch(tailscaleSettingProvider);
   List<ProxyGroup> proxyGroups = [];
   List<Rule> rules = [];
   List<Rule> addedRules = [];
@@ -108,6 +109,7 @@ Future<SetupState> setupState(Ref ref, int? profileId) async {
     extendType: extendType,
     addedRules: addedRules,
     customRoutings: customRoutings,
+    tailscale: tailscale,
     script: script,
     overrides: overrides,
     matchTarget:

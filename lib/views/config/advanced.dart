@@ -4,6 +4,7 @@ import 'package:fl_clash/views/config/custom_routings.dart';
 import 'package:fl_clash/views/config/dns.dart';
 import 'package:fl_clash/views/config/network.dart';
 import 'package:fl_clash/views/config/scripts.dart';
+import 'package:fl_clash/views/config/tailscale.dart';
 import 'package:fl_clash/widgets/list.dart';
 import 'package:fl_clash/widgets/scaffold.dart';
 import 'package:material_ui/material_ui.dart';
@@ -39,6 +40,11 @@ class AdvancedConfigView extends StatelessWidget {
         title: Text(appLocalizations.customRouting),
         leading: const GlyphIcon(AppGlyphs.split),
         widget: const CustomRoutingsView(),
+      ),
+      ListItem.open(
+        title: const Text('Tailscale'),
+        leading: const GlyphIcon(AppGlyphs.vpn),
+        widget: const TailscaleView(),
       ),
       ListItem.open(
         title: Text(appLocalizations.script),

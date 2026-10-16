@@ -7751,6 +7751,191 @@ class AppLocalizations {
       args: [mode],
     );
   }
+
+  /// `Adds a Tailscale node to every profile and sends tailnet addresses (100.64.0.0/10, fd7a:115c:a1e9::/48) and MagicDNS names to it, ahead of all other rules. Changes apply when you leave this page.`
+  String get tailscaleDesc {
+    return Intl.message(
+      'Adds a Tailscale node to every profile and sends tailnet addresses (100.64.0.0/10, fd7a:115c:a1e9::/48) and MagicDNS names to it, ahead of all other rules. Changes apply when you leave this page.',
+      name: 'tailscaleDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Node`
+  String get tailscaleNode {
+    return Intl.message('Node', name: 'tailscaleNode', desc: '', args: []);
+  }
+
+  /// `Hostname`
+  String get tailscaleHostname {
+    return Intl.message(
+      'Hostname',
+      name: 'tailscaleHostname',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Auth key`
+  String get tailscaleAuthKey {
+    return Intl.message(
+      'Auth key',
+      name: 'tailscaleAuthKey',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Control URL (Headscale)`
+  String get tailscaleControlUrl {
+    return Intl.message(
+      'Control URL (Headscale)',
+      name: 'tailscaleControlUrl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exit node`
+  String get tailscaleExitNode {
+    return Intl.message(
+      'Exit node',
+      name: 'tailscaleExitNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tailnet DNS suffixes`
+  String get tailscaleDnsSuffixes {
+    return Intl.message(
+      'Tailnet DNS suffixes',
+      name: 'tailscaleDnsSuffixes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Accept routes`
+  String get tailscaleAcceptRoutes {
+    return Intl.message(
+      'Accept routes',
+      name: 'tailscaleAcceptRoutes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ephemeral node`
+  String get tailscaleEphemeral {
+    return Intl.message(
+      'Ephemeral node',
+      name: 'tailscaleEphemeral',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not started`
+  String get tailscaleStatusIdle {
+    return Intl.message(
+      'Not started',
+      name: 'tailscaleStatusIdle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Needs login`
+  String get tailscaleStatusNeedsLogin {
+    return Intl.message(
+      'Needs login',
+      name: 'tailscaleStatusNeedsLogin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connected`
+  String get tailscaleStatusRunning {
+    return Intl.message(
+      'Connected',
+      name: 'tailscaleStatusRunning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open login page`
+  String get tailscaleOpenLogin {
+    return Intl.message(
+      'Open login page',
+      name: 'tailscaleOpenLogin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Without an auth key, tap Connect: the node starts and shows a login link here. After you approve it in the browser the login is kept across restarts.`
+  String get tailscaleLoginDesc {
+    return Intl.message(
+      'Without an auth key, tap Connect: the node starts and shows a login link here. After you approve it in the browser the login is kept across restarts.',
+      name: 'tailscaleLoginDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The log level is silent, so the login link cannot be read. Choose another log level.`
+  String get tailscaleSilentLogTip {
+    return Intl.message(
+      'The log level is silent, so the login link cannot be read. Choose another log level.',
+      name: 'tailscaleSilentLogTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connect`
+  String get tailscaleConnect {
+    return Intl.message(
+      'Connect',
+      name: 'tailscaleConnect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Log out and reset`
+  String get tailscaleReset {
+    return Intl.message(
+      'Log out and reset',
+      name: 'tailscaleReset',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This deletes the saved Tailscale login of this device, so it has to log in again. Continue?`
+  String get tailscaleResetTip {
+    return Intl.message(
+      'This deletes the saved Tailscale login of this device, so it has to log in again. Continue?',
+      name: 'tailscaleResetTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable Tailscale`
+  String get tailscaleEnable {
+    return Intl.message(
+      'Enable Tailscale',
+      name: 'tailscaleEnable',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

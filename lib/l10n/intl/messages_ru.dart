@@ -1826,6 +1826,51 @@ class MessageLookup extends MessageLookupByLibrary {
     "systemProxy": MessageLookupByLibrary.simpleMessage("Системный прокси"),
     "tab": MessageLookupByLibrary.simpleMessage("Вкладки"),
     "tabAnimation": MessageLookupByLibrary.simpleMessage("Анимация вкладок"),
+    "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage(
+      "Принимать маршруты",
+    ),
+    "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage(
+      "Ключ авторизации",
+    ),
+    "tailscaleConnect": MessageLookupByLibrary.simpleMessage("Подключить"),
+    "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage(
+      "Сервер управления (Headscale)",
+    ),
+    "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
+      "Добавляет узел Tailscale во все профили и направляет на него адреса tailnet (100.64.0.0/10, fd7a:115c:a1e9::/48) и имена MagicDNS раньше всех правил. Применяется при выходе со страницы.",
+    ),
+    "tailscaleDnsSuffixes": MessageLookupByLibrary.simpleMessage(
+      "DNS-суффиксы tailnet",
+    ),
+    "tailscaleEnable": MessageLookupByLibrary.simpleMessage(
+      "Включить Tailscale",
+    ),
+    "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage(
+      "Временный узел",
+    ),
+    "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("Выходной узел"),
+    "tailscaleHostname": MessageLookupByLibrary.simpleMessage("Имя хоста"),
+    "tailscaleLoginDesc": MessageLookupByLibrary.simpleMessage(
+      "Без ключа нажмите «Подключить»: узел запустится и покажет здесь ссылку для входа. После подтверждения в браузере вход сохраняется и после перезапуска.",
+    ),
+    "tailscaleNode": MessageLookupByLibrary.simpleMessage("Узел"),
+    "tailscaleOpenLogin": MessageLookupByLibrary.simpleMessage(
+      "Открыть страницу входа",
+    ),
+    "tailscaleReset": MessageLookupByLibrary.simpleMessage("Выйти и сбросить"),
+    "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
+      "Сохранённый вход Tailscale на этом устройстве будет удалён, потребуется войти снова. Продолжить?",
+    ),
+    "tailscaleSilentLogTip": MessageLookupByLibrary.simpleMessage(
+      "Уровень журнала silent, ссылку для входа прочитать нельзя. Выберите другой уровень.",
+    ),
+    "tailscaleStatusIdle": MessageLookupByLibrary.simpleMessage("Не запущен"),
+    "tailscaleStatusNeedsLogin": MessageLookupByLibrary.simpleMessage(
+      "Требуется вход",
+    ),
+    "tailscaleStatusRunning": MessageLookupByLibrary.simpleMessage(
+      "Подключено",
+    ),
     "tapToAuthorize": MessageLookupByLibrary.simpleMessage(
       "Нажмите, чтобы разрешить",
     ),

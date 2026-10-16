@@ -9,6 +9,7 @@ import 'common.dart';
 import 'config.dart';
 import 'core.dart';
 import 'custom_routing.dart';
+import 'tailscale.dart';
 import 'profile.dart';
 
 part 'generated/state.freezed.dart';
@@ -343,6 +344,7 @@ abstract class MakeRealProfileState with _$MakeRealProfileState {
     required List<Rule> rules,
     required List<Rule> addedRules,
     @Default([]) List<CustomRouting> customRoutings,
+    @Default(TailscaleProps()) TailscaleProps tailscale,
     required String defaultUA,
     @Default([]) List<String> authentication,
     @Default({}) Map<String, dynamic> injectedProxyProviders,
@@ -384,6 +386,7 @@ abstract class SetupState with _$SetupState {
     @Default([]) List<CustomProxy> appProxies,
     @Default({}) Map<int, String> proxyDialers,
     @Default([]) List<CustomRouting> customRoutings,
+    @Default(TailscaleProps()) TailscaleProps tailscale,
     String? matchTarget,
   }) = _SetupState;
 }

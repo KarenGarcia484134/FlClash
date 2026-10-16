@@ -1330,6 +1330,37 @@ class MessageLookup extends MessageLookupByLibrary {
     "systemProxy": MessageLookupByLibrary.simpleMessage("系统代理"),
     "tab": MessageLookupByLibrary.simpleMessage("标签页"),
     "tabAnimation": MessageLookupByLibrary.simpleMessage("选项卡动画"),
+    "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage("接受子网路由"),
+    "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("认证密钥 (Auth key)"),
+    "tailscaleConnect": MessageLookupByLibrary.simpleMessage("连接"),
+    "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage(
+      "控制服务器 (Headscale)",
+    ),
+    "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
+      "为所有配置加入一个 Tailscale 节点，并把 tailnet 地址（100.64.0.0/10、fd7a:115c:a1e9::/48）和 MagicDNS 域名优先路由到它，排在所有规则之前。离开本页时生效。",
+    ),
+    "tailscaleDnsSuffixes": MessageLookupByLibrary.simpleMessage(
+      "Tailnet 域名后缀",
+    ),
+    "tailscaleEnable": MessageLookupByLibrary.simpleMessage("启用 Tailscale"),
+    "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage("临时节点"),
+    "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("出口节点"),
+    "tailscaleHostname": MessageLookupByLibrary.simpleMessage("主机名"),
+    "tailscaleLoginDesc": MessageLookupByLibrary.simpleMessage(
+      "没有认证密钥时点“连接”：节点启动后会在这里显示登录链接，在浏览器中授权后登录状态会一直保留，重启也不会丢失。",
+    ),
+    "tailscaleNode": MessageLookupByLibrary.simpleMessage("节点"),
+    "tailscaleOpenLogin": MessageLookupByLibrary.simpleMessage("打开登录页面"),
+    "tailscaleReset": MessageLookupByLibrary.simpleMessage("退出登录并重置"),
+    "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
+      "这会删除本设备保存的 Tailscale 登录状态，之后需要重新登录。继续吗？",
+    ),
+    "tailscaleSilentLogTip": MessageLookupByLibrary.simpleMessage(
+      "日志等级为 silent，无法读取登录链接，请换成其他日志等级。",
+    ),
+    "tailscaleStatusIdle": MessageLookupByLibrary.simpleMessage("未启动"),
+    "tailscaleStatusNeedsLogin": MessageLookupByLibrary.simpleMessage("需要登录"),
+    "tailscaleStatusRunning": MessageLookupByLibrary.simpleMessage("已连接"),
     "tapToAuthorize": MessageLookupByLibrary.simpleMessage("点击授权"),
     "tcpConcurrent": MessageLookupByLibrary.simpleMessage("TCP并发"),
     "testInterval": MessageLookupByLibrary.simpleMessage("测试间隔"),

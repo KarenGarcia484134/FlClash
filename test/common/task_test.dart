@@ -361,6 +361,47 @@ void main() {
     },
   );
 
+  test('makeRealProfileTask puts tailscale rules first', () async {
+    final rawConfig = await decodeJSONTask<Map<String, dynamic>>(
+      await encodeJSONTask({
+        'proxies': [],
+        'rules': ['MATCH,DIRECT'],
+      }),
+    );
+    final result = await makeRealProfileTask(
+      MakeRealProfileState(
+        profilesPath: '/profiles',
+        profileId: 7,
+        rawConfig: rawConfig,
+        realPatchConfig: const PatchClashConfig(),
+        appendSystemDns: false,
+        proxyGroups: const [],
+        rules: const [],
+        addedRules: const [],
+        customRoutings: const [
+          CustomRouting(
+            id: 1,
+            target: 'Tailscale',
+            conditions: [
+              CustomRoutingCondition(values: ['home.example']),
+            ],
+          ),
+        ],
+        tailscale: const TailscaleProps(enable: true),
+        defaultUA: 'FlClash-Test',
+      ),
+    );
+    final yaml = loadYaml(result.yaml) as YamlMap;
+    expect(yaml['rules'], [
+      'IP-CIDR,100.64.0.0/10,Tailscale,no-resolve',
+      'IP-CIDR6,fd7a:115c:a1e9::/48,Tailscale,no-resolve',
+      'DOMAIN-SUFFIX,ts.net,Tailscale',
+      'DOMAIN-SUFFIX,home.example,Tailscale',
+      'MATCH,DIRECT',
+    ]);
+    expect((yaml['proxies'] as YamlList).single['type'], 'tailscale');
+  });
+
   // The core re-reads these two keys out of the generated config on every
   // profile apply and adopts whatever it finds, so a subscription that ships
   // them would otherwise decide whether GEO databases auto-update — including

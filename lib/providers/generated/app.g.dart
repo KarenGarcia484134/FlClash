@@ -102,6 +102,64 @@ abstract class _$AuthorizedTunEnable extends $Notifier<TunAuthorizationState> {
   }
 }
 
+/// What the Core last logged about the injected Tailscale node.
+
+@ProviderFor(TailscaleState)
+final tailscaleStateProvider = TailscaleStateProvider._();
+
+/// What the Core last logged about the injected Tailscale node.
+final class TailscaleStateProvider
+    extends $NotifierProvider<TailscaleState, TailscaleStatus> {
+  /// What the Core last logged about the injected Tailscale node.
+  TailscaleStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'tailscaleStateProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$tailscaleStateHash();
+
+  @$internal
+  @override
+  TailscaleState create() => TailscaleState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(TailscaleStatus value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<TailscaleStatus>(value),
+    );
+  }
+}
+
+String _$tailscaleStateHash() => r'6f8a3324d538a875ef9c84b184421bf855aa3dc2';
+
+/// What the Core last logged about the injected Tailscale node.
+
+abstract class _$TailscaleState extends $Notifier<TailscaleStatus> {
+  TailscaleStatus build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<TailscaleStatus, TailscaleStatus>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<TailscaleStatus, TailscaleStatus>,
+              TailscaleStatus,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(Logs)
 final logsProvider = LogsProvider._();
 

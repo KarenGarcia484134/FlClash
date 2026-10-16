@@ -1745,6 +1745,45 @@ class MessageLookup extends MessageLookupByLibrary {
     "systemProxy": MessageLookupByLibrary.simpleMessage("System proxy"),
     "tab": MessageLookupByLibrary.simpleMessage("Tab"),
     "tabAnimation": MessageLookupByLibrary.simpleMessage("Tab animation"),
+    "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage(
+      "Accept routes",
+    ),
+    "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("Auth key"),
+    "tailscaleConnect": MessageLookupByLibrary.simpleMessage("Connect"),
+    "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage(
+      "Control URL (Headscale)",
+    ),
+    "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
+      "Adds a Tailscale node to every profile and sends tailnet addresses (100.64.0.0/10, fd7a:115c:a1e9::/48) and MagicDNS names to it, ahead of all other rules. Changes apply when you leave this page.",
+    ),
+    "tailscaleDnsSuffixes": MessageLookupByLibrary.simpleMessage(
+      "Tailnet DNS suffixes",
+    ),
+    "tailscaleEnable": MessageLookupByLibrary.simpleMessage("Enable Tailscale"),
+    "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage(
+      "Ephemeral node",
+    ),
+    "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("Exit node"),
+    "tailscaleHostname": MessageLookupByLibrary.simpleMessage("Hostname"),
+    "tailscaleLoginDesc": MessageLookupByLibrary.simpleMessage(
+      "Without an auth key, tap Connect: the node starts and shows a login link here. After you approve it in the browser the login is kept across restarts.",
+    ),
+    "tailscaleNode": MessageLookupByLibrary.simpleMessage("Node"),
+    "tailscaleOpenLogin": MessageLookupByLibrary.simpleMessage(
+      "Open login page",
+    ),
+    "tailscaleReset": MessageLookupByLibrary.simpleMessage("Log out and reset"),
+    "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
+      "This deletes the saved Tailscale login of this device, so it has to log in again. Continue?",
+    ),
+    "tailscaleSilentLogTip": MessageLookupByLibrary.simpleMessage(
+      "The log level is silent, so the login link cannot be read. Choose another log level.",
+    ),
+    "tailscaleStatusIdle": MessageLookupByLibrary.simpleMessage("Not started"),
+    "tailscaleStatusNeedsLogin": MessageLookupByLibrary.simpleMessage(
+      "Needs login",
+    ),
+    "tailscaleStatusRunning": MessageLookupByLibrary.simpleMessage("Connected"),
     "tapToAuthorize": MessageLookupByLibrary.simpleMessage("Tap to authorize"),
     "tcpConcurrent": MessageLookupByLibrary.simpleMessage("TCP concurrent"),
     "testInterval": MessageLookupByLibrary.simpleMessage("Test interval"),

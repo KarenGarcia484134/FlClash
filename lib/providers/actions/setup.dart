@@ -457,6 +457,7 @@ class SetupAction extends _$SetupAction {
         appendSystemDns: appendSystemDns,
         addedRules: setupState.addedRules,
         customRoutings: setupState.customRoutings,
+        tailscale: setupState.tailscale,
         defaultUA: defaultUA,
         authentication: networkSetting.authentication.credentials,
         matchTarget: setupState.matchTarget,
