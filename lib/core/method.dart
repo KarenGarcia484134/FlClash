@@ -48,6 +48,7 @@ enum CoreMethod {
   clearEffect,
   updateDns,
   watchRoute,
+  tailscaleStatus,
 }
 
 class CoreMethodCall {

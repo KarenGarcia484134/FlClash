@@ -7936,6 +7936,106 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Tailnet`
+  String get tailscaleNetwork {
+    return Intl.message(
+      'Tailnet',
+      name: 'tailscaleNetwork',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This device`
+  String get tailscaleLocalNode {
+    return Intl.message(
+      'This device',
+      name: 'tailscaleLocalNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Devices`
+  String get tailscalePeers {
+    return Intl.message('Devices', name: 'tailscalePeers', desc: '', args: []);
+  }
+
+  /// `The node is not running yet. Connect to load the device list.`
+  String get tailscaleNotStarted {
+    return Intl.message(
+      'The node is not running yet. Connect to load the device list.',
+      name: 'tailscaleNotStarted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Online`
+  String get tailscaleOnline {
+    return Intl.message('Online', name: 'tailscaleOnline', desc: '', args: []);
+  }
+
+  /// `Offline`
+  String get tailscaleOffline {
+    return Intl.message(
+      'Offline',
+      name: 'tailscaleOffline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Can be exit node`
+  String get tailscaleExitNodeOption {
+    return Intl.message(
+      'Can be exit node',
+      name: 'tailscaleExitNodeOption',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current exit node`
+  String get tailscaleCurrentExitNode {
+    return Intl.message(
+      'Current exit node',
+      name: 'tailscaleCurrentExitNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add to custom routing`
+  String get tailscaleAddRouting {
+    return Intl.message(
+      'Add to custom routing',
+      name: 'tailscaleAddRouting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Added to custom routing`
+  String get tailscaleRoutingAdded {
+    return Intl.message(
+      'Added to custom routing',
+      name: 'tailscaleRoutingAdded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Refresh`
+  String get tailscaleRefresh {
+    return Intl.message(
+      'Refresh',
+      name: 'tailscaleRefresh',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

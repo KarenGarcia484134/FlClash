@@ -60,6 +60,7 @@ const (
 	compileRuleSetMethod           CoreMethod = "compileRuleSet"
 	clearEffectMethod              CoreMethod = "clearEffect"
 	watchRouteMethod               CoreMethod = "watchRoute"
+	tailscaleStatusMethod          CoreMethod = "tailscaleStatus"
 )
 
 type MessageType string

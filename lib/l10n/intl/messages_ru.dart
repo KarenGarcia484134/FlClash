@@ -1829,12 +1829,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage(
       "Принимать маршруты",
     ),
+    "tailscaleAddRouting": MessageLookupByLibrary.simpleMessage(
+      "Добавить в пользовательскую маршрутизацию",
+    ),
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage(
       "Ключ авторизации",
     ),
     "tailscaleConnect": MessageLookupByLibrary.simpleMessage("Подключить"),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage(
       "Сервер управления (Headscale)",
+    ),
+    "tailscaleCurrentExitNode": MessageLookupByLibrary.simpleMessage(
+      "Текущий выходной узел",
     ),
     "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
       "Добавляет узел Tailscale во все профили и направляет на него адреса tailnet (100.64.0.0/10, fd7a:115c:a1e9::/48) и имена MagicDNS раньше всех правил. Применяется при выходе со страницы.",
@@ -1849,17 +1855,34 @@ class MessageLookup extends MessageLookupByLibrary {
       "Временный узел",
     ),
     "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("Выходной узел"),
+    "tailscaleExitNodeOption": MessageLookupByLibrary.simpleMessage(
+      "Может быть выходным узлом",
+    ),
     "tailscaleHostname": MessageLookupByLibrary.simpleMessage("Имя хоста"),
+    "tailscaleLocalNode": MessageLookupByLibrary.simpleMessage(
+      "Это устройство",
+    ),
     "tailscaleLoginDesc": MessageLookupByLibrary.simpleMessage(
       "Без ключа нажмите «Подключить»: узел запустится и покажет здесь ссылку для входа. После подтверждения в браузере вход сохраняется и после перезапуска.",
     ),
+    "tailscaleNetwork": MessageLookupByLibrary.simpleMessage("Сеть Tailnet"),
     "tailscaleNode": MessageLookupByLibrary.simpleMessage("Узел"),
+    "tailscaleNotStarted": MessageLookupByLibrary.simpleMessage(
+      "Узел ещё не запущен. Подключитесь, чтобы загрузить список устройств.",
+    ),
+    "tailscaleOffline": MessageLookupByLibrary.simpleMessage("Не в сети"),
+    "tailscaleOnline": MessageLookupByLibrary.simpleMessage("В сети"),
     "tailscaleOpenLogin": MessageLookupByLibrary.simpleMessage(
       "Открыть страницу входа",
     ),
+    "tailscalePeers": MessageLookupByLibrary.simpleMessage("Устройства"),
+    "tailscaleRefresh": MessageLookupByLibrary.simpleMessage("Обновить"),
     "tailscaleReset": MessageLookupByLibrary.simpleMessage("Выйти и сбросить"),
     "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
       "Сохранённый вход Tailscale на этом устройстве будет удалён, потребуется войти снова. Продолжить?",
+    ),
+    "tailscaleRoutingAdded": MessageLookupByLibrary.simpleMessage(
+      "Добавлено в пользовательскую маршрутизацию",
     ),
     "tailscaleSilentLogTip": MessageLookupByLibrary.simpleMessage(
       "Уровень журнала silent, ссылку для входа прочитать нельзя. Выберите другой уровень.",

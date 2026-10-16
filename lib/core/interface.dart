@@ -48,6 +48,8 @@ mixin CoreInterface {
 
   Future<OutboundIpResult?> outboundIp(OutboundIpParams params);
 
+  Future<TailscaleNetStatus> tailscaleStatus(String name, {bool start = false});
+
   Future<List<ServiceCheckItem>> serviceCheck(ServiceCheckParams params);
 
   Future<String> updateConfig(UpdateParams updateParams);
@@ -546,6 +548,21 @@ abstract class CoreHandlerInterface with CoreInterface {
       timeout: coreGuardFor(params.timeout),
     );
     return data == null ? null : OutboundIpResult.fromJson(data);
+  }
+
+  @override
+  Future<TailscaleNetStatus> tailscaleStatus(
+    String name, {
+    bool start = false,
+  }) async {
+    final data = await _invokeMethod<Map<String, dynamic>>(
+      method: CoreMethod.tailscaleStatus,
+      arguments: {'name': name, 'start': start},
+      timeout: const Duration(seconds: 20),
+    );
+    return data == null
+        ? const TailscaleNetStatus(error: 'no response')
+        : TailscaleNetStatus.fromJson(data);
   }
 
   @override

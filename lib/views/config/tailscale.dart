@@ -14,6 +14,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' show join;
 
+import 'package:fl_clash/views/config/tailscale_network.dart';
+
 /// The name the injected node takes in the current profile, mirroring the
 /// clash check the config generator makes.
 String? currentTailscaleProxyName(WidgetRef ref) {
@@ -312,6 +314,11 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
             ),
             const SizedBox(height: 16),
             _buildStatus(props),
+            const SizedBox(height: 24),
+            TailscaleNetworkSection(
+              proxyName: props.enable ? currentTailscaleProxyName(ref) : null,
+              onConnect: _handleConnect,
+            ),
           ],
         ),
       ),

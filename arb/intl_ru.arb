@@ -941,5 +941,16 @@
   "tailscaleConnect": "Подключить",
   "tailscaleReset": "Выйти и сбросить",
   "tailscaleResetTip": "Сохранённый вход Tailscale на этом устройстве будет удалён, потребуется войти снова. Продолжить?",
-  "tailscaleEnable": "Включить Tailscale"
+  "tailscaleEnable": "Включить Tailscale",
+  "tailscaleNetwork": "Сеть Tailnet",
+  "tailscaleLocalNode": "Это устройство",
+  "tailscalePeers": "Устройства",
+  "tailscaleNotStarted": "Узел ещё не запущен. Подключитесь, чтобы загрузить список устройств.",
+  "tailscaleOnline": "В сети",
+  "tailscaleOffline": "Не в сети",
+  "tailscaleExitNodeOption": "Может быть выходным узлом",
+  "tailscaleCurrentExitNode": "Текущий выходной узел",
+  "tailscaleAddRouting": "Добавить в пользовательскую маршрутизацию",
+  "tailscaleRoutingAdded": "Добавлено в пользовательскую маршрутизацию",
+  "tailscaleRefresh": "Обновить"
 }

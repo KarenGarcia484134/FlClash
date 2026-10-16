@@ -941,5 +941,16 @@
   "tailscaleConnect": "连接",
   "tailscaleReset": "退出登录并重置",
   "tailscaleResetTip": "这会删除本设备保存的 Tailscale 登录状态，之后需要重新登录。继续吗？",
-  "tailscaleEnable": "启用 Tailscale"
+  "tailscaleEnable": "启用 Tailscale",
+  "tailscaleNetwork": "网络",
+  "tailscaleLocalNode": "本机",
+  "tailscalePeers": "设备",
+  "tailscaleNotStarted": "节点尚未启动，连接后即可查看设备列表。",
+  "tailscaleOnline": "在线",
+  "tailscaleOffline": "离线",
+  "tailscaleExitNodeOption": "可作出口节点",
+  "tailscaleCurrentExitNode": "当前出口节点",
+  "tailscaleAddRouting": "添加到自定义分流",
+  "tailscaleRoutingAdded": "已添加到自定义分流",
+  "tailscaleRefresh": "刷新"
 }

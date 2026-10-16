@@ -1748,10 +1748,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage(
       "Accept routes",
     ),
+    "tailscaleAddRouting": MessageLookupByLibrary.simpleMessage(
+      "Add to custom routing",
+    ),
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("Auth key"),
     "tailscaleConnect": MessageLookupByLibrary.simpleMessage("Connect"),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage(
       "Control URL (Headscale)",
+    ),
+    "tailscaleCurrentExitNode": MessageLookupByLibrary.simpleMessage(
+      "Current exit node",
     ),
     "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
       "Adds a Tailscale node to every profile and sends tailnet addresses (100.64.0.0/10, fd7a:115c:a1e9::/48) and MagicDNS names to it, ahead of all other rules. Changes apply when you leave this page.",
@@ -1764,17 +1770,32 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ephemeral node",
     ),
     "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("Exit node"),
+    "tailscaleExitNodeOption": MessageLookupByLibrary.simpleMessage(
+      "Can be exit node",
+    ),
     "tailscaleHostname": MessageLookupByLibrary.simpleMessage("Hostname"),
+    "tailscaleLocalNode": MessageLookupByLibrary.simpleMessage("This device"),
     "tailscaleLoginDesc": MessageLookupByLibrary.simpleMessage(
       "Without an auth key, tap Connect: the node starts and shows a login link here. After you approve it in the browser the login is kept across restarts.",
     ),
+    "tailscaleNetwork": MessageLookupByLibrary.simpleMessage("Tailnet"),
     "tailscaleNode": MessageLookupByLibrary.simpleMessage("Node"),
+    "tailscaleNotStarted": MessageLookupByLibrary.simpleMessage(
+      "The node is not running yet. Connect to load the device list.",
+    ),
+    "tailscaleOffline": MessageLookupByLibrary.simpleMessage("Offline"),
+    "tailscaleOnline": MessageLookupByLibrary.simpleMessage("Online"),
     "tailscaleOpenLogin": MessageLookupByLibrary.simpleMessage(
       "Open login page",
     ),
+    "tailscalePeers": MessageLookupByLibrary.simpleMessage("Devices"),
+    "tailscaleRefresh": MessageLookupByLibrary.simpleMessage("Refresh"),
     "tailscaleReset": MessageLookupByLibrary.simpleMessage("Log out and reset"),
     "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
       "This deletes the saved Tailscale login of this device, so it has to log in again. Continue?",
+    ),
+    "tailscaleRoutingAdded": MessageLookupByLibrary.simpleMessage(
+      "Added to custom routing",
     ),
     "tailscaleSilentLogTip": MessageLookupByLibrary.simpleMessage(
       "The log level is silent, so the login link cannot be read. Choose another log level.",

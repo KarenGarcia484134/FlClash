@@ -941,5 +941,16 @@
   "tailscaleConnect": "接続",
   "tailscaleReset": "ログアウトしてリセット",
   "tailscaleResetTip": "このデバイスに保存された Tailscale のログイン状態を削除し、再ログインが必要になります。続行しますか？",
-  "tailscaleEnable": "Tailscale を有効化"
+  "tailscaleEnable": "Tailscale を有効化",
+  "tailscaleNetwork": "Tailnet",
+  "tailscaleLocalNode": "このデバイス",
+  "tailscalePeers": "デバイス",
+  "tailscaleNotStarted": "ノードはまだ起動していません。接続するとデバイス一覧を表示します。",
+  "tailscaleOnline": "オンライン",
+  "tailscaleOffline": "オフライン",
+  "tailscaleExitNodeOption": "出口ノード可",
+  "tailscaleCurrentExitNode": "現在の出口ノード",
+  "tailscaleAddRouting": "カスタムルーティングに追加",
+  "tailscaleRoutingAdded": "カスタムルーティングに追加しました",
+  "tailscaleRefresh": "更新"
 }

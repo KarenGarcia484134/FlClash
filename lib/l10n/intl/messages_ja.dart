@@ -1486,10 +1486,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "tab": MessageLookupByLibrary.simpleMessage("タブ"),
     "tabAnimation": MessageLookupByLibrary.simpleMessage("タブアニメーション"),
     "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage("ルートを受け入れる"),
+    "tailscaleAddRouting": MessageLookupByLibrary.simpleMessage(
+      "カスタムルーティングに追加",
+    ),
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("認証キー"),
     "tailscaleConnect": MessageLookupByLibrary.simpleMessage("接続"),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage(
       "コントロール URL (Headscale)",
+    ),
+    "tailscaleCurrentExitNode": MessageLookupByLibrary.simpleMessage(
+      "現在の出口ノード",
     ),
     "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
       "すべてのプロファイルに Tailscale ノードを追加し、tailnet のアドレス（100.64.0.0/10、fd7a:115c:a1e9::/48）と MagicDNS 名を他のすべてのルールより先にそこへ送ります。このページを離れると適用されます。",
@@ -1500,15 +1506,28 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleEnable": MessageLookupByLibrary.simpleMessage("Tailscale を有効化"),
     "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage("エフェメラルノード"),
     "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("出口ノード"),
+    "tailscaleExitNodeOption": MessageLookupByLibrary.simpleMessage("出口ノード可"),
     "tailscaleHostname": MessageLookupByLibrary.simpleMessage("ホスト名"),
+    "tailscaleLocalNode": MessageLookupByLibrary.simpleMessage("このデバイス"),
     "tailscaleLoginDesc": MessageLookupByLibrary.simpleMessage(
       "認証キーがない場合は「接続」をタップすると、ノードが起動してここにログインリンクが表示されます。ブラウザで承認すると再起動後もログインが保持されます。",
     ),
+    "tailscaleNetwork": MessageLookupByLibrary.simpleMessage("Tailnet"),
     "tailscaleNode": MessageLookupByLibrary.simpleMessage("ノード"),
+    "tailscaleNotStarted": MessageLookupByLibrary.simpleMessage(
+      "ノードはまだ起動していません。接続するとデバイス一覧を表示します。",
+    ),
+    "tailscaleOffline": MessageLookupByLibrary.simpleMessage("オフライン"),
+    "tailscaleOnline": MessageLookupByLibrary.simpleMessage("オンライン"),
     "tailscaleOpenLogin": MessageLookupByLibrary.simpleMessage("ログインページを開く"),
+    "tailscalePeers": MessageLookupByLibrary.simpleMessage("デバイス"),
+    "tailscaleRefresh": MessageLookupByLibrary.simpleMessage("更新"),
     "tailscaleReset": MessageLookupByLibrary.simpleMessage("ログアウトしてリセット"),
     "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
       "このデバイスに保存された Tailscale のログイン状態を削除し、再ログインが必要になります。続行しますか？",
+    ),
+    "tailscaleRoutingAdded": MessageLookupByLibrary.simpleMessage(
+      "カスタムルーティングに追加しました",
     ),
     "tailscaleSilentLogTip": MessageLookupByLibrary.simpleMessage(
       "ログレベルが silent のため、ログインリンクを読み取れません。別のログレベルを選んでください。",

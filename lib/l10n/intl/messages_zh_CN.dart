@@ -1331,11 +1331,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "tab": MessageLookupByLibrary.simpleMessage("标签页"),
     "tabAnimation": MessageLookupByLibrary.simpleMessage("选项卡动画"),
     "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage("接受子网路由"),
+    "tailscaleAddRouting": MessageLookupByLibrary.simpleMessage("添加到自定义分流"),
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("认证密钥 (Auth key)"),
     "tailscaleConnect": MessageLookupByLibrary.simpleMessage("连接"),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage(
       "控制服务器 (Headscale)",
     ),
+    "tailscaleCurrentExitNode": MessageLookupByLibrary.simpleMessage("当前出口节点"),
     "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
       "为所有配置加入一个 Tailscale 节点，并把 tailnet 地址（100.64.0.0/10、fd7a:115c:a1e9::/48）和 MagicDNS 域名优先路由到它，排在所有规则之前。离开本页时生效。",
     ),
@@ -1345,16 +1347,27 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleEnable": MessageLookupByLibrary.simpleMessage("启用 Tailscale"),
     "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage("临时节点"),
     "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("出口节点"),
+    "tailscaleExitNodeOption": MessageLookupByLibrary.simpleMessage("可作出口节点"),
     "tailscaleHostname": MessageLookupByLibrary.simpleMessage("主机名"),
+    "tailscaleLocalNode": MessageLookupByLibrary.simpleMessage("本机"),
     "tailscaleLoginDesc": MessageLookupByLibrary.simpleMessage(
       "没有认证密钥时点“连接”：节点启动后会在这里显示登录链接，在浏览器中授权后登录状态会一直保留，重启也不会丢失。",
     ),
+    "tailscaleNetwork": MessageLookupByLibrary.simpleMessage("网络"),
     "tailscaleNode": MessageLookupByLibrary.simpleMessage("节点"),
+    "tailscaleNotStarted": MessageLookupByLibrary.simpleMessage(
+      "节点尚未启动，连接后即可查看设备列表。",
+    ),
+    "tailscaleOffline": MessageLookupByLibrary.simpleMessage("离线"),
+    "tailscaleOnline": MessageLookupByLibrary.simpleMessage("在线"),
     "tailscaleOpenLogin": MessageLookupByLibrary.simpleMessage("打开登录页面"),
+    "tailscalePeers": MessageLookupByLibrary.simpleMessage("设备"),
+    "tailscaleRefresh": MessageLookupByLibrary.simpleMessage("刷新"),
     "tailscaleReset": MessageLookupByLibrary.simpleMessage("退出登录并重置"),
     "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
       "这会删除本设备保存的 Tailscale 登录状态，之后需要重新登录。继续吗？",
     ),
+    "tailscaleRoutingAdded": MessageLookupByLibrary.simpleMessage("已添加到自定义分流"),
     "tailscaleSilentLogTip": MessageLookupByLibrary.simpleMessage(
       "日志等级为 silent，无法读取登录链接，请换成其他日志等级。",
     ),

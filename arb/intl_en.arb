@@ -941,5 +941,16 @@
   "tailscaleConnect": "Connect",
   "tailscaleReset": "Log out and reset",
   "tailscaleResetTip": "This deletes the saved Tailscale login of this device, so it has to log in again. Continue?",
-  "tailscaleEnable": "Enable Tailscale"
+  "tailscaleEnable": "Enable Tailscale",
+  "tailscaleNetwork": "Tailnet",
+  "tailscaleLocalNode": "This device",
+  "tailscalePeers": "Devices",
+  "tailscaleNotStarted": "The node is not running yet. Connect to load the device list.",
+  "tailscaleOnline": "Online",
+  "tailscaleOffline": "Offline",
+  "tailscaleExitNodeOption": "Can be exit node",
+  "tailscaleCurrentExitNode": "Current exit node",
+  "tailscaleAddRouting": "Add to custom routing",
+  "tailscaleRoutingAdded": "Added to custom routing",
+  "tailscaleRefresh": "Refresh"
 }

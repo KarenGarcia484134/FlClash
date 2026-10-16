@@ -1,4 +1,5 @@
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/models/custom_routing.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'generated/tailscale.freezed.dart';
@@ -162,4 +163,86 @@ List<String> injectTailscale(
     'IP-CIDR6,$tailscaleIpv6Range,$name,no-resolve',
     for (final suffix in suffixes) 'DOMAIN-SUFFIX,$suffix,$name',
   ];
+}
+
+@freezed
+abstract class TailscalePeer with _$TailscalePeer {
+  const factory TailscalePeer({
+    @Default('') String id,
+    @Default('') String hostName,
+    @Default('') String dnsName,
+    @Default('') String os,
+    @Default([]) List<String> ips,
+    @Default(false) bool online,
+    @Default(false) bool exitNode,
+    @Default(false) bool exitNodeOption,
+    String? lastSeen,
+  }) = _TailscalePeer;
+
+  factory TailscalePeer.fromJson(Map<String, Object?> json) =>
+      _$TailscalePeerFromJson(json);
+}
+
+@freezed
+abstract class TailscaleNetStatus with _$TailscaleNetStatus {
+  const factory TailscaleNetStatus({
+    @Default(false) bool started,
+    @Default('') String backendState,
+    @Default('') String magicDnsSuffix,
+    TailscalePeer? self,
+    @Default([]) List<TailscalePeer> peers,
+    String? error,
+  }) = _TailscaleNetStatus;
+
+  factory TailscaleNetStatus.fromJson(Map<String, Object?> json) =>
+      _$TailscaleNetStatusFromJson(json);
+}
+
+extension TailscalePeerExt on TailscalePeer {
+  String get shortDnsName {
+    final name = dnsName.endsWith('.')
+        ? dnsName.substring(0, dnsName.length - 1)
+        : dnsName;
+    return name;
+  }
+
+  String get displayName =>
+      hostName.isNotEmpty ? hostName : shortDnsName.split('.').first;
+
+  String? get ipv4 => ips.where((ip) => !ip.contains(':')).firstOrNull;
+
+  String? get ipv6 => ips.where((ip) => ip.contains(':')).firstOrNull;
+
+  bool matches(String query) {
+    final text = query.trim().toLowerCase();
+    if (text.isEmpty) {
+      return true;
+    }
+    return [
+      hostName,
+      dnsName,
+      os,
+      ...ips,
+    ].any((value) => value.toLowerCase().contains(text));
+  }
+}
+
+/// A rule value for one peer: its DNS name when it has one, so a changed
+/// address keeps matching, else a single-host CIDR of its IPv4.
+CustomRoutingCondition? tailscalePeerCondition(TailscalePeer peer) {
+  if (peer.shortDnsName.isNotEmpty) {
+    return CustomRoutingCondition(
+      ruleAction: RuleAction.DOMAIN,
+      values: [peer.shortDnsName],
+    );
+  }
+  final ip = peer.ipv4 ?? peer.ipv6;
+  if (ip == null) {
+    return null;
+  }
+  return CustomRoutingCondition(
+    ruleAction: ip.contains(':') ? RuleAction.IP_CIDR6 : RuleAction.IP_CIDR,
+    values: [ip.contains(':') ? '$ip/128' : '$ip/32'],
+    noResolve: true,
+  );
 }

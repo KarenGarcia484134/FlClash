@@ -1,4 +1,5 @@
 import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/enum/enum.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -73,5 +74,59 @@ void main() {
     expect(running.phase, TailscalePhase.running);
     expect(running.loginUrl, isNull);
     expect(parseTailscaleLog('other', idle), isNull);
+  });
+
+  test('decodes the core status payload', () {
+    final status = TailscaleNetStatus.fromJson({
+      'started': true,
+      'backendState': 'Running',
+      'magicDnsSuffix': 'tail.ts.net',
+      'self': {
+        'hostName': 'phone',
+        'ips': ['100.64.0.1', 'fd7a:115c:a1e9::1'],
+        'online': true,
+      },
+      'peers': [
+        {
+          'hostName': 'nas',
+          'dnsName': 'nas.tail.ts.net.',
+          'os': 'linux',
+          'ips': ['100.64.0.2'],
+          'online': true,
+          'exitNodeOption': true,
+        },
+      ],
+    });
+    expect(status.self!.ipv4, '100.64.0.1');
+    expect(status.self!.ipv6, 'fd7a:115c:a1e9::1');
+    final peer = status.peers.single;
+    expect(peer.shortDnsName, 'nas.tail.ts.net');
+    expect(peer.exitNodeOption, isTrue);
+    expect(peer.matches('LINUX'), isTrue);
+    expect(peer.matches('100.64.0.2'), isTrue);
+    expect(peer.matches('mac'), isFalse);
+  });
+
+  test('peer routing prefers the DNS name, else a host CIDR', () {
+    final byName = tailscalePeerCondition(
+      const TailscalePeer(dnsName: 'nas.tail.ts.net.', ips: ['100.64.0.2']),
+    )!;
+    expect(byName.ruleAction, RuleAction.DOMAIN);
+    expect(byName.values, ['nas.tail.ts.net']);
+    final byIp = tailscalePeerCondition(
+      const TailscalePeer(ips: ['100.64.0.2']),
+    )!;
+    expect(byIp.ruleAction, RuleAction.IP_CIDR);
+    expect(byIp.values, ['100.64.0.2/32']);
+    expect(byIp.noResolve, isTrue);
+    final byIp6 = tailscalePeerCondition(
+      const TailscalePeer(ips: ['fd7a:115c:a1e9::2']),
+    )!;
+    expect(byIp6.values, ['fd7a:115c:a1e9::2/128']);
+    expect(tailscalePeerCondition(const TailscalePeer()), isNull);
+    expect(
+      CustomRouting(id: 1, target: 'Tailscale', conditions: [byIp]).toRule(),
+      'IP-CIDR,100.64.0.2/32,Tailscale,no-resolve',
+    );
   });
 }
