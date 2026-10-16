@@ -50,8 +50,6 @@ android {
                 storePassword = releaseStorePassword
                 keyAlias = releaseKeyAlias
                 keyPassword = releaseKeyPassword
-                // minSdk >= 24 turns JAR signing off, and some installers
-                // still reject an APK without it.
                 enableV1Signing = true
                 enableV2Signing = true
                 enableV3Signing = true
