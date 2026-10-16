@@ -1490,6 +1490,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "カスタムルーティングに追加",
     ),
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("認証キー"),
+    "tailscaleAuthKeyNotAccepted": MessageLookupByLibrary.simpleMessage(
+      "コントロールサーバーが認証キーを受け付けませんでした（期限切れ、使用済み、失効、または入力ミス）。新しいキーを作成するか、上の URL でログインしてください。",
+    ),
     "tailscaleConnect": MessageLookupByLibrary.simpleMessage("接続"),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage(
       "コントロール URL (Headscale)",

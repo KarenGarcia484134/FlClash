@@ -1333,6 +1333,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage("接受子网路由"),
     "tailscaleAddRouting": MessageLookupByLibrary.simpleMessage("添加到自定义分流"),
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("认证密钥 (Auth key)"),
+    "tailscaleAuthKeyNotAccepted": MessageLookupByLibrary.simpleMessage(
+      "控制服务器没有接受认证密钥（可能已过期、一次性密钥已被使用、已撤销或填写有误）。请生成新密钥，或使用上面的链接登录。",
+    ),
     "tailscaleConnect": MessageLookupByLibrary.simpleMessage("连接"),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage(
       "控制服务器 (Headscale)",

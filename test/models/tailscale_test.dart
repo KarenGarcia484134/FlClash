@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -127,6 +129,49 @@ void main() {
     expect(
       CustomRouting(id: 1, target: 'Tailscale', conditions: [byIp]).toRule(),
       'IP-CIDR,100.64.0.2/32,Tailscale,no-resolve',
+    );
+  });
+
+  test('the auth key survives the saved config', () {
+    const props = TailscaleProps(enable: true, authKey: 'tskey-auth-1');
+    final config = Config.fromJson(
+      jsonDecode(
+            jsonEncode(
+              const Config(themeProps: ThemeProps(), tailscaleProps: props),
+            ),
+          )
+          as Map<String, dynamic>,
+    );
+    expect(config.tailscaleProps.authKey, 'tskey-auth-1');
+  });
+
+  test('node status drives the phase over stale log lines', () {
+    const stale = TailscaleStatus(
+      phase: TailscalePhase.needsLogin,
+      loginUrl: 'https://login.tailscale.com/a/old',
+    );
+    final running = applyTailscaleNetStatus(
+      stale,
+      const TailscaleNetStatus(started: true, backendState: 'Running'),
+      'Tailscale',
+    );
+    expect(running.phase, TailscalePhase.running);
+    expect(running.loginUrl, isNull);
+    final login = applyTailscaleNetStatus(
+      stale,
+      const TailscaleNetStatus(
+        started: true,
+        backendState: 'NeedsLogin',
+        authUrl: 'https://login.tailscale.com/a/new',
+        health: ['invalid key'],
+      ),
+      'Tailscale',
+    );
+    expect(login.loginUrl, 'https://login.tailscale.com/a/new');
+    expect(login.health, ['invalid key']);
+    expect(
+      applyTailscaleNetStatus(stale, const TailscaleNetStatus(), 'Tailscale'),
+      stale,
     );
   });
 }

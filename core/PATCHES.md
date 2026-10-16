@@ -9,6 +9,7 @@ upstream does not conflict.
 | Commit | Files | Purpose |
 | --- | --- | --- |
 | feat(tailscale): expose node status for FlClash | `adapter/outbound/tailscale_status.go`, `tailscale_status_test.go` | Adds `Started`, `Start` and `Status` (tsnet `LocalClient().Status()`) on the tailscale outbound, used by the `tailscaleStatus` core method. |
+| feat(tailscale): unwrap, compare and adopt nodes across reloads | same files | `UnwrapTailscale` (sees through the parser's auto-close wrapper), `SameConfig` and `Adopt`, which let `core/tailscale_status_ts.go` keep one running tsnet node across config applies instead of a new one per apply. |
 
 ## Syncing with upstream
 
@@ -22,5 +23,6 @@ git push --force-with-lease origin HEAD:FlClash-patched
 cd ../.. && git add core/Clash.Meta && git commit -m "chore: sync mihomo"
 ```
 
-If upstream renames the `server`, `serverStarted` or `ensureStarted` members of
-`Tailscale`, only `tailscale_status.go` needs adjusting.
+If upstream renames the `server`, `serverStarted`, `option`,
+`unregisterDNSResolver` or `ensureStarted` members of `Tailscale`, or
+`autoCloseProxyAdapter`, only `tailscale_status.go` needs adjusting.

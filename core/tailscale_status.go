@@ -9,6 +9,7 @@ import (
 type TailscaleStatusParams struct {
 	Name  string `json:"name"`
 	Start bool   `json:"start"`
+	Reset bool   `json:"reset"`
 }
 
 type TailscalePeer struct {
@@ -26,6 +27,8 @@ type TailscalePeer struct {
 type TailscaleStatusResult struct {
 	Started        bool            `json:"started"`
 	BackendState   string          `json:"backendState"`
+	AuthURL        string          `json:"authUrl,omitempty"`
+	Health         []string        `json:"health,omitempty"`
 	MagicDNSSuffix string          `json:"magicDnsSuffix"`
 	Self           *TailscalePeer  `json:"self"`
 	Peers          []TailscalePeer `json:"peers"`
@@ -39,6 +42,10 @@ const tailscaleStatusTimeout = 15 * time.Second
 func handleTailscaleStatus(params TailscaleStatusParams) TailscaleStatusResult {
 	ctx, cancel := context.WithTimeout(context.Background(), tailscaleStatusTimeout)
 	defer cancel()
+	if params.Reset {
+		retireTailscaleNode(params.Name)
+		return TailscaleStatusResult{Peers: []TailscalePeer{}}
+	}
 	result, err := tailscaleStatus(ctx, params)
 	if err != nil {
 		result.Error = err.Error()

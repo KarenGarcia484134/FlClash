@@ -1835,6 +1835,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage(
       "Ключ авторизации",
     ),
+    "tailscaleAuthKeyNotAccepted": MessageLookupByLibrary.simpleMessage(
+      "Сервер управления не принял ключ (истёк, уже использован, отозван или введён с ошибкой). Создайте новый ключ или войдите по ссылке выше.",
+    ),
     "tailscaleConnect": MessageLookupByLibrary.simpleMessage("Подключить"),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage(
       "Сервер управления (Headscale)",

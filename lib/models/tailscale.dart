@@ -43,6 +43,7 @@ abstract class TailscaleStatus with _$TailscaleStatus {
     @Default(TailscalePhase.idle) TailscalePhase phase,
     String? loginUrl,
     String? proxyName,
+    @Default([]) List<String> health,
   }) = _TailscaleStatus;
 }
 
@@ -188,6 +189,8 @@ abstract class TailscaleNetStatus with _$TailscaleNetStatus {
   const factory TailscaleNetStatus({
     @Default(false) bool started,
     @Default('') String backendState,
+    String? authUrl,
+    @Default([]) List<String> health,
     @Default('') String magicDnsSuffix,
     TailscalePeer? self,
     @Default([]) List<TailscalePeer> peers,
@@ -245,4 +248,32 @@ CustomRoutingCondition? tailscalePeerCondition(TailscalePeer peer) {
     values: [ip.contains(':') ? '$ip/128' : '$ip/32'],
     noResolve: true,
   );
+}
+
+/// Folds a status read from the node into the phase the page shows, so it
+/// follows the node itself rather than only the log lines.
+TailscaleStatus applyTailscaleNetStatus(
+  TailscaleStatus current,
+  TailscaleNetStatus net,
+  String proxyName,
+) {
+  if (!net.started) {
+    return current;
+  }
+  return switch (net.backendState) {
+    'Running' => TailscaleStatus(
+      phase: TailscalePhase.running,
+      proxyName: proxyName,
+      health: net.health,
+    ),
+    'NeedsLogin' || 'NeedsMachineAuth' => TailscaleStatus(
+      phase: TailscalePhase.needsLogin,
+      loginUrl: net.authUrl?.isNotEmpty == true
+          ? net.authUrl
+          : current.loginUrl,
+      proxyName: proxyName,
+      health: net.health,
+    ),
+    _ => current.copyWith(proxyName: proxyName, health: net.health),
+  };
 }

@@ -8036,6 +8036,16 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `The control server did not accept the auth key (expired, already used, revoked or mistyped). Create a new key, or log in with the URL above.`
+  String get tailscaleAuthKeyNotAccepted {
+    return Intl.message(
+      'The control server did not accept the auth key (expired, already used, revoked or mistyped). Create a new key, or log in with the URL above.',
+      name: 'tailscaleAuthKeyNotAccepted',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

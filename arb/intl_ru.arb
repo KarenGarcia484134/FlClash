@@ -952,5 +952,6 @@
   "tailscaleCurrentExitNode": "Текущий выходной узел",
   "tailscaleAddRouting": "Добавить в пользовательскую маршрутизацию",
   "tailscaleRoutingAdded": "Добавлено в пользовательскую маршрутизацию",
-  "tailscaleRefresh": "Обновить"
+  "tailscaleRefresh": "Обновить",
+  "tailscaleAuthKeyNotAccepted": "Сервер управления не принял ключ (истёк, уже использован, отозван или введён с ошибкой). Создайте новый ключ или войдите по ссылке выше."
 }

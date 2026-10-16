@@ -387,7 +387,10 @@ void main() {
             ],
           ),
         ],
-        tailscale: const TailscaleProps(enable: true),
+        tailscale: const TailscaleProps(
+          enable: true,
+          authKey: ' tskey-auth-1 ',
+        ),
         defaultUA: 'FlClash-Test',
       ),
     );
@@ -399,7 +402,10 @@ void main() {
       'DOMAIN-SUFFIX,home.example,Tailscale',
       'MATCH,DIRECT',
     ]);
-    expect((yaml['proxies'] as YamlList).single['type'], 'tailscale');
+    final node = (yaml['proxies'] as YamlList).single as YamlMap;
+    expect(node['type'], 'tailscale');
+    expect(node['auth-key'], 'tskey-auth-1');
+    expect(node['state-dir'], tailscaleStateDir);
   });
 
   // The core re-reads these two keys out of the generated config on every

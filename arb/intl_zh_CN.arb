@@ -952,5 +952,6 @@
   "tailscaleCurrentExitNode": "当前出口节点",
   "tailscaleAddRouting": "添加到自定义分流",
   "tailscaleRoutingAdded": "已添加到自定义分流",
-  "tailscaleRefresh": "刷新"
+  "tailscaleRefresh": "刷新",
+  "tailscaleAuthKeyNotAccepted": "控制服务器没有接受认证密钥（可能已过期、一次性密钥已被使用、已撤销或填写有误）。请生成新密钥，或使用上面的链接登录。"
 }

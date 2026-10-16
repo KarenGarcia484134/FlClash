@@ -38,6 +38,10 @@ class TailscaleState extends _$TailscaleState with AutoDisposeNotifierMixin {
     }
   }
 
+  void onStatus(TailscaleNetStatus net, String proxyName) {
+    update((state) => applyTailscaleNetStatus(state, net, proxyName));
+  }
+
   void reset() {
     value = const TailscaleStatus();
   }

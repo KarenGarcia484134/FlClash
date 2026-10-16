@@ -68,6 +68,12 @@ _TailscaleNetStatus _$TailscaleNetStatusFromJson(Map<String, dynamic> json) =>
     _TailscaleNetStatus(
       started: json['started'] as bool? ?? false,
       backendState: json['backendState'] as String? ?? '',
+      authUrl: json['authUrl'] as String?,
+      health:
+          (json['health'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
       magicDnsSuffix: json['magicDnsSuffix'] as String? ?? '',
       self: json['self'] == null
           ? null
@@ -84,6 +90,8 @@ Map<String, dynamic> _$TailscaleNetStatusToJson(_TailscaleNetStatus instance) =>
     <String, dynamic>{
       'started': instance.started,
       'backendState': instance.backendState,
+      'authUrl': instance.authUrl,
+      'health': instance.health,
       'magicDnsSuffix': instance.magicDnsSuffix,
       'self': instance.self,
       'peers': instance.peers,

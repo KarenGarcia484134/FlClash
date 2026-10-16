@@ -19,11 +19,13 @@ class TailscaleNetworkSection extends ConsumerStatefulWidget {
   const TailscaleNetworkSection({
     super.key,
     required this.proxyName,
-    required this.onConnect,
+    required this.onApply,
   });
 
   final String? proxyName;
-  final Future<void> Function() onConnect;
+
+  /// Applies the profile, for a node that is not in the running config yet.
+  final Future<void> Function() onApply;
 
   @override
   ConsumerState<TailscaleNetworkSection> createState() =>
@@ -90,7 +92,9 @@ class TailscaleNetworkSectionState
       final status = await ref
           .read(coreHandlerProvider)
           .tailscaleStatus(name, start: start);
-      if (mounted) setState(() => _status = status);
+      if (!mounted) return;
+      setState(() => _status = status);
+      ref.read(tailscaleStateProvider.notifier).onStatus(status, name);
     } catch (e) {
       if (mounted) {
         setState(() => _status = TailscaleNetStatus(error: e.toString()));
@@ -98,6 +102,17 @@ class TailscaleNetworkSectionState
     } finally {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  /// Starts the node without rebuilding it, applying the profile first only
+  /// when the running config does not carry the node yet.
+  Future<void> connect() async {
+    await refresh(start: true);
+    if (!mounted || _status?.started == true) {
+      return;
+    }
+    await widget.onApply();
+    await refresh(start: true);
   }
 
   Future<void> _copy(String text) async {
@@ -234,10 +249,7 @@ class TailscaleNetworkSectionState
           ),
           if (widget.proxyName != null)
             FilledButton.tonal(
-              onPressed: () async {
-                await widget.onConnect();
-                await refresh(start: true);
-              },
+              onPressed: connect,
               child: Text(appLocalizations.tailscaleConnect),
             ),
         ],

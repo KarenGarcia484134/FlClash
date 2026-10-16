@@ -952,5 +952,6 @@
   "tailscaleCurrentExitNode": "Current exit node",
   "tailscaleAddRouting": "Add to custom routing",
   "tailscaleRoutingAdded": "Added to custom routing",
-  "tailscaleRefresh": "Refresh"
+  "tailscaleRefresh": "Refresh",
+  "tailscaleAuthKeyNotAccepted": "The control server did not accept the auth key (expired, already used, revoked or mistyped). Create a new key, or log in with the URL above."
 }

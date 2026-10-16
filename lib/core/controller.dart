@@ -286,7 +286,8 @@ class CoreController {
   Future<TailscaleNetStatus> tailscaleStatus(
     String name, {
     bool start = false,
-  }) => _interface.tailscaleStatus(name, start: start);
+    bool reset = false,
+  }) => _interface.tailscaleStatus(name, start: start, reset: reset);
 
   Future<List<ServiceCheckItem>> serviceCheck(ServiceCheckParams params) =>
       _interface.serviceCheck(params);

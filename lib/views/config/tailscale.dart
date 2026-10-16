@@ -41,6 +41,7 @@ class TailscaleView extends ConsumerStatefulWidget {
 
 class _TailscaleViewState extends ConsumerState<TailscaleView> {
   late final SetupAction _setupAction;
+  final _networkKey = GlobalKey<TailscaleNetworkSectionState>();
 
   @override
   void initState() {
@@ -59,12 +60,7 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
   }
 
   Future<void> _handleConnect() async {
-    final name = currentTailscaleProxyName(ref);
-    if (name == null) {
-      return;
-    }
-    await _setupAction.applyProfile(force: true);
-    unawaited(ref.read(coreHandlerProvider).getDelay(defaultTestUrl, name));
+    await _networkKey.currentState?.connect();
   }
 
   Future<void> _handleReset() async {
@@ -77,6 +73,9 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
       return;
     }
     await globalState.safeRun(() async {
+      if (currentTailscaleProxyName(ref) case final name?) {
+        await ref.read(coreHandlerProvider).tailscaleStatus(name, reset: true);
+      }
       final home = await appPath.homeDirPath;
       await Directory(
         join(home, tailscaleStateDir),
@@ -183,6 +182,27 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
               ),
           ],
         ),
+        for (final message in status.health)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: Text(
+              message,
+              style: context.listCaptionStyle?.copyWith(
+                color: context.colorScheme.error,
+              ),
+            ),
+          ),
+        if (status.phase == TailscalePhase.needsLogin &&
+            props.authKey.trim().isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: Text(
+              appLocalizations.tailscaleAuthKeyNotAccepted,
+              style: context.listCaptionStyle?.copyWith(
+                color: context.colorScheme.error,
+              ),
+            ),
+          ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
@@ -316,8 +336,9 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
             _buildStatus(props),
             const SizedBox(height: 24),
             TailscaleNetworkSection(
+              key: _networkKey,
               proxyName: props.enable ? currentTailscaleProxyName(ref) : null,
-              onConnect: _handleConnect,
+              onApply: _setupAction.applyProfile,
             ),
           ],
         ),

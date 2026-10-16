@@ -1752,6 +1752,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Add to custom routing",
     ),
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("Auth key"),
+    "tailscaleAuthKeyNotAccepted": MessageLookupByLibrary.simpleMessage(
+      "The control server did not accept the auth key (expired, already used, revoked or mistyped). Create a new key, or log in with the URL above.",
+    ),
     "tailscaleConnect": MessageLookupByLibrary.simpleMessage("Connect"),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage(
       "Control URL (Headscale)",
