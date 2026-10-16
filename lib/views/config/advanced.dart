@@ -1,5 +1,6 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/icons/icons.dart';
+import 'package:fl_clash/views/config/custom_routings.dart';
 import 'package:fl_clash/views/config/dns.dart';
 import 'package:fl_clash/views/config/network.dart';
 import 'package:fl_clash/views/config/scripts.dart';
@@ -33,6 +34,11 @@ class AdvancedConfigView extends StatelessWidget {
         title: Text(appLocalizations.addedRules),
         leading: const GlyphIcon(AppGlyphs.rules),
         widget: const AddedRulesView(),
+      ),
+      ListItem.open(
+        title: Text(appLocalizations.customRouting),
+        leading: const GlyphIcon(AppGlyphs.split),
+        widget: const CustomRoutingsView(),
       ),
       ListItem.open(
         title: Text(appLocalizations.script),
