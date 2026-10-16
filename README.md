@@ -1,3 +1,36 @@
+> [!NOTE]
+> **This is a fork of [chen08209/FlClash](https://github.com/chen08209/FlClash).** Many thanks to the upstream author. What the fork adds is listed here; the original README follows below.
+
+## What this fork adds
+
+- **Custom routing** (Advanced config → Custom routing, picked per profile under Profile → Extend)
+  - Visual rule editor: domain suffix / keyword / exact domain, IP-CIDR(6), GEOSITE, GEOIP, process name, rule sets and more, combined with OR / AND
+  - A separate outbound per entry (policy, group or single node); a missing outbound is marked red and skipped
+  - Injected **in front of** the profile's rules in list order; drag to reorder, toggle, and duplicate (the copy is named "name copy")
+- **Extend tab layout**: custom routing is its own tab, placed before Standard / Script and selected by default, without changing the profile's mode
+- **Visual Tailscale** (Advanced config → Tailscale)
+  - Auth-key or browser-URL login (copy / open the URL), with login status and the real error
+  - **Connection proxy**: Tailscale's own control-server / DERP traffic can go through a chosen group or node, for networks that cannot reach the control server directly
+  - This device's tailnet IPs and every peer (online, OS, exit-node capability), with search, copy IP and one-tap "add to custom routing" (MagicDNS name plus IPv4/IPv6 in one OR rule)
+  - Injects front rules for 100.64.0.0/10, fd7a:115c:a1e9::/48 and ts.net plus MagicDNS resolution; logout & reset clears the login state
+
+### Download
+
+Get builds from this fork's [Releases](https://github.com/KarenGarcia484134/FlClash/releases). Stable releases come from `v*` tags; `build-…` releases are development previews.
+
+> [!IMPORTANT]
+> The Android package is still `com.follow.clash` but signed with a different key, so **uninstall the official FlClash first** (back up your settings in the app beforehand). APKs carry v1/v2/v3 signatures.
+
+### How releases are built
+
+[`.github/workflows/release.yaml`](.github/workflows/release.yaml): pushing a `v*` tag publishes a stable release; running the workflow manually (`workflow_dispatch`) lets you skip desktop builds and override the version with the `version` input (blank uses `pubspec.yaml`). Android APKs are re-signed and their v1/v2/v3 signatures verified before upload.
+
+### Patched core
+
+The `core/Clash.Meta` submodule points at the `FlClash-patched` branch of [KarenGarcia484134/Clash.Meta](https://github.com/KarenGarcia484134/Clash.Meta): upstream's `FlClash` branch plus one **added** file that exposes Tailscale node status and keeps one node across config reloads. See [`core/PATCHES.md`](core/PATCHES.md) for details and how to sync with upstream.
+
+---
+
 <div align="center">
 
 <img src="assets/images/icon.png" alt="FlClash" width="88">

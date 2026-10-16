@@ -1,3 +1,36 @@
+> [!NOTE]
+> **这是 [chen08209/FlClash](https://github.com/chen08209/FlClash) 的二次开发分支（fork）**，感谢上游作者的出色工作。以下是本分支新增的内容，原版说明保留在下方。
+
+## 本分支新增功能
+
+- **自定义分流**（进阶配置 → 自定义分流，配置 → 扩展中按配置勾选）
+  - 可视化编辑规则：域名后缀 / 关键字 / 完整域名、IP-CIDR(6)、GEOSITE、GEOIP、进程名、规则集等，多条件 OR / AND 组合
+  - 每条分流独立选择出口（策略、代理组或单个节点），出口不存在时标红并在注入时跳过
+  - 生成配置时按列表顺序**前置注入**到规则最前面，支持拖动排序、启用开关、复制（副本名为“名称 copy”）
+- **扩展页布局**：自定义分流成为独立标签，位于“标准 / 脚本”之前并默认选中；切换标签不会改动配置原本的模式
+- **可视化 Tailscale**（进阶配置 → Tailscale）
+  - 认证密钥登录或网页链接登录（链接可复制 / 在浏览器打开），显示登录状态与错误原因
+  - **连接代理**：Tailscale 自身连接控制服务器 / DERP 的流量可走指定代理组或节点，适合无法直连控制服务器的网络
+  - 显示本机 tailnet IP 与全部设备（在线状态、系统、出口节点能力），支持搜索、复制 IP、一键“添加到自定义分流”（MagicDNS 域名 + IPv4/IPv6 合并为一条 OR 规则）
+  - 自动注入 100.64.0.0/10、fd7a:115c:a1e9::/48、ts.net 等前置规则和 MagicDNS 解析；退出登录并重置会清除登录状态
+
+### 下载
+
+从本分支的 [Releases](https://github.com/KarenGarcia484134/FlClash/releases) 下载。正式版对应 `v*` 标签；`build-…` 开头的是开发预览版。
+
+> [!IMPORTANT]
+> Android 包名同为 `com.follow.clash`，但签名与官方版不同，**需要先卸载官方 FlClash 再安装**（卸载前可先在应用内备份配置）。安装包同时带有 v1/v2/v3 签名。
+
+### 发布流程
+
+[`.github/workflows/release.yaml`](.github/workflows/release.yaml)：推送 `v*` 标签发布正式版；或手动运行 workflow（`workflow_dispatch`），可选是否构建桌面端，并用 `version` 输入覆盖版本号（留空则使用 `pubspec.yaml`）。Android 包会重新签名并校验 v1/v2/v3 签名后再上传。
+
+### 内核补丁
+
+`core/Clash.Meta` 子模块指向 [KarenGarcia484134/Clash.Meta](https://github.com/KarenGarcia484134/Clash.Meta) 的 `FlClash-patched` 分支：在上游 `FlClash` 分支上只**新增**了一个文件，用于读取 Tailscale 节点状态并在重载配置时保留同一个节点。补丁说明与同步上游的方法见 [`core/PATCHES.md`](core/PATCHES.md)。
+
+---
+
 <div align="center">
 
 <img src="assets/images/icon.png" alt="FlClash" width="88">
