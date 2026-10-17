@@ -135,6 +135,12 @@ Future<ProviderContainer> _pumpCoreManager(
   return container;
 }
 
+void _openLogs(ProviderContainer container) {
+  container
+      .read(appSettingProvider.notifier)
+      .update((state) => state.copyWith(openLogs: true));
+}
+
 // Loading.stop leaves a minDuration timer (up to 1000ms) pending after
 // setupConfig resolves. Polling on the actual outcome instead of a fixed
 // pump budget avoids racing it, and draining past it here keeps its
@@ -422,6 +428,7 @@ void main() {
   testWidgets('core logs are recorded for the logs view', (tester) async {
     final coreInterface = _coreInterface();
     final container = await _pumpCoreManager(tester, coreInterface);
+    _openLogs(container);
 
     coreEventManager.sendEvent(
       const CoreEvent(
@@ -523,7 +530,8 @@ void main() {
     tester,
   ) async {
     final coreInterface = _coreInterface();
-    await _pumpCoreManager(tester, coreInterface);
+    final container = await _pumpCoreManager(tester, coreInterface);
+    _openLogs(container);
 
     coreEventManager.sendEvent(
       const CoreEvent(
@@ -534,6 +542,26 @@ void main() {
     await tester.pump();
 
     expect(find.text('core failure'), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  // The stream also runs for Tailscale's login events with logs turned off;
+  // those lines must not fill the logs view or raise notifications.
+  testWidgets('logs stay out of the view while logging is off', (tester) async {
+    final coreInterface = _coreInterface();
+    final container = await _pumpCoreManager(tester, coreInterface);
+
+    coreEventManager.sendEvent(
+      const CoreEvent(
+        type: CoreEventType.log,
+        data: {'LogLevel': 'error', 'Payload': 'core failure'},
+      ),
+    );
+    await tester.pump();
+
+    expect(container.read(logsProvider).list, isEmpty);
+    expect(find.text('core failure'), findsNothing);
 
     await tester.pumpWidget(const SizedBox.shrink());
   });
