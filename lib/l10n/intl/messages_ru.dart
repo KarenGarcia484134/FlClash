@@ -261,6 +261,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Добавить маршрутизацию",
     ),
     "addFilters": MessageLookupByLibrary.simpleMessage("Добавить фильтры"),
+    "addListener": MessageLookupByLibrary.simpleMessage("Добавить порт"),
     "addNodes": MessageLookupByLibrary.simpleMessage("Добавить узлы"),
     "addOverrideEntry": MessageLookupByLibrary.simpleMessage(
       "Добавить параметр",
@@ -799,6 +800,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "editGlobalRules": MessageLookupByLibrary.simpleMessage(
       "Редактировать глобальные правила",
     ),
+    "editListener": MessageLookupByLibrary.simpleMessage("Изменить порт"),
     "editProxy": MessageLookupByLibrary.simpleMessage("Редактировать прокси"),
     "editProxyGroup": MessageLookupByLibrary.simpleMessage(
       "Редактировать группу прокси",
@@ -1142,6 +1144,59 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "listenRoutingMarkDesc": MessageLookupByLibrary.simpleMessage(
       "Метка маршрутизации действует только в Linux.",
+    ),
+    "listenerActive": MessageLookupByLibrary.simpleMessage("Слушает"),
+    "listenerAppPort": MessageLookupByLibrary.simpleMessage(
+      "Порт занят самим приложением",
+    ),
+    "listenerDuplicateName": MessageLookupByLibrary.simpleMessage(
+      "Имя уже занято",
+    ),
+    "listenerDuplicatePort": MessageLookupByLibrary.simpleMessage(
+      "Порт занят другим портом",
+    ),
+    "listenerFollowRules": MessageLookupByLibrary.simpleMessage("По правилам"),
+    "listenerInactive": MessageLookupByLibrary.simpleMessage("Не слушает"),
+    "listenerLan": MessageLookupByLibrary.simpleMessage("Локальная сеть"),
+    "listenerLanWarning": MessageLookupByLibrary.simpleMessage(
+      "Устройства в вашей сети смогут пользоваться этим портом; задайте логин и пароль.",
+    ),
+    "listenerListen": MessageLookupByLibrary.simpleMessage(
+      "Адрес прослушивания",
+    ),
+    "listenerListenInvalid": MessageLookupByLibrary.simpleMessage(
+      "Неверный IP-адрес",
+    ),
+    "listenerLocalOnly": MessageLookupByLibrary.simpleMessage(
+      "Только это устройство",
+    ),
+    "listenerMissingRule": MessageLookupByLibrary.simpleMessage(
+      "Подправила нет в профиле, пропущено",
+    ),
+    "listenerMissingTarget": MessageLookupByLibrary.simpleMessage(
+      "Выхода нет в профиле, пропущено",
+    ),
+    "listenerOutbound": MessageLookupByLibrary.simpleMessage("Выход"),
+    "listenerPortInvalid": MessageLookupByLibrary.simpleMessage(
+      "Порт должен быть 1–65535",
+    ),
+    "listenerSubRule": MessageLookupByLibrary.simpleMessage("Подправило"),
+    "listenerUnsupported": MessageLookupByLibrary.simpleMessage(
+      "Не поддерживается на этой платформе",
+    ),
+    "listenerUserInvalid": MessageLookupByLibrary.simpleMessage(
+      "Нужно имя пользователя",
+    ),
+    "listenerUsers": MessageLookupByLibrary.simpleMessage("Пользователи"),
+    "listenerUsersEmpty": MessageLookupByLibrary.simpleMessage(
+      "Нет пользователей: действует аутентификация приложения.",
+    ),
+    "listeners": MessageLookupByLibrary.simpleMessage("Мультипорт"),
+    "listenersDesc": MessageLookupByLibrary.simpleMessage(
+      "Каждый порт — дополнительный локальный прокси (mihomo listeners), трафик которого можно направить в фиксированный выход вместо правил. Действует для всех профилей.",
+    ),
+    "listenersEnable": MessageLookupByLibrary.simpleMessage(
+      "Включить дополнительные порты",
     ),
     "liveConnections": MessageLookupByLibrary.simpleMessage(
       "Активные соединения",

@@ -268,6 +268,64 @@ abstract class _$TailscaleSetting extends $Notifier<TailscaleProps> {
   }
 }
 
+/// Extra inbound listeners, app-wide.
+
+@ProviderFor(ListenersSetting)
+final listenersSettingProvider = ListenersSettingProvider._();
+
+/// Extra inbound listeners, app-wide.
+final class ListenersSettingProvider
+    extends $NotifierProvider<ListenersSetting, ListenersProps> {
+  /// Extra inbound listeners, app-wide.
+  ListenersSettingProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'listenersSettingProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$listenersSettingHash();
+
+  @$internal
+  @override
+  ListenersSetting create() => ListenersSetting();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ListenersProps value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ListenersProps>(value),
+    );
+  }
+}
+
+String _$listenersSettingHash() => r'3e7f19d8f1f987d38ef50553176a32e7f1eb5f18';
+
+/// Extra inbound listeners, app-wide.
+
+abstract class _$ListenersSetting extends $Notifier<ListenersProps> {
+  ListenersProps build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<ListenersProps, ListenersProps>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<ListenersProps, ListenersProps>,
+              ListenersProps,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
 /// The user's dialer-proxy per node, per profile id.
 
 @ProviderFor(DialerProxySetting)
@@ -829,4 +887,4 @@ final class _ConfigProvider extends $FunctionalProvider<Config, Config, Config>
   }
 }
 
-String _$_configHash() => r'7cf2493a2a976bc748fe8eb3564d471fff11645d';
+String _$_configHash() => r'399b035d91f6576655a7aaccc99e2db2fe927b92';

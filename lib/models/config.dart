@@ -446,6 +446,7 @@ abstract class Config with _$Config {
     @Default([]) List<String> excludeSSIDs,
     @Default(TailscaleProps()) TailscaleProps tailscaleProps,
     @Default({}) Map<String, Map<String, String>> dialerProxies,
+    @Default(ListenersProps()) ListenersProps listenersProps,
   }) = _Config;
 
   factory Config.fromJson(Map<String, Object?> json) =>

@@ -37,6 +37,14 @@ Based on [chen08209/FlClash](https://github.com/chen08209/FlClash). Thanks to th
 - Existing connections keep their old route by default; turn on "Close connections on apply" in General to make new rules hit every connection at once
 - New "Restart core" dashboard card: confirms, then restarts and shows progress and the result; added once by default for new and existing users
 
+### Multi-port
+
+- "Advanced config → Multi-port": extra local proxy ports (mihomo `listeners`) of type mixed / socks / http, plus redir / tproxy on desktop Linux (hidden elsewhere)
+- Each has a name, enable switch, listen address (127.0.0.1 by default, 0.0.0.0 for LAN with a warning), port, UDP and username/password users
+- Outbound: follow rules (default), a sub-rule of the profile, or a fixed node / group / DIRECT from the outbound picker with latency
+- Port range and clashes with the app's own ports and other listeners are checked; a profile listener with the same name or port gives way to yours; a missing outbound or sub-rule is skipped and flagged
+- App-wide (not per profile) with a master switch; changes reapply automatically; the list shows whether each is listening, and long-press copies its address (e.g. socks5://127.0.0.1:7891)
+
 ### Extend tab layout
 
 - Custom routing is its own tab, placed before Standard / Script and selected by default

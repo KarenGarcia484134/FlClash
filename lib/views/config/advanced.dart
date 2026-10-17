@@ -3,6 +3,7 @@ import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/views/config/custom_routings.dart';
 import 'package:fl_clash/views/config/dialer_proxy.dart';
 import 'package:fl_clash/views/config/dns.dart';
+import 'package:fl_clash/views/config/listeners.dart';
 import 'package:fl_clash/views/config/network.dart';
 import 'package:fl_clash/views/config/scripts.dart';
 import 'package:fl_clash/views/config/tailscale.dart';
@@ -47,6 +48,11 @@ class AdvancedConfigView extends ConsumerWidget {
         title: const Text('Tailscale'),
         leading: const GlyphIcon(AppGlyphs.vpn),
         widget: const TailscaleView(),
+      ),
+      ListItem.open(
+        title: Text(appLocalizations.listeners),
+        leading: const GlyphIcon(AppGlyphs.devices),
+        widget: const ListenersView(),
       ),
       ListItem.open(
         title: Text(appLocalizations.dialerProxy),

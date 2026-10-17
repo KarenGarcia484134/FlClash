@@ -45,6 +45,45 @@ class TailscaleSetting extends _$TailscaleSetting
   }
 }
 
+/// Extra inbound listeners, app-wide.
+@riverpod
+class ListenersSetting extends _$ListenersSetting
+    with AutoDisposeNotifierMixin {
+  @override
+  ListenersProps build() {
+    return const ListenersProps();
+  }
+
+  void put(InboundListenerProps item) {
+    update((state) {
+      final items = [...state.items];
+      final index = items.indexWhere((e) => e.id == item.id);
+      if (index == -1) {
+        items.add(item);
+      } else {
+        items[index] = item;
+      }
+      return state.copyWith(items: items);
+    });
+  }
+
+  void remove(String id) {
+    update(
+      (state) =>
+          state.copyWith(items: state.items.where((e) => e.id != id).toList()),
+    );
+  }
+
+  void reorder(int oldIndex, int newIndex) {
+    update((state) {
+      final items = [...state.items];
+      final item = items.removeAt(oldIndex);
+      items.insert(newIndex > oldIndex ? newIndex - 1 : newIndex, item);
+      return state.copyWith(items: items);
+    });
+  }
+}
+
 /// The user's dialer-proxy per node, per profile id.
 @riverpod
 class DialerProxySetting extends _$DialerProxySetting
@@ -161,6 +200,7 @@ Config _config(Ref ref) {
   final excludeSSIDs = ref.watch(excludeSSIDsProvider);
   final tailscaleProps = ref.watch(tailscaleSettingProvider);
   final dialerProxies = ref.watch(dialerProxySettingProvider);
+  final listenersProps = ref.watch(listenersSettingProvider);
   return Config(
     appSettingProps: appSettingProps,
     windowProps: windowProps,
@@ -175,6 +215,7 @@ Config _config(Ref ref) {
     excludeSSIDs: excludeSSIDs,
     tailscaleProps: tailscaleProps,
     dialerProxies: dialerProxies,
+    listenersProps: listenersProps,
   );
 }
 
@@ -194,6 +235,7 @@ void writeConfig(Ref ref, Config config) {
   ref.read(excludeSSIDsProvider.notifier).value = config.excludeSSIDs;
   ref.read(tailscaleSettingProvider.notifier).value = config.tailscaleProps;
   ref.read(dialerProxySettingProvider.notifier).value = config.dialerProxies;
+  ref.read(listenersSettingProvider.notifier).value = config.listenersProps;
 }
 
 List<Override> buildConfigOverrides(Config config) {
@@ -219,5 +261,6 @@ List<Override> buildConfigOverrides(Config config) {
     dialerProxySettingProvider.overrideWithBuild(
       (_, _) => config.dialerProxies,
     ),
+    listenersSettingProvider.overrideWithBuild((_, _) => config.listenersProps),
   ];
 }

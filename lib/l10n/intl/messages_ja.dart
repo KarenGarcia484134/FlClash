@@ -224,6 +224,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "addCustomProxy": MessageLookupByLibrary.simpleMessage("プロキシを追加"),
     "addCustomRouting": MessageLookupByLibrary.simpleMessage("カスタムルーティングを追加"),
     "addFilters": MessageLookupByLibrary.simpleMessage("フィルターを追加"),
+    "addListener": MessageLookupByLibrary.simpleMessage("リスナーを追加"),
     "addNodes": MessageLookupByLibrary.simpleMessage("ノードを追加"),
     "addOverrideEntry": MessageLookupByLibrary.simpleMessage("上書き項目を追加"),
     "addProfile": MessageLookupByLibrary.simpleMessage("プロファイルを追加"),
@@ -648,6 +649,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "edit": MessageLookupByLibrary.simpleMessage("編集"),
     "editCustomRouting": MessageLookupByLibrary.simpleMessage("カスタムルーティングを編集"),
     "editGlobalRules": MessageLookupByLibrary.simpleMessage("グローバルルールを編集"),
+    "editListener": MessageLookupByLibrary.simpleMessage("リスナーを編集"),
     "editProxy": MessageLookupByLibrary.simpleMessage("プロキシを編集"),
     "editProxyGroup": MessageLookupByLibrary.simpleMessage("プロキシグループを編集"),
     "editRule": MessageLookupByLibrary.simpleMessage("ルールを編集"),
@@ -941,6 +943,47 @@ class MessageLookup extends MessageLookupByLibrary {
     "listenRoutingMarkDesc": MessageLookupByLibrary.simpleMessage(
       "リッスンのルーティングマークは Linux でのみ有効です。",
     ),
+    "listenerActive": MessageLookupByLibrary.simpleMessage("待ち受け中"),
+    "listenerAppPort": MessageLookupByLibrary.simpleMessage(
+      "アプリ自体のポートと重複しています",
+    ),
+    "listenerDuplicateName": MessageLookupByLibrary.simpleMessage("名前が重複しています"),
+    "listenerDuplicatePort": MessageLookupByLibrary.simpleMessage(
+      "他のリスナーとポートが重複しています",
+    ),
+    "listenerFollowRules": MessageLookupByLibrary.simpleMessage("ルールに従う"),
+    "listenerInactive": MessageLookupByLibrary.simpleMessage("待ち受けていません"),
+    "listenerLan": MessageLookupByLibrary.simpleMessage("LAN"),
+    "listenerLanWarning": MessageLookupByLibrary.simpleMessage(
+      "同じネットワークの端末がこのポートを使えます。ユーザー名とパスワードを設定してください。",
+    ),
+    "listenerListen": MessageLookupByLibrary.simpleMessage("待ち受けアドレス"),
+    "listenerListenInvalid": MessageLookupByLibrary.simpleMessage(
+      "有効な IP アドレスではありません",
+    ),
+    "listenerLocalOnly": MessageLookupByLibrary.simpleMessage("この端末のみ"),
+    "listenerMissingRule": MessageLookupByLibrary.simpleMessage(
+      "このプロファイルにサブルールがないためスキップ",
+    ),
+    "listenerMissingTarget": MessageLookupByLibrary.simpleMessage(
+      "このプロファイルに出口がないためスキップ",
+    ),
+    "listenerOutbound": MessageLookupByLibrary.simpleMessage("出口"),
+    "listenerPortInvalid": MessageLookupByLibrary.simpleMessage("ポートは 1–65535"),
+    "listenerSubRule": MessageLookupByLibrary.simpleMessage("サブルール"),
+    "listenerUnsupported": MessageLookupByLibrary.simpleMessage(
+      "このプラットフォームでは非対応",
+    ),
+    "listenerUserInvalid": MessageLookupByLibrary.simpleMessage("ユーザー名が必要です"),
+    "listenerUsers": MessageLookupByLibrary.simpleMessage("ユーザー認証"),
+    "listenerUsersEmpty": MessageLookupByLibrary.simpleMessage(
+      "ユーザーなし：アプリ自体の認証設定が適用されます。",
+    ),
+    "listeners": MessageLookupByLibrary.simpleMessage("マルチポート"),
+    "listenersDesc": MessageLookupByLibrary.simpleMessage(
+      "各リスナーは追加のローカルプロキシポート（mihomo listeners）で、ルールを通さず固定の出口に送れます。すべてのプロファイルに適用されます。",
+    ),
+    "listenersEnable": MessageLookupByLibrary.simpleMessage("追加リスナーを有効化"),
     "liveConnections": MessageLookupByLibrary.simpleMessage("リアルタイム接続"),
     "loading": MessageLookupByLibrary.simpleMessage("読み込み中…"),
     "local": MessageLookupByLibrary.simpleMessage("ローカル"),

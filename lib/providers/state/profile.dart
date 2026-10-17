@@ -65,6 +65,7 @@ Future<SetupState> setupState(Ref ref, int? profileId) async {
   final dialerProxies = profileId == null
       ? const <String, String>{}
       : ref.watch(profileDialerProxiesProvider(profileId));
+  final listeners = ref.watch(listenersSettingProvider);
   List<ProxyGroup> proxyGroups = [];
   List<Rule> rules = [];
   List<Rule> addedRules = [];
@@ -114,6 +115,7 @@ Future<SetupState> setupState(Ref ref, int? profileId) async {
     customRoutings: customRoutings,
     tailscale: tailscale,
     dialerProxies: dialerProxies,
+    listeners: listeners,
     script: script,
     overrides: overrides,
     matchTarget:
@@ -162,6 +164,7 @@ Future<DialerGraph> dialerGraph(Ref ref, int profileId) async {
     (
       ref.watch(tailscaleSettingProvider),
       ref.watch(profileDialerProxiesProvider(profileId)),
+      ref.watch(listenersSettingProvider),
     ),
   );
 }

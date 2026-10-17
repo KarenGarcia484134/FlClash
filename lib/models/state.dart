@@ -9,6 +9,7 @@ import 'common.dart';
 import 'config.dart';
 import 'core.dart';
 import 'custom_routing.dart';
+import 'listener.dart';
 import 'tailscale.dart';
 import 'profile.dart';
 
@@ -346,6 +347,7 @@ abstract class MakeRealProfileState with _$MakeRealProfileState {
     @Default([]) List<CustomRouting> customRoutings,
     @Default(TailscaleProps()) TailscaleProps tailscale,
     @Default({}) Map<String, String> dialerProxies,
+    @Default(ListenersProps()) ListenersProps listeners,
     required String defaultUA,
     @Default([]) List<String> authentication,
     @Default({}) Map<String, dynamic> injectedProxyProviders,
@@ -389,6 +391,7 @@ abstract class SetupState with _$SetupState {
     @Default([]) List<CustomRouting> customRoutings,
     @Default(TailscaleProps()) TailscaleProps tailscale,
     @Default({}) Map<String, String> dialerProxies,
+    @Default(ListenersProps()) ListenersProps listeners,
     String? matchTarget,
   }) = _SetupState;
 }
