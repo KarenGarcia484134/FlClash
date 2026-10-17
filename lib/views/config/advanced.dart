@@ -1,5 +1,6 @@
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/icons/icons.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
+import 'package:fl_clash/ui/ui.dart';
 import 'package:fl_clash/views/config/custom_routings.dart';
 import 'package:fl_clash/views/config/dialer_proxy.dart';
 import 'package:fl_clash/views/config/dns.dart';
@@ -7,8 +8,6 @@ import 'package:fl_clash/views/config/listeners.dart';
 import 'package:fl_clash/views/config/network.dart';
 import 'package:fl_clash/views/config/scripts.dart';
 import 'package:fl_clash/views/config/tailscale.dart';
-import 'package:fl_clash/widgets/list.dart';
-import 'package:fl_clash/widgets/scaffold.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -78,7 +77,7 @@ class AdvancedConfigView extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(
           horizontal: 16,
         ).copyWith(top: context.contentTopPadding, bottom: 16),
-        children: [generateSectionV3(items: items)],
+        children: [generateSection(items: items)],
       ),
     );
   }

@@ -1,7 +1,4 @@
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/icons/icons.dart';
-import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/rendering.dart';
 import 'package:material_ui/material_ui.dart';
@@ -227,7 +224,10 @@ class _SelectionSheetState<T> extends ConsumerState<SelectionSheet<T>>
   Widget _buildHeader(SelectionSection<T> section) {
     final header = Padding(
       padding: const EdgeInsets.only(bottom: 4),
-      child: ListHeader(title: section.label!, padding: baseInfoEdgeInsets),
+      child: ListHeader(
+        title: section.label!,
+        padding: baseInfoEdgeInsetsOf(context),
+      ),
     );
     if (!widget.removeOnSelect) {
       return header;
@@ -260,7 +260,7 @@ class _SelectionSheetState<T> extends ConsumerState<SelectionSheet<T>>
       ),
     );
     final extra = widget.trailingBuilder?.call(item);
-    final check = isSelected ? const GlyphIcon(AppGlyphs.check) : null;
+    final check = isSelected ? const SelectionCheck() : null;
     final onLongPress = widget.onLongPress;
     final Widget tile = DecorationListItem(
       onPressed: () => _handleSelected(item),
@@ -317,13 +317,12 @@ class _SelectionSheetState<T> extends ConsumerState<SelectionSheet<T>>
           : null,
       body: Builder(
         builder: (context) => NullStatusSwitcher(
+          isLoading: loadingStatus != null,
           isEmpty:
-              loadingStatus != null ||
               count == 0 && (widget.emptyLabel != null || _query.isNotEmpty),
-          isSearching: loadingStatus == null && _query.isNotEmpty,
-          holdsArrival: loadingStatus != null,
-          nullStatus:
-              loadingStatus ?? NullStatus(label: widget.emptyLabel ?? ''),
+          isSearching: _query.isNotEmpty,
+          loadingStatus: loadingStatus,
+          nullStatus: NullStatus(label: widget.emptyLabel ?? ''),
           child: CustomScrollView(
             controller: _controller,
             slivers: [

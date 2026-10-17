@@ -1,4 +1,5 @@
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/ui/color.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'app_localizations.dart';
@@ -58,9 +59,9 @@ extension ProxyCardTypeL10n on ProxyCardType {
   String get label {
     final appLocalizations = currentAppLocalizations;
     return switch (this) {
-      ProxyCardType.expand => appLocalizations.expand,
-      ProxyCardType.shrink => appLocalizations.shrink,
-      ProxyCardType.min => appLocalizations.min,
+      ProxyCardType.loose => appLocalizations.loose,
+      ProxyCardType.standard => appLocalizations.standard,
+      ProxyCardType.compact => appLocalizations.compact,
     };
   }
 }
@@ -112,12 +113,27 @@ extension DynamicSchemeVariantL10n on DynamicSchemeVariant {
   }
 }
 
+extension ColorStyleL10n on ColorStyle {
+  String get label {
+    final appLocalizations = currentAppLocalizations;
+    return switch (this) {
+      ColorStyle.vivid => appLocalizations.vividStyle,
+      ColorStyle.tinted => appLocalizations.tintedStyle,
+      ColorStyle.soft => appLocalizations.softStyle,
+      ColorStyle.monochrome => appLocalizations.monochromeScheme,
+    };
+  }
+}
+
 extension LocaleL10n on Locale {
   String get label {
     final appLocalizations = currentAppLocalizations;
     return switch (toString()) {
       'en' => appLocalizations.en,
+      'es' => appLocalizations.es,
+      'fr' => appLocalizations.fr,
       'ja' => appLocalizations.ja,
+      'ko' => appLocalizations.ko,
       'ru' => appLocalizations.ru,
       'zh_CN' => appLocalizations.zhCN,
       final code => code,

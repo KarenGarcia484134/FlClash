@@ -1,6 +1,7 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/icons/icons.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
+import 'package:fl_clash/ui/ui.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/views/config/custom_routings.dart';
@@ -155,7 +156,7 @@ class DialerProxyView extends ConsumerWidget {
       for (final entry in graph.existing.entries)
         if (!settings.containsKey(entry.key)) entry.key: entry.value,
     };
-    return BaseScaffold(
+    return CommonScaffold(
       title: appLocalizations.dialerProxy,
       actions: [
         if (profileId != null && settings.isNotEmpty)

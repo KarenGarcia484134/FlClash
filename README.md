@@ -45,6 +45,12 @@ Based on [chen08209/FlClash](https://github.com/chen08209/FlClash). Thanks to th
 - Port range and clashes with the app's own ports and other listeners are checked; a profile listener with the same name or port gives way to yours; a missing outbound or sub-rule is skipped and flagged
 - App-wide (not per profile) with a master switch; changes reapply automatically; the list shows whether each is listening, and long-press copies its address (e.g. socks5://127.0.0.1:7891)
 
+### Interface style
+
+- Settings → Theme → "Interface style": **Classic** (default, the Material look of 0.9.11) or **New** (upstream's 0.9.1 redesign: iOS type scale, layered surfaces, iOS color palette, Liquid Glass); switching applies immediately
+- Each style keeps its own theme colors: Classic keeps the colors and Material color scheme you had before, New uses the iOS palette and color styles; Liquid Glass is only offered in New
+- The redesigned screens of 0.9.1 (dashboard around the current exit, proxy group cards, connection / request tables) are kept in both styles; the switch changes the theme, not the layouts
+
 ### Extend tab layout
 
 - Custom routing is its own tab, placed before Standard / Script and selected by default
@@ -103,9 +109,11 @@ App code:
 
 ```sh
 git remote add upstream https://github.com/chen08209/FlClash.git
-git fetch upstream
-git merge upstream/main
+git fetch upstream --tags
+git merge v<upstream release>   # prefer the latest release tag over main
 ```
+
+The fork is currently synced to upstream **v0.9.1** (released here as 0.9.12).
 
 Core submodule: follow [`core/PATCHES.md`](core/PATCHES.md) to rebase `FlClash-patched` onto upstream's latest `FlClash` branch, push it, then commit the new submodule pointer.
 

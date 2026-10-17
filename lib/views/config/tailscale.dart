@@ -4,7 +4,8 @@ import 'dart:io';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/features/form/form.dart';
-import 'package:fl_clash/icons/icons.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
+import 'package:fl_clash/ui/ui.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
@@ -207,7 +208,7 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        generateSectionV3(
+        generateSection(
           title: appLocalizations.status,
           items: [
             FormRow(
@@ -220,7 +221,7 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
               DecorationListItem(
                 title: SelectableText(
                   url,
-                  style: context.textTheme.bodyMedium?.toJetBrainsMono,
+                  style: AppTextStyle.subheadline.of(context).toJetBrainsMono,
                 ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -245,7 +246,7 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             child: Text(
               message,
-              style: context.listCaptionStyle?.copyWith(
+              style: context.listCaptionStyle.copyWith(
                 color: context.colorScheme.error,
               ),
             ),
@@ -263,7 +264,7 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: Text(
                 hint,
-                style: context.listCaptionStyle?.copyWith(
+                style: context.listCaptionStyle.copyWith(
                   color: context.colorScheme.error,
                 ),
               ),
@@ -280,7 +281,7 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               appLocalizations.tailscaleSilentLogTip,
-              style: context.listCaptionStyle?.copyWith(
+              style: context.listCaptionStyle.copyWith(
                 color: context.colorScheme.error,
               ),
             ),
@@ -318,7 +319,7 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
             16 + BottomInsetScope.of(context),
           ),
           children: [
-            generateSectionV3(
+            generateSection(
               items: [
                 _switchRow(
                   title: appLocalizations.tailscaleEnable,
@@ -335,7 +336,7 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
                 style: context.listCaptionStyle,
               ),
             ),
-            generateSectionV3(
+            generateSection(
               title: appLocalizations.tailscaleNode,
               items: [
                 _textRow(
