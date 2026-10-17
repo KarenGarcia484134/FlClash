@@ -106,6 +106,7 @@ class CommonScaffoldState extends State<CommonScaffold> {
   final ValueNotifier<List<String>> _keywordsNotifier = ValueNotifier([]);
   final _textController = TextEditingController();
   final _searchFocusNode = FocusNode();
+  final _backLayerKey = GlobalKey<BackLayerScopeState>();
   var _sorting = false;
 
   bool get _isSearch {
@@ -248,6 +249,17 @@ class CommonScaffoldState extends State<CommonScaffold> {
       return;
     }
     _popAppBarLayer();
+  }
+
+  /// Runs [action] so that a pop inside it closes the route even while the
+  /// bar is searching or sorting, which otherwise only ends that layer.
+  void runWithoutBackLayer(VoidCallback action) {
+    final layer = _backLayerKey.currentState;
+    if (layer == null) {
+      action();
+      return;
+    }
+    layer.runWithoutLayer(action);
   }
 
   void handleExitSearching() {
@@ -610,7 +622,11 @@ class CommonScaffoldState extends State<CommonScaffold> {
       child: _isSearch ? _buildSearchingAppBarTheme(child) : child,
     );
     if (_isSearch || _sorting) {
-      return BackLayerScope(onBack: _handleExitAppBarLayer, child: appBar);
+      return BackLayerScope(
+        key: _backLayerKey,
+        onBack: _handleExitAppBarLayer,
+        child: appBar,
+      );
     }
     return appBar;
   }

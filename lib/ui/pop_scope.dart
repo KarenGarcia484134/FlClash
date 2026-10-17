@@ -69,10 +69,10 @@ class BackLayerScope extends StatefulWidget {
   });
 
   @override
-  State<BackLayerScope> createState() => _BackLayerScopeState();
+  State<BackLayerScope> createState() => BackLayerScopeState();
 }
 
-class _BackLayerScopeState extends State<BackLayerScope> {
+class BackLayerScopeState extends State<BackLayerScope> {
   ModalRoute<dynamic>? _route;
   LocalHistoryEntry? _entry;
   bool _isDetaching = false;
@@ -105,13 +105,30 @@ class _BackLayerScopeState extends State<BackLayerScope> {
       if (route == null) {
         return;
       }
-      final entry = LocalHistoryEntry(
-        impliesAppBarDismissal: false,
-        onRemove: _handleRemove,
-      );
-      _entry = entry;
-      route.addLocalHistoryEntry(entry);
+      _attach(route);
     });
+  }
+
+  void _attach(ModalRoute<dynamic> route) {
+    final entry = LocalHistoryEntry(
+      impliesAppBarDismissal: false,
+      onRemove: _handleRemove,
+    );
+    _entry = entry;
+    route.addLocalHistoryEntry(entry);
+  }
+
+  /// Runs [action] with this layer off the route, so a pop inside it, such as
+  /// a picker returning its pick, closes the route instead of this layer. The
+  /// layer comes back if the route is still showing afterwards.
+  void runWithoutLayer(VoidCallback action) {
+    final route = _route;
+    final hadEntry = _entry != null;
+    _detach();
+    action();
+    if (hadEntry && mounted && _entry == null && route?.isCurrent == true) {
+      _attach(route!);
+    }
   }
 
   void _handleRemove() {
