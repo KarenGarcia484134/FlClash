@@ -90,6 +90,7 @@
   - `desktop`：是否同时构建 Windows / Linux / macOS
   - `version`：覆盖版本号，例如 `0.9.6` 或 `0.9.6+2026101606`，留空则使用 `pubspec.yaml`
 - Android 签名使用仓库密钥 `KEYSTORE`、`KEY_ALIAS`、`STORE_PASSWORD`、`KEY_PASSWORD`；APK 会重新签名，并在上传前校验 v1 / v2 / v3 签名
+- **发布说明**由 `dart run tool/changelog.dart render fork-release` 从 [`changelog.json`](changelog.json) 生成。打标签前：修改 `pubspec.yaml` 版本号，运行 `dart run tool/changelog.dart release --version X.Y.Z`，按需把新条目改写成中文，然后把 `CHANGELOG.md` 和 `changelog.json` 与版本号一起提交。如果推送标签前漏了这一步，工作流会根据上一个标签以来的约定式提交自动生成说明
 
 本地构建方法与上游相同：
 

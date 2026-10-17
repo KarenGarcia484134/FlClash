@@ -188,3 +188,68 @@ File resolve(String root, String path) {
   }
   return File('$root$separator$path');
 }
+
+/// Rebuilding from git would otherwise drop the polished wording of versions
+/// already recorded. A recorded version keeps its text, scope, date and
+/// hand-added entries; git only adds the entries it is missing, and entries
+/// whose commit left the version's range (a rebased prerelease) are dropped.
+Changelog preserveRecorded(ChangelogBuildResult derived, Changelog recorded) {
+  final byTag = <String, ChangelogVersion>{
+    for (final version in recorded.versions) version.tag: version,
+  };
+  return Changelog(
+    versions: <ChangelogVersion>[
+      for (final version in derived.changelog.versions)
+        _preserveVersion(
+          version,
+          byTag[version.tag],
+          derived.commitIdsByTag[version.tag] ?? const <String>{},
+        ),
+    ],
+  );
+}
+
+ChangelogVersion _preserveVersion(
+  ChangelogVersion derived,
+  ChangelogVersion? recorded,
+  Set<String> range,
+) {
+  if (recorded == null) {
+    return derived;
+  }
+  Iterable<ChangelogEntry> entriesOf(
+    ChangelogVersion version,
+    ChangelogType type,
+  ) => version.groups
+      .where((group) => group.type == type)
+      .expand((group) => group.entries);
+
+  final groups = <ChangelogGroup>[];
+  for (final type in ChangelogType.values) {
+    final entries = entriesOf(
+      recorded,
+      type,
+    ).where((entry) => range.contains(entry.id)).toList();
+    final known = entries.map((entry) => entry.id).toSet();
+    entries.addAll(
+      entriesOf(derived, type).where((entry) => !known.contains(entry.id)),
+    );
+    if (entries.isNotEmpty) {
+      groups.add(ChangelogGroup(type: type, entries: entries));
+    }
+  }
+  return ChangelogVersion(
+    version: derived.version,
+    tag: derived.tag,
+    date: recorded.date.isEmpty ? derived.date : recorded.date,
+    prerelease: derived.prerelease,
+    groups: groups,
+  );
+}
+
+Changelog readRecorded(String root) {
+  final file = resolve(root, changelogDataPath);
+  return file.existsSync()
+      ? decodeChangelog(file.readAsStringSync())
+      : Changelog.empty;
+}

@@ -90,6 +90,7 @@ Releases are built by [`.github/workflows/release.yaml`](.github/workflows/relea
   - `desktop`: also build Windows / Linux / macOS
   - `version`: version override such as `0.9.6` or `0.9.6+2026101606`; blank uses `pubspec.yaml`
 - Android signing uses the repository secrets `KEYSTORE`, `KEY_ALIAS`, `STORE_PASSWORD` and `KEY_PASSWORD`; APKs are re-signed and their v1 / v2 / v3 signatures verified before upload
+- **Release notes** are generated from [`changelog.json`](changelog.json) by `dart run tool/changelog.dart render fork-release`. Before tagging, bump `pubspec.yaml`, run `dart run tool/changelog.dart release --version X.Y.Z`, optionally rewrite the new entries' wording (in Chinese), and commit `CHANGELOG.md` and `changelog.json` with the bump. If a tag is pushed without this step, the workflow builds its notes from the conventional commits since the previous tag instead
 
 Local builds work as upstream:
 

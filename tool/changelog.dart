@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 
 import 'src/changelog/builder.dart';
+import 'src/changelog/fork_release.dart';
 import 'src/changelog/git.dart';
 import 'src/changelog/models.dart';
 import 'src/changelog/render.dart';
@@ -27,7 +28,16 @@ Future<void> main(List<String> arguments) async {
 
   parser.addCommand('render')
     ..addOption('tag', help: 'Version tag to render, defaults to the newest.')
-    ..addOption('out', help: 'Output file, defaults to stdout.');
+    ..addOption('out', help: 'Output file, defaults to stdout.')
+    ..addOption(
+      'repo',
+      help: 'owner/name the fork release links point at.',
+      defaultsTo: 'KarenGarcia484134/FlClash',
+    )
+    ..addOption(
+      'assets',
+      help: 'Directory of published files; fork-release links only these.',
+    );
 
   parser.addCommand('verify');
 
@@ -66,8 +76,9 @@ int _release(String root, ArgResults command) {
     ),
   );
   _printWarnings(result.warnings);
-  _writeData(root, result.changelog);
-  _writeMarkdown(root, result.changelog);
+  final changelog = preserveRecorded(result, readRecorded(root));
+  _writeData(root, changelog);
+  _writeMarkdown(root, changelog);
   stdout.writeln('Wrote $changelogMarkdownPath and $changelogDataPath');
   return 0;
 }
@@ -97,7 +108,7 @@ int _build(String root, ArgResults command) {
   }
   final result = ChangelogBuilder(git).build(pending: pending);
   _printWarnings(result.warnings);
-  _writeData(root, result.changelog);
+  _writeData(root, preserveRecorded(result, readRecorded(root)));
   stdout.writeln('Wrote $changelogDataPath');
   return 0;
 }
@@ -105,7 +116,7 @@ int _build(String root, ArgResults command) {
 int _render(String root, ArgResults command) {
   final rest = command.rest;
   if (rest.isEmpty) {
-    _fail('render needs a target: release or telegram');
+    _fail('render needs a target: release, fork-release or telegram');
   }
   final changelog = decodeChangelog(
     resolve(root, changelogDataPath).readAsStringSync(),
@@ -123,6 +134,12 @@ int _render(String root, ArgResults command) {
 
   final output = switch (rest.first) {
     'release' => renderRelease(version),
+    'fork-release' => renderForkRelease(
+      version,
+      repository: command.option('repo')!,
+      previousTag: _previousTag(changelog, version),
+      assets: _assetNames(root, command.option('assets')),
+    ),
     // Only stable builds pass --tag, and only they get a release page; a
     // prerelease caption already links its workflow run.
     'telegram' => renderTelegram(
@@ -240,6 +257,29 @@ int _verify(String root) {
   return 1;
 }
 
+String? _previousTag(Changelog changelog, ChangelogVersion version) {
+  final stable = changelog.versions.where((item) => !item.prerelease).toList();
+  final index = stable.indexWhere((item) => item.tag == version.tag);
+  if (index < 0) {
+    return null;
+  }
+  return index + 1 < stable.length ? stable[index + 1].tag : null;
+}
+
+Set<String>? _assetNames(String root, String? path) {
+  if (path == null) {
+    return null;
+  }
+  final directory = Directory(resolve(root, path).path);
+  if (!directory.existsSync()) {
+    _fail('--assets directory $path does not exist');
+  }
+  return <String>{
+    for (final entity in directory.listSync())
+      entity.uri.pathSegments.lastWhere((segment) => segment.isNotEmpty),
+  };
+}
+
 /// Identity of an entry for drift detection: which group it landed in and which
 /// commit it came from. Wording and scope are deliberately excluded so a
 /// maintainer can polish the text of a released version without failing CI.
@@ -272,7 +312,7 @@ Usage: dart run tool/changelog.dart <command> [options]
 Commands:
   release --version X   Rewrite CHANGELOG.md and changelog.json.
   build [--unreleased]  Rewrite changelog.json only.
-  render <release|telegram> [--tag vX] [--out file]
+  render <release|fork-release|telegram> [--tag vX] [--out file]
   verify                Check the committed changelog against git.
 
 ${parser.usage}''';
