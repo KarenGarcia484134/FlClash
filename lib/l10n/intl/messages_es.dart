@@ -2198,6 +2198,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Ancho de banda de subida",
     ),
+    "upstreamProject": MessageLookupByLibrary.simpleMessage(
+      "Proyecto original",
+    ),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlTip": m85,
     "useHosts": MessageLookupByLibrary.simpleMessage("Usar hosts"),

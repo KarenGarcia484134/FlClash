@@ -88,11 +88,9 @@ class Request {
   /// Null when this build is current; throws when GitHub cannot be asked.
   Future<Map<String, dynamic>?> checkForUpdate() async {
     final release = await latestRelease();
-    final remoteVersion = release['tag_name'] as String;
-    final version = globalState.packageInfo.version;
-    final hasUpdate =
-        compareVersions(remoteVersion.replaceAll('v', ''), version) > 0;
-    return hasUpdate ? release : null;
+    return isNewerRelease(release, globalState.packageInfo.version)
+        ? release
+        : null;
   }
 
   /// The release page redirect still answers once the hourly API quota is spent.
@@ -128,6 +126,30 @@ class Request {
 }
 
 final request = Request();
+
+final _releaseTag = RegExp(r'^v?(\d+\.\d+\.\d+)$');
+
+/// Only a published `vX.Y.Z` release above [installed] counts: drafts,
+/// prereleases and the `build-*` preview tags never prompt an update.
+bool isNewerRelease(Map<String, dynamic> release, String installed) {
+  if (release['draft'] == true || release['prerelease'] == true) {
+    return false;
+  }
+  final tag = release['tag_name'];
+  final match = tag is String ? _releaseTag.firstMatch(tag.trim()) : null;
+  if (match == null) {
+    return false;
+  }
+  return compareVersions(match.group(1)!, installed) > 0;
+}
+
+/// The page of the release the update dialog announced.
+String releasePageUrl(String? tagName) {
+  final tag = tagName?.trim() ?? '';
+  return tag.isEmpty || tag.contains('/')
+      ? 'https://github.com/$repository/releases/latest'
+      : 'https://github.com/$repository/releases/tag/$tag';
+}
 
 /// Some subscription servers send a gzip or zlib body without saying so in
 /// Content-Encoding, which is the only signal dart:io decompresses on.

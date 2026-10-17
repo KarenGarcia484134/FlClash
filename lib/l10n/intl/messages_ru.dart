@@ -2167,6 +2167,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "update": MessageLookupByLibrary.simpleMessage("Обновить"),
     "upload": MessageLookupByLibrary.simpleMessage("Отдача"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("Скорость отдачи"),
+    "upstreamProject": MessageLookupByLibrary.simpleMessage("Исходный проект"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlTip": m85,
     "useHosts": MessageLookupByLibrary.simpleMessage("Использовать hosts"),

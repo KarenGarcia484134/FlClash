@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../../tool/src/changelog/fork_release.dart' as tool;
+import '../../tool/src/changelog/models.dart' as tool;
 import '../helpers/test_app.dart';
 
 const _runningVersion = '0.8.95';
@@ -104,6 +106,46 @@ void main() {
     // headings still follow the app locale.
     expect(find.textContaining('新功能'), findsOneWidget);
     expect(find.textContaining('Override scripts'), findsOneWidget);
+
+    await tapCancel(tester);
+    await shown;
+  });
+
+  testWidgets('shows the Chinese notes of a fork release page', (tester) async {
+    final container = await pumpApp(tester, locale: const Locale('zh', 'CN'));
+    final body = tool.renderForkRelease(
+      const tool.ChangelogVersion(
+        version: '0.9.16',
+        tag: 'v0.9.16',
+        date: '2026-10-18',
+        groups: [
+          tool.ChangelogGroup(
+            type: tool.ChangelogType.fix,
+            entries: [
+              tool.ChangelogEntry(
+                id: 'abcdef0',
+                scope: 'ui',
+                text: '点击搜索结果会直接选中并生效',
+              ),
+            ],
+          ),
+        ],
+      ),
+      repository: 'KarenGarcia484134/FlClash',
+      previousTag: 'v0.9.15',
+    );
+
+    final shown = container
+        .read(commonActionProvider.notifier)
+        .checkUpdateResultHandle(data: {'tag_name': 'v0.9.16', 'body': body});
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('v0.9.16'), findsOneWidget);
+    expect(find.textContaining('点击搜索结果会直接选中并生效'), findsOneWidget);
+    expect(find.textContaining('问题修复'), findsOneWidget);
+    // The fork header and download table stay on the release page.
+    expect(find.textContaining('分支版本'), findsNothing);
+    expect(find.textContaining('arm64-v8a'), findsNothing);
 
     await tapCancel(tester);
     await shown;

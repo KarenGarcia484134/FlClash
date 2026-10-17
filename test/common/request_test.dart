@@ -38,6 +38,31 @@ class _HostAdapter implements HttpClientAdapter {
   void close({bool force = false}) {}
 }
 
+class _RecordingAdapter implements HttpClientAdapter {
+  _RecordingAdapter(this.uris);
+
+  final List<Uri> uris;
+
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<Uint8List>? requestStream,
+    Future<void>? cancelFuture,
+  ) async {
+    uris.add(options.uri);
+    return ResponseBody.fromString(
+      '{"tag_name":"v0.9.16"}',
+      200,
+      headers: {
+        Headers.contentTypeHeader: [Headers.jsonContentType],
+      },
+    );
+  }
+
+  @override
+  void close({bool force = false}) {}
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -118,6 +143,82 @@ void main() {
       });
 
       await expectLater(request.latestRelease(), throwsA(isA<DioException>()));
+    });
+  });
+
+  group('isNewerRelease', () {
+    Map<String, dynamic> release(
+      String tag, {
+      bool prerelease = false,
+      bool draft = false,
+    }) => {'tag_name': tag, 'prerelease': prerelease, 'draft': draft};
+
+    test('a higher release tag is an update', () {
+      expect(isNewerRelease(release('v0.9.16'), '0.9.15'), isTrue);
+      expect(isNewerRelease(release('v0.10.0'), '0.9.15'), isTrue);
+      expect(isNewerRelease({'tag_name': 'v0.9.16'}, '0.9.15'), isTrue);
+    });
+
+    test('the same or an older tag is not', () {
+      expect(isNewerRelease(release('v0.9.15'), '0.9.15'), isFalse);
+      expect(isNewerRelease(release('v0.9.9'), '0.9.15'), isFalse);
+      // Upstream's numbering is behind the fork's.
+      expect(isNewerRelease(release('v0.9.1'), '0.9.15'), isFalse);
+    });
+
+    test('preview builds, prereleases and drafts never prompt', () {
+      expect(
+        isNewerRelease(
+          release('build-main-20261018-abc1234', prerelease: true),
+          '0.9.15',
+        ),
+        isFalse,
+      );
+      expect(
+        isNewerRelease(release('build-main-20261018-abc1234'), '0.9.15'),
+        isFalse,
+      );
+      expect(
+        isNewerRelease(release('v0.9.16', prerelease: true), '0.9.15'),
+        isFalse,
+      );
+      expect(isNewerRelease(release('v0.9.16-pre.1'), '0.9.15'), isFalse);
+      expect(
+        isNewerRelease(release('v0.9.16', draft: true), '0.9.15'),
+        isFalse,
+      );
+      expect(isNewerRelease({'tag_name': null}, '0.9.15'), isFalse);
+    });
+  });
+
+  group('release links', () {
+    test('point at the fork', () {
+      expect(repository, 'KarenGarcia484134/FlClash');
+      expect(
+        releasePageUrl('v0.9.16'),
+        'https://github.com/KarenGarcia484134/FlClash/releases/tag/v0.9.16',
+      );
+    });
+
+    test('fall back to the latest release without a usable tag', () {
+      const latest =
+          'https://github.com/KarenGarcia484134/FlClash/releases/latest';
+      expect(releasePageUrl(null), latest);
+      expect(releasePageUrl(' '), latest);
+      expect(releasePageUrl('a/b'), latest);
+    });
+
+    test('the latest-release lookup asks the fork', () async {
+      final hosts = <Uri>[];
+      final request = Request()
+        ..dio.httpClientAdapter = _RecordingAdapter(hosts);
+
+      await request.latestRelease();
+
+      expect(
+        hosts.single.toString(),
+        'https://api.github.com/repos/KarenGarcia484134/FlClash/releases/latest',
+      );
     });
   });
 

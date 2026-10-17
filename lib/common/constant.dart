@@ -108,7 +108,11 @@ const configKey = 'config';
 const systemDnsRecordKey = 'system_dns_record';
 const bootRecordKey = 'boot_record';
 const defaultSystemDnsFallback = '223.5.5.5';
-const repository = 'chen08209/FlClash';
+// Updates, release pages and the project link follow this fork.
+const repository = 'KarenGarcia484134/FlClash';
+const upstreamRepository = 'chen08209/FlClash';
+const coreRepositoryUrl =
+    'https://github.com/KarenGarcia484134/Clash.Meta/tree/FlClash-patched';
 const maxMobileWidth = 600;
 const maxLaptopWidth = 840;
 const defaultTestUrl = 'https://www.gstatic.com/generate_204';

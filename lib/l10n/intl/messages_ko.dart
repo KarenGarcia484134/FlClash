@@ -1778,6 +1778,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "update": MessageLookupByLibrary.simpleMessage("업데이트"),
     "upload": MessageLookupByLibrary.simpleMessage("업로드"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("업로드 대역폭"),
+    "upstreamProject": MessageLookupByLibrary.simpleMessage("업스트림 프로젝트"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlTip": m85,
     "useHosts": MessageLookupByLibrary.simpleMessage("hosts 사용"),

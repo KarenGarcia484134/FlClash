@@ -2205,6 +2205,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Bande passante d’envoi",
     ),
+    "upstreamProject": MessageLookupByLibrary.simpleMessage(
+      "Projet d\'origine",
+    ),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlTip": m85,
     "useHosts": MessageLookupByLibrary.simpleMessage("Utiliser hosts"),
