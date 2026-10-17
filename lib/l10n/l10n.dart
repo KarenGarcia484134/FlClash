@@ -910,6 +910,16 @@ class AppLocalizations {
     return Intl.message('Project', name: 'project', desc: '', args: []);
   }
 
+  /// `Upstream project`
+  String get upstreamProject {
+    return Intl.message(
+      'Upstream project',
+      name: 'upstreamProject',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Core`
   String get core {
     return Intl.message('Core', name: 'core', desc: '', args: []);

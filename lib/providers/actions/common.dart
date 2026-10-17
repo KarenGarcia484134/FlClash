@@ -151,9 +151,7 @@ class CommonAction extends _$CommonAction {
       );
       if (res == true) {
         unawaited(
-          launchUrl(
-            Uri.parse('https://github.com/$repository/releases/latest'),
-          ),
+          launchUrl(Uri.parse(releasePageUrl(data['tag_name'] as String?))),
         );
       } else if (!isUser && res == false) {
         ref

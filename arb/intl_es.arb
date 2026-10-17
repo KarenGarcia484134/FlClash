@@ -117,6 +117,7 @@
   "safeMode": "Modo seguro",
   "safeModeAppTitle": "{appName} (Modo seguro)",
   "project": "Proyecto",
+  "upstreamProject": "Proyecto original",
   "core": "Núcleo",
   "tabAnimation": "Animación de pestañas",
   "desc": "Un cliente proxy multiplataforma basado en ClashMeta, sencillo de usar, de código abierto y sin anuncios.",
