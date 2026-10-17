@@ -147,3 +147,21 @@ Future<DialerGraph> dialerGraph(Ref ref, int profileId) async {
   final configMap = await ref.read(coreHandlerProvider).getConfig(profileId);
   return DialerGraph.fromConfig(configMap);
 }
+
+/// Settings outside the patch config and the database that end up in the
+/// generated config of the current profile. Database edits reapply from
+/// their notifiers.
+@riverpod
+(int, Object)? generatedConfigInputs(Ref ref) {
+  final profileId = ref.watch(currentProfileIdProvider);
+  if (profileId == null) {
+    return null;
+  }
+  return (
+    profileId,
+    (
+      ref.watch(tailscaleSettingProvider),
+      ref.watch(profileDialerProxiesProvider(profileId)),
+    ),
+  );
+}

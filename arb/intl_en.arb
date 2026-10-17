@@ -985,5 +985,13 @@
   "dialerProxyClearAll": "Clear all",
   "dialerProxyClearAllTip": "Clear all dialer proxies set for this profile?",
   "dialerProxyProviderTip": "This node comes from a proxy provider and cannot take its own dialer proxy",
-  "dialerProxySkippedTip": "{count} dialer proxy settings were skipped"
+  "dialerProxySkippedTip": "{count} dialer proxy settings were skipped",
+  "appliedTip": "Applied",
+  "applyFailed": "Failed to apply config",
+  "closeConnectionsOnApply": "Close connections on apply",
+  "restartCore": "Restart core",
+  "restartCoreCardDesc": "Tap to restart",
+  "restartingCore": "Restarting…",
+  "restartCoreDone": "Core restarted",
+  "restartCoreFailed": "Failed to restart core"
 }

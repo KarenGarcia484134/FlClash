@@ -90,6 +90,11 @@ extension DashboardWidgetView on DashboardWidget {
       crossAxisCellCount: 4,
       child: CustomRoutingCard(),
     ),
+    DashboardWidget.restartCore => const GridItem(
+      key: ValueKey(DashboardWidget.restartCore),
+      crossAxisCellCount: 4,
+      child: RestartCoreCard(),
+    ),
   };
 }
 

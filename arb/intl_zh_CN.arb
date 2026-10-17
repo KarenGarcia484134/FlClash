@@ -975,5 +975,13 @@
   "dialerProxyClearAll": "清除全部",
   "dialerProxyClearAllTip": "清除当前配置的全部前置代理设置？",
   "dialerProxyProviderTip": "该节点来自代理集合，无法单独设置前置代理",
-  "dialerProxySkippedTip": "{count} 个前置代理设置已失效"
+  "dialerProxySkippedTip": "{count} 个前置代理设置已失效",
+  "appliedTip": "已应用",
+  "applyFailed": "应用配置失败",
+  "closeConnectionsOnApply": "应用配置时关闭连接",
+  "restartCore": "重启核心",
+  "restartCoreCardDesc": "点按重启",
+  "restartingCore": "正在重启…",
+  "restartCoreDone": "核心已重启",
+  "restartCoreFailed": "核心重启失败"
 }

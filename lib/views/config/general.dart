@@ -353,6 +353,12 @@ class GeneralView extends ConsumerWidget {
         update: (state, value) => state.copyWith(closeConnections: value),
       ),
       _appSettingToggle(
+        title: (l) => l.closeConnectionsOnApply,
+        select: (state) => state.closeConnectionsOnApply,
+        update: (state, value) =>
+            state.copyWith(closeConnectionsOnApply: value),
+      ),
+      _appSettingToggle(
         title: (l) => l.onlyStatisticsProxy,
         select: (state) => state.onlyStatisticsProxy,
         update: (state, value) => state.copyWith(onlyStatisticsProxy: value),

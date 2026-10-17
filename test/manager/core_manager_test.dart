@@ -88,6 +88,30 @@ class _ApplyRecordingSetupAction extends SetupAction {
   }
 }
 
+class _ReapplyRecordingSetupAction extends SetupAction {
+  int reapplies = 0;
+  int applyProfiles = 0;
+
+  @override
+  void reapplyForChange() {
+    reapplies++;
+  }
+}
+
+class _GatedSetupAction extends SetupAction {
+  int applyProfiles = 0;
+
+  @override
+  Future<bool> applyProfile({
+    bool silence = false,
+    bool force = false,
+    Future<void> Function()? preloadInvoke,
+  }) async {
+    applyProfiles++;
+    return true;
+  }
+}
+
 _MockCoreHandlerInterface _coreInterface() {
   final coreInterface = _MockCoreHandlerInterface();
   when(() => coreInterface.startLog()).thenAnswer((_) {});
@@ -358,6 +382,54 @@ void main() {
     expect(setupAction.updates, 0);
 
     await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('dialer proxy and Tailscale edits reapply the profile', (
+    tester,
+  ) async {
+    final setupAction = _ReapplyRecordingSetupAction();
+    final profile = Profile.normal(label: 'p');
+    final container = await _pumpCoreManager(
+      tester,
+      _coreInterface(),
+      overrides: [
+        setupActionProvider.overrideWith(() => setupAction),
+        profilesProvider.overrideWith(() => TestProfiles([profile])),
+        currentProfileIdProvider.overrideWithBuild((_, _) => profile.id),
+      ],
+    );
+
+    container
+        .read(dialerProxySettingProvider.notifier)
+        .set(profile.id, 'A', 'B');
+    await tester.pump();
+    container
+        .read(tailscaleSettingProvider.notifier)
+        .update((state) => state.copyWith(hostname: 'box'));
+    await tester.pump();
+
+    expect(setupAction.reapplies, 2);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('a reapply waits for a running core', (tester) async {
+    final setupAction = _GatedSetupAction();
+    final container = ProviderContainer(
+      overrides: [setupActionProvider.overrideWith(() => setupAction)],
+    );
+    addTearDown(container.dispose);
+
+    container.read(setupActionProvider.notifier).reapplyForChange();
+    await tester.pump(const Duration(seconds: 1));
+    expect(setupAction.applyProfiles, 0);
+
+    container.read(runTimeProvider.notifier).value = 1;
+    container.read(setupActionProvider.notifier).reapplyForChange();
+    container.read(setupActionProvider.notifier).reapplyForChange();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    expect(setupAction.applyProfiles, 1);
   });
 
   testWidgets('core logs are recorded for the logs view', (tester) async {

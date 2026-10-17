@@ -303,6 +303,47 @@ class SetupAction extends _$SetupAction {
     }, args: [silence]);
   }
 
+  /// Reapplies the running profile after an edit that changes its generated
+  /// config, such as custom routings, dialer proxies or Tailscale.
+  void reapplyForChange() {
+    debouncer.call(
+      FunctionTag.reapplyProfile,
+      _reapplyForChange,
+      duration: const Duration(milliseconds: 800),
+    );
+  }
+
+  Future<void> _reapplyForChange() async {
+    if (!ref.read(isStartProvider) || await _inputsApplied()) {
+      return;
+    }
+    final appLocalizations = currentAppLocalizations;
+    final bool applied;
+    try {
+      applied = await applyProfile(silence: true);
+    } catch (error) {
+      dialogs.showNotifier(
+        '${appLocalizations.applyFailed}: $error',
+        level: MessageLevel.error,
+      );
+      return;
+    }
+    if (!applied) {
+      dialogs.showNotifier(
+        appLocalizations.applyFailed,
+        level: MessageLevel.error,
+      );
+      return;
+    }
+    if (ref.read(appSettingProvider).closeConnectionsOnApply) {
+      await ref.read(coreActionProvider.notifier).closeConnections();
+    }
+    dialogs.showNotifier(
+      appLocalizations.appliedTip,
+      level: MessageLevel.success,
+    );
+  }
+
   void changeMode(Mode mode) {
     ref
         .read(patchClashConfigProvider.notifier)

@@ -456,6 +456,7 @@ enum FunctionTag {
   setupConfig,
   updateGroups,
   applyProfile,
+  reapplyProfile,
   savePreferences,
   changeProxy,
   handleWill,
@@ -494,7 +495,8 @@ enum DashboardWidget {
   runTime,
   proxyGroups,
   profiles,
-  customRouting;
+  customRouting,
+  restartCore;
 
   final List<SupportPlatform> platforms;
 

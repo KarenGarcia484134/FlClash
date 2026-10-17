@@ -494,6 +494,8 @@ void main() {
             )
             .first,
       );
+      await tester.ensureVisible(logItem);
+      await tester.pumpAndSettle();
       await tester.tap(logItem);
       await tester.pumpAndSettle();
 

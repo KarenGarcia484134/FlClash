@@ -117,12 +117,13 @@ const List<DashboardWidget> defaultDashboardWidgets = [
   DashboardWidget.trafficUsage,
   DashboardWidget.intranetIp,
   DashboardWidget.customRouting,
+  DashboardWidget.restartCore,
 ];
 
 /// Cards added to the dashboard of existing users once, by an update. Each
 /// is recorded in [AppSettingProps.seededDashboardWidgets], so a card the user
 /// removes afterwards stays removed.
-const seededDashboardWidgetNames = ['customRouting'];
+const seededDashboardWidgetNames = ['customRouting', 'restartCore'];
 
 Object? _readDashboardWidgets(Map<dynamic, dynamic> json, String key) {
   final value = json[key];
@@ -219,6 +220,7 @@ abstract class AppSettingProps with _$AppSettingProps {
     @Default(false) bool autoRun,
     @Default(false) bool openLogs,
     @Default(true) bool closeConnections,
+    @Default(false) bool closeConnectionsOnApply,
     @Default(defaultTestUrl) String testUrl,
     @Default(TabAnimation.slide)
     @JsonKey(readValue: _readTabAnimation)

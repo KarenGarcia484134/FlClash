@@ -37,6 +37,7 @@ _AppSettingProps _$AppSettingPropsFromJson(
   autoRun: json['autoRun'] as bool? ?? false,
   openLogs: json['openLogs'] as bool? ?? false,
   closeConnections: json['closeConnections'] as bool? ?? true,
+  closeConnectionsOnApply: json['closeConnectionsOnApply'] as bool? ?? false,
   testUrl: json['testUrl'] as String? ?? defaultTestUrl,
   tabAnimation:
       $enumDecodeNullable(
@@ -102,6 +103,7 @@ Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
       'autoRun': instance.autoRun,
       'openLogs': instance.openLogs,
       'closeConnections': instance.closeConnections,
+      'closeConnectionsOnApply': instance.closeConnectionsOnApply,
       'testUrl': instance.testUrl,
       'tabAnimation': _$TabAnimationEnumMap[instance.tabAnimation]!,
       'floatingNavigationBar': instance.floatingNavigationBar,
@@ -160,6 +162,7 @@ const _$DashboardWidgetEnumMap = {
   DashboardWidget.proxyGroups: 'proxyGroups',
   DashboardWidget.profiles: 'profiles',
   DashboardWidget.customRouting: 'customRouting',
+  DashboardWidget.restartCore: 'restartCore',
 };
 
 _AccessControlProps _$AccessControlPropsFromJson(Map<String, dynamic> json) =>

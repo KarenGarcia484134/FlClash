@@ -325,6 +325,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "appendSystemDns": MessageLookupByLibrary.simpleMessage(
       "Добавлять системный DNS",
     ),
+    "appliedTip": MessageLookupByLibrary.simpleMessage("Применено"),
+    "applyFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось применить конфигурацию",
+    ),
     "authentication": MessageLookupByLibrary.simpleMessage("Аутентификация"),
     "authenticationDesc": MessageLookupByLibrary.simpleMessage(
       "Аутентификация требует логин и пароль для локального порта прокси.",
@@ -469,6 +473,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "close": MessageLookupByLibrary.simpleMessage("Закрыть"),
     "closeConnections": MessageLookupByLibrary.simpleMessage(
       "Закрыть соединения",
+    ),
+    "closeConnectionsOnApply": MessageLookupByLibrary.simpleMessage(
+      "Закрывать соединения при применении",
     ),
     "color": MessageLookupByLibrary.simpleMessage("Цвет"),
     "colorSchemes": MessageLookupByLibrary.simpleMessage("Цветовые схемы"),
@@ -1489,9 +1496,20 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "responseCode": MessageLookupByLibrary.simpleMessage("Код ответа"),
     "restart": MessageLookupByLibrary.simpleMessage("Перезапустить"),
+    "restartCore": MessageLookupByLibrary.simpleMessage("Перезапуск ядра"),
+    "restartCoreCardDesc": MessageLookupByLibrary.simpleMessage(
+      "Нажмите для перезапуска",
+    ),
+    "restartCoreDone": MessageLookupByLibrary.simpleMessage(
+      "Ядро перезапущено",
+    ),
+    "restartCoreFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось перезапустить ядро",
+    ),
     "restartCoreTip": MessageLookupByLibrary.simpleMessage(
       "Вы уверены, что хотите перезапустить ядро?",
     ),
+    "restartingCore": MessageLookupByLibrary.simpleMessage("Перезапуск…"),
     "restore": MessageLookupByLibrary.simpleMessage("Восстановить"),
     "restoreAllData": MessageLookupByLibrary.simpleMessage(
       "Восстановить все данные",

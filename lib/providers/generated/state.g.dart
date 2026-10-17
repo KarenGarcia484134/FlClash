@@ -3906,3 +3906,56 @@ final class DialerGraphFamily extends $Family
   @override
   String toString() => r'dialerGraphProvider';
 }
+
+/// Settings outside the patch config and the database that end up in the
+/// generated config of the current profile. Database edits reapply from
+/// their notifiers.
+
+@ProviderFor(generatedConfigInputs)
+final generatedConfigInputsProvider = GeneratedConfigInputsProvider._();
+
+/// Settings outside the patch config and the database that end up in the
+/// generated config of the current profile. Database edits reapply from
+/// their notifiers.
+
+final class GeneratedConfigInputsProvider
+    extends $FunctionalProvider<(int, Object)?, (int, Object)?, (int, Object)?>
+    with $Provider<(int, Object)?> {
+  /// Settings outside the patch config and the database that end up in the
+  /// generated config of the current profile. Database edits reapply from
+  /// their notifiers.
+  GeneratedConfigInputsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'generatedConfigInputsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$generatedConfigInputsHash();
+
+  @$internal
+  @override
+  $ProviderElement<(int, Object)?> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  (int, Object)? create(Ref ref) {
+    return generatedConfigInputs(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue((int, Object)? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<(int, Object)?>(value),
+    );
+  }
+}
+
+String _$generatedConfigInputsHash() =>
+    r'727fbdee46a6d3ab42f4b42cc938ef4325a01336';

@@ -89,7 +89,6 @@ Future<void> pickDialerProxy(
   } else {
     notifier.set(profileId, node, res);
   }
-  ref.read(setupActionProvider.notifier).autoApplyProfile();
 }
 
 /// Long-press menu entries of a node on the proxies page. Append new entries
@@ -140,7 +139,6 @@ class DialerProxyView extends ConsumerWidget {
       return;
     }
     ref.read(dialerProxySettingProvider.notifier).clear(id);
-    ref.read(setupActionProvider.notifier).autoApplyProfile();
   }
 
   @override
@@ -186,7 +184,6 @@ class DialerProxyView extends ConsumerWidget {
                       ref
                           .read(dialerProxySettingProvider.notifier)
                           .set(profileId!, node, null);
-                      ref.read(setupActionProvider.notifier).autoApplyProfile();
                     },
                   ),
                 for (final MapEntry(key: node, value: target)

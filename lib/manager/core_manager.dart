@@ -49,6 +49,12 @@ class _CoreContainerState extends ConsumerState<CoreManager>
         ref.read(setupActionProvider.notifier).updateConfigDebounce();
       }
     });
+    ref.listenManual(generatedConfigInputsProvider, (prev, next) {
+      // A profile switch runs its own full setup.
+      if (prev != null && next != null && prev.$1 == next.$1 && prev != next) {
+        ref.read(setupActionProvider.notifier).reapplyForChange();
+      }
+    });
     ref.listenManual(setupPatchProvider, (prev, next) {
       if (prev != next) {
         ref

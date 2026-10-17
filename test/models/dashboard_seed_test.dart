@@ -21,16 +21,32 @@ void main() {
       DashboardWidget.networkSpeed,
       DashboardWidget.outboundMode,
       DashboardWidget.customRouting,
+      DashboardWidget.restartCore,
     ]);
-    expect(props.seededDashboardWidgets, contains('customRouting'));
+    expect(
+      props.seededDashboardWidgets,
+      containsAll(['customRouting', 'restartCore']),
+    );
   });
 
   test('a removed card stays removed after the seed', () {
     final saved = AppSettingProps.fromJson({
       'dashboardWidgets': ['networkSpeed'],
-      'seededDashboardWidgets': ['customRouting'],
+      'seededDashboardWidgets': ['customRouting', 'restartCore'],
     });
     expect(saved.dashboardWidgets, [DashboardWidget.networkSpeed]);
+  });
+
+  test('users seeded with the routing card get the restart card once', () {
+    final saved = AppSettingProps.fromJson({
+      'dashboardWidgets': ['networkSpeed'],
+      'seededDashboardWidgets': ['customRouting'],
+    });
+    expect(saved.dashboardWidgets, [
+      DashboardWidget.networkSpeed,
+      DashboardWidget.restartCore,
+    ]);
+    expect(saved.seededDashboardWidgets, contains('restartCore'));
   });
 
   test('round trip keeps the seed record', () {

@@ -975,5 +975,13 @@
   "dialerProxyClearAll": "すべてクリア",
   "dialerProxyClearAllTip": "このプロファイルの前置プロキシ設定をすべてクリアしますか？",
   "dialerProxyProviderTip": "このノードはプロキシプロバイダー由来のため個別に設定できません",
-  "dialerProxySkippedTip": "{count} 件の前置プロキシ設定がスキップされました"
+  "dialerProxySkippedTip": "{count} 件の前置プロキシ設定がスキップされました",
+  "appliedTip": "適用しました",
+  "applyFailed": "設定の適用に失敗しました",
+  "closeConnectionsOnApply": "設定適用時に接続を閉じる",
+  "restartCore": "コアを再起動",
+  "restartCoreCardDesc": "タップで再起動",
+  "restartingCore": "再起動中…",
+  "restartCoreDone": "コアを再起動しました",
+  "restartCoreFailed": "コアの再起動に失敗しました"
 }
