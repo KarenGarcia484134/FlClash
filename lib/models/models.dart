@@ -10,3 +10,4 @@ export 'references.dart';
 export 'state.dart';
 export 'custom_routing.dart';
 export 'tailscale.dart';
+export 'dialer_proxy.dart';

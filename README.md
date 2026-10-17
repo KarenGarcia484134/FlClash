@@ -23,6 +23,14 @@ Based on [chen08209/FlClash](https://github.com/chen08209/FlClash). Thanks to th
 - Dashboard card: a "Custom routing" card shows how many entries the current profile uses and opens the management list in one tap (where each entry can be ticked for the current profile); added once by default for new and existing users, and stays removed if you remove it
 - Outbound latency: the outbound picker shows each node's delay (green / yellow / red / timeout, shared with the proxies page), with test all, tap or **long-press** a node to test it (long-press does not select), sort by latency and hide timeouts; groups show their current node and its delay; each entry in the routing list shows its outbound's delay, tap or long-press to retest
 
+### Dialer proxy
+
+- On the Proxies page, **long-press** a plain node to open its (extensible) menu and choose "Set dialer proxy": pick another node or group (with latency badges), or "None"
+- Saved per profile, by node name, and injected as `dialer-proxy` when the final config is generated; it overrides a dialer-proxy from the subscription, which is shown too
+- Choices that would loop (the node itself, A→B→A, groups containing the node) are excluded; if the node or target disappears after a subscription update the setting is skipped and flagged in the UI
+- Nodes with a dialer proxy show "via XX"; delay tests measure the whole chain
+- "Advanced config → Dialer proxy" lists, edits, deletes or clears them all; applies to nodes defined in the profile itself (not proxy-provider nodes)
+
 ### Extend tab layout
 
 - Custom routing is its own tab, placed before Standard / Script and selected by default

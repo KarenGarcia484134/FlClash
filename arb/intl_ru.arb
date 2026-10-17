@@ -240,7 +240,7 @@
   "ntpStatusDesc": "NTP берёт время с NTP-сервера, а не из системных часов.",
   "server": "Сервер",
   "ntpInterval": "Интервал синхронизации (минуты)",
-  "dialerProxy": "Прокси для подключения",
+  "dialerProxy": "Промежуточный прокси",
   "dialerProxyDesc": "Прокси для подключения — исход, через который идёт обращение к NTP-серверу.",
   "writeToSystem": "Записывать в систему",
   "writeToSystemDesc": "«Записывать в систему» также устанавливает системные часы; Android это игнорирует.",
@@ -963,5 +963,17 @@
   "hideTimeoutNodes": "Скрыть тайм-ауты",
   "customRoutingCardCount": "Активно {applied} из {total}",
   "customRoutingCardNoProfile": "Профиль не выбран",
-  "customRoutingUseInProfile": "Использовать в текущем профиле"
+  "customRoutingUseInProfile": "Использовать в текущем профиле",
+  "setDialerProxy": "Задать промежуточный прокси",
+  "dialerProxyVia": "через {name}",
+  "dialerProxyFromProfile": "из профиля",
+  "dialerProxyNone": "Не использовать",
+  "dialerProxyMissingNode": "узел отсутствует, пропущено",
+  "dialerProxyMissingTarget": "прокси отсутствует, пропущено",
+  "dialerProxyCycle": "образует цикл, пропущено",
+  "dialerProxyEmpty": "В этом профиле нет промежуточных прокси",
+  "dialerProxyClearAll": "Очистить всё",
+  "dialerProxyClearAllTip": "Удалить все промежуточные прокси этого профиля?",
+  "dialerProxyProviderTip": "Этот узел из провайдера прокси, для него нельзя задать промежуточный прокси",
+  "dialerProxySkippedTip": "Пропущено настроек промежуточного прокси: {count}"
 }

@@ -268,6 +268,164 @@ abstract class _$TailscaleSetting extends $Notifier<TailscaleProps> {
   }
 }
 
+/// The user's dialer-proxy per node, per profile id.
+
+@ProviderFor(DialerProxySetting)
+final dialerProxySettingProvider = DialerProxySettingProvider._();
+
+/// The user's dialer-proxy per node, per profile id.
+final class DialerProxySettingProvider
+    extends
+        $NotifierProvider<
+          DialerProxySetting,
+          Map<String, Map<String, String>>
+        > {
+  /// The user's dialer-proxy per node, per profile id.
+  DialerProxySettingProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'dialerProxySettingProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$dialerProxySettingHash();
+
+  @$internal
+  @override
+  DialerProxySetting create() => DialerProxySetting();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Map<String, Map<String, String>> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Map<String, Map<String, String>>>(
+        value,
+      ),
+    );
+  }
+}
+
+String _$dialerProxySettingHash() =>
+    r'8b980990cc8f1334bead16e995539cf9a9565908';
+
+/// The user's dialer-proxy per node, per profile id.
+
+abstract class _$DialerProxySetting
+    extends $Notifier<Map<String, Map<String, String>>> {
+  Map<String, Map<String, String>> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref =
+        this.ref
+            as $Ref<
+              Map<String, Map<String, String>>,
+              Map<String, Map<String, String>>
+            >;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                Map<String, Map<String, String>>,
+                Map<String, Map<String, String>>
+              >,
+              Map<String, Map<String, String>>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(profileDialerProxies)
+final profileDialerProxiesProvider = ProfileDialerProxiesFamily._();
+
+final class ProfileDialerProxiesProvider
+    extends
+        $FunctionalProvider<
+          Map<String, String>,
+          Map<String, String>,
+          Map<String, String>
+        >
+    with $Provider<Map<String, String>> {
+  ProfileDialerProxiesProvider._({
+    required ProfileDialerProxiesFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'profileDialerProxiesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$profileDialerProxiesHash();
+
+  @override
+  String toString() {
+    return r'profileDialerProxiesProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<Map<String, String>> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  Map<String, String> create(Ref ref) {
+    final argument = this.argument as int;
+    return profileDialerProxies(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Map<String, String> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Map<String, String>>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ProfileDialerProxiesProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$profileDialerProxiesHash() =>
+    r'a7d4d202e08b3fbfcc81008a408c84514f0637f4';
+
+final class ProfileDialerProxiesFamily extends $Family
+    with $FunctionalFamilyOverride<Map<String, String>, int> {
+  ProfileDialerProxiesFamily._()
+    : super(
+        retry: null,
+        name: r'profileDialerProxiesProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  ProfileDialerProxiesProvider call(int profileId) =>
+      ProfileDialerProxiesProvider._(argument: profileId, from: this);
+
+  @override
+  String toString() => r'profileDialerProxiesProvider';
+}
+
 @ProviderFor(ThemeSetting)
 final themeSettingProvider = ThemeSettingProvider._();
 
@@ -671,4 +829,4 @@ final class _ConfigProvider extends $FunctionalProvider<Config, Config, Config>
   }
 }
 
-String _$_configHash() => r'd9595a420724193502e096a1e210b96a3a1706ba';
+String _$_configHash() => r'7cf2493a2a976bc748fe8eb3564d471fff11645d';

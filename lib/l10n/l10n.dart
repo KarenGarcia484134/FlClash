@@ -8136,6 +8136,121 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Set dialer proxy`
+  String get setDialerProxy {
+    return Intl.message(
+      'Set dialer proxy',
+      name: 'setDialerProxy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `via {name}`
+  String dialerProxyVia(Object name) {
+    return Intl.message(
+      'via $name',
+      name: 'dialerProxyVia',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `from profile`
+  String get dialerProxyFromProfile {
+    return Intl.message(
+      'from profile',
+      name: 'dialerProxyFromProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `None`
+  String get dialerProxyNone {
+    return Intl.message('None', name: 'dialerProxyNone', desc: '', args: []);
+  }
+
+  /// `node gone, skipped`
+  String get dialerProxyMissingNode {
+    return Intl.message(
+      'node gone, skipped',
+      name: 'dialerProxyMissingNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `dialer proxy gone, skipped`
+  String get dialerProxyMissingTarget {
+    return Intl.message(
+      'dialer proxy gone, skipped',
+      name: 'dialerProxyMissingTarget',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `would loop, skipped`
+  String get dialerProxyCycle {
+    return Intl.message(
+      'would loop, skipped',
+      name: 'dialerProxyCycle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No dialer proxies in this profile`
+  String get dialerProxyEmpty {
+    return Intl.message(
+      'No dialer proxies in this profile',
+      name: 'dialerProxyEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clear all`
+  String get dialerProxyClearAll {
+    return Intl.message(
+      'Clear all',
+      name: 'dialerProxyClearAll',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clear all dialer proxies set for this profile?`
+  String get dialerProxyClearAllTip {
+    return Intl.message(
+      'Clear all dialer proxies set for this profile?',
+      name: 'dialerProxyClearAllTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This node comes from a proxy provider and cannot take its own dialer proxy`
+  String get dialerProxyProviderTip {
+    return Intl.message(
+      'This node comes from a proxy provider and cannot take its own dialer proxy',
+      name: 'dialerProxyProviderTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} dialer proxy settings were skipped`
+  String dialerProxySkippedTip(Object count) {
+    return Intl.message(
+      '$count dialer proxy settings were skipped',
+      name: 'dialerProxySkippedTip',
+      desc: '',
+      args: [count],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

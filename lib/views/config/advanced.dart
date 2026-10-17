@@ -1,21 +1,23 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/views/config/custom_routings.dart';
+import 'package:fl_clash/views/config/dialer_proxy.dart';
 import 'package:fl_clash/views/config/dns.dart';
 import 'package:fl_clash/views/config/network.dart';
 import 'package:fl_clash/views/config/scripts.dart';
 import 'package:fl_clash/views/config/tailscale.dart';
 import 'package:fl_clash/widgets/list.dart';
 import 'package:fl_clash/widgets/scaffold.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'rules.dart';
 
-class AdvancedConfigView extends StatelessWidget {
+class AdvancedConfigView extends ConsumerWidget {
   const AdvancedConfigView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final appLocalizations = context.appLocalizations;
     final items = [
       ListItem.open(
@@ -45,6 +47,18 @@ class AdvancedConfigView extends StatelessWidget {
         title: const Text('Tailscale'),
         leading: const GlyphIcon(AppGlyphs.vpn),
         widget: const TailscaleView(),
+      ),
+      ListItem.open(
+        title: Text(appLocalizations.dialerProxy),
+        subtitle: switch (dialerProxySkippedCount(ref)) {
+          0 => null,
+          final count => Text(
+            appLocalizations.dialerProxySkippedTip(count),
+            style: TextStyle(color: context.colorScheme.error),
+          ),
+        },
+        leading: const GlyphIcon(AppGlyphs.link),
+        widget: const DialerProxyView(),
       ),
       ListItem.open(
         title: Text(appLocalizations.script),

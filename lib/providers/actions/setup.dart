@@ -458,6 +458,7 @@ class SetupAction extends _$SetupAction {
         addedRules: setupState.addedRules,
         customRoutings: setupState.customRoutings,
         tailscale: setupState.tailscale,
+        dialerProxies: setupState.dialerProxies,
         defaultUA: defaultUA,
         authentication: networkSetting.authentication.credentials,
         matchTarget: setupState.matchTarget,

@@ -4,6 +4,7 @@ import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/views/config/dialer_proxy.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -86,7 +87,7 @@ class ProxyCard extends ConsumerWidget {
             final selectedProxyName = ref.watch(
               selectedProxyNameProvider(groupName),
             );
-            return CommonCard(
+            final card = CommonCard(
               radius: AppCorner.lg,
               enterActionsOnRight: true,
               key: key,
@@ -101,6 +102,10 @@ class ProxyCard extends ConsumerWidget {
               isSelected: selectedProxyName == proxy.name,
               child: child!,
             );
+            final menuItems = proxyNodeMenuItems(context, ref, proxy);
+            return menuItems.isEmpty
+                ? card
+                : ContextMenuRegion(menuItems: menuItems, child: card);
           },
           child: Container(
             alignment: Alignment.centerLeft,
@@ -129,7 +134,10 @@ class ProxyCard extends ConsumerWidget {
                           flex: 1,
                           child: TooltipText(
                             text: Text(
-                              proxy.type,
+                              [
+                                proxy.type,
+                                ?dialerProxySubtitle(ref, context, proxy.name),
+                              ].join(' · '),
                               maxLines: 1,
                               style: context.textTheme.bodySmall?.copyWith(
                                 overflow: TextOverflow.ellipsis,
@@ -320,8 +328,9 @@ class _ProxyDesc extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final desc = ref.watch(proxyDescProvider(proxy));
+    final via = dialerProxySubtitle(ref, context, proxy.name);
     return EmojiText(
-      desc,
+      via == null ? desc : '$desc · $via',
       overflow: TextOverflow.ellipsis,
       style: context.textTheme.bodySmall?.copyWith(
         color: context.textTheme.bodySmall?.color?.opacity80,

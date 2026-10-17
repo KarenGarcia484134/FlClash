@@ -46,25 +46,42 @@ Future<String?> showRoutingTargetSheet(
 }) {
   return showSheet<String>(
     context: context,
-    builder: (context) => _RoutingTargetSheet(selected: selected),
+    builder: (context) => OutboundPickerSheet(selected: selected),
   );
 }
 
-class _RoutingTargetSheet extends ConsumerStatefulWidget {
-  const _RoutingTargetSheet({required this.selected});
+/// The outbound picker with latency badges. [basicItems] replaces the
+/// built-in policies section and [allow] drops outbounds that can't be
+/// picked.
+class OutboundPickerSheet extends ConsumerStatefulWidget {
+  const OutboundPickerSheet({
+    super.key,
+    required this.selected,
+    this.title,
+    this.basicItems,
+    this.basicLabel,
+    this.allow,
+  });
 
   final String? selected;
+  final String? title;
+  final List<String>? basicItems;
+  final String Function(String item)? basicLabel;
+  final bool Function(String name)? allow;
 
   @override
-  ConsumerState<_RoutingTargetSheet> createState() =>
-      _RoutingTargetSheetState();
+  ConsumerState<OutboundPickerSheet> createState() =>
+      _OutboundPickerSheetState();
 }
 
-class _RoutingTargetSheetState extends ConsumerState<_RoutingTargetSheet> {
+class _OutboundPickerSheetState extends ConsumerState<OutboundPickerSheet> {
   bool _sortByDelay = false;
   bool _hideTimeout = false;
 
   List<String> _arrange(List<String> names) {
+    if (widget.allow case final allow?) {
+      names = names.where(allow).toList();
+    }
     if (!_sortByDelay && !_hideTimeout) {
       return names;
     }
@@ -101,7 +118,7 @@ class _RoutingTargetSheetState extends ConsumerState<_RoutingTargetSheet> {
       (name) => ref.watch(delayTestPhaseProvider(proxyName: name)) != null,
     );
     return SelectionSheet<String>(
-      title: appLocalizations.routingTarget,
+      title: widget.title ?? appLocalizations.routingTarget,
       actions: [
         AppBarActionButton(
           data: IconButtonData(
@@ -130,11 +147,13 @@ class _RoutingTargetSheetState extends ConsumerState<_RoutingTargetSheet> {
       sections: [
         SelectionSection(
           label: appLocalizations.basicStrategy,
-          items: [
-            for (final name in RuleTarget.ruleTargetNames)
-              if (!groupTypes.containsKey(name)) name,
-            ?tailscale,
-          ],
+          items:
+              widget.basicItems ??
+              [
+                for (final name in RuleTarget.ruleTargetNames)
+                  if (!groupTypes.containsKey(name)) name,
+                ?tailscale,
+              ],
         ),
         SelectionSection(
           label: appLocalizations.proxyGroup,
@@ -151,7 +170,10 @@ class _RoutingTargetSheetState extends ConsumerState<_RoutingTargetSheet> {
           subtitleBuilder: (_, name) => proxyTypes[name] ?? '',
         ),
       ],
-      labelBuilder: (item) => item,
+      labelBuilder: (item) =>
+          widget.basicItems?.contains(item) == true && widget.basicLabel != null
+          ? widget.basicLabel!(item)
+          : item,
       trailingBuilder: (item) =>
           hasOutboundDelay(item) ? OutboundDelayBadge(name: item) : null,
       onLongPress: (item) => testOutboundDelay(ref, item),

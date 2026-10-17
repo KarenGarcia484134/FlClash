@@ -452,6 +452,11 @@ _Config _$ConfigFromJson(Map<String, dynamic> json) => _Config(
   tailscaleProps: json['tailscaleProps'] == null
       ? const TailscaleProps()
       : TailscaleProps.fromJson(json['tailscaleProps'] as Map<String, dynamic>),
+  dialerProxies:
+      (json['dialerProxies'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(k, Map<String, String>.from(e as Map)),
+      ) ??
+      const {},
 );
 
 Map<String, dynamic> _$ConfigToJson(_Config instance) => <String, dynamic>{
@@ -467,4 +472,5 @@ Map<String, dynamic> _$ConfigToJson(_Config instance) => <String, dynamic>{
   'patchClashConfig': instance.patchClashConfig,
   'excludeSSIDs': instance.excludeSSIDs,
   'tailscaleProps': instance.tailscaleProps,
+  'dialerProxies': instance.dialerProxies,
 };

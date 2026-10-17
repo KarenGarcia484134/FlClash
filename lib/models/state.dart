@@ -345,6 +345,7 @@ abstract class MakeRealProfileState with _$MakeRealProfileState {
     required List<Rule> addedRules,
     @Default([]) List<CustomRouting> customRoutings,
     @Default(TailscaleProps()) TailscaleProps tailscale,
+    @Default({}) Map<String, String> dialerProxies,
     required String defaultUA,
     @Default([]) List<String> authentication,
     @Default({}) Map<String, dynamic> injectedProxyProviders,
@@ -387,6 +388,7 @@ abstract class SetupState with _$SetupState {
     @Default({}) Map<int, String> proxyDialers,
     @Default([]) List<CustomRouting> customRoutings,
     @Default(TailscaleProps()) TailscaleProps tailscale,
+    @Default({}) Map<String, String> dialerProxies,
     String? matchTarget,
   }) = _SetupState;
 }
