@@ -18,7 +18,8 @@ import (
 )
 
 // What makes a profile large stays in the Core; the overlay the host sends
-// back replaces every other section.
+// back replaces every other section. Proxies are merged so host-injected
+// nodes (Tailscale) survive next to the profile's list.
 var profileBaseSections = []string{"proxies", "proxy-groups", "sub-rules"}
 
 func handleGetProfileBase(path string) (*ProfileBase, error) {
@@ -142,8 +143,18 @@ func mergeProfileBase(base *SetupBase) (*yaml.Node, error) {
 		return nil, err
 	}
 	for _, key := range profileBaseSections {
-		if value := mappingValue(profile, key); value != nil {
-			setMappingValue(root, key, value)
+		switch key {
+		case "proxies":
+			// The host may inject a few proxies of its own (Tailscale) into the
+			// overlay; keep those on top of the profile's list, which stays in
+			// the Core so a large subscription never crosses the bridge.
+			if merged := mergeOverlayProxies(mappingValue(profile, key), mappingValue(root, key)); merged != nil {
+				setMappingValue(root, key, merged)
+			}
+		default:
+			if value := mappingValue(profile, key); value != nil {
+				setMappingValue(root, key, value)
+			}
 		}
 	}
 	rules, err := appendRules(mappingValue(root, "rules"), mappingValue(profile, "rules"))
@@ -216,6 +227,64 @@ func setMappingValue(mapping *yaml.Node, key string, value *yaml.Node) {
 		&yaml.Node{Kind: yaml.ScalarNode, Tag: "!!str", Value: key},
 		value,
 	)
+}
+
+// Overlay proxies whose names the profile lacks (the injected Tailscale node)
+// are prepended; a name the profile already has keeps the profile's entry.
+func mergeOverlayProxies(profile, overlay *yaml.Node) *yaml.Node {
+	profile, overlay = resolveAlias(profile), resolveAlias(overlay)
+	if profile == nil || isNull(profile) {
+		if overlay == nil || isNull(overlay) {
+			return nil
+		}
+		return overlay
+	}
+	if overlay == nil || isNull(overlay) || overlay.Kind != yaml.SequenceNode || len(overlay.Content) == 0 {
+		return profile
+	}
+	if profile.Kind != yaml.SequenceNode {
+		return profile
+	}
+	taken := proxyNamesIn(profile)
+	extra := make([]*yaml.Node, 0, len(overlay.Content))
+	for _, item := range overlay.Content {
+		name := proxyNameOf(item)
+		if name == "" || taken[name] {
+			continue
+		}
+		extra = append(extra, item)
+		taken[name] = true
+	}
+	if len(extra) == 0 {
+		return profile
+	}
+	content := make([]*yaml.Node, 0, len(extra)+len(profile.Content))
+	content = append(append(content, extra...), profile.Content...)
+	return &yaml.Node{Kind: yaml.SequenceNode, Tag: "!!seq", Content: content}
+}
+
+func proxyNamesIn(list *yaml.Node) map[string]bool {
+	names := make(map[string]bool, len(list.Content))
+	for _, item := range list.Content {
+		if name := proxyNameOf(item); name != "" {
+			names[name] = true
+		}
+	}
+	return names
+}
+
+func proxyNameOf(item *yaml.Node) string {
+	item = resolveAlias(item)
+	if item == nil || item.Kind != yaml.MappingNode {
+		return ""
+	}
+	if name := mappingValue(item, "name"); name != nil {
+		name = resolveAlias(name)
+		if name.Kind == yaml.ScalarNode {
+			return name.Value
+		}
+	}
+	return ""
 }
 
 // The overlay's rules are the ones the host adds in front of the profile's.

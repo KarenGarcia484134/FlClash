@@ -11,6 +11,34 @@ void main() {
     expect(raw['proxies'], isEmpty);
   });
 
+  // Rules that name Tailscale without the matching proxy make the core reject
+  // the config ("proxy [Tailscale] not found"); injection must keep them paired.
+  test('injectTailscale never emits rules without the proxy', () {
+    final raw = <String, dynamic>{
+      'proxies': [
+        {'name': 'HK', 'type': 'direct'},
+      ],
+      'dns': <String, dynamic>{'enable': true},
+    };
+    final rules = injectTailscale(
+      raw,
+      const TailscaleProps(enable: true, authKey: 'tskey'),
+    );
+    expect(rules, isNotEmpty);
+    expect(
+      rules.every((rule) => rule.contains(',Tailscale')),
+      isTrue,
+      reason: 'every injected rule must target the injected proxy name',
+    );
+    final proxies = raw['proxies'] as List;
+    expect(
+      proxies.whereType<Map>().any(
+        (item) => item['name'] == 'Tailscale' && item['type'] == 'tailscale',
+      ),
+      isTrue,
+    );
+  });
+
   test('injects proxy, rules and nameserver policy', () {
     final raw = <String, dynamic>{
       'proxies': [
