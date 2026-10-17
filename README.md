@@ -31,6 +31,12 @@ Based on [chen08209/FlClash](https://github.com/chen08209/FlClash). Thanks to th
 - Nodes with a dialer proxy show "via XX"; delay tests measure the whole chain
 - "Advanced config → Dialer proxy" lists, edits, deletes or clears them all; applies to nodes defined in the profile itself (not proxy-provider nodes)
 
+### Auto-apply and core restart
+
+- Editing custom routings (edits, enable switches, per-profile ticks including the dashboard card list and the Extend page, reorder, copy, delete), dialer proxies or Tailscale settings reapplies the current profile automatically while the core runs (debounced), with an "Applied" toast or the failure reason
+- Existing connections keep their old route by default; turn on "Close connections on apply" in General to make new rules hit every connection at once
+- New "Restart core" dashboard card: confirms, then restarts and shows progress and the result; added once by default for new and existing users
+
 ### Extend tab layout
 
 - Custom routing is its own tab, placed before Standard / Script and selected by default

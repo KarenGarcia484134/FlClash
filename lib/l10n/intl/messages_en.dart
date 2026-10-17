@@ -311,6 +311,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "appendSystemDns": MessageLookupByLibrary.simpleMessage(
       "Append system DNS",
     ),
+    "appliedTip": MessageLookupByLibrary.simpleMessage("Applied"),
+    "applyFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to apply config",
+    ),
     "authentication": MessageLookupByLibrary.simpleMessage("Authentication"),
     "authenticationDesc": MessageLookupByLibrary.simpleMessage(
       "Authentication asks for a username and password on the local proxy port.",
@@ -447,6 +451,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "close": MessageLookupByLibrary.simpleMessage("Close"),
     "closeConnections": MessageLookupByLibrary.simpleMessage(
       "Close connections",
+    ),
+    "closeConnectionsOnApply": MessageLookupByLibrary.simpleMessage(
+      "Close connections on apply",
     ),
     "color": MessageLookupByLibrary.simpleMessage("Color"),
     "colorSchemes": MessageLookupByLibrary.simpleMessage("Color schemes"),
@@ -1429,9 +1436,18 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "responseCode": MessageLookupByLibrary.simpleMessage("Response code"),
     "restart": MessageLookupByLibrary.simpleMessage("Restart"),
+    "restartCore": MessageLookupByLibrary.simpleMessage("Restart core"),
+    "restartCoreCardDesc": MessageLookupByLibrary.simpleMessage(
+      "Tap to restart",
+    ),
+    "restartCoreDone": MessageLookupByLibrary.simpleMessage("Core restarted"),
+    "restartCoreFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to restart core",
+    ),
     "restartCoreTip": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to restart the core?",
     ),
+    "restartingCore": MessageLookupByLibrary.simpleMessage("Restarting…"),
     "restore": MessageLookupByLibrary.simpleMessage("Restore"),
     "restoreAllData": MessageLookupByLibrary.simpleMessage("Restore all data"),
     "restoreOnlyConfig": MessageLookupByLibrary.simpleMessage(

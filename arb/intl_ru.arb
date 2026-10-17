@@ -975,5 +975,13 @@
   "dialerProxyClearAll": "Очистить всё",
   "dialerProxyClearAllTip": "Удалить все промежуточные прокси этого профиля?",
   "dialerProxyProviderTip": "Этот узел из провайдера прокси, для него нельзя задать промежуточный прокси",
-  "dialerProxySkippedTip": "Пропущено настроек промежуточного прокси: {count}"
+  "dialerProxySkippedTip": "Пропущено настроек промежуточного прокси: {count}",
+  "appliedTip": "Применено",
+  "applyFailed": "Не удалось применить конфигурацию",
+  "closeConnectionsOnApply": "Закрывать соединения при применении",
+  "restartCore": "Перезапуск ядра",
+  "restartCoreCardDesc": "Нажмите для перезапуска",
+  "restartingCore": "Перезапуск…",
+  "restartCoreDone": "Ядро перезапущено",
+  "restartCoreFailed": "Не удалось перезапустить ядро"
 }

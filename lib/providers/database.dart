@@ -5,6 +5,7 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/database/database.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/providers/action.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -1067,6 +1068,19 @@ class ProfileDisabledRuleIds extends _$ProfileDisabledRuleIds
   }
 }
 
+/// Runs a write that changes the generated config, then reapplies the
+/// running profile.
+FutureOr<void> Function() _reapplyAfter(
+  Ref ref,
+  FutureOr<void> Function() action,
+) {
+  final setup = ref.read(setupActionProvider.notifier);
+  return () async {
+    await action();
+    setup.reapplyForChange();
+  };
+}
+
 @riverpod
 class CustomRoutings extends _$CustomRoutings
     with AsyncNotifierMixin, OptimisticMixin {
@@ -1092,7 +1106,10 @@ class CustomRoutings extends _$CustomRoutings
       );
       next.add(placed);
     }
-    optimistic(next, () => database.customRoutingsDao.put(placed));
+    optimistic(
+      next,
+      _reapplyAfter(ref, () => database.customRoutingsDao.put(placed)),
+    );
   }
 
   Future<void> append(CustomRouting routing) {
@@ -1102,7 +1119,7 @@ class CustomRoutings extends _$CustomRoutings
     return optimisticAsync([
       ...value,
       placed,
-    ], () => database.customRoutingsDao.put(placed));
+    ], _reapplyAfter(ref, () => database.customRoutingsDao.put(placed)));
   }
 
   void duplicate(CustomRouting routing) {
@@ -1118,14 +1135,14 @@ class CustomRoutings extends _$CustomRoutings
     );
     optimistic(
       [...value]..insert(index + 1, copy),
-      () => database.customRoutingsDao.put(copy),
+      _reapplyAfter(ref, () => database.customRoutingsDao.put(copy)),
     );
   }
 
   void del(int id) {
     optimistic(
       value.where((item) => item.id != id).toList(),
-      () => database.customRoutingsDao.del(id),
+      _reapplyAfter(ref, () => database.customRoutingsDao.del(id)),
     );
   }
 
@@ -1139,7 +1156,10 @@ class CustomRoutings extends _$CustomRoutings
     next[newIndex] = item.copyWith(order: newOrder);
     optimistic(
       next,
-      () => database.customRoutingsDao.order(id: item.id, order: newOrder),
+      _reapplyAfter(
+        ref,
+        () => database.customRoutingsDao.order(id: item.id, order: newOrder),
+      ),
     );
   }
 }
@@ -1168,13 +1188,19 @@ class ProfileCustomRoutingIds extends _$ProfileCustomRoutingIds
     if (value.contains(routingId)) {
       optimistic(
         value.where((item) => item != routingId).toList(),
-        () => database.customRoutingsDao.delSelected(profileId, routingId),
+        _reapplyAfter(
+          ref,
+          () => database.customRoutingsDao.delSelected(profileId, routingId),
+        ),
       );
       return;
     }
-    optimistic([
-      ...value,
-      routingId,
-    ], () => database.customRoutingsDao.putSelected(profileId, routingId));
+    optimistic(
+      [...value, routingId],
+      _reapplyAfter(
+        ref,
+        () => database.customRoutingsDao.putSelected(profileId, routingId),
+      ),
+    );
   }
 }

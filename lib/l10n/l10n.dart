@@ -8251,6 +8251,81 @@ class AppLocalizations {
       args: [count],
     );
   }
+
+  /// `Applied`
+  String get appliedTip {
+    return Intl.message('Applied', name: 'appliedTip', desc: '', args: []);
+  }
+
+  /// `Failed to apply config`
+  String get applyFailed {
+    return Intl.message(
+      'Failed to apply config',
+      name: 'applyFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Close connections on apply`
+  String get closeConnectionsOnApply {
+    return Intl.message(
+      'Close connections on apply',
+      name: 'closeConnectionsOnApply',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restart core`
+  String get restartCore {
+    return Intl.message(
+      'Restart core',
+      name: 'restartCore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap to restart`
+  String get restartCoreCardDesc {
+    return Intl.message(
+      'Tap to restart',
+      name: 'restartCoreCardDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restarting…`
+  String get restartingCore {
+    return Intl.message(
+      'Restarting…',
+      name: 'restartingCore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Core restarted`
+  String get restartCoreDone {
+    return Intl.message(
+      'Core restarted',
+      name: 'restartCoreDone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to restart core`
+  String get restartCoreFailed {
+    return Intl.message(
+      'Failed to restart core',
+      name: 'restartCoreFailed',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
