@@ -136,6 +136,51 @@ void main() {
     expect(versions.single.date, '2026-01-02');
   });
 
+  test('rebuilding keeps recorded wording and adds what git derives', () {
+    final first = build();
+    final version = first.changelog.versions.single;
+    final fix = version.groups.firstWhere(
+      (group) => group.type == ChangelogType.fix,
+    );
+    final recorded = Changelog(
+      versions: <ChangelogVersion>[
+        ChangelogVersion(
+          version: version.version,
+          tag: version.tag,
+          date: '2026-01-01',
+          groups: <ChangelogGroup>[
+            ChangelogGroup(
+              type: ChangelogType.fix,
+              entries: <ChangelogEntry>[
+                ChangelogEntry(id: fix.entries.single.id, text: '修复'),
+                const ChangelogEntry(id: 'f0f0f0f', text: 'Out of range'),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+
+    final kept = preserveRecorded(first, recorded).versions.single;
+
+    expect(kept.date, '2026-01-01');
+    expect(
+      kept.groups.map((group) => group.type),
+      version.groups.map((group) => group.type),
+    );
+    final keptFix = kept.groups.firstWhere(
+      (group) => group.type == ChangelogType.fix,
+    );
+    expect(keptFix.entries.map((entry) => entry.text), ['修复']);
+    expect(
+      kept.groups
+          .firstWhere((group) => group.type == ChangelogType.feat)
+          .entries
+          .map((entry) => entry.text),
+      ['Second feature', 'First feature'],
+    );
+  });
+
   test('a release tag on another branch is not reachable from this one', () {
     git(['checkout', '--quiet', '-b', 'feature', 'v1.0.0']);
     commit('feat(d): work started before the release');

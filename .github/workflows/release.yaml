@@ -247,6 +247,11 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Download
         uses: actions/download-artifact@v4
         with:
@@ -260,15 +265,50 @@ jobs:
           test -n "$(ls dist)" || { echo "No artifacts were built" >&2; exit 1; }
           cd dist && sha256sum ./* > SHA256SUMS
 
+      - name: Setup Flutter
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      # Notes come from changelog.json (written by `tool/changelog.dart release`
+      # before tagging). A tag that skipped that step gets its section derived
+      # from the conventional commits since the previous tag instead.
       - name: Release notes
+        shell: bash
+        env:
+          TAG: ${{ needs.meta.outputs.tag }}
         run: |
-          {
-            echo "Automated build of \`${GITHUB_REF_NAME}\` @ \`${GITHUB_SHA::7}\`."
-            echo
-            echo "Android: use \`*-android-arm64-v8a.apk\` for most phones."
-            echo
-            echo "Build log: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
-          } > notes.md
+          fallback() {
+            {
+              echo "Automated build of \`${GITHUB_REF_NAME}\` @ \`${GITHUB_SHA::7}\`."
+              echo
+              echo "Android: use \`*-android-arm64-v8a.apk\` for most phones."
+              echo
+              echo "Build log: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            } > notes.md
+          }
+          if [[ "$GITHUB_REF" != refs/tags/v* ]]; then
+            fallback
+            exit 0
+          fi
+          generate() {
+            flutter pub get &&
+            yq -i '.hooks.user_defines.setup.build_assets = false | .hooks.user_defines.rust_api.build_assets = false' pubspec.yaml &&
+            if ! jq -e --arg tag "$TAG" '.versions[] | select(.tag == $tag)' changelog.json > /dev/null; then
+              echo "::warning::$TAG is not in changelog.json; deriving its notes from git"
+              dart run tool/changelog.dart build
+            fi &&
+            dart run tool/changelog.dart render fork-release --tag "$TAG" \
+              --repo "$GITHUB_REPOSITORY" --assets dist --out notes.md
+          }
+          if ! generate; then
+            echo "::warning::Release notes generation failed; publishing the short notes"
+            fallback
+          fi
+          git checkout -- pubspec.yaml changelog.json 2>/dev/null || true
+          cat notes.md
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
