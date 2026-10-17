@@ -115,11 +115,22 @@ type ProfileBase struct {
 	Proxies     int               `json:"proxies"`
 	ProxyGroups int               `json:"proxy-groups"`
 	Rules       int               `json:"rules"`
+	// Names and links of what stays in the Core, for the host's injections
+	// (dialer proxies, custom routings, listeners, Tailscale) to resolve.
+	Outline ProfileOutline `json:"outline"`
+}
+
+type ProfileOutline struct {
+	Proxies     []map[string]any `json:"proxies"`
+	ProxyGroups []map[string]any `json:"proxy-groups"`
+	SubRules    []string         `json:"sub-rules"`
 }
 
 type ProfileOutbounds struct {
 	Proxies     []ProfileOutbound `json:"proxies"`
 	ProxyGroups []ProfileOutbound `json:"proxy-groups"`
+	// Names only; the multi-port page offers them as listener rules.
+	SubRules map[string][]string `json:"sub-rules"`
 }
 
 type ProfileOutbound struct {

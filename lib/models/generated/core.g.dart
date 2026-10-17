@@ -42,6 +42,7 @@ _ProfileBase _$ProfileBaseFromJson(Map<String, dynamic> json) => _ProfileBase(
   proxies: (json['proxies'] as num?)?.toInt() ?? 0,
   proxyGroups: (json['proxy-groups'] as num?)?.toInt() ?? 0,
   rules: (json['rules'] as num?)?.toInt() ?? 0,
+  outline: json['outline'] as Map<String, dynamic>? ?? const {},
 );
 
 Map<String, dynamic> _$ProfileBaseToJson(_ProfileBase instance) =>
@@ -52,6 +53,7 @@ Map<String, dynamic> _$ProfileBaseToJson(_ProfileBase instance) =>
       'proxies': instance.proxies,
       'proxy-groups': instance.proxyGroups,
       'rules': instance.rules,
+      'outline': instance.outline,
     };
 
 _UpdateParams _$UpdateParamsFromJson(Map<String, dynamic> json) =>

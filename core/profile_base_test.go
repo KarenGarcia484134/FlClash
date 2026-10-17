@@ -120,6 +120,7 @@ func TestHandleGetProfileOutboundsListsOnlyNamesAndTypes(t *testing.T) {
 	want := &ProfileOutbounds{
 		Proxies:     []ProfileOutbound{{Name: "a", Type: "socks5"}, {Name: "b", Type: "vless"}},
 		ProxyGroups: []ProfileOutbound{{Name: "g", Type: "select"}},
+		SubRules:    map[string][]string{"sub": {}},
 	}
 	if !reflect.DeepEqual(outbounds, want) {
 		t.Errorf("outbounds = %+v, want %+v", outbounds, want)
@@ -368,30 +369,46 @@ func TestLoadConfigWithBaseKeepsOverlayInjectedProxies(t *testing.T) {
 	}
 }
 
-func TestMergeOverlayProxiesPrependsOnlyNewNames(t *testing.T) {
+func TestMergeOverlayProxiesPrependsNewNamesAndPatchesKnownOnes(t *testing.T) {
 	profile := sequenceOf(
 		mappingOf("name", "a", "type", "direct"),
-		mappingOf("name", "b", "type", "direct"),
+		mappingOf("name", "b", "type", "direct", "dialer-proxy", "a"),
 	)
 	overlay := sequenceOf(
 		mappingOf("name", "Tailscale", "type", "tailscale"),
-		mappingOf("name", "a", "type", "socks5"), // profile wins
+		mappingOf("name", "a", "dialer-proxy", "b2"),
+		&yaml.Node{Kind: yaml.MappingNode, Tag: "!!map", Content: []*yaml.Node{
+			{Kind: yaml.ScalarNode, Tag: "!!str", Value: "name"},
+			{Kind: yaml.ScalarNode, Tag: "!!str", Value: "b"},
+			{Kind: yaml.ScalarNode, Tag: "!!str", Value: "dialer-proxy"},
+			{Kind: yaml.ScalarNode, Tag: "!!null", Value: "null"},
+		}},
 	)
 
 	merged := mergeOverlayProxies(profile, overlay)
 
 	if got := sequenceNames(merged); !reflect.DeepEqual(got, []string{"Tailscale", "a", "b"}) {
-		t.Errorf("names = %v, want Tailscale then the profile's a, b", got)
+		t.Fatalf("names = %v, want Tailscale then the profile's a, b", got)
 	}
-	if got := mappingValue(resolveAlias(merged.Content[1]), "type"); got == nil || got.Value != "direct" {
-		t.Errorf("profile entry a was replaced by the overlay")
+	a, b := merged.Content[1], merged.Content[2]
+	if got := mappingValue(a, "dialer-proxy"); got == nil || got.Value != "b2" {
+		t.Errorf("a was not patched with its dialer-proxy")
+	}
+	if got := mappingValue(a, "type"); got == nil || got.Value != "direct" {
+		t.Errorf("a lost the keys the patch does not name")
+	}
+	if got := mappingValue(b, "dialer-proxy"); got != nil {
+		t.Errorf("b kept the dialer-proxy the patch cleared: %v", got.Value)
+	}
+	if got := mappingValue(profile.Content[0], "dialer-proxy"); got != nil {
+		t.Errorf("the patch changed the profile node in place")
 	}
 }
 
 func TestMergeOverlayProxiesFallsBackWhenASideIsMissing(t *testing.T) {
 	overlay := sequenceOf(mappingOf("name", "Tailscale", "type", "tailscale"))
-	if got := mergeOverlayProxies(nil, overlay); got != overlay {
-		t.Errorf("nil profile should keep the overlay")
+	if got := sequenceNames(mergeOverlayProxies(nil, overlay)); !reflect.DeepEqual(got, []string{"Tailscale"}) {
+		t.Errorf("nil profile should keep the overlay's new proxies, got %v", got)
 	}
 	profile := sequenceOf(mappingOf("name", "a", "type", "direct"))
 	if got := mergeOverlayProxies(profile, nil); got != profile {

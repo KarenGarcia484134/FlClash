@@ -112,8 +112,65 @@ Future<RealProfile> makeRealProfileTask(MakeRealProfileState data) async {
   return compute<MakeRealProfileState, RealProfile>(_makeRealProfileTask, data);
 }
 
+/// The base config of a large profile with the outline of what the Core
+/// keeps, so the injections see the profile's proxies, groups and sub-rules.
+Map<String, dynamic> withProfileOutline(
+  Map<String, dynamic> config,
+  Map<String, dynamic> outline,
+) {
+  List<Map<String, dynamic>> maps(Object? list) => [
+    if (list is List)
+      for (final item in list)
+        if (item is Map) Map<String, dynamic>.from(item),
+  ];
+  final subRules = outline['sub-rules'];
+  return {
+    ...config,
+    'proxies': maps(outline['proxies']),
+    'proxy-groups': maps(outline['proxy-groups']),
+    'sub-rules': {
+      if (subRules is List)
+        for (final name in subRules.whereType<String>()) name: const <String>[],
+    },
+  };
+}
+
+Map<String, String?> _outlineDialers(Object? proxies) => {
+  if (proxies is List)
+    for (final item in proxies)
+      if (item is Map && item['name'] is String)
+        item['name'] as String: switch (item['dialer-proxy']) {
+          final String via when via.isNotEmpty => via,
+          _ => null,
+        },
+};
+
+/// New proxies stay whole; an outline proxy whose dialer-proxy changed is
+/// sent as a patch, a null clearing it in the Core's merge.
+List<Object?> _outlineProxyChanges(
+  Map<String, String?> original,
+  Object? proxies,
+) {
+  if (proxies is! List) {
+    return const [];
+  }
+  final current = _outlineDialers(proxies);
+  return [
+    for (final item in proxies)
+      if (item is! Map || item['name'] is! String)
+        item
+      else if (!original.containsKey(item['name']))
+        item
+      else if (current[item['name']] != original[item['name']])
+        {'name': item['name'], 'dialer-proxy': current[item['name']]},
+  ];
+}
+
 Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
   final rawConfig = Map.from(data.rawConfig);
+  final outlineDialers = data.outlineOnly
+      ? _outlineDialers(rawConfig['proxies'])
+      : const <String, String?>{};
   final realPatchConfig = data.realPatchConfig;
   final profilesPath = data.profilesPath;
   final profileId = data.profileId;
@@ -390,8 +447,24 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
   }
   rules = [...tailscaleRules, ...rules];
   rawConfig['rules'] = rules;
+  var counts = configCountsOf(rawConfig);
+  if (data.outlineOnly) {
+    final changes = _outlineProxyChanges(outlineDialers, rawConfig['proxies']);
+    rawConfig['proxies'] = changes;
+    rawConfig.remove('proxy-groups');
+    rawConfig.remove('sub-rules');
+    counts = (
+      groups: 0,
+      proxies: changes
+          .where(
+            (item) => item is Map && !outlineDialers.containsKey(item['name']),
+          )
+          .length,
+      rules: rules.length,
+    );
+  }
   final yaml = await _encodeYaml(Map<String, dynamic>.from(rawConfig));
-  return (yaml: yaml, md5: yaml.toMd5(), counts: configCountsOf(rawConfig));
+  return (yaml: yaml, md5: yaml.toMd5(), counts: counts);
 }
 
 typedef ShakingStoreArgs = ({

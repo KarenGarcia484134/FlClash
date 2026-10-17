@@ -507,7 +507,9 @@ class SetupAction extends _$SetupAction {
               groups: setupState.proxyGroups,
             ),
           }
-        : profileBase?.base.config ?? await _core.getConfig(profileId);
+        : profileBase != null
+        ? withProfileOutline(profileBase.base.config, profileBase.base.outline)
+        : await _core.getConfig(profileId);
     final proxyGroups = isCustom ? setupState.proxyGroups : <ProxyGroup>[];
     final rules = isCustom ? setupState.rules : <Rule>[];
     if (hasScript) {
@@ -546,6 +548,7 @@ class SetupAction extends _$SetupAction {
             ? setupState.matchTarget
             : lastMatchTarget(profileBase.base.matchRules),
         safeMode: ref.read(safeModeProvider),
+        outlineOnly: profileBase != null,
       ),
     );
     if (profileBase == null) {

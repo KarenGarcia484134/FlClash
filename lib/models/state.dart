@@ -241,6 +241,11 @@ abstract class MakeRealProfileState with _$MakeRealProfileState {
     @Default({}) Map<String, dynamic> injectedRuleProviders,
     String? matchTarget,
     @Default(false) bool safeMode,
+
+    /// [rawConfig] carries only the outline of the proxies, groups and
+    /// sub-rules the Core keeps; the result then holds new proxies and
+    /// patches of the outline's instead of whole sections.
+    @Default(false) bool outlineOnly,
   }) = _MakeRealProfileState;
 }
 
