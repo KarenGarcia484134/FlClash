@@ -460,6 +460,9 @@ _Config _$ConfigFromJson(Map<String, dynamic> json) => _Config(
         (k, e) => MapEntry(k, Map<String, String>.from(e as Map)),
       ) ??
       const {},
+  listenersProps: json['listenersProps'] == null
+      ? const ListenersProps()
+      : ListenersProps.fromJson(json['listenersProps'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$ConfigToJson(_Config instance) => <String, dynamic>{
@@ -476,4 +479,5 @@ Map<String, dynamic> _$ConfigToJson(_Config instance) => <String, dynamic>{
   'excludeSSIDs': instance.excludeSSIDs,
   'tailscaleProps': instance.tailscaleProps,
   'dialerProxies': instance.dialerProxies,
+  'listenersProps': instance.listenersProps,
 };

@@ -384,34 +384,40 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('dialer proxy and Tailscale edits reapply the profile', (
-    tester,
-  ) async {
-    final setupAction = _ReapplyRecordingSetupAction();
-    final profile = Profile.normal(label: 'p');
-    final container = await _pumpCoreManager(
-      tester,
-      _coreInterface(),
-      overrides: [
-        setupActionProvider.overrideWith(() => setupAction),
-        profilesProvider.overrideWith(() => TestProfiles([profile])),
-        currentProfileIdProvider.overrideWithBuild((_, _) => profile.id),
-      ],
-    );
+  testWidgets(
+    'dialer proxy, Tailscale and listener edits reapply the profile',
+    (tester) async {
+      final setupAction = _ReapplyRecordingSetupAction();
+      final profile = Profile.normal(label: 'p');
+      final container = await _pumpCoreManager(
+        tester,
+        _coreInterface(),
+        overrides: [
+          setupActionProvider.overrideWith(() => setupAction),
+          profilesProvider.overrideWith(() => TestProfiles([profile])),
+          currentProfileIdProvider.overrideWithBuild((_, _) => profile.id),
+        ],
+      );
 
-    container
-        .read(dialerProxySettingProvider.notifier)
-        .set(profile.id, 'A', 'B');
-    await tester.pump();
-    container
-        .read(tailscaleSettingProvider.notifier)
-        .update((state) => state.copyWith(hostname: 'box'));
-    await tester.pump();
+      container
+          .read(dialerProxySettingProvider.notifier)
+          .set(profile.id, 'A', 'B');
+      await tester.pump();
+      container
+          .read(tailscaleSettingProvider.notifier)
+          .update((state) => state.copyWith(hostname: 'box'));
+      await tester.pump();
 
-    expect(setupAction.reapplies, 2);
+      container
+          .read(listenersSettingProvider.notifier)
+          .put(const InboundListenerProps(id: '1', name: 'a', port: 7891));
+      await tester.pump();
 
-    await tester.pumpWidget(const SizedBox.shrink());
-  });
+      expect(setupAction.reapplies, 3);
+
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
 
   testWidgets('a reapply waits for a running core', (tester) async {
     final setupAction = _GatedSetupAction();

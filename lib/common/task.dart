@@ -374,6 +374,14 @@ Future<({String yaml, String md5})> _makeRealProfileTask(
   }
   final tailscaleRules = injectTailscale(rawConfig, data.tailscale);
   injectDialerProxies(rawConfig, data.dialerProxies);
+  if (!data.safeMode) {
+    injectListeners(
+      rawConfig,
+      data.listeners,
+      appPorts: appInboundPorts(realPatchConfig),
+      linux: Platform.isLinux,
+    );
+  }
   if (data.customRoutings.isNotEmpty) {
     rules = [
       ...buildCustomRoutingRulesForConfig(rawConfig, data.customRoutings),

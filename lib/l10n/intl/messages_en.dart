@@ -253,6 +253,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Add custom routing",
     ),
     "addFilters": MessageLookupByLibrary.simpleMessage("Add filters"),
+    "addListener": MessageLookupByLibrary.simpleMessage("Add listener"),
     "addNodes": MessageLookupByLibrary.simpleMessage("Add nodes"),
     "addOverrideEntry": MessageLookupByLibrary.simpleMessage(
       "Add override entry",
@@ -771,6 +772,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "editGlobalRules": MessageLookupByLibrary.simpleMessage(
       "Edit global rules",
     ),
+    "editListener": MessageLookupByLibrary.simpleMessage("Edit listener"),
     "editProxy": MessageLookupByLibrary.simpleMessage("Edit proxy"),
     "editProxyGroup": MessageLookupByLibrary.simpleMessage("Edit proxy group"),
     "editRule": MessageLookupByLibrary.simpleMessage("Edit rule"),
@@ -1102,6 +1104,57 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "listenRoutingMarkDesc": MessageLookupByLibrary.simpleMessage(
       "Listen routing mark works only on Linux.",
+    ),
+    "listenerActive": MessageLookupByLibrary.simpleMessage("Listening"),
+    "listenerAppPort": MessageLookupByLibrary.simpleMessage(
+      "Port used by the app itself",
+    ),
+    "listenerDuplicateName": MessageLookupByLibrary.simpleMessage(
+      "Name already used",
+    ),
+    "listenerDuplicatePort": MessageLookupByLibrary.simpleMessage(
+      "Port used by another listener",
+    ),
+    "listenerFollowRules": MessageLookupByLibrary.simpleMessage("Follow rules"),
+    "listenerInactive": MessageLookupByLibrary.simpleMessage("Not listening"),
+    "listenerLan": MessageLookupByLibrary.simpleMessage("LAN"),
+    "listenerLanWarning": MessageLookupByLibrary.simpleMessage(
+      "Devices on your network can use this port; add a username and password.",
+    ),
+    "listenerListen": MessageLookupByLibrary.simpleMessage("Listen address"),
+    "listenerListenInvalid": MessageLookupByLibrary.simpleMessage(
+      "Not a valid IP address",
+    ),
+    "listenerLocalOnly": MessageLookupByLibrary.simpleMessage(
+      "This device only",
+    ),
+    "listenerMissingRule": MessageLookupByLibrary.simpleMessage(
+      "Sub-rule not in this profile, skipped",
+    ),
+    "listenerMissingTarget": MessageLookupByLibrary.simpleMessage(
+      "Outbound not in this profile, skipped",
+    ),
+    "listenerOutbound": MessageLookupByLibrary.simpleMessage("Outbound"),
+    "listenerPortInvalid": MessageLookupByLibrary.simpleMessage(
+      "Port must be 1–65535",
+    ),
+    "listenerSubRule": MessageLookupByLibrary.simpleMessage("Sub-rule"),
+    "listenerUnsupported": MessageLookupByLibrary.simpleMessage(
+      "Not supported on this platform",
+    ),
+    "listenerUserInvalid": MessageLookupByLibrary.simpleMessage(
+      "Username is required",
+    ),
+    "listenerUsers": MessageLookupByLibrary.simpleMessage("Users"),
+    "listenerUsersEmpty": MessageLookupByLibrary.simpleMessage(
+      "No users: the app\'s own authentication applies.",
+    ),
+    "listeners": MessageLookupByLibrary.simpleMessage("Multi-port"),
+    "listenersDesc": MessageLookupByLibrary.simpleMessage(
+      "Each listener is an extra local proxy port (mihomo listeners) that can send its traffic through a fixed outbound instead of the rules. Applies to every profile.",
+    ),
+    "listenersEnable": MessageLookupByLibrary.simpleMessage(
+      "Enable extra listeners",
     ),
     "liveConnections": MessageLookupByLibrary.simpleMessage("Live connections"),
     "loading": MessageLookupByLibrary.simpleMessage("Loading…"),

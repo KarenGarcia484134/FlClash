@@ -8326,6 +8326,241 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Multi-port`
+  String get listeners {
+    return Intl.message('Multi-port', name: 'listeners', desc: '', args: []);
+  }
+
+  /// `Enable extra listeners`
+  String get listenersEnable {
+    return Intl.message(
+      'Enable extra listeners',
+      name: 'listenersEnable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Each listener is an extra local proxy port (mihomo listeners) that can send its traffic through a fixed outbound instead of the rules. Applies to every profile.`
+  String get listenersDesc {
+    return Intl.message(
+      'Each listener is an extra local proxy port (mihomo listeners) that can send its traffic through a fixed outbound instead of the rules. Applies to every profile.',
+      name: 'listenersDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add listener`
+  String get addListener {
+    return Intl.message(
+      'Add listener',
+      name: 'addListener',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit listener`
+  String get editListener {
+    return Intl.message(
+      'Edit listener',
+      name: 'editListener',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Listen address`
+  String get listenerListen {
+    return Intl.message(
+      'Listen address',
+      name: 'listenerListen',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This device only`
+  String get listenerLocalOnly {
+    return Intl.message(
+      'This device only',
+      name: 'listenerLocalOnly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `LAN`
+  String get listenerLan {
+    return Intl.message('LAN', name: 'listenerLan', desc: '', args: []);
+  }
+
+  /// `Devices on your network can use this port; add a username and password.`
+  String get listenerLanWarning {
+    return Intl.message(
+      'Devices on your network can use this port; add a username and password.',
+      name: 'listenerLanWarning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Outbound`
+  String get listenerOutbound {
+    return Intl.message(
+      'Outbound',
+      name: 'listenerOutbound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Follow rules`
+  String get listenerFollowRules {
+    return Intl.message(
+      'Follow rules',
+      name: 'listenerFollowRules',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sub-rule`
+  String get listenerSubRule {
+    return Intl.message(
+      'Sub-rule',
+      name: 'listenerSubRule',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Users`
+  String get listenerUsers {
+    return Intl.message('Users', name: 'listenerUsers', desc: '', args: []);
+  }
+
+  /// `No users: the app's own authentication applies.`
+  String get listenerUsersEmpty {
+    return Intl.message(
+      'No users: the app\'s own authentication applies.',
+      name: 'listenerUsersEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Port must be 1–65535`
+  String get listenerPortInvalid {
+    return Intl.message(
+      'Port must be 1–65535',
+      name: 'listenerPortInvalid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not a valid IP address`
+  String get listenerListenInvalid {
+    return Intl.message(
+      'Not a valid IP address',
+      name: 'listenerListenInvalid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Username is required`
+  String get listenerUserInvalid {
+    return Intl.message(
+      'Username is required',
+      name: 'listenerUserInvalid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Name already used`
+  String get listenerDuplicateName {
+    return Intl.message(
+      'Name already used',
+      name: 'listenerDuplicateName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Port used by another listener`
+  String get listenerDuplicatePort {
+    return Intl.message(
+      'Port used by another listener',
+      name: 'listenerDuplicatePort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Port used by the app itself`
+  String get listenerAppPort {
+    return Intl.message(
+      'Port used by the app itself',
+      name: 'listenerAppPort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not supported on this platform`
+  String get listenerUnsupported {
+    return Intl.message(
+      'Not supported on this platform',
+      name: 'listenerUnsupported',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sub-rule not in this profile, skipped`
+  String get listenerMissingRule {
+    return Intl.message(
+      'Sub-rule not in this profile, skipped',
+      name: 'listenerMissingRule',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Listening`
+  String get listenerActive {
+    return Intl.message(
+      'Listening',
+      name: 'listenerActive',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not listening`
+  String get listenerInactive {
+    return Intl.message(
+      'Not listening',
+      name: 'listenerInactive',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Outbound not in this profile, skipped`
+  String get listenerMissingTarget {
+    return Intl.message(
+      'Outbound not in this profile, skipped',
+      name: 'listenerMissingTarget',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
