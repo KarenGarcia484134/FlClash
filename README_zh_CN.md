@@ -45,6 +45,12 @@
 - 校验端口范围以及与应用自身端口、其他监听器的冲突；名称或端口与配置文件自带的 listener 相同时以你的为准，出口或子规则不存在时跳过并标红
 - 全局生效（不区分配置），有总开关；修改后自动重新应用；列表显示监听状态，长按可复制地址（如 socks5://127.0.0.1:7891）
 
+### 界面风格
+
+- 设置 → 主题 →「界面风格」：**经典**（默认，即 0.9.11 的 Material 外观）或 **新版**（上游 0.9.1 的重新设计：iOS 字号体系、分层表面、iOS 配色、液态玻璃），切换后立即生效
+- 两种风格各自保存主题色：经典沿用之前设置的颜色和 Material 配色方案，新版使用 iOS 色板和配色风格；液态玻璃仅在新版中提供
+- 0.9.1 重新设计的页面（围绕当前出口的仪表盘、代理组卡片、连接 / 请求表格）在两种风格下都保留；切换改变的是主题，不是页面布局
+
 ### 扩展页布局
 
 - 「自定义分流」成为独立标签，位于「标准 / 脚本」之前并默认选中
@@ -103,9 +109,11 @@ dart setup.dart android   # 或 windows / linux / macos
 
 ```sh
 git remote add upstream https://github.com/chen08209/FlClash.git
-git fetch upstream
-git merge upstream/main
+git fetch upstream --tags
+git merge v<上游版本>   # 优先合并最新的发布标签而不是 main
 ```
+
+当前已同步到上游 **v0.9.1**（本仓库以 0.9.12 发布）。
 
 内核子模块：按 [`core/PATCHES.md`](core/PATCHES.md) 中的步骤，把 `FlClash-patched` 变基到上游最新的 `FlClash` 分支并推送，再提交子模块的新指针。
 

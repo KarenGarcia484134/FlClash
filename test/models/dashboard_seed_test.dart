@@ -18,6 +18,7 @@ void main() {
       'dashboardWidgets': ['networkSpeed', 'outboundMode'],
     });
     expect(props.dashboardWidgets, [
+      DashboardWidget.currentOutbound,
       DashboardWidget.networkSpeed,
       DashboardWidget.outboundMode,
       DashboardWidget.customRouting,
@@ -34,7 +35,10 @@ void main() {
       'dashboardWidgets': ['networkSpeed'],
       'seededDashboardWidgets': ['customRouting', 'restartCore'],
     });
-    expect(saved.dashboardWidgets, [DashboardWidget.networkSpeed]);
+    expect(saved.dashboardWidgets, [
+      DashboardWidget.currentOutbound,
+      DashboardWidget.networkSpeed,
+    ]);
   });
 
   test('users seeded with the routing card get the restart card once', () {
@@ -43,6 +47,7 @@ void main() {
       'seededDashboardWidgets': ['customRouting'],
     });
     expect(saved.dashboardWidgets, [
+      DashboardWidget.currentOutbound,
       DashboardWidget.networkSpeed,
       DashboardWidget.restartCore,
     ]);
@@ -56,7 +61,10 @@ void main() {
     final json = jsonDecode(jsonEncode(first)) as Map<String, dynamic>
       ..['dashboardWidgets'] = ['networkSpeed'];
     final again = AppSettingProps.fromJson(json);
-    expect(again.dashboardWidgets, [DashboardWidget.networkSpeed]);
+    expect(again.dashboardWidgets, [
+      DashboardWidget.currentOutbound,
+      DashboardWidget.networkSpeed,
+    ]);
   });
 
   test('card counts entries switched on and selected', () {

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:fl_clash/common/app_localizations.dart';
+import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/pages/scan.dart';
 import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/ui/activate_box.dart';
@@ -752,6 +753,7 @@ void main() {
           .read(themeSettingProvider.notifier)
           .update(
             (state) => state.copyWith(
+              uiStyle: UiStyle.modern,
               themeMode: ThemeMode.light,
               pureBlack: true,
               fontFamily: 'Inter',

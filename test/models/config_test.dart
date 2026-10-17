@@ -164,6 +164,7 @@ void main() {
     test('the traffic usage card folds into the network speed one', () {
       final restored = AppSettingProps.fromJson({
         'dashboardWidgets': ['currentOutbound', 'trafficUsage', 'profiles'],
+        'seededDashboardWidgets': seededDashboardWidgetNames,
       });
       expect(restored.dashboardWidgets, [
         DashboardWidget.currentOutbound,
@@ -173,6 +174,7 @@ void main() {
 
       final both = AppSettingProps.fromJson({
         'dashboardWidgets': ['currentOutbound', 'networkSpeed', 'trafficUsage'],
+        'seededDashboardWidgets': seededDashboardWidgetNames,
       });
       expect(both.dashboardWidgets, [
         DashboardWidget.currentOutbound,
@@ -201,7 +203,10 @@ void main() {
         <String>[],
         ['runTime'],
       ]) {
-        final restored = AppSettingProps.fromJson({'dashboardWidgets': saved});
+        final restored = AppSettingProps.fromJson({
+          'dashboardWidgets': saved,
+          'seededDashboardWidgets': seededDashboardWidgetNames,
+        });
         expect(restored.dashboardWidgets, [DashboardWidget.currentOutbound]);
       }
     });
@@ -214,6 +219,7 @@ void main() {
           'profiles',
           'intranetIp',
         ],
+        'seededDashboardWidgets': seededDashboardWidgetNames,
       });
       expect(restored.dashboardWidgets, [
         DashboardWidget.currentOutbound,
@@ -233,6 +239,7 @@ void main() {
           'tunButton',
           'vpnButton',
         ],
+        'seededDashboardWidgets': seededDashboardWidgetNames,
       });
       expect(restored.dashboardWidgets, [
         DashboardWidget.currentOutbound,
@@ -736,7 +743,10 @@ void main() {
         }).colorStyle,
         ColorStyle.tinted,
       );
-      expect(const ThemeProps().toJson(), isNot(contains('schemeVariant')));
+      // Kept for the classic style, beside the color style it no longer sets.
+      final json = jsonDecode(jsonEncode(const ThemeProps()));
+      expect(json['schemeVariant'], 'content');
+      expect(ThemeProps.fromJson(json).colorStyle, ColorStyle.vivid);
     });
 
     test('reads the old liquid glass switch as the standard tier', () {

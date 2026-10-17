@@ -1042,5 +1042,18 @@
   "listenerMissingRule": "Подправила нет в профиле, пропущено",
   "listenerActive": "Слушает",
   "listenerInactive": "Не слушает",
-  "listenerMissingTarget": "Выхода нет в профиле, пропущено"
+  "listenerMissingTarget": "Выхода нет в профиле, пропущено",
+  "uiStyle": "Стиль интерфейса",
+  "uiStyleClassic": "Классический",
+  "uiStyleModern": "Новый",
+  "uiStyleDesc": "Классический сохраняет облик Material прежних версий, Новый — обновлённый дизайн. Применяется сразу.",
+  "colorSchemes": "Цветовые схемы",
+  "tonalSpotScheme": "Тональный акцент",
+  "fidelityScheme": "Точная передача",
+  "neutralScheme": "Нейтральная",
+  "vibrantScheme": "Яркая",
+  "expressiveScheme": "Экспрессивная",
+  "contentScheme": "Контентная",
+  "rainbowScheme": "Радуга",
+  "fruitSaladScheme": "Фруктовый микс"
 }

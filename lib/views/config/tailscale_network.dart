@@ -223,10 +223,7 @@ class TailscaleNetworkSectionState
       tooltip: appLocalizations.tailscaleRefresh,
       onPressed: widget.proxyName == null || _loading ? null : refresh,
       icon: _loading
-          ? const SizedBox.square(
-              dimension: 18,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
+          ? const CommonCircleLoading(size: 18)
           : const GlyphIcon(AppGlyphs.refresh),
     );
     final header = Row(

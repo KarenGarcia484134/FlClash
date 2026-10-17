@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'dart:ui' show ImageFilter;
 
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/providers/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
@@ -184,7 +185,7 @@ class _ThemeLivePreviewState extends ConsumerState<ThemeLivePreview>
     );
     final liquidGlass = ref.watch(
       themeSettingProvider.select(
-        (state) => state.liquidGlass != LiquidGlassMode.none,
+        (state) => state.effectiveLiquidGlass != LiquidGlassMode.none,
       ),
     );
     final corner = AppCorner.fit(_phoneWidth);

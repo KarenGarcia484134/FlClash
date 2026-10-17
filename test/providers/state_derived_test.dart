@@ -9,7 +9,6 @@ import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/providers/database.dart';
 import 'package:fl_clash/providers/state.dart';
-import 'package:fl_clash/ui/color.dart';
 import 'package:fl_clash/views/navigation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -762,7 +761,10 @@ void main() {
 
     container
         .read(themeSettingProvider.notifier)
-        .update((state) => state.copyWith(colorStyle: ColorStyle.soft));
+        .update(
+          (state) =>
+              state.copyWith(schemeVariant: DynamicSchemeVariant.vibrant),
+        );
     expect(container.read(provider), isNot(same(first)));
   });
 

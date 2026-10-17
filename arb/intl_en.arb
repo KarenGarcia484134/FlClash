@@ -1052,5 +1052,18 @@
   "listenerMissingRule": "Sub-rule not in this profile, skipped",
   "listenerActive": "Listening",
   "listenerInactive": "Not listening",
-  "listenerMissingTarget": "Outbound not in this profile, skipped"
+  "listenerMissingTarget": "Outbound not in this profile, skipped",
+  "uiStyle": "Interface style",
+  "uiStyleClassic": "Classic",
+  "uiStyleModern": "New",
+  "uiStyleDesc": "Classic keeps the Material look of earlier versions; New is the redesigned look. Applies immediately.",
+  "colorSchemes": "Color schemes",
+  "tonalSpotScheme": "Tonal spot",
+  "fidelityScheme": "Fidelity",
+  "neutralScheme": "Neutral",
+  "vibrantScheme": "Vibrant",
+  "expressiveScheme": "Expressive",
+  "contentScheme": "Content",
+  "rainbowScheme": "Rainbow",
+  "fruitSaladScheme": "Fruit salad"
 }

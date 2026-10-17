@@ -46,9 +46,10 @@ ColorScheme genColorScheme(
   final themeSetting = ref.watch(
     themeSettingProvider.select(
       (state) => (
-        primaryColor: state.primaryColor,
+        primaryColor: state.activePrimaryColor,
         colorStyle: state.colorStyle,
         pureBlack: state.pureBlack,
+        schemeVariant: state.isClassic ? state.schemeVariant : null,
       ),
     ),
   );
@@ -63,29 +64,38 @@ ColorScheme genColorScheme(
   return _cachedColorScheme(
     seedColor,
     brightness,
-    themeSetting.colorStyle,
+    themeSetting.schemeVariant ?? themeSetting.colorStyle,
     pureBlack ?? themeSetting.pureBlack,
   );
 }
 
 const _maxCachedColorSchemes = 64;
 
-final _colorSchemes = <(Color, Brightness, ColorStyle, bool), ColorScheme>{};
+final _colorSchemes = <(Color, Brightness, Enum, bool), ColorScheme>{};
 
+/// [style] is a [ColorStyle] for the modern style, and the classic style's
+/// [DynamicSchemeVariant].
 ColorScheme _cachedColorScheme(
   Color seedColor,
   Brightness brightness,
-  ColorStyle style,
+  Enum style,
   bool pureBlack,
 ) {
   final key = (seedColor, brightness, style, pureBlack);
   final colorScheme =
       _colorSchemes.remove(key) ??
-      seededColorScheme(
-        seedColor: seedColor,
-        brightness: brightness,
-        style: style,
-      ).toPureBlack(pureBlack);
+      switch (style) {
+        final DynamicSchemeVariant variant => ColorScheme.fromSeed(
+          seedColor: seedColor,
+          brightness: brightness,
+          dynamicSchemeVariant: variant,
+        ),
+        _ => seededColorScheme(
+          seedColor: seedColor,
+          brightness: brightness,
+          style: style as ColorStyle,
+        ),
+      }.toPureBlack(pureBlack);
   _colorSchemes[key] = colorScheme;
   if (_colorSchemes.length > _maxCachedColorSchemes) {
     _colorSchemes.remove(_colorSchemes.keys.first);

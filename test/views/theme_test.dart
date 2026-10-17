@@ -53,6 +53,55 @@ void main() {
 
   ThemeProps readTheme() => container.read(themeSettingProvider);
 
+  void useModernStyle() => container
+      .read(themeSettingProvider.notifier)
+      .update((state) => state.copyWith(uiStyle: UiStyle.modern));
+
+  group('interface style', () {
+    testWidgets('defaults to classic and switches live both ways', (
+      tester,
+    ) async {
+      await pumpThemeView(tester);
+      expect(readTheme().uiStyle, UiStyle.classic);
+      expect(find.text('Interface style'), findsOneWidget);
+
+      await tester.tap(find.text('New'));
+      await tester.pumpAndSettle();
+      expect(readTheme().uiStyle, UiStyle.modern);
+
+      await tester.tap(find.text('Classic'));
+      await tester.pumpAndSettle();
+      expect(readTheme().uiStyle, UiStyle.classic);
+    });
+
+    testWidgets('classic offers scheme variants and hides liquid glass', (
+      tester,
+    ) async {
+      await pumpThemeView(tester);
+      expect(find.text('Color schemes'), findsOneWidget);
+      expect(find.text('Color style'), findsNothing);
+      expect(find.byType(PreviewChoiceGroup<LiquidGlassMode>), findsNothing);
+
+      await tester.tap(find.text('New'));
+      await tester.pumpAndSettle();
+      expect(find.text('Color schemes'), findsNothing);
+      expect(find.text('Color style'), findsOneWidget);
+      expect(find.byType(PreviewChoiceGroup<LiquidGlassMode>), findsOneWidget);
+    });
+
+    testWidgets('classic colors are kept apart from the modern palette', (
+      tester,
+    ) async {
+      await pumpThemeView(tester);
+      final before = readTheme();
+      container
+          .read(themeSettingProvider.notifier)
+          .update((state) => state.withActivePrimaryColor(0xFF795548));
+      expect(readTheme().classicPrimaryColor, 0xFF795548);
+      expect(readTheme().primaryColor, before.primaryColor);
+    });
+  });
+
   group('theme mode', () {
     testWidgets('defaults to following the system', (tester) async {
       await pumpThemeView(tester);
@@ -78,6 +127,8 @@ void main() {
   });
 
   group('primary color', () {
+    setUp(useModernStyle);
+
     Finder swatch(int color) => find.byWidgetPredicate(
       (widget) =>
           widget is Semantics && widget.properties.label == Color(color).hex,
@@ -86,7 +137,7 @@ void main() {
     testWidgets('starts on blue among the system colors', (tester) async {
       container
           .read(themeSettingProvider.notifier)
-          .update((_) => defaultThemeProps);
+          .update((_) => defaultThemeProps.copyWith(uiStyle: UiStyle.modern));
       await pumpThemeView(tester);
 
       expect(readTheme().primaryColor, 0xFF007AFF);
@@ -275,6 +326,8 @@ void main() {
   });
 
   group('liquid glass', () {
+    setUp(useModernStyle);
+
     testWidgets('is off until a tier is chosen, and switches back', (
       tester,
     ) async {

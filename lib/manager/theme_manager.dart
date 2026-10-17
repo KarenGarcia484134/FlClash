@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/action.dart';
 import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
@@ -42,11 +43,17 @@ ThemeData watchAppTheme(WidgetRef ref, Brightness brightness) {
   final locale = ref.watch(appSettingProvider.select((state) => state.locale));
   final themeSetting = ref.watch(
     themeSettingProvider.select(
-      (state) => (fontFamily: state.fontFamily, pureBlack: state.pureBlack),
+      (state) => (
+        fontFamily: state.fontFamily,
+        pureBlack: state.pureBlack,
+        uiStyle: state.uiStyle,
+      ),
     ),
   );
   final colorScheme = ref.watch(genColorSchemeProvider(brightness));
-  final plainDark = brightness == Brightness.dark && themeSetting.pureBlack
+  final classic = themeSetting.uiStyle == UiStyle.classic;
+  final plainDark =
+      !classic && brightness == Brightness.dark && themeSetting.pureBlack
       ? ref.watch(genColorSchemeProvider(brightness, pureBlack: false))
       : null;
   final locales = [
@@ -66,16 +73,60 @@ ThemeData watchAppTheme(WidgetRef ref, Brightness brightness) {
   ) when cached == inputs) {
     return theme;
   }
+  final theme = classic
+      ? _classicTheme(colorScheme, themeSetting.fontFamily, locales)
+      : _modernTheme(
+          brightness,
+          colorScheme,
+          plainDark,
+          themeSetting.fontFamily,
+          locales,
+        );
+  _appThemes[brightness] = (inputs: inputs, theme: theme);
+  return theme;
+}
+
+/// The look of 0.9.11: Material 3 surfaces and type on the app's shapes.
+ThemeData _classicTheme(
+  ColorScheme colorScheme,
+  String? fontFamily,
+  List<Locale> locales,
+) {
   final theme = ThemeData(
     useMaterial3: true,
     pageTransitionsTheme: _pageTransitionsTheme,
     actionIconTheme: _actionIconTheme,
     colorScheme: colorScheme,
-    fontFamily: themeSetting.fontFamily,
+    fontFamily: fontFamily,
     fontFamilyFallback: appFontFamilyFallback(
       platform: defaultTargetPlatform,
       locales: locales,
-      fontFamily: themeSetting.fontFamily,
+      fontFamily: fontFamily,
+    ),
+    extensions: const [ClassicTypography()],
+  ).withAppShapes;
+  return theme.copyWith(
+    dialogTheme: theme.dialogTheme.copyWith(shape: AppShape.xxl),
+  );
+}
+
+ThemeData _modernTheme(
+  Brightness brightness,
+  ColorScheme colorScheme,
+  ColorScheme? plainDark,
+  String? fontFamily,
+  List<Locale> locales,
+) {
+  return ThemeData(
+    useMaterial3: true,
+    pageTransitionsTheme: _pageTransitionsTheme,
+    actionIconTheme: _actionIconTheme,
+    colorScheme: colorScheme,
+    fontFamily: fontFamily,
+    fontFamilyFallback: appFontFamilyFallback(
+      platform: defaultTargetPlatform,
+      locales: locales,
+      fontFamily: fontFamily,
     ),
     extensions: [
       if (brightness == Brightness.dark)
@@ -86,8 +137,6 @@ ThemeData watchAppTheme(WidgetRef ref, Brightness brightness) {
         ),
     ],
   ).withAppShapes.withAppSurfaces.withAppTypography;
-  _appThemes[brightness] = (inputs: inputs, theme: theme);
-  return theme;
 }
 
 class ThemeManager extends ConsumerWidget {
@@ -188,7 +237,7 @@ class _LiquidGlassSetting extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mode = ref.watch(
-      themeSettingProvider.select((state) => state.liquidGlass),
+      themeSettingProvider.select((state) => state.effectiveLiquidGlass),
     );
     return LiquidGlassScope(
       enabled: mode != LiquidGlassMode.none,

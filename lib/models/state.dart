@@ -144,6 +144,8 @@ abstract class ThemeColorsSelectorState with _$ThemeColorsSelectorState {
     required int? primaryColor,
     required List<int> primaryColors,
     required ColorStyle colorStyle,
+    required bool isClassic,
+    required DynamicSchemeVariant schemeVariant,
     required bool isDefault,
   }) = _ThemeColorsSelectorState;
 }

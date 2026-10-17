@@ -3921,7 +3921,7 @@ as int,
 /// @nodoc
 mixin _$ThemeColorsSelectorState {
 
- int? get primaryColor; List<int> get primaryColors; ColorStyle get colorStyle; bool get isDefault;
+ int? get primaryColor; List<int> get primaryColors; ColorStyle get colorStyle; bool get isClassic; DynamicSchemeVariant get schemeVariant; bool get isDefault;
 /// Create a copy of ThemeColorsSelectorState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -3933,20 +3933,20 @@ $ThemeColorsSelectorStateCopyWith<ThemeColorsSelectorState> get copyWith => _$Th
 @override
 bool operator ==(Object other) {
   final _this = this as ThemeColorsSelectorState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ThemeColorsSelectorState&&(identical(other.primaryColor, _this.primaryColor) || other.primaryColor == _this.primaryColor)&&const DeepCollectionEquality().equals(other.primaryColors, _this.primaryColors)&&(identical(other.colorStyle, _this.colorStyle) || other.colorStyle == _this.colorStyle)&&(identical(other.isDefault, _this.isDefault) || other.isDefault == _this.isDefault));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ThemeColorsSelectorState&&(identical(other.primaryColor, _this.primaryColor) || other.primaryColor == _this.primaryColor)&&const DeepCollectionEquality().equals(other.primaryColors, _this.primaryColors)&&(identical(other.colorStyle, _this.colorStyle) || other.colorStyle == _this.colorStyle)&&(identical(other.isClassic, _this.isClassic) || other.isClassic == _this.isClassic)&&(identical(other.schemeVariant, _this.schemeVariant) || other.schemeVariant == _this.schemeVariant)&&(identical(other.isDefault, _this.isDefault) || other.isDefault == _this.isDefault));
 }
 
 
 @override
 int get hashCode {
   final _this = this as ThemeColorsSelectorState;
-  return Object.hash(runtimeType,_this.primaryColor,const DeepCollectionEquality().hash(_this.primaryColors),_this.colorStyle,_this.isDefault);
+  return Object.hash(runtimeType,_this.primaryColor,const DeepCollectionEquality().hash(_this.primaryColors),_this.colorStyle,_this.isClassic,_this.schemeVariant,_this.isDefault);
 }
 
 @override
 String toString() {
   final _this = this as ThemeColorsSelectorState;
-  return 'ThemeColorsSelectorState(primaryColor: ${_this.primaryColor}, primaryColors: ${_this.primaryColors}, colorStyle: ${_this.colorStyle}, isDefault: ${_this.isDefault})';
+  return 'ThemeColorsSelectorState(primaryColor: ${_this.primaryColor}, primaryColors: ${_this.primaryColors}, colorStyle: ${_this.colorStyle}, isClassic: ${_this.isClassic}, schemeVariant: ${_this.schemeVariant}, isDefault: ${_this.isDefault})';
 }
 
 
@@ -3957,7 +3957,7 @@ abstract mixin class $ThemeColorsSelectorStateCopyWith<$Res>  {
   factory $ThemeColorsSelectorStateCopyWith(ThemeColorsSelectorState value, $Res Function(ThemeColorsSelectorState) _then) = _$ThemeColorsSelectorStateCopyWithImpl;
 @useResult
 $Res call({
- int? primaryColor, List<int> primaryColors, ColorStyle colorStyle, bool isDefault
+ int? primaryColor, List<int> primaryColors, ColorStyle colorStyle, bool isClassic, DynamicSchemeVariant schemeVariant, bool isDefault
 });
 
 
@@ -3974,12 +3974,14 @@ class _$ThemeColorsSelectorStateCopyWithImpl<$Res>
 
 /// Create a copy of ThemeColorsSelectorState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? primaryColor = freezed,Object? primaryColors = null,Object? colorStyle = null,Object? isDefault = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? primaryColor = freezed,Object? primaryColors = null,Object? colorStyle = null,Object? isClassic = null,Object? schemeVariant = null,Object? isDefault = null,}) {
   return _then(ThemeColorsSelectorState(
 primaryColor: freezed == primaryColor ? _self.primaryColor : primaryColor // ignore: cast_nullable_to_non_nullable
 as int?,primaryColors: null == primaryColors ? _self.primaryColors : primaryColors // ignore: cast_nullable_to_non_nullable
 as List<int>,colorStyle: null == colorStyle ? _self.colorStyle : colorStyle // ignore: cast_nullable_to_non_nullable
-as ColorStyle,isDefault: null == isDefault ? _self.isDefault : isDefault // ignore: cast_nullable_to_non_nullable
+as ColorStyle,isClassic: null == isClassic ? _self.isClassic : isClassic // ignore: cast_nullable_to_non_nullable
+as bool,schemeVariant: null == schemeVariant ? _self.schemeVariant : schemeVariant // ignore: cast_nullable_to_non_nullable
+as DynamicSchemeVariant,isDefault: null == isDefault ? _self.isDefault : isDefault // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -4065,10 +4067,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? primaryColor,  List<int> primaryColors,  ColorStyle colorStyle,  bool isDefault)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? primaryColor,  List<int> primaryColors,  ColorStyle colorStyle,  bool isClassic,  DynamicSchemeVariant schemeVariant,  bool isDefault)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ThemeColorsSelectorState() when $default != null:
-return $default(_that.primaryColor,_that.primaryColors,_that.colorStyle,_that.isDefault);case _:
+return $default(_that.primaryColor,_that.primaryColors,_that.colorStyle,_that.isClassic,_that.schemeVariant,_that.isDefault);case _:
   return orElse();
 
 }
@@ -4086,10 +4088,10 @@ return $default(_that.primaryColor,_that.primaryColors,_that.colorStyle,_that.is
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? primaryColor,  List<int> primaryColors,  ColorStyle colorStyle,  bool isDefault)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? primaryColor,  List<int> primaryColors,  ColorStyle colorStyle,  bool isClassic,  DynamicSchemeVariant schemeVariant,  bool isDefault)  $default,) {final _that = this;
 switch (_that) {
 case _ThemeColorsSelectorState():
-return $default(_that.primaryColor,_that.primaryColors,_that.colorStyle,_that.isDefault);case _:
+return $default(_that.primaryColor,_that.primaryColors,_that.colorStyle,_that.isClassic,_that.schemeVariant,_that.isDefault);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -4106,10 +4108,10 @@ return $default(_that.primaryColor,_that.primaryColors,_that.colorStyle,_that.is
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? primaryColor,  List<int> primaryColors,  ColorStyle colorStyle,  bool isDefault)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? primaryColor,  List<int> primaryColors,  ColorStyle colorStyle,  bool isClassic,  DynamicSchemeVariant schemeVariant,  bool isDefault)?  $default,) {final _that = this;
 switch (_that) {
 case _ThemeColorsSelectorState() when $default != null:
-return $default(_that.primaryColor,_that.primaryColors,_that.colorStyle,_that.isDefault);case _:
+return $default(_that.primaryColor,_that.primaryColors,_that.colorStyle,_that.isClassic,_that.schemeVariant,_that.isDefault);case _:
   return null;
 
 }
@@ -4121,7 +4123,7 @@ return $default(_that.primaryColor,_that.primaryColors,_that.colorStyle,_that.is
 
 
 class _ThemeColorsSelectorState implements ThemeColorsSelectorState {
-  const _ThemeColorsSelectorState({required this.primaryColor, required  List<int> primaryColors, required this.colorStyle, required this.isDefault}): _primaryColors = primaryColors;
+  const _ThemeColorsSelectorState({required this.primaryColor, required  List<int> primaryColors, required this.colorStyle, required this.isClassic, required this.schemeVariant, required this.isDefault}): _primaryColors = primaryColors;
   
 
 @override final  int? primaryColor;
@@ -4133,6 +4135,8 @@ class _ThemeColorsSelectorState implements ThemeColorsSelectorState {
 }
 
 @override final  ColorStyle colorStyle;
+@override final  bool isClassic;
+@override final  DynamicSchemeVariant schemeVariant;
 @override final  bool isDefault;
 
 /// Create a copy of ThemeColorsSelectorState
@@ -4145,18 +4149,18 @@ _$ThemeColorsSelectorStateCopyWith<_ThemeColorsSelectorState> get copyWith => __
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ThemeColorsSelectorState&&(identical(other.primaryColor, primaryColor) || other.primaryColor == primaryColor)&&const DeepCollectionEquality().equals(other.primaryColors, _primaryColors)&&(identical(other.colorStyle, colorStyle) || other.colorStyle == colorStyle)&&(identical(other.isDefault, isDefault) || other.isDefault == isDefault));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ThemeColorsSelectorState&&(identical(other.primaryColor, primaryColor) || other.primaryColor == primaryColor)&&const DeepCollectionEquality().equals(other.primaryColors, _primaryColors)&&(identical(other.colorStyle, colorStyle) || other.colorStyle == colorStyle)&&(identical(other.isClassic, isClassic) || other.isClassic == isClassic)&&(identical(other.schemeVariant, schemeVariant) || other.schemeVariant == schemeVariant)&&(identical(other.isDefault, isDefault) || other.isDefault == isDefault));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,primaryColor,const DeepCollectionEquality().hash(_primaryColors),colorStyle,isDefault);
+    return Object.hash(runtimeType,primaryColor,const DeepCollectionEquality().hash(_primaryColors),colorStyle,isClassic,schemeVariant,isDefault);
 }
 
 @override
 String toString() {
-    return 'ThemeColorsSelectorState(primaryColor: $primaryColor, primaryColors: $primaryColors, colorStyle: $colorStyle, isDefault: $isDefault)';
+    return 'ThemeColorsSelectorState(primaryColor: $primaryColor, primaryColors: $primaryColors, colorStyle: $colorStyle, isClassic: $isClassic, schemeVariant: $schemeVariant, isDefault: $isDefault)';
 }
 
 
@@ -4167,7 +4171,7 @@ abstract mixin class _$ThemeColorsSelectorStateCopyWith<$Res> implements $ThemeC
   factory _$ThemeColorsSelectorStateCopyWith(_ThemeColorsSelectorState value, $Res Function(_ThemeColorsSelectorState) _then) = __$ThemeColorsSelectorStateCopyWithImpl;
 @override @useResult
 $Res call({
- int? primaryColor, List<int> primaryColors, ColorStyle colorStyle, bool isDefault
+ int? primaryColor, List<int> primaryColors, ColorStyle colorStyle, bool isClassic, DynamicSchemeVariant schemeVariant, bool isDefault
 });
 
 
@@ -4184,12 +4188,14 @@ class __$ThemeColorsSelectorStateCopyWithImpl<$Res>
 
 /// Create a copy of ThemeColorsSelectorState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? primaryColor = freezed,Object? primaryColors = null,Object? colorStyle = null,Object? isDefault = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? primaryColor = freezed,Object? primaryColors = null,Object? colorStyle = null,Object? isClassic = null,Object? schemeVariant = null,Object? isDefault = null,}) {
   return _then(_ThemeColorsSelectorState(
 primaryColor: freezed == primaryColor ? _self.primaryColor : primaryColor // ignore: cast_nullable_to_non_nullable
 as int?,primaryColors: null == primaryColors ? _self._primaryColors : primaryColors // ignore: cast_nullable_to_non_nullable
 as List<int>,colorStyle: null == colorStyle ? _self.colorStyle : colorStyle // ignore: cast_nullable_to_non_nullable
-as ColorStyle,isDefault: null == isDefault ? _self.isDefault : isDefault // ignore: cast_nullable_to_non_nullable
+as ColorStyle,isClassic: null == isClassic ? _self.isClassic : isClassic // ignore: cast_nullable_to_non_nullable
+as bool,schemeVariant: null == schemeVariant ? _self.schemeVariant : schemeVariant // ignore: cast_nullable_to_non_nullable
+as DynamicSchemeVariant,isDefault: null == isDefault ? _self.isDefault : isDefault // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

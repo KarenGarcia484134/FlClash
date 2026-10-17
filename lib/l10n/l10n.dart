@@ -8811,6 +8811,96 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Interface style`
+  String get uiStyle {
+    return Intl.message('Interface style', name: 'uiStyle', desc: '', args: []);
+  }
+
+  /// `Classic`
+  String get uiStyleClassic {
+    return Intl.message('Classic', name: 'uiStyleClassic', desc: '', args: []);
+  }
+
+  /// `New`
+  String get uiStyleModern {
+    return Intl.message('New', name: 'uiStyleModern', desc: '', args: []);
+  }
+
+  /// `Classic keeps the Material look of earlier versions; New is the redesigned look. Applies immediately.`
+  String get uiStyleDesc {
+    return Intl.message(
+      'Classic keeps the Material look of earlier versions; New is the redesigned look. Applies immediately.',
+      name: 'uiStyleDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Color schemes`
+  String get colorSchemes {
+    return Intl.message(
+      'Color schemes',
+      name: 'colorSchemes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tonal spot`
+  String get tonalSpotScheme {
+    return Intl.message(
+      'Tonal spot',
+      name: 'tonalSpotScheme',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fidelity`
+  String get fidelityScheme {
+    return Intl.message('Fidelity', name: 'fidelityScheme', desc: '', args: []);
+  }
+
+  /// `Neutral`
+  String get neutralScheme {
+    return Intl.message('Neutral', name: 'neutralScheme', desc: '', args: []);
+  }
+
+  /// `Vibrant`
+  String get vibrantScheme {
+    return Intl.message('Vibrant', name: 'vibrantScheme', desc: '', args: []);
+  }
+
+  /// `Expressive`
+  String get expressiveScheme {
+    return Intl.message(
+      'Expressive',
+      name: 'expressiveScheme',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Content`
+  String get contentScheme {
+    return Intl.message('Content', name: 'contentScheme', desc: '', args: []);
+  }
+
+  /// `Rainbow`
+  String get rainbowScheme {
+    return Intl.message('Rainbow', name: 'rainbowScheme', desc: '', args: []);
+  }
+
+  /// `Fruit salad`
+  String get fruitSaladScheme {
+    return Intl.message(
+      'Fruit salad',
+      name: 'fruitSaladScheme',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

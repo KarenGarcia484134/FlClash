@@ -32,6 +32,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m4(url) => "${url}에서 프로필을 만드시겠습니까?";
 
+  static String m5(mode) => "Current extend mode: ${mode}";
+
   static String m6(count, label) =>
       "${Intl.plural(count, other: '사용자 지정 프로필은 하위 규칙을 지원하지 않아 SUB-RULE 규칙 ${label}개를 제외했습니다')}";
 
@@ -58,6 +60,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m17(count) => "문제가 있는 항목 ${count}개, 이 프로필을 적용하면 실패할 수 있습니다";
 
+  static String m18(applied, total) => "${applied} of ${total} active";
+
   static String m19(count) => "${Intl.plural(count, other: '${count}일 전')}";
 
   static String m20(count) => "${Intl.plural(count, other: '${count}일 전')}";
@@ -70,6 +74,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m24(name) =>
       "${name}을(를) 거치는 다이얼이 이를 사용하는 프록시로 되돌아와 연결을 중단했습니다";
+
+  static String m25(count) => "${count} dialer proxy settings were skipped";
+
+  static String m26(name) => "via ${name}";
 
   static String m27(label) => "${label}을(를) 입력하세요";
 
@@ -173,6 +181,9 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m72(count, label) =>
       "${Intl.plural(count, other: '프록시 그룹 ${label}개')}";
 
+  static String m73(target) =>
+      "${target} is not in the current profile, so this entry is skipped";
+
   static String m74(count, label) =>
       "${Intl.plural(count, other: '규칙 ${label}개')}";
 
@@ -233,11 +244,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "actionView": MessageLookupByLibrary.simpleMessage("표시/숨기기"),
     "add": MessageLookupByLibrary.simpleMessage("추가"),
     "addCustomProxy": MessageLookupByLibrary.simpleMessage("프록시 추가"),
+    "addCustomRouting": MessageLookupByLibrary.simpleMessage(
+      "Add custom routing",
+    ),
     "addFilters": MessageLookupByLibrary.simpleMessage("필터 추가"),
+    "addListener": MessageLookupByLibrary.simpleMessage("Add listener"),
     "addNodes": MessageLookupByLibrary.simpleMessage("노드 추가"),
     "addOverrideEntry": MessageLookupByLibrary.simpleMessage("덮어쓰기 항목 추가"),
     "addProfile": MessageLookupByLibrary.simpleMessage("프로필 추가"),
     "addProxyGroup": MessageLookupByLibrary.simpleMessage("프록시 그룹 추가"),
+    "addRoutingCondition": MessageLookupByLibrary.simpleMessage(
+      "Add condition",
+    ),
     "addRule": MessageLookupByLibrary.simpleMessage("규칙 추가"),
     "addSettingEntry": MessageLookupByLibrary.simpleMessage("설정 추가"),
     "addSsid": MessageLookupByLibrary.simpleMessage("SSID 추가"),
@@ -271,6 +289,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "appIconDesign": MessageLookupByLibrary.simpleMessage("앱 아이콘 디자인"),
     "appProxiesEmpty": MessageLookupByLibrary.simpleMessage("로컬 프록시 없음"),
     "appendSystemDns": MessageLookupByLibrary.simpleMessage("시스템 DNS 추가"),
+    "appliedTip": MessageLookupByLibrary.simpleMessage("Applied"),
+    "applyFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to apply config",
+    ),
     "authentication": MessageLookupByLibrary.simpleMessage("인증"),
     "authenticationDesc": MessageLookupByLibrary.simpleMessage(
       "인증을 켜면 로컬 프록시 포트에서 사용자 이름과 비밀번호를 요구합니다.",
@@ -375,7 +397,11 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "close": MessageLookupByLibrary.simpleMessage("닫기"),
     "closeConnections": MessageLookupByLibrary.simpleMessage("연결 종료"),
+    "closeConnectionsOnApply": MessageLookupByLibrary.simpleMessage(
+      "Close connections on apply",
+    ),
     "color": MessageLookupByLibrary.simpleMessage("색상"),
+    "colorSchemes": MessageLookupByLibrary.simpleMessage("색 구성표"),
     "colorStyle": MessageLookupByLibrary.simpleMessage("색상 스타일"),
     "columns": MessageLookupByLibrary.simpleMessage("열"),
     "compact": MessageLookupByLibrary.simpleMessage("간결하게"),
@@ -407,6 +433,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "connectivity": MessageLookupByLibrary.simpleMessage("연결 상태: "),
     "content": MessageLookupByLibrary.simpleMessage("내용"),
     "contentNotEmpty": MessageLookupByLibrary.simpleMessage("내용을 입력하세요"),
+    "contentScheme": MessageLookupByLibrary.simpleMessage("콘텐츠"),
     "controlGlobalAddedRules": MessageLookupByLibrary.simpleMessage(
       "전역 추가 규칙 관리",
     ),
@@ -427,6 +454,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "create": MessageLookupByLibrary.simpleMessage("만들기"),
     "createProfileFromUrlTip": m4,
     "creationTime": MessageLookupByLibrary.simpleMessage("생성 시간"),
+    "currentExtendMode": m5,
     "currentOutboundDesc": MessageLookupByLibrary.simpleMessage(
       "시작 버튼이 있어 제거할 수 없습니다",
     ),
@@ -457,6 +485,17 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "customProfileResourcesDesc": MessageLookupByLibrary.simpleMessage(
       "사용자 지정 프로필 리소스에는 프록시, 규칙 공급자, 필터, 아이콘 세트가 포함됩니다.",
+    ),
+    "customRouting": MessageLookupByLibrary.simpleMessage("Custom routing"),
+    "customRoutingCardCount": m18,
+    "customRoutingCardNoProfile": MessageLookupByLibrary.simpleMessage(
+      "No profile selected",
+    ),
+    "customRoutingDesc": MessageLookupByLibrary.simpleMessage(
+      "Selected entries go in order ahead of every rule of this profile, in both standard and script mode",
+    ),
+    "customRoutingUseInProfile": MessageLookupByLibrary.simpleMessage(
+      "Use in current profile",
     ),
     "cut": MessageLookupByLibrary.simpleMessage("잘라내기"),
     "dark": MessageLookupByLibrary.simpleMessage("다크"),
@@ -493,10 +532,35 @@ class MessageLookup extends MessageLookupByLibrary {
       "개발자 모드가 켜졌습니다.",
     ),
     "dialerProxy": MessageLookupByLibrary.simpleMessage("다이얼러 프록시"),
+    "dialerProxyClearAll": MessageLookupByLibrary.simpleMessage("Clear all"),
+    "dialerProxyClearAllTip": MessageLookupByLibrary.simpleMessage(
+      "Clear all dialer proxies set for this profile?",
+    ),
+    "dialerProxyCycle": MessageLookupByLibrary.simpleMessage(
+      "would loop, skipped",
+    ),
     "dialerProxyDesc": MessageLookupByLibrary.simpleMessage(
       "다이얼러 프록시는 NTP 서버에 연결할 때 사용하는 아웃바운드입니다.",
     ),
+    "dialerProxyEmpty": MessageLookupByLibrary.simpleMessage(
+      "No dialer proxies in this profile",
+    ),
+    "dialerProxyFromProfile": MessageLookupByLibrary.simpleMessage(
+      "from profile",
+    ),
     "dialerProxyLoopStopped": m24,
+    "dialerProxyMissingNode": MessageLookupByLibrary.simpleMessage(
+      "node gone, skipped",
+    ),
+    "dialerProxyMissingTarget": MessageLookupByLibrary.simpleMessage(
+      "dialer proxy gone, skipped",
+    ),
+    "dialerProxyNone": MessageLookupByLibrary.simpleMessage("None"),
+    "dialerProxyProviderTip": MessageLookupByLibrary.simpleMessage(
+      "This node comes from a proxy provider and cannot take its own dialer proxy",
+    ),
+    "dialerProxySkippedTip": m25,
+    "dialerProxyVia": m26,
     "direct": MessageLookupByLibrary.simpleMessage("직접"),
     "disableIcmpForwarding": MessageLookupByLibrary.simpleMessage(
       "ICMP 전달 사용 안 함",
@@ -602,8 +666,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage("다운로드 대역폭"),
     "duration": MessageLookupByLibrary.simpleMessage("소요 시간"),
     "edit": MessageLookupByLibrary.simpleMessage("편집"),
+    "editCustomRouting": MessageLookupByLibrary.simpleMessage(
+      "Edit custom routing",
+    ),
     "editDashboard": MessageLookupByLibrary.simpleMessage("대시보드 편집"),
     "editGlobalRules": MessageLookupByLibrary.simpleMessage("전역 규칙 편집"),
+    "editListener": MessageLookupByLibrary.simpleMessage("Edit listener"),
     "editProxy": MessageLookupByLibrary.simpleMessage("프록시 편집"),
     "editProxyGroup": MessageLookupByLibrary.simpleMessage("프록시 그룹 편집"),
     "editRule": MessageLookupByLibrary.simpleMessage("규칙 편집"),
@@ -649,6 +717,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "exportFile": MessageLookupByLibrary.simpleMessage("파일 내보내기"),
     "exportLogs": MessageLookupByLibrary.simpleMessage("로그 내보내기"),
     "exportSuccess": MessageLookupByLibrary.simpleMessage("내보내기 완료"),
+    "expressiveScheme": MessageLookupByLibrary.simpleMessage("표현력"),
     "extend": MessageLookupByLibrary.simpleMessage("확장"),
     "extendMode": MessageLookupByLibrary.simpleMessage("확장 모드"),
     "extendScript": MessageLookupByLibrary.simpleMessage("확장 스크립트"),
@@ -673,6 +742,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fakeipRange6": MessageLookupByLibrary.simpleMessage("Fake-IP 범위(IPv6)"),
     "fakeipTtl": MessageLookupByLibrary.simpleMessage("Fake-IP TTL"),
     "fallbackFilter": MessageLookupByLibrary.simpleMessage("폴백 필터"),
+    "fidelityScheme": MessageLookupByLibrary.simpleMessage("충실도"),
     "file": MessageLookupByLibrary.simpleMessage("파일"),
     "fileDesc": MessageLookupByLibrary.simpleMessage("프로필 파일을 직접 업로드"),
     "fileIsUpdate": MessageLookupByLibrary.simpleMessage(
@@ -698,6 +768,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "코어를 강제로 다시 시작하시겠습니까?",
     ),
     "fr": MessageLookupByLibrary.simpleMessage("프랑스어"),
+    "fruitSaladScheme": MessageLookupByLibrary.simpleMessage("과일 샐러드"),
     "general": MessageLookupByLibrary.simpleMessage("일반"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo"),
     "geoSkipped": m31,
@@ -708,6 +779,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "goDownload": MessageLookupByLibrary.simpleMessage("다운로드"),
     "goToConfigureAddedRules": MessageLookupByLibrary.simpleMessage(
       "추가한 규칙 구성으로 이동",
+    ),
+    "goToConfigureCustomRouting": MessageLookupByLibrary.simpleMessage(
+      "Go to custom routing configuration",
     ),
     "goToConfigureScript": MessageLookupByLibrary.simpleMessage("스크립트 구성으로 이동"),
     "grid": MessageLookupByLibrary.simpleMessage("격자"),
@@ -724,6 +798,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "hideFromList": MessageLookupByLibrary.simpleMessage("목록에서 숨기기"),
     "hideIp": MessageLookupByLibrary.simpleMessage("IP 숨기기"),
     "hidePassword": MessageLookupByLibrary.simpleMessage("비밀번호 숨기기"),
+    "hideTimeoutNodes": MessageLookupByLibrary.simpleMessage("Hide timeouts"),
     "hideTimeoutProxies": MessageLookupByLibrary.simpleMessage(
       "시간 초과된 프록시 숨기기",
     ),
@@ -917,6 +992,57 @@ class MessageLookup extends MessageLookupByLibrary {
     "listenRoutingMarkDesc": MessageLookupByLibrary.simpleMessage(
       "수신 라우팅 마크는 Linux에서만 작동합니다.",
     ),
+    "listenerActive": MessageLookupByLibrary.simpleMessage("Listening"),
+    "listenerAppPort": MessageLookupByLibrary.simpleMessage(
+      "Port used by the app itself",
+    ),
+    "listenerDuplicateName": MessageLookupByLibrary.simpleMessage(
+      "Name already used",
+    ),
+    "listenerDuplicatePort": MessageLookupByLibrary.simpleMessage(
+      "Port used by another listener",
+    ),
+    "listenerFollowRules": MessageLookupByLibrary.simpleMessage("Follow rules"),
+    "listenerInactive": MessageLookupByLibrary.simpleMessage("Not listening"),
+    "listenerLan": MessageLookupByLibrary.simpleMessage("LAN"),
+    "listenerLanWarning": MessageLookupByLibrary.simpleMessage(
+      "Devices on your network can use this port; add a username and password.",
+    ),
+    "listenerListen": MessageLookupByLibrary.simpleMessage("Listen address"),
+    "listenerListenInvalid": MessageLookupByLibrary.simpleMessage(
+      "Not a valid IP address",
+    ),
+    "listenerLocalOnly": MessageLookupByLibrary.simpleMessage(
+      "This device only",
+    ),
+    "listenerMissingRule": MessageLookupByLibrary.simpleMessage(
+      "Sub-rule not in this profile, skipped",
+    ),
+    "listenerMissingTarget": MessageLookupByLibrary.simpleMessage(
+      "Outbound not in this profile, skipped",
+    ),
+    "listenerOutbound": MessageLookupByLibrary.simpleMessage("Outbound"),
+    "listenerPortInvalid": MessageLookupByLibrary.simpleMessage(
+      "Port must be 1–65535",
+    ),
+    "listenerSubRule": MessageLookupByLibrary.simpleMessage("Sub-rule"),
+    "listenerUnsupported": MessageLookupByLibrary.simpleMessage(
+      "Not supported on this platform",
+    ),
+    "listenerUserInvalid": MessageLookupByLibrary.simpleMessage(
+      "Username is required",
+    ),
+    "listenerUsers": MessageLookupByLibrary.simpleMessage("Users"),
+    "listenerUsersEmpty": MessageLookupByLibrary.simpleMessage(
+      "No users: the app\'s own authentication applies.",
+    ),
+    "listeners": MessageLookupByLibrary.simpleMessage("Multi-port"),
+    "listenersDesc": MessageLookupByLibrary.simpleMessage(
+      "Each listener is an extra local proxy port (mihomo listeners) that can send its traffic through a fixed outbound instead of the rules. Applies to every profile.",
+    ),
+    "listenersEnable": MessageLookupByLibrary.simpleMessage(
+      "Enable extra listeners",
+    ),
     "liveConnections": MessageLookupByLibrary.simpleMessage("실시간 연결"),
     "loading": MessageLookupByLibrary.simpleMessage("로드 중…"),
     "local": MessageLookupByLibrary.simpleMessage("로컬"),
@@ -1016,6 +1142,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "보안 연결에 실패했습니다. 서버 인증서가 올바르지 않거나 연결이 가로채이고 있을 수 있습니다",
     ),
     "networkType": MessageLookupByLibrary.simpleMessage("네트워크 유형"),
+    "neutralScheme": MessageLookupByLibrary.simpleMessage("중립"),
     "nextMatch": MessageLookupByLibrary.simpleMessage("다음 결과"),
     "no": MessageLookupByLibrary.simpleMessage("아니요"),
     "noData": MessageLookupByLibrary.simpleMessage("데이터 없음"),
@@ -1157,7 +1284,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "qrcodeDesc": MessageLookupByLibrary.simpleMessage("QR 코드를 스캔하여 프로필 가져오기"),
     "quickActions": MessageLookupByLibrary.simpleMessage("빠른 작업"),
     "quickEdit": MessageLookupByLibrary.simpleMessage("빠른 편집"),
+    "rainbowScheme": MessageLookupByLibrary.simpleMessage("무지개"),
     "recentRequests": MessageLookupByLibrary.simpleMessage("최근 요청"),
+    "recommended": MessageLookupByLibrary.simpleMessage("Recommended"),
     "recommendedIcons": MessageLookupByLibrary.simpleMessage("추천"),
     "recordType": MessageLookupByLibrary.simpleMessage("레코드 유형"),
     "redirPort": MessageLookupByLibrary.simpleMessage("Redir 포트"),
@@ -1196,7 +1325,16 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "responseCode": MessageLookupByLibrary.simpleMessage("응답 코드"),
     "restart": MessageLookupByLibrary.simpleMessage("다시 시작"),
+    "restartCore": MessageLookupByLibrary.simpleMessage("Restart core"),
+    "restartCoreCardDesc": MessageLookupByLibrary.simpleMessage(
+      "Tap to restart",
+    ),
+    "restartCoreDone": MessageLookupByLibrary.simpleMessage("Core restarted"),
+    "restartCoreFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to restart core",
+    ),
     "restartCoreTip": MessageLookupByLibrary.simpleMessage("코어를 다시 시작하시겠습니까?"),
+    "restartingCore": MessageLookupByLibrary.simpleMessage("Restarting…"),
     "restore": MessageLookupByLibrary.simpleMessage("복원"),
     "restoreAllData": MessageLookupByLibrary.simpleMessage("모든 데이터 복원"),
     "restoreOnlyConfig": MessageLookupByLibrary.simpleMessage("프로필만 복원"),
@@ -1208,7 +1346,29 @@ class MessageLookup extends MessageLookupByLibrary {
     "retry": MessageLookupByLibrary.simpleMessage("다시 시도"),
     "routeAddress": MessageLookupByLibrary.simpleMessage("라우팅 주소"),
     "routeExcludeAddress": MessageLookupByLibrary.simpleMessage("라우팅 제외 주소"),
+    "routingCondition": MessageLookupByLibrary.simpleMessage("Condition"),
+    "routingConditionsEmptyTip": MessageLookupByLibrary.simpleMessage(
+      "Add at least one condition with a value",
+    ),
+    "routingLogic": MessageLookupByLibrary.simpleMessage("Match logic"),
+    "routingLogicAnd": MessageLookupByLibrary.simpleMessage(
+      "All conditions (AND)",
+    ),
+    "routingLogicOr": MessageLookupByLibrary.simpleMessage(
+      "Any condition (OR)",
+    ),
     "routingMark": MessageLookupByLibrary.simpleMessage("라우팅 마크"),
+    "routingTarget": MessageLookupByLibrary.simpleMessage("Outbound"),
+    "routingTargetEmptyTip": MessageLookupByLibrary.simpleMessage(
+      "Choose an outbound",
+    ),
+    "routingTargetMissingTip": m73,
+    "routingValueCommaTip": MessageLookupByLibrary.simpleMessage(
+      "A value cannot contain a comma",
+    ),
+    "routingValuesHint": MessageLookupByLibrary.simpleMessage(
+      "One value per line",
+    ),
     "ru": MessageLookupByLibrary.simpleMessage("러시아어"),
     "rule": MessageLookupByLibrary.simpleMessage("규칙"),
     "ruleActionAndDesc": MessageLookupByLibrary.simpleMessage("논리 규칙 AND"),
@@ -1383,6 +1543,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "serviceUnsupportedRegion": MessageLookupByLibrary.simpleMessage(
       "지원하지 않는 지역",
     ),
+    "setDialerProxy": MessageLookupByLibrary.simpleMessage("Set dialer proxy"),
     "settingEntries": MessageLookupByLibrary.simpleMessage("설정"),
     "settings": MessageLookupByLibrary.simpleMessage("설정"),
     "settingsCount": m80,
@@ -1429,6 +1590,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "socksPort": MessageLookupByLibrary.simpleMessage("SOCKS 포트"),
     "softStyle": MessageLookupByLibrary.simpleMessage("부드러움"),
     "sort": MessageLookupByLibrary.simpleMessage("정렬"),
+    "sortByDelay": MessageLookupByLibrary.simpleMessage("Sort by latency"),
     "source": MessageLookupByLibrary.simpleMessage("소스"),
     "sourceIp": MessageLookupByLibrary.simpleMessage("출발지 IP"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("특수 프록시"),
@@ -1475,10 +1637,83 @@ class MessageLookup extends MessageLookupByLibrary {
     "systemProxy": MessageLookupByLibrary.simpleMessage("시스템 프록시"),
     "tab": MessageLookupByLibrary.simpleMessage("탭"),
     "tabAnimation": MessageLookupByLibrary.simpleMessage("탭 애니메이션"),
+    "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage(
+      "Accept routes",
+    ),
+    "tailscaleAddRouting": MessageLookupByLibrary.simpleMessage(
+      "Add to custom routing",
+    ),
+    "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("Auth key"),
+    "tailscaleAuthKeyNotAccepted": MessageLookupByLibrary.simpleMessage(
+      "The control server did not accept the auth key (expired, already used, revoked or mistyped). Create a new key, or log in with the URL above.",
+    ),
+    "tailscaleConnect": MessageLookupByLibrary.simpleMessage("Connect"),
+    "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage(
+      "Control URL (Headscale)",
+    ),
+    "tailscaleCurrentExitNode": MessageLookupByLibrary.simpleMessage(
+      "Current exit node",
+    ),
+    "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
+      "Adds a Tailscale node to every profile and sends tailnet addresses (100.64.0.0/10, fd7a:115c:a1e9::/48) and MagicDNS names to it, ahead of all other rules. Changes apply when you leave this page.",
+    ),
+    "tailscaleDialerProxy": MessageLookupByLibrary.simpleMessage(
+      "Connection proxy",
+    ),
+    "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
+      "Tailscale\'s own traffic to its control server, DERP relays and peers goes through this proxy or group. Choose one if the control server cannot be reached directly.",
+    ),
+    "tailscaleDnsSuffixes": MessageLookupByLibrary.simpleMessage(
+      "Tailnet DNS suffixes",
+    ),
+    "tailscaleEnable": MessageLookupByLibrary.simpleMessage("Enable Tailscale"),
+    "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage(
+      "Ephemeral node",
+    ),
+    "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("Exit node"),
+    "tailscaleExitNodeOption": MessageLookupByLibrary.simpleMessage(
+      "Can be exit node",
+    ),
+    "tailscaleHostname": MessageLookupByLibrary.simpleMessage("Hostname"),
+    "tailscaleLocalNode": MessageLookupByLibrary.simpleMessage("This device"),
+    "tailscaleLoginDesc": MessageLookupByLibrary.simpleMessage(
+      "Without an auth key, tap Connect: the node starts and shows a login link here. After you approve it in the browser the login is kept across restarts.",
+    ),
+    "tailscaleNetwork": MessageLookupByLibrary.simpleMessage("Tailnet"),
+    "tailscaleNetworkIssue": MessageLookupByLibrary.simpleMessage(
+      "The control server could not be reached (network timeout). This is a network problem, not the auth key: choose a connection proxy above and connect again.",
+    ),
+    "tailscaleNode": MessageLookupByLibrary.simpleMessage("Node"),
+    "tailscaleNotStarted": MessageLookupByLibrary.simpleMessage(
+      "The node is not running yet. Connect to load the device list.",
+    ),
+    "tailscaleOffline": MessageLookupByLibrary.simpleMessage("Offline"),
+    "tailscaleOnline": MessageLookupByLibrary.simpleMessage("Online"),
+    "tailscaleOpenLogin": MessageLookupByLibrary.simpleMessage(
+      "Open login page",
+    ),
+    "tailscalePeers": MessageLookupByLibrary.simpleMessage("Devices"),
+    "tailscaleRefresh": MessageLookupByLibrary.simpleMessage("Refresh"),
+    "tailscaleReset": MessageLookupByLibrary.simpleMessage("Log out and reset"),
+    "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
+      "This deletes the saved Tailscale login of this device, so it has to log in again. Continue?",
+    ),
+    "tailscaleRoutingAdded": MessageLookupByLibrary.simpleMessage(
+      "Added to custom routing",
+    ),
+    "tailscaleSilentLogTip": MessageLookupByLibrary.simpleMessage(
+      "The log level is silent, so the login link cannot be read. Choose another log level.",
+    ),
+    "tailscaleStatusIdle": MessageLookupByLibrary.simpleMessage("Not started"),
+    "tailscaleStatusNeedsLogin": MessageLookupByLibrary.simpleMessage(
+      "Needs login",
+    ),
+    "tailscaleStatusRunning": MessageLookupByLibrary.simpleMessage("Connected"),
     "tapIconToRetry": MessageLookupByLibrary.simpleMessage("아이콘을 눌러 다시 시도"),
     "tapToAuthorize": MessageLookupByLibrary.simpleMessage("눌러서 허용"),
     "target": MessageLookupByLibrary.simpleMessage("대상"),
     "tcpConcurrent": MessageLookupByLibrary.simpleMessage("TCP 동시 연결"),
+    "testAllDelays": MessageLookupByLibrary.simpleMessage("Test all"),
     "testInterval": MessageLookupByLibrary.simpleMessage("테스트 간격"),
     "testUrl": MessageLookupByLibrary.simpleMessage("테스트 URL"),
     "testWhenUsed": MessageLookupByLibrary.simpleMessage("사용할 때 테스트"),
@@ -1496,6 +1731,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tip": MessageLookupByLibrary.simpleMessage("안내"),
     "toggle": MessageLookupByLibrary.simpleMessage("전환"),
     "tolerance": MessageLookupByLibrary.simpleMessage("허용 오차"),
+    "tonalSpotScheme": MessageLookupByLibrary.simpleMessage("톤 스팟"),
     "tools": MessageLookupByLibrary.simpleMessage("도구"),
     "torch": MessageLookupByLibrary.simpleMessage("손전등"),
     "total": MessageLookupByLibrary.simpleMessage("합계"),
@@ -1523,6 +1759,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "udpTimeoutDesc": MessageLookupByLibrary.simpleMessage(
       "UDP 시간 제한은 초 단위이며 gvisor, system, mixed 스택에서만 작동합니다.",
     ),
+    "uiStyle": MessageLookupByLibrary.simpleMessage("인터페이스 스타일"),
+    "uiStyleClassic": MessageLookupByLibrary.simpleMessage("클래식"),
+    "uiStyleDesc": MessageLookupByLibrary.simpleMessage(
+      "클래식은 이전 버전의 Material 모양을 유지하고, 새 디자인은 새롭게 디자인된 모양입니다. 즉시 적용됩니다.",
+    ),
+    "uiStyleModern": MessageLookupByLibrary.simpleMessage("새 디자인"),
     "ultra": MessageLookupByLibrary.simpleMessage("최고"),
     "undo": MessageLookupByLibrary.simpleMessage("실행 취소"),
     "unifiedDelay": MessageLookupByLibrary.simpleMessage("통합 지연"),
@@ -1545,6 +1787,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "userAgent": MessageLookupByLibrary.simpleMessage("User-Agent"),
     "username": MessageLookupByLibrary.simpleMessage("사용자 이름"),
     "value": MessageLookupByLibrary.simpleMessage("값"),
+    "vibrantScheme": MessageLookupByLibrary.simpleMessage("선명함"),
     "view": MessageLookupByLibrary.simpleMessage("보기"),
     "virtualIpv4": MessageLookupByLibrary.simpleMessage("가상 IPv4"),
     "vividStyle": MessageLookupByLibrary.simpleMessage("선명"),

@@ -33,6 +33,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m4(url) => "¿Quieres crear un perfil a partir de ${url}?";
 
+  static String m5(mode) => "Current extend mode: ${mode}";
+
   static String m6(count, label) =>
       "${Intl.plural(count, one: 'Se descartó 1 regla SUB-RULE, porque los perfiles personalizados no admiten subreglas', other: 'Se descartaron ${label} reglas SUB-RULE, porque los perfiles personalizados no admiten subreglas')}";
 
@@ -67,6 +69,8 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m17(count) =>
       "${count} elementos tienen problemas, y aplicar este perfil puede fallar";
 
+  static String m18(applied, total) => "${applied} of ${total} active";
+
   static String m19(count) =>
       "${Intl.plural(count, one: 'hace 1 día', other: 'hace ${count} días')}";
 
@@ -82,6 +86,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m24(name) =>
       "La marcación a través de ${name} lleva de vuelta al proxy que lo usa, por lo que se detuvo la conexión";
+
+  static String m25(count) => "${count} dialer proxy settings were skipped";
+
+  static String m26(name) => "via ${name}";
 
   static String m27(label) => "${label} no puede estar vacío";
 
@@ -198,6 +206,9 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m72(count, label) =>
       "${Intl.plural(count, one: '1 grupo de proxies', other: '${label} grupos de proxies')}";
 
+  static String m73(target) =>
+      "${target} is not in the current profile, so this entry is skipped";
+
   static String m74(count, label) =>
       "${Intl.plural(count, one: '1 regla', other: '${label} reglas')}";
 
@@ -268,7 +279,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "actionView": MessageLookupByLibrary.simpleMessage("Mostrar/Ocultar"),
     "add": MessageLookupByLibrary.simpleMessage("Añadir"),
     "addCustomProxy": MessageLookupByLibrary.simpleMessage("Añadir proxy"),
+    "addCustomRouting": MessageLookupByLibrary.simpleMessage(
+      "Add custom routing",
+    ),
     "addFilters": MessageLookupByLibrary.simpleMessage("Añadir filtros"),
+    "addListener": MessageLookupByLibrary.simpleMessage("Add listener"),
     "addNodes": MessageLookupByLibrary.simpleMessage("Añadir nodos"),
     "addOverrideEntry": MessageLookupByLibrary.simpleMessage(
       "Añadir entrada de sobrescritura",
@@ -276,6 +291,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "addProfile": MessageLookupByLibrary.simpleMessage("Añadir perfil"),
     "addProxyGroup": MessageLookupByLibrary.simpleMessage(
       "Añadir grupo de proxies",
+    ),
+    "addRoutingCondition": MessageLookupByLibrary.simpleMessage(
+      "Add condition",
     ),
     "addRule": MessageLookupByLibrary.simpleMessage("Añadir regla"),
     "addSettingEntry": MessageLookupByLibrary.simpleMessage("Añadir ajuste"),
@@ -337,6 +355,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "appendSystemDns": MessageLookupByLibrary.simpleMessage(
       "Añadir DNS del sistema",
+    ),
+    "appliedTip": MessageLookupByLibrary.simpleMessage("Applied"),
+    "applyFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to apply config",
     ),
     "authentication": MessageLookupByLibrary.simpleMessage("Autenticación"),
     "authenticationDesc": MessageLookupByLibrary.simpleMessage(
@@ -490,7 +512,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "closeConnections": MessageLookupByLibrary.simpleMessage(
       "Cerrar conexiones",
     ),
+    "closeConnectionsOnApply": MessageLookupByLibrary.simpleMessage(
+      "Close connections on apply",
+    ),
     "color": MessageLookupByLibrary.simpleMessage("Color"),
+    "colorSchemes": MessageLookupByLibrary.simpleMessage("Esquemas de color"),
     "colorStyle": MessageLookupByLibrary.simpleMessage("Estilo de color"),
     "columns": MessageLookupByLibrary.simpleMessage("Columnas"),
     "compact": MessageLookupByLibrary.simpleMessage("Compacto"),
@@ -534,6 +560,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "contentNotEmpty": MessageLookupByLibrary.simpleMessage(
       "El contenido no puede estar vacío",
     ),
+    "contentScheme": MessageLookupByLibrary.simpleMessage("Contenido"),
     "controlGlobalAddedRules": MessageLookupByLibrary.simpleMessage(
       "Controlar las reglas añadidas globales",
     ),
@@ -558,6 +585,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "create": MessageLookupByLibrary.simpleMessage("Crear"),
     "createProfileFromUrlTip": m4,
     "creationTime": MessageLookupByLibrary.simpleMessage("Fecha de creación"),
+    "currentExtendMode": m5,
     "currentOutboundDesc": MessageLookupByLibrary.simpleMessage(
       "Contiene el botón de inicio y no se puede quitar",
     ),
@@ -590,6 +618,17 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "customProfileResourcesDesc": MessageLookupByLibrary.simpleMessage(
       "Los recursos de perfil personalizado incluyen proxies, proveedores de reglas, filtros y conjuntos de iconos.",
+    ),
+    "customRouting": MessageLookupByLibrary.simpleMessage("Custom routing"),
+    "customRoutingCardCount": m18,
+    "customRoutingCardNoProfile": MessageLookupByLibrary.simpleMessage(
+      "No profile selected",
+    ),
+    "customRoutingDesc": MessageLookupByLibrary.simpleMessage(
+      "Selected entries go in order ahead of every rule of this profile, in both standard and script mode",
+    ),
+    "customRoutingUseInProfile": MessageLookupByLibrary.simpleMessage(
+      "Use in current profile",
     ),
     "cut": MessageLookupByLibrary.simpleMessage("Cortar"),
     "dark": MessageLookupByLibrary.simpleMessage("Oscuro"),
@@ -634,10 +673,35 @@ class MessageLookup extends MessageLookupByLibrary {
       "El modo desarrollador está activado.",
     ),
     "dialerProxy": MessageLookupByLibrary.simpleMessage("Proxy de marcación"),
+    "dialerProxyClearAll": MessageLookupByLibrary.simpleMessage("Clear all"),
+    "dialerProxyClearAllTip": MessageLookupByLibrary.simpleMessage(
+      "Clear all dialer proxies set for this profile?",
+    ),
+    "dialerProxyCycle": MessageLookupByLibrary.simpleMessage(
+      "would loop, skipped",
+    ),
     "dialerProxyDesc": MessageLookupByLibrary.simpleMessage(
       "El proxy de marcación es la salida que se usa para llegar al servidor NTP.",
     ),
+    "dialerProxyEmpty": MessageLookupByLibrary.simpleMessage(
+      "No dialer proxies in this profile",
+    ),
+    "dialerProxyFromProfile": MessageLookupByLibrary.simpleMessage(
+      "from profile",
+    ),
     "dialerProxyLoopStopped": m24,
+    "dialerProxyMissingNode": MessageLookupByLibrary.simpleMessage(
+      "node gone, skipped",
+    ),
+    "dialerProxyMissingTarget": MessageLookupByLibrary.simpleMessage(
+      "dialer proxy gone, skipped",
+    ),
+    "dialerProxyNone": MessageLookupByLibrary.simpleMessage("None"),
+    "dialerProxyProviderTip": MessageLookupByLibrary.simpleMessage(
+      "This node comes from a proxy provider and cannot take its own dialer proxy",
+    ),
+    "dialerProxySkippedTip": m25,
+    "dialerProxyVia": m26,
     "direct": MessageLookupByLibrary.simpleMessage("Directo"),
     "disableIcmpForwarding": MessageLookupByLibrary.simpleMessage(
       "Desactivar reenvío ICMP",
@@ -761,10 +825,14 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "duration": MessageLookupByLibrary.simpleMessage("Duración"),
     "edit": MessageLookupByLibrary.simpleMessage("Editar"),
+    "editCustomRouting": MessageLookupByLibrary.simpleMessage(
+      "Edit custom routing",
+    ),
     "editDashboard": MessageLookupByLibrary.simpleMessage("Editar panel"),
     "editGlobalRules": MessageLookupByLibrary.simpleMessage(
       "Editar reglas globales",
     ),
+    "editListener": MessageLookupByLibrary.simpleMessage("Edit listener"),
     "editProxy": MessageLookupByLibrary.simpleMessage("Editar proxy"),
     "editProxyGroup": MessageLookupByLibrary.simpleMessage(
       "Editar grupo de proxies",
@@ -832,6 +900,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "exportSuccess": MessageLookupByLibrary.simpleMessage(
       "Exportación completada",
     ),
+    "expressiveScheme": MessageLookupByLibrary.simpleMessage("Expresivo"),
     "extend": MessageLookupByLibrary.simpleMessage("Extensión"),
     "extendMode": MessageLookupByLibrary.simpleMessage("Modo de extensión"),
     "extendScript": MessageLookupByLibrary.simpleMessage("Script de extensión"),
@@ -864,6 +933,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fallbackFilter": MessageLookupByLibrary.simpleMessage(
       "Filtro de respaldo",
     ),
+    "fidelityScheme": MessageLookupByLibrary.simpleMessage("Fidelidad"),
     "file": MessageLookupByLibrary.simpleMessage("Archivo"),
     "fileDesc": MessageLookupByLibrary.simpleMessage(
       "Sube un archivo de perfil directamente",
@@ -891,6 +961,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "¿Seguro que quieres forzar el reinicio del núcleo?",
     ),
     "fr": MessageLookupByLibrary.simpleMessage("Francés"),
+    "fruitSaladScheme": MessageLookupByLibrary.simpleMessage("Macedonia"),
     "general": MessageLookupByLibrary.simpleMessage("General"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo"),
     "geoSkipped": m31,
@@ -903,6 +974,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "goDownload": MessageLookupByLibrary.simpleMessage("Descargar"),
     "goToConfigureAddedRules": MessageLookupByLibrary.simpleMessage(
       "Ir a la configuración de las reglas añadidas",
+    ),
+    "goToConfigureCustomRouting": MessageLookupByLibrary.simpleMessage(
+      "Go to custom routing configuration",
     ),
     "goToConfigureScript": MessageLookupByLibrary.simpleMessage(
       "Ir a la configuración del script",
@@ -927,6 +1001,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "hideFromList": MessageLookupByLibrary.simpleMessage("Ocultar de la lista"),
     "hideIp": MessageLookupByLibrary.simpleMessage("Ocultar IP"),
     "hidePassword": MessageLookupByLibrary.simpleMessage("Ocultar contraseña"),
+    "hideTimeoutNodes": MessageLookupByLibrary.simpleMessage("Hide timeouts"),
     "hideTimeoutProxies": MessageLookupByLibrary.simpleMessage(
       "Ocultar proxies sin respuesta",
     ),
@@ -1159,6 +1234,57 @@ class MessageLookup extends MessageLookupByLibrary {
     "listenRoutingMarkDesc": MessageLookupByLibrary.simpleMessage(
       "La marca de enrutamiento de escucha solo funciona en Linux.",
     ),
+    "listenerActive": MessageLookupByLibrary.simpleMessage("Listening"),
+    "listenerAppPort": MessageLookupByLibrary.simpleMessage(
+      "Port used by the app itself",
+    ),
+    "listenerDuplicateName": MessageLookupByLibrary.simpleMessage(
+      "Name already used",
+    ),
+    "listenerDuplicatePort": MessageLookupByLibrary.simpleMessage(
+      "Port used by another listener",
+    ),
+    "listenerFollowRules": MessageLookupByLibrary.simpleMessage("Follow rules"),
+    "listenerInactive": MessageLookupByLibrary.simpleMessage("Not listening"),
+    "listenerLan": MessageLookupByLibrary.simpleMessage("LAN"),
+    "listenerLanWarning": MessageLookupByLibrary.simpleMessage(
+      "Devices on your network can use this port; add a username and password.",
+    ),
+    "listenerListen": MessageLookupByLibrary.simpleMessage("Listen address"),
+    "listenerListenInvalid": MessageLookupByLibrary.simpleMessage(
+      "Not a valid IP address",
+    ),
+    "listenerLocalOnly": MessageLookupByLibrary.simpleMessage(
+      "This device only",
+    ),
+    "listenerMissingRule": MessageLookupByLibrary.simpleMessage(
+      "Sub-rule not in this profile, skipped",
+    ),
+    "listenerMissingTarget": MessageLookupByLibrary.simpleMessage(
+      "Outbound not in this profile, skipped",
+    ),
+    "listenerOutbound": MessageLookupByLibrary.simpleMessage("Outbound"),
+    "listenerPortInvalid": MessageLookupByLibrary.simpleMessage(
+      "Port must be 1–65535",
+    ),
+    "listenerSubRule": MessageLookupByLibrary.simpleMessage("Sub-rule"),
+    "listenerUnsupported": MessageLookupByLibrary.simpleMessage(
+      "Not supported on this platform",
+    ),
+    "listenerUserInvalid": MessageLookupByLibrary.simpleMessage(
+      "Username is required",
+    ),
+    "listenerUsers": MessageLookupByLibrary.simpleMessage("Users"),
+    "listenerUsersEmpty": MessageLookupByLibrary.simpleMessage(
+      "No users: the app\'s own authentication applies.",
+    ),
+    "listeners": MessageLookupByLibrary.simpleMessage("Multi-port"),
+    "listenersDesc": MessageLookupByLibrary.simpleMessage(
+      "Each listener is an extra local proxy port (mihomo listeners) that can send its traffic through a fixed outbound instead of the rules. Applies to every profile.",
+    ),
+    "listenersEnable": MessageLookupByLibrary.simpleMessage(
+      "Enable extra listeners",
+    ),
     "liveConnections": MessageLookupByLibrary.simpleMessage(
       "Conexiones activas",
     ),
@@ -1288,6 +1414,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Falló la conexión segura. Puede que el certificado del servidor no sea válido o que la conexión esté siendo interceptada",
     ),
     "networkType": MessageLookupByLibrary.simpleMessage("Tipo de red"),
+    "neutralScheme": MessageLookupByLibrary.simpleMessage("Neutro"),
     "nextMatch": MessageLookupByLibrary.simpleMessage("Coincidencia siguiente"),
     "no": MessageLookupByLibrary.simpleMessage("No"),
     "noData": MessageLookupByLibrary.simpleMessage("Sin datos"),
@@ -1473,9 +1600,11 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "quickActions": MessageLookupByLibrary.simpleMessage("Acciones rápidas"),
     "quickEdit": MessageLookupByLibrary.simpleMessage("Edición rápida"),
+    "rainbowScheme": MessageLookupByLibrary.simpleMessage("Arcoíris"),
     "recentRequests": MessageLookupByLibrary.simpleMessage(
       "Solicitudes recientes",
     ),
+    "recommended": MessageLookupByLibrary.simpleMessage("Recommended"),
     "recommendedIcons": MessageLookupByLibrary.simpleMessage("Sugeridos"),
     "recordType": MessageLookupByLibrary.simpleMessage("Tipo de registro"),
     "redirPort": MessageLookupByLibrary.simpleMessage("Puerto Redir"),
@@ -1520,9 +1649,18 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "responseCode": MessageLookupByLibrary.simpleMessage("Código de respuesta"),
     "restart": MessageLookupByLibrary.simpleMessage("Reiniciar"),
+    "restartCore": MessageLookupByLibrary.simpleMessage("Restart core"),
+    "restartCoreCardDesc": MessageLookupByLibrary.simpleMessage(
+      "Tap to restart",
+    ),
+    "restartCoreDone": MessageLookupByLibrary.simpleMessage("Core restarted"),
+    "restartCoreFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to restart core",
+    ),
     "restartCoreTip": MessageLookupByLibrary.simpleMessage(
       "¿Seguro que quieres reiniciar el núcleo?",
     ),
+    "restartingCore": MessageLookupByLibrary.simpleMessage("Restarting…"),
     "restore": MessageLookupByLibrary.simpleMessage("Restaurar"),
     "restoreAllData": MessageLookupByLibrary.simpleMessage(
       "Restaurar todos los datos",
@@ -1548,8 +1686,30 @@ class MessageLookup extends MessageLookupByLibrary {
     "routeExcludeAddress": MessageLookupByLibrary.simpleMessage(
       "Direcciones excluidas de la ruta",
     ),
+    "routingCondition": MessageLookupByLibrary.simpleMessage("Condition"),
+    "routingConditionsEmptyTip": MessageLookupByLibrary.simpleMessage(
+      "Add at least one condition with a value",
+    ),
+    "routingLogic": MessageLookupByLibrary.simpleMessage("Match logic"),
+    "routingLogicAnd": MessageLookupByLibrary.simpleMessage(
+      "All conditions (AND)",
+    ),
+    "routingLogicOr": MessageLookupByLibrary.simpleMessage(
+      "Any condition (OR)",
+    ),
     "routingMark": MessageLookupByLibrary.simpleMessage(
       "Marca de enrutamiento",
+    ),
+    "routingTarget": MessageLookupByLibrary.simpleMessage("Outbound"),
+    "routingTargetEmptyTip": MessageLookupByLibrary.simpleMessage(
+      "Choose an outbound",
+    ),
+    "routingTargetMissingTip": m73,
+    "routingValueCommaTip": MessageLookupByLibrary.simpleMessage(
+      "A value cannot contain a comma",
+    ),
+    "routingValuesHint": MessageLookupByLibrary.simpleMessage(
+      "One value per line",
     ),
     "ru": MessageLookupByLibrary.simpleMessage("Ruso"),
     "rule": MessageLookupByLibrary.simpleMessage("Regla"),
@@ -1773,6 +1933,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "serviceUnsupportedRegion": MessageLookupByLibrary.simpleMessage(
       "Región no compatible",
     ),
+    "setDialerProxy": MessageLookupByLibrary.simpleMessage("Set dialer proxy"),
     "settingEntries": MessageLookupByLibrary.simpleMessage("ajustes"),
     "settings": MessageLookupByLibrary.simpleMessage("Ajustes"),
     "settingsCount": m80,
@@ -1827,6 +1988,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "socksPort": MessageLookupByLibrary.simpleMessage("Puerto SOCKS"),
     "softStyle": MessageLookupByLibrary.simpleMessage("Suave"),
     "sort": MessageLookupByLibrary.simpleMessage("Ordenar"),
+    "sortByDelay": MessageLookupByLibrary.simpleMessage("Sort by latency"),
     "source": MessageLookupByLibrary.simpleMessage("Origen"),
     "sourceIp": MessageLookupByLibrary.simpleMessage("IP de origen"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("Proxy especial"),
@@ -1885,6 +2047,78 @@ class MessageLookup extends MessageLookupByLibrary {
     "tabAnimation": MessageLookupByLibrary.simpleMessage(
       "Animación de pestañas",
     ),
+    "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage(
+      "Accept routes",
+    ),
+    "tailscaleAddRouting": MessageLookupByLibrary.simpleMessage(
+      "Add to custom routing",
+    ),
+    "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("Auth key"),
+    "tailscaleAuthKeyNotAccepted": MessageLookupByLibrary.simpleMessage(
+      "The control server did not accept the auth key (expired, already used, revoked or mistyped). Create a new key, or log in with the URL above.",
+    ),
+    "tailscaleConnect": MessageLookupByLibrary.simpleMessage("Connect"),
+    "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage(
+      "Control URL (Headscale)",
+    ),
+    "tailscaleCurrentExitNode": MessageLookupByLibrary.simpleMessage(
+      "Current exit node",
+    ),
+    "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
+      "Adds a Tailscale node to every profile and sends tailnet addresses (100.64.0.0/10, fd7a:115c:a1e9::/48) and MagicDNS names to it, ahead of all other rules. Changes apply when you leave this page.",
+    ),
+    "tailscaleDialerProxy": MessageLookupByLibrary.simpleMessage(
+      "Connection proxy",
+    ),
+    "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
+      "Tailscale\'s own traffic to its control server, DERP relays and peers goes through this proxy or group. Choose one if the control server cannot be reached directly.",
+    ),
+    "tailscaleDnsSuffixes": MessageLookupByLibrary.simpleMessage(
+      "Tailnet DNS suffixes",
+    ),
+    "tailscaleEnable": MessageLookupByLibrary.simpleMessage("Enable Tailscale"),
+    "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage(
+      "Ephemeral node",
+    ),
+    "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("Exit node"),
+    "tailscaleExitNodeOption": MessageLookupByLibrary.simpleMessage(
+      "Can be exit node",
+    ),
+    "tailscaleHostname": MessageLookupByLibrary.simpleMessage("Hostname"),
+    "tailscaleLocalNode": MessageLookupByLibrary.simpleMessage("This device"),
+    "tailscaleLoginDesc": MessageLookupByLibrary.simpleMessage(
+      "Without an auth key, tap Connect: the node starts and shows a login link here. After you approve it in the browser the login is kept across restarts.",
+    ),
+    "tailscaleNetwork": MessageLookupByLibrary.simpleMessage("Tailnet"),
+    "tailscaleNetworkIssue": MessageLookupByLibrary.simpleMessage(
+      "The control server could not be reached (network timeout). This is a network problem, not the auth key: choose a connection proxy above and connect again.",
+    ),
+    "tailscaleNode": MessageLookupByLibrary.simpleMessage("Node"),
+    "tailscaleNotStarted": MessageLookupByLibrary.simpleMessage(
+      "The node is not running yet. Connect to load the device list.",
+    ),
+    "tailscaleOffline": MessageLookupByLibrary.simpleMessage("Offline"),
+    "tailscaleOnline": MessageLookupByLibrary.simpleMessage("Online"),
+    "tailscaleOpenLogin": MessageLookupByLibrary.simpleMessage(
+      "Open login page",
+    ),
+    "tailscalePeers": MessageLookupByLibrary.simpleMessage("Devices"),
+    "tailscaleRefresh": MessageLookupByLibrary.simpleMessage("Refresh"),
+    "tailscaleReset": MessageLookupByLibrary.simpleMessage("Log out and reset"),
+    "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
+      "This deletes the saved Tailscale login of this device, so it has to log in again. Continue?",
+    ),
+    "tailscaleRoutingAdded": MessageLookupByLibrary.simpleMessage(
+      "Added to custom routing",
+    ),
+    "tailscaleSilentLogTip": MessageLookupByLibrary.simpleMessage(
+      "The log level is silent, so the login link cannot be read. Choose another log level.",
+    ),
+    "tailscaleStatusIdle": MessageLookupByLibrary.simpleMessage("Not started"),
+    "tailscaleStatusNeedsLogin": MessageLookupByLibrary.simpleMessage(
+      "Needs login",
+    ),
+    "tailscaleStatusRunning": MessageLookupByLibrary.simpleMessage("Connected"),
     "tapIconToRetry": MessageLookupByLibrary.simpleMessage(
       "Toca el icono para reintentar",
     ),
@@ -1893,6 +2127,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "target": MessageLookupByLibrary.simpleMessage("Destino"),
     "tcpConcurrent": MessageLookupByLibrary.simpleMessage("TCP concurrente"),
+    "testAllDelays": MessageLookupByLibrary.simpleMessage("Test all"),
     "testInterval": MessageLookupByLibrary.simpleMessage("Intervalo de prueba"),
     "testUrl": MessageLookupByLibrary.simpleMessage("URL de prueba"),
     "testWhenUsed": MessageLookupByLibrary.simpleMessage("Probar al usarse"),
@@ -1910,6 +2145,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tip": MessageLookupByLibrary.simpleMessage("Consejo"),
     "toggle": MessageLookupByLibrary.simpleMessage("Alternar"),
     "tolerance": MessageLookupByLibrary.simpleMessage("Tolerancia"),
+    "tonalSpotScheme": MessageLookupByLibrary.simpleMessage("Punto tonal"),
     "tools": MessageLookupByLibrary.simpleMessage("Herramientas"),
     "torch": MessageLookupByLibrary.simpleMessage("Linterna"),
     "total": MessageLookupByLibrary.simpleMessage("Total"),
@@ -1941,6 +2177,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "udpTimeoutDesc": MessageLookupByLibrary.simpleMessage(
       "El tiempo de espera UDP se indica en segundos y solo funciona con las pilas gvisor, system y mixed.",
     ),
+    "uiStyle": MessageLookupByLibrary.simpleMessage("Estilo de interfaz"),
+    "uiStyleClassic": MessageLookupByLibrary.simpleMessage("Clásico"),
+    "uiStyleDesc": MessageLookupByLibrary.simpleMessage(
+      "Clásico mantiene el aspecto Material de versiones anteriores; Nuevo es el diseño renovado. Se aplica al instante.",
+    ),
+    "uiStyleModern": MessageLookupByLibrary.simpleMessage("Nuevo"),
     "ultra": MessageLookupByLibrary.simpleMessage("Ultra"),
     "undo": MessageLookupByLibrary.simpleMessage("Deshacer"),
     "unifiedDelay": MessageLookupByLibrary.simpleMessage("Latencia unificada"),
@@ -1967,6 +2209,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "userAgent": MessageLookupByLibrary.simpleMessage("User-Agent"),
     "username": MessageLookupByLibrary.simpleMessage("Usuario"),
     "value": MessageLookupByLibrary.simpleMessage("Valor"),
+    "vibrantScheme": MessageLookupByLibrary.simpleMessage("Vibrante"),
     "view": MessageLookupByLibrary.simpleMessage("Ver"),
     "virtualIpv4": MessageLookupByLibrary.simpleMessage("IPv4 virtual"),
     "vividStyle": MessageLookupByLibrary.simpleMessage("Vivo"),

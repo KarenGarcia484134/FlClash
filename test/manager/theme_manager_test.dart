@@ -1,7 +1,9 @@
+import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/manager/theme_manager.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fl_clash/ui/ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -64,5 +66,29 @@ void main() {
     expect(themes, hasLength(3));
     expect(themes[1], same(themes[0]));
     expect(themes[2], isNot(same(themes[1])));
+  });
+
+  testWidgets('switching the ui style rebuilds the theme live', (tester) async {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+    late ThemeData theme;
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: Consumer(
+          builder: (_, ref, _) {
+            theme = watchAppTheme(ref, Brightness.light);
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+    expect(theme.extension<ClassicTypography>(), isNotNull);
+
+    final notifier = container.read(themeSettingProvider.notifier);
+    notifier.value = notifier.value.copyWith(uiStyle: UiStyle.modern);
+    await tester.pump();
+
+    expect(theme.extension<ClassicTypography>(), isNull);
   });
 }

@@ -26,6 +26,8 @@ class ThemeView extends StatelessWidget {
         children: const [
           ThemeLivePreview(),
           SizedBox(height: 16),
+          UiStyleItem(),
+          SizedBox(height: 16),
           _ThemeModeItem(),
           SizedBox(height: 16),
           _PureBlackItem(),
@@ -44,6 +46,58 @@ class ThemeView extends StatelessWidget {
           _TextScaleFactorItem(),
         ],
       ),
+    );
+  }
+}
+
+class UiStyleItem extends ConsumerWidget {
+  const UiStyleItem({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appLocalizations = context.appLocalizations;
+    final uiStyle = ref.watch(
+      themeSettingProvider.select((state) => state.uiStyle),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        InfoHeader(
+          info: Info(label: appLocalizations.uiStyle, glyph: AppGlyphs.layers),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: 8,
+            children: [
+              SegmentedButton<UiStyle>(
+                showSelectedIcon: false,
+                segments: [
+                  ButtonSegment(
+                    value: UiStyle.classic,
+                    label: Text(appLocalizations.uiStyleClassic),
+                  ),
+                  ButtonSegment(
+                    value: UiStyle.modern,
+                    label: Text(appLocalizations.uiStyleModern),
+                  ),
+                ],
+                selected: {uiStyle},
+                onSelectionChanged: (value) => ref
+                    .read(themeSettingProvider.notifier)
+                    .update((state) => state.copyWith(uiStyle: value.first)),
+              ),
+              Text(
+                appLocalizations.uiStyleDesc,
+                style: AppTextStyle.footnote
+                    .of(context)
+                    .copyWith(color: context.colorScheme.onSurfaceVariant),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -112,13 +166,9 @@ class _PrimaryColorItem extends ConsumerWidget {
     if (res != true || !context.mounted) {
       return;
     }
-    ref.read(themeSettingProvider.notifier).update((state) {
-      return state.copyWith(
-        primaryColors: defaultPrimaryColors,
-        primaryColor: defaultPrimaryColor,
-        colorStyle: ColorStyle.vivid,
-      );
-    });
+    ref
+        .read(themeSettingProvider.notifier)
+        .update((state) => state.withDefaultColors);
   }
 
   Future<void> _handleDelete(
@@ -138,17 +188,16 @@ class _PrimaryColorItem extends ConsumerWidget {
       return;
     }
     ref.read(themeSettingProvider.notifier).update((state) {
-      final primaryColors = List<int>.from(state.primaryColors)..remove(color);
-      var primaryColor = state.primaryColor;
+      final primaryColors = List<int>.from(state.activePrimaryColors)
+        ..remove(color);
+      var primaryColor = state.activePrimaryColor;
       if (primaryColor == color) {
-        primaryColor = primaryColors.contains(defaultPrimaryColor)
-            ? defaultPrimaryColor
-            : null;
+        final fallback = state.activeDefaultPrimaryColor;
+        primaryColor = primaryColors.contains(fallback) ? fallback : null;
       }
-      return state.copyWith(
-        primaryColors: primaryColors,
-        primaryColor: primaryColor,
-      );
+      return state
+          .withActivePrimaryColors(primaryColors)
+          .withActivePrimaryColor(primaryColor);
     });
   }
 
@@ -172,21 +221,20 @@ class _PrimaryColorItem extends ConsumerWidget {
   }
 
   void _handleAdd(BuildContext context, WidgetRef ref) {
-    final primaryColor = ref.read(themeSettingProvider).primaryColor;
+    final primaryColor = ref.read(themeSettingProvider).activePrimaryColor;
     _showColorSheet(
       context,
       primaryColor != null
           ? Color(primaryColor)
           : ref.read(dynamicColorProvider).accentColor,
-      (color) => _update(
-        ref,
-        (state) => state.copyWith(
-          primaryColors: state.primaryColors.contains(color)
-              ? state.primaryColors
-              : [...state.primaryColors, color],
-          primaryColor: color,
-        ),
-      ),
+      (color) => _update(ref, (state) {
+        final colors = state.activePrimaryColors;
+        return state
+            .withActivePrimaryColors(
+              colors.contains(color) ? colors : [...colors, color],
+            )
+            .withActivePrimaryColor(color);
+      }),
     );
   }
 
@@ -195,22 +243,23 @@ class _PrimaryColorItem extends ConsumerWidget {
       context,
       Color(color),
       (edited) => _update(ref, (state) {
-        final index = state.primaryColors.indexOf(color);
+        final index = state.activePrimaryColors.indexOf(color);
         if (edited == color || index == -1) {
           return state;
         }
-        final primaryColors = List<int>.from(state.primaryColors);
+        final primaryColors = List<int>.from(state.activePrimaryColors);
         if (primaryColors.contains(edited)) {
           primaryColors.removeAt(index);
         } else {
           primaryColors[index] = edited;
         }
-        return state.copyWith(
-          primaryColors: primaryColors,
-          primaryColor: state.primaryColor == color
-              ? edited
-              : state.primaryColor,
-        );
+        return state
+            .withActivePrimaryColors(primaryColors)
+            .withActivePrimaryColor(
+              state.activePrimaryColor == color
+                  ? edited
+                  : state.activePrimaryColor,
+            );
       }),
     );
   }
@@ -225,16 +274,12 @@ class _PrimaryColorItem extends ConsumerWidget {
     final themeColors = ref.watch(
       themeSettingProvider.select(
         (state) => ThemeColorsSelectorState(
-          primaryColor: state.primaryColor,
-          primaryColors: state.primaryColors,
+          primaryColor: state.activePrimaryColor,
+          primaryColors: state.activePrimaryColors,
           colorStyle: state.colorStyle,
-          isDefault:
-              state.primaryColor == defaultPrimaryColor &&
-              intListEquality.equals(
-                state.primaryColors,
-                defaultPrimaryColors,
-              ) &&
-              state.colorStyle == ColorStyle.vivid,
+          isClassic: state.isClassic,
+          schemeVariant: state.schemeVariant,
+          isDefault: state.hasDefaultColors,
         ),
       ),
     );
@@ -262,7 +307,7 @@ class _PrimaryColorItem extends ConsumerWidget {
                 selected: themeColors.primaryColor,
                 onSelect: (color) => _update(
                   ref,
-                  (state) => state.copyWith(primaryColor: color),
+                  (state) => state.withActivePrimaryColor(color),
                 ),
                 onEdit: (color) => _handleEdit(context, ref, color),
                 onDelete: (color) => _handleDelete(context, ref, color),
@@ -270,16 +315,28 @@ class _PrimaryColorItem extends ConsumerWidget {
               ),
               generateSection(
                 items: [
-                  ListItem<ColorStyle>.options(
-                    title: Text(appLocalizations.colorStyle),
-                    options: ColorStyle.values,
-                    value: themeColors.colorStyle,
-                    textBuilder: (style) => style.label,
-                    onChanged: (style) => _update(
-                      ref,
-                      (state) => state.copyWith(colorStyle: style),
+                  if (themeColors.isClassic)
+                    ListItem<DynamicSchemeVariant>.options(
+                      title: Text(appLocalizations.colorSchemes),
+                      options: DynamicSchemeVariant.values,
+                      value: themeColors.schemeVariant,
+                      textBuilder: (variant) => variant.label,
+                      onChanged: (variant) => _update(
+                        ref,
+                        (state) => state.copyWith(schemeVariant: variant),
+                      ),
+                    )
+                  else
+                    ListItem<ColorStyle>.options(
+                      title: Text(appLocalizations.colorStyle),
+                      options: ColorStyle.values,
+                      value: themeColors.colorStyle,
+                      textBuilder: (style) => style.label,
+                      onChanged: (style) => _update(
+                        ref,
+                        (state) => state.copyWith(colorStyle: style),
+                      ),
                     ),
-                  ),
                 ],
               ),
             ],
@@ -574,7 +631,7 @@ final _floatingBarProvider = appSettingProvider.select(
 );
 
 final _liquidGlassProvider = themeSettingProvider.select(
-  (state) => state.liquidGlass != LiquidGlassMode.none,
+  (state) => state.effectiveLiquidGlass != LiquidGlassMode.none,
 );
 
 class _PureBlackItem extends ConsumerWidget {
@@ -724,6 +781,9 @@ class _LiquidGlassItem extends ConsumerWidget {
     final mode = ref.watch(
       themeSettingProvider.select((state) => state.liquidGlass),
     );
+    if (ref.watch(themeSettingProvider.select((state) => state.isClassic))) {
+      return const SizedBox.shrink();
+    }
     final colorScheme = context.colorScheme;
     // Floating either way, as a docked bar stays a fill, over the list page,
     // whose rows run on under the bar where glass shows them.

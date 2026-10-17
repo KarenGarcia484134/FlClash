@@ -86,7 +86,10 @@ const defaultNetworkProps = NetworkProps();
 const defaultProxiesStyleProps = ProxiesStyleProps();
 const defaultWindowProps = WindowProps();
 const defaultAccessControlProps = AccessControlProps();
-const defaultThemeProps = ThemeProps(primaryColor: defaultPrimaryColor);
+const defaultThemeProps = ThemeProps(
+  primaryColor: defaultPrimaryColor,
+  classicPrimaryColor: classicDefaultPrimaryColor,
+);
 
 HotKeyAction _defaultHotKeyAction(HotAction action, PhysicalKeyboardKey key) {
   return HotKeyAction(
@@ -498,6 +501,21 @@ Object? _readColorStyle(Map<dynamic, dynamic> json, String key) {
   };
 }
 
+// The classic palette starts from the colors chosen before the two styles
+// split, as the upgrade resets those for the modern style.
+Object? _readClassicPrimaryColor(Map<dynamic, dynamic> json, String key) {
+  if (json.containsKey(key)) {
+    return json[key];
+  }
+  if (json.containsKey('primaryColor')) {
+    return json['primaryColor'];
+  }
+  return classicDefaultPrimaryColor;
+}
+
+Object? _readClassicPrimaryColors(Map<dynamic, dynamic> json, String key) =>
+    json[key] ?? json['primaryColors'];
+
 // Older configs say whether glass is on.
 Object? _readLiquidGlass(Map<dynamic, dynamic> json, String key) {
   return switch (json[key]) {
@@ -521,6 +539,12 @@ abstract class ThemeProps with _$ThemeProps {
     @Default(LiquidGlassMode.none)
     @JsonKey(readValue: _readLiquidGlass)
     LiquidGlassMode liquidGlass,
+    @Default(UiStyle.classic) UiStyle uiStyle,
+    @JsonKey(readValue: _readClassicPrimaryColor) int? classicPrimaryColor,
+    @Default(classicDefaultPrimaryColors)
+    @JsonKey(readValue: _readClassicPrimaryColors)
+    List<int> classicPrimaryColors,
+    @Default(DynamicSchemeVariant.content) DynamicSchemeVariant schemeVariant,
     @Default(TextScale()) TextScale textScale,
     // `fontFamily` held the names of a removed enum, which old configs may
     // still carry.
@@ -536,6 +560,52 @@ abstract class ThemeProps with _$ThemeProps {
     }
     return decodeSalvaging('theme settings', json, ThemeProps.fromJson);
   }
+}
+
+extension ThemePropsStyleExt on ThemeProps {
+  bool get isClassic => uiStyle == UiStyle.classic;
+
+  /// Glass belongs to the modern style alone.
+  LiquidGlassMode get effectiveLiquidGlass =>
+      isClassic ? LiquidGlassMode.none : liquidGlass;
+
+  int? get activePrimaryColor => isClassic ? classicPrimaryColor : primaryColor;
+
+  List<int> get activePrimaryColors =>
+      isClassic ? classicPrimaryColors : primaryColors;
+
+  int get activeDefaultPrimaryColor =>
+      isClassic ? classicDefaultPrimaryColor : defaultPrimaryColor;
+
+  List<int> get activeDefaultPrimaryColors =>
+      isClassic ? classicDefaultPrimaryColors : defaultPrimaryColors;
+
+  bool get hasDefaultColors =>
+      activePrimaryColor == activeDefaultPrimaryColor &&
+      intListEquality.equals(activePrimaryColors, activeDefaultPrimaryColors) &&
+      (isClassic
+          ? schemeVariant == DynamicSchemeVariant.content
+          : colorStyle == ColorStyle.vivid);
+
+  ThemeProps withActivePrimaryColor(int? color) => isClassic
+      ? copyWith(classicPrimaryColor: color)
+      : copyWith(primaryColor: color);
+
+  ThemeProps withActivePrimaryColors(List<int> colors) => isClassic
+      ? copyWith(classicPrimaryColors: colors)
+      : copyWith(primaryColors: colors);
+
+  ThemeProps get withDefaultColors => isClassic
+      ? copyWith(
+          classicPrimaryColor: classicDefaultPrimaryColor,
+          classicPrimaryColors: classicDefaultPrimaryColors,
+          schemeVariant: DynamicSchemeVariant.content,
+        )
+      : copyWith(
+          primaryColor: defaultPrimaryColor,
+          primaryColors: defaultPrimaryColors,
+          colorStyle: ColorStyle.vivid,
+        );
 }
 
 @freezed

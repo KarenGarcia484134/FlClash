@@ -1042,5 +1042,18 @@
   "listenerMissingRule": "当前配置没有该子规则，已跳过",
   "listenerActive": "监听中",
   "listenerInactive": "未监听",
-  "listenerMissingTarget": "当前配置没有该出口，已跳过"
+  "listenerMissingTarget": "当前配置没有该出口，已跳过",
+  "uiStyle": "界面风格",
+  "uiStyleClassic": "经典",
+  "uiStyleModern": "新版",
+  "uiStyleDesc": "经典沿用旧版本的 Material 外观；新版为重新设计的外观。切换后立即生效。",
+  "colorSchemes": "配色方案",
+  "tonalSpotScheme": "调性点缀",
+  "fidelityScheme": "高保真",
+  "neutralScheme": "中性",
+  "vibrantScheme": "活力",
+  "expressiveScheme": "表现力",
+  "contentScheme": "内容主题",
+  "rainbowScheme": "彩虹",
+  "fruitSaladScheme": "果缤纷"
 }

@@ -161,6 +161,18 @@ const pausedMaxDnsQueriesLength = maxDnsQueriesLength * 2;
 
 const trafficSampleLength = 30;
 
+const classicDefaultPrimaryColor = 0XFFD8C0C3;
+
+const classicDefaultPrimaryColors = [
+  0xFF795548,
+  0xFF03A9F4,
+  0xFFFFFF00,
+  0XFFBBC9CC,
+  0XFFABD397,
+  classicDefaultPrimaryColor,
+  0XFF665390,
+];
+
 // Apple's system colors, in the order of the macOS accent colors.
 const defaultPrimaryColors = [
   defaultPrimaryColor,

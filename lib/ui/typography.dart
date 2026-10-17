@@ -30,8 +30,14 @@ enum AppTextStyle {
   final FontWeight weight;
   final FontWeight emphasizedWeight;
 
-  TextStyle of(BuildContext context, {bool emphasized = false}) =>
-      _apply(_slotOf(Theme.of(context).textTheme)!, emphasized: emphasized);
+  TextStyle of(BuildContext context, {bool emphasized = false}) {
+    final theme = Theme.of(context);
+    final slot = _slotOf(theme.textTheme)!;
+    if (theme.extension<ClassicTypography>() != null) {
+      return emphasized ? slot.copyWith(fontWeight: emphasizedWeight) : slot;
+    }
+    return _apply(slot, emphasized: emphasized);
+  }
 
   /// For text sized to the shape it marks, such as a letter in an icon.
   static TextStyle custom(
@@ -102,3 +108,14 @@ TextTheme _onAppScale(TextTheme theme) => theme.copyWith(
   labelMedium: AppTextStyle.caption1._on(theme.labelMedium, emphasized: true),
   labelSmall: AppTextStyle.caption2._on(theme.labelSmall, emphasized: true),
 );
+
+/// Marks a theme of the classic style, whose text keeps Material's own scale.
+class ClassicTypography extends ThemeExtension<ClassicTypography> {
+  const ClassicTypography();
+
+  @override
+  ClassicTypography copyWith() => this;
+
+  @override
+  ClassicTypography lerp(ClassicTypography? other, double t) => this;
+}

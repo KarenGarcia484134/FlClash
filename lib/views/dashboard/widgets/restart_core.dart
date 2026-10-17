@@ -55,11 +55,7 @@ class RestartCoreCard extends ConsumerWidget {
           Row(
             spacing: 8,
             children: [
-              if (restarting)
-                const SizedBox.square(
-                  dimension: 14,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
+              if (restarting) const CommonCircleLoading(size: 14),
               Flexible(
                 child: Text(
                   restarting

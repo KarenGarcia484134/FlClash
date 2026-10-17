@@ -380,6 +380,22 @@ _ThemeProps _$ThemePropsFromJson(Map<String, dynamic> json) => _ThemeProps(
         _readLiquidGlass(json, 'liquidGlass'),
       ) ??
       LiquidGlassMode.none,
+  uiStyle:
+      $enumDecodeNullable(_$UiStyleEnumMap, json['uiStyle']) ?? UiStyle.classic,
+  classicPrimaryColor:
+      (_readClassicPrimaryColor(json, 'classicPrimaryColor') as num?)?.toInt(),
+  classicPrimaryColors:
+      (_readClassicPrimaryColors(json, 'classicPrimaryColors')
+              as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
+          .toList() ??
+      classicDefaultPrimaryColors,
+  schemeVariant:
+      $enumDecodeNullable(
+        _$DynamicSchemeVariantEnumMap,
+        json['schemeVariant'],
+      ) ??
+      DynamicSchemeVariant.content,
   textScale: json['textScale'] == null
       ? const TextScale()
       : TextScale.fromJson(json['textScale'] as Map<String, dynamic>),
@@ -395,6 +411,10 @@ Map<String, dynamic> _$ThemePropsToJson(_ThemeProps instance) =>
       'pureBlack': instance.pureBlack,
       'sidebarBlur': instance.sidebarBlur,
       'liquidGlass': _$LiquidGlassModeEnumMap[instance.liquidGlass]!,
+      'uiStyle': _$UiStyleEnumMap[instance.uiStyle]!,
+      'classicPrimaryColor': instance.classicPrimaryColor,
+      'classicPrimaryColors': instance.classicPrimaryColors,
+      'schemeVariant': _$DynamicSchemeVariantEnumMap[instance.schemeVariant]!,
       'textScale': instance.textScale,
       'systemFontFamily': instance.fontFamily,
     };
@@ -416,6 +436,20 @@ const _$LiquidGlassModeEnumMap = {
   LiquidGlassMode.none: 'none',
   LiquidGlassMode.standard: 'standard',
   LiquidGlassMode.ultra: 'ultra',
+};
+
+const _$UiStyleEnumMap = {UiStyle.classic: 'classic', UiStyle.modern: 'modern'};
+
+const _$DynamicSchemeVariantEnumMap = {
+  DynamicSchemeVariant.tonalSpot: 'tonalSpot',
+  DynamicSchemeVariant.fidelity: 'fidelity',
+  DynamicSchemeVariant.monochrome: 'monochrome',
+  DynamicSchemeVariant.neutral: 'neutral',
+  DynamicSchemeVariant.vibrant: 'vibrant',
+  DynamicSchemeVariant.expressive: 'expressive',
+  DynamicSchemeVariant.content: 'content',
+  DynamicSchemeVariant.rainbow: 'rainbow',
+  DynamicSchemeVariant.fruitSalad: 'fruitSalad',
 };
 
 _Config _$ConfigFromJson(Map<String, dynamic> json) => _Config(

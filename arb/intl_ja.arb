@@ -1042,5 +1042,18 @@
   "listenerMissingRule": "このプロファイルにサブルールがないためスキップ",
   "listenerActive": "待ち受け中",
   "listenerInactive": "待ち受けていません",
-  "listenerMissingTarget": "このプロファイルに出口がないためスキップ"
+  "listenerMissingTarget": "このプロファイルに出口がないためスキップ",
+  "uiStyle": "インターフェーススタイル",
+  "uiStyleClassic": "クラシック",
+  "uiStyleModern": "新デザイン",
+  "uiStyleDesc": "クラシックは以前のバージョンの Material の外観、新デザインは刷新された外観です。すぐに反映されます。",
+  "colorSchemes": "カラースキーム",
+  "tonalSpotScheme": "トーナルスポット",
+  "fidelityScheme": "フィデリティ",
+  "neutralScheme": "ニュートラル",
+  "vibrantScheme": "ビブラント",
+  "expressiveScheme": "エクスプレッシブ",
+  "contentScheme": "コンテンツ",
+  "rainbowScheme": "レインボー",
+  "fruitSaladScheme": "フルーツサラダ"
 }

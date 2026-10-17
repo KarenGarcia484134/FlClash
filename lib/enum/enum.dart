@@ -811,6 +811,9 @@ enum TabAnimation { slide, fade }
 
 enum LiquidGlassMode { none, standard, ultra }
 
+/// [classic] is the Material look of 0.9.11, [modern] the redesign of 0.9.1.
+enum UiStyle { classic, modern }
+
 enum Language { yaml, javaScript, json }
 
 enum ScrollPositionCacheKey { proxiesTabList }
