@@ -318,3 +318,111 @@ func TestEncodeConfigMappingKeepsEveryKeyAfterAnOpenEndedScalar(t *testing.T) {
 		t.Errorf("decoded %d rules, want all %d in order", len(decoded.Rules), len(rules))
 	}
 }
+
+// The host injects Tailscale into the overlay's proxies; the merge used to
+// throw that node away and keep only the profile's list, so the Tailscale
+// rules the overlay also adds pointed at a missing proxy.
+func TestLoadConfigWithBaseKeepsOverlayInjectedProxies(t *testing.T) {
+	path := writeBaseProfile(t, baseProfile)
+	base, err := handleGetProfileBase(path)
+	if err != nil {
+		t.Fatalf("handleGetProfileBase = %v", err)
+	}
+	overlay := overlayOf(t, base, []string{
+		"IP-CIDR,100.64.0.0/10,Tailscale,no-resolve",
+		"DOMAIN-SUFFIX,ts.net,Tailscale",
+	}, map[string]any{
+		// A socks5 stand-in: parsing a real Tailscale node needs with_gvisor; the
+		// merge only cares that an overlay-only name survives next to the profile.
+		"proxies": []map[string]any{{
+			"name":   "Tailscale",
+			"type":   "socks5",
+			"server": "127.0.0.1",
+			"port":   1081,
+		}},
+	})
+	configPath := filepath.Join(t.TempDir(), "config.yaml")
+
+	cfg, err := loadConfigWithBase(&SetupBase{Path: path, Overlay: overlay}, configPath)
+
+	if err != nil {
+		t.Fatalf("loadConfigWithBase = %v", err)
+	}
+	if cfg.Proxies["Tailscale"] == nil {
+		t.Fatalf("injected Tailscale proxy is missing; have %v", proxyNames(cfg))
+	}
+	for _, name := range []string{"a", "b", "g"} {
+		if cfg.Proxies[name] == nil {
+			t.Errorf("profile proxy %s is missing", name)
+		}
+	}
+	wantRules := []string{
+		"IPCIDR,100.64.0.0/10,Tailscale",
+		"DomainSuffix,ts.net,Tailscale",
+		"DomainSuffix,example.com,g",
+		"Match,,DIRECT",
+		"Match,,g",
+	}
+	if got := ruleStrings(cfg); !reflect.DeepEqual(got, wantRules) {
+		t.Errorf("rules = %v, want %v", got, wantRules)
+	}
+}
+
+func TestMergeOverlayProxiesPrependsOnlyNewNames(t *testing.T) {
+	profile := sequenceOf(
+		mappingOf("name", "a", "type", "direct"),
+		mappingOf("name", "b", "type", "direct"),
+	)
+	overlay := sequenceOf(
+		mappingOf("name", "Tailscale", "type", "tailscale"),
+		mappingOf("name", "a", "type", "socks5"), // profile wins
+	)
+
+	merged := mergeOverlayProxies(profile, overlay)
+
+	if got := sequenceNames(merged); !reflect.DeepEqual(got, []string{"Tailscale", "a", "b"}) {
+		t.Errorf("names = %v, want Tailscale then the profile's a, b", got)
+	}
+	if got := mappingValue(resolveAlias(merged.Content[1]), "type"); got == nil || got.Value != "direct" {
+		t.Errorf("profile entry a was replaced by the overlay")
+	}
+}
+
+func TestMergeOverlayProxiesFallsBackWhenASideIsMissing(t *testing.T) {
+	overlay := sequenceOf(mappingOf("name", "Tailscale", "type", "tailscale"))
+	if got := mergeOverlayProxies(nil, overlay); got != overlay {
+		t.Errorf("nil profile should keep the overlay")
+	}
+	profile := sequenceOf(mappingOf("name", "a", "type", "direct"))
+	if got := mergeOverlayProxies(profile, nil); got != profile {
+		t.Errorf("nil overlay should keep the profile")
+	}
+}
+
+func proxyNames(cfg *config.Config) []string {
+	names := make([]string, 0, len(cfg.Proxies))
+	for name := range cfg.Proxies {
+		names = append(names, name)
+	}
+	return names
+}
+
+func sequenceOf(items ...*yaml.Node) *yaml.Node {
+	return &yaml.Node{Kind: yaml.SequenceNode, Tag: "!!seq", Content: items}
+}
+
+func mappingOf(pairs ...string) *yaml.Node {
+	content := make([]*yaml.Node, 0, len(pairs))
+	for _, value := range pairs {
+		content = append(content, &yaml.Node{Kind: yaml.ScalarNode, Tag: "!!str", Value: value})
+	}
+	return &yaml.Node{Kind: yaml.MappingNode, Tag: "!!map", Content: content}
+}
+
+func sequenceNames(list *yaml.Node) []string {
+	names := make([]string, 0, len(list.Content))
+	for _, item := range list.Content {
+		names = append(names, proxyNameOf(item))
+	}
+	return names
+}
