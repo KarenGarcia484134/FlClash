@@ -174,12 +174,16 @@ class TailscaleNetworkSectionState
         appLocalizations.tailscaleExitNodeOption,
     ];
     return DecorationListItem(
-      leading: Icon(
-        Icons.circle,
-        size: 10,
-        color: peer.online
-            ? context.colorScheme.primary
-            : context.colorScheme.outline,
+      leading: SizedBox.square(
+        dimension: 10,
+        child: DecoratedBox(
+          decoration: ShapeDecoration(
+            shape: const CircleBorder(),
+            color: peer.online
+                ? context.colorScheme.primary
+                : context.colorScheme.outline,
+          ),
+        ),
       ),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

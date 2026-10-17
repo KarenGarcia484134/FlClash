@@ -443,6 +443,7 @@ abstract class Config with _$Config {
     @Default(defaultClashConfig) PatchClashConfig patchClashConfig,
     @Default([]) List<String> excludeSSIDs,
     @Default(TailscaleProps()) TailscaleProps tailscaleProps,
+    @Default({}) Map<String, Map<String, String>> dialerProxies,
   }) = _Config;
 
   factory Config.fromJson(Map<String, Object?> json) =>

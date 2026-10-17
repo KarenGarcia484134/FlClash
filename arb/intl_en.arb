@@ -973,5 +973,17 @@
     }
   },
   "customRoutingCardNoProfile": "No profile selected",
-  "customRoutingUseInProfile": "Use in current profile"
+  "customRoutingUseInProfile": "Use in current profile",
+  "setDialerProxy": "Set dialer proxy",
+  "dialerProxyVia": "via {name}",
+  "dialerProxyFromProfile": "from profile",
+  "dialerProxyNone": "None",
+  "dialerProxyMissingNode": "node gone, skipped",
+  "dialerProxyMissingTarget": "dialer proxy gone, skipped",
+  "dialerProxyCycle": "would loop, skipped",
+  "dialerProxyEmpty": "No dialer proxies in this profile",
+  "dialerProxyClearAll": "Clear all",
+  "dialerProxyClearAllTip": "Clear all dialer proxies set for this profile?",
+  "dialerProxyProviderTip": "This node comes from a proxy provider and cannot take its own dialer proxy",
+  "dialerProxySkippedTip": "{count} dialer proxy settings were skipped"
 }

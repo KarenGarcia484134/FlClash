@@ -240,7 +240,7 @@
   "ntpStatusDesc": "NTP を有効にすると、システムクロックではなく NTP サーバーから時刻を取得します。",
   "server": "サーバー",
   "ntpInterval": "同期間隔（分）",
-  "dialerProxy": "ダイヤラープロキシ",
+  "dialerProxy": "前置プロキシ",
   "dialerProxyDesc": "ダイヤラープロキシは NTP サーバーへの接続に使用するアウトバウンドです。",
   "writeToSystem": "システムに書き込む",
   "writeToSystemDesc": "システムに書き込むを有効にするとシステムクロックも設定します。Android では無視されます。",
@@ -963,5 +963,17 @@
   "hideTimeoutNodes": "タイムアウトを隠す",
   "customRoutingCardCount": "{total} 件中 {applied} 件が有効",
   "customRoutingCardNoProfile": "プロファイル未選択",
-  "customRoutingUseInProfile": "現在のプロファイルで使用"
+  "customRoutingUseInProfile": "現在のプロファイルで使用",
+  "setDialerProxy": "前置プロキシを設定",
+  "dialerProxyVia": "{name} 経由",
+  "dialerProxyFromProfile": "プロファイル由来",
+  "dialerProxyNone": "使用しない",
+  "dialerProxyMissingNode": "ノードがないためスキップ",
+  "dialerProxyMissingTarget": "前置プロキシがないためスキップ",
+  "dialerProxyCycle": "ループになるためスキップ",
+  "dialerProxyEmpty": "このプロファイルに前置プロキシはありません",
+  "dialerProxyClearAll": "すべてクリア",
+  "dialerProxyClearAllTip": "このプロファイルの前置プロキシ設定をすべてクリアしますか？",
+  "dialerProxyProviderTip": "このノードはプロキシプロバイダー由来のため個別に設定できません",
+  "dialerProxySkippedTip": "{count} 件の前置プロキシ設定がスキップされました"
 }

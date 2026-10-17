@@ -240,7 +240,7 @@
   "ntpStatusDesc": "开启 NTP 后从 NTP 服务器获取时间，而非系统时钟。",
   "server": "服务器",
   "ntpInterval": "同步间隔（分钟）",
-  "dialerProxy": "拨号代理",
+  "dialerProxy": "前置代理",
   "dialerProxyDesc": "拨号代理为连接 NTP 服务器使用的出站。",
   "writeToSystem": "写入系统",
   "writeToSystemDesc": "写入系统会同时设置系统时钟，Android 上不生效。",
@@ -963,5 +963,17 @@
   "hideTimeoutNodes": "隐藏超时",
   "customRoutingCardCount": "已启用 {applied} / {total}",
   "customRoutingCardNoProfile": "未选择配置",
-  "customRoutingUseInProfile": "在当前配置中使用"
+  "customRoutingUseInProfile": "在当前配置中使用",
+  "setDialerProxy": "设置前置代理",
+  "dialerProxyVia": "经 {name}",
+  "dialerProxyFromProfile": "来自配置文件",
+  "dialerProxyNone": "不使用",
+  "dialerProxyMissingNode": "节点已不存在，已跳过",
+  "dialerProxyMissingTarget": "前置代理已不存在，已跳过",
+  "dialerProxyCycle": "会形成循环，已跳过",
+  "dialerProxyEmpty": "当前配置没有前置代理",
+  "dialerProxyClearAll": "清除全部",
+  "dialerProxyClearAllTip": "清除当前配置的全部前置代理设置？",
+  "dialerProxyProviderTip": "该节点来自代理集合，无法单独设置前置代理",
+  "dialerProxySkippedTip": "{count} 个前置代理设置已失效"
 }

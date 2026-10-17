@@ -62,6 +62,9 @@ Future<SetupState> setupState(Ref ref, int? profileId) async {
         );
   final allProfileProviders = ref.watch(profileProvidersProvider);
   final tailscale = ref.watch(tailscaleSettingProvider);
+  final dialerProxies = profileId == null
+      ? const <String, String>{}
+      : ref.watch(profileDialerProxiesProvider(profileId));
   List<ProxyGroup> proxyGroups = [];
   List<Rule> rules = [];
   List<Rule> addedRules = [];
@@ -110,6 +113,7 @@ Future<SetupState> setupState(Ref ref, int? profileId) async {
     addedRules: addedRules,
     customRoutings: customRoutings,
     tailscale: tailscale,
+    dialerProxies: dialerProxies,
     script: script,
     overrides: overrides,
     matchTarget:
@@ -127,4 +131,19 @@ Map<String, int> profileProviders(Ref ref) {
     for (final profile in profiles)
       if (profile.type != ProfileType.custom) profile.realLabel: profile.id,
   };
+}
+
+@riverpod
+Future<DialerGraph> dialerGraph(Ref ref, int profileId) async {
+  ref.watch(
+    profileProvider(
+      profileId,
+    ).select((state) => state?.lastUpdateDate?.millisecondsSinceEpoch),
+  );
+  final type = ref.read(profileProvider(profileId))?.type;
+  if (type == ProfileType.custom) {
+    return const DialerGraph();
+  }
+  final configMap = await ref.read(coreHandlerProvider).getConfig(profileId);
+  return DialerGraph.fromConfig(configMap);
 }

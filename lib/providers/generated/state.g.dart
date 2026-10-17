@@ -3761,7 +3761,7 @@ final class SetupStateProvider
   }
 }
 
-String _$setupStateHash() => r'4d59ea8b4e0dbaf05d6047cbb7a0928dfe3182b5';
+String _$setupStateHash() => r'0caddd93fb755846c634a90e288ddb7424569140';
 
 final class SetupStateFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<SetupState>, int?> {
@@ -3831,3 +3831,78 @@ final class ProfileProvidersProvider
 }
 
 String _$profileProvidersHash() => r'689856f32a4b40e6a26b1eedd16db418d140371a';
+
+@ProviderFor(dialerGraph)
+final dialerGraphProvider = DialerGraphFamily._();
+
+final class DialerGraphProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<DialerGraph>,
+          DialerGraph,
+          FutureOr<DialerGraph>
+        >
+    with $FutureModifier<DialerGraph>, $FutureProvider<DialerGraph> {
+  DialerGraphProvider._({
+    required DialerGraphFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'dialerGraphProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$dialerGraphHash();
+
+  @override
+  String toString() {
+    return r'dialerGraphProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<DialerGraph> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<DialerGraph> create(Ref ref) {
+    final argument = this.argument as int;
+    return dialerGraph(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is DialerGraphProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$dialerGraphHash() => r'aa5516f5c3d4606921ad0c82a517d98f3e84d0e7';
+
+final class DialerGraphFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<DialerGraph>, int> {
+  DialerGraphFamily._()
+    : super(
+        retry: null,
+        name: r'dialerGraphProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  DialerGraphProvider call(int profileId) =>
+      DialerGraphProvider._(argument: profileId, from: this);
+
+  @override
+  String toString() => r'dialerGraphProvider';
+}

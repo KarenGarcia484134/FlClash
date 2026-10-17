@@ -373,6 +373,7 @@ Future<({String yaml, String md5})> _makeRealProfileTask(
         .toList();
   }
   final tailscaleRules = injectTailscale(rawConfig, data.tailscale);
+  injectDialerProxies(rawConfig, data.dialerProxies);
   if (data.customRoutings.isNotEmpty) {
     rules = [
       ...buildCustomRoutingRulesForConfig(rawConfig, data.customRoutings),
