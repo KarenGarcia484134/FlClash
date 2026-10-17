@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/features/form/form.dart';
-import 'package:fl_clash/icons/icons.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
+import 'package:fl_clash/ui/ui.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
@@ -156,7 +157,7 @@ class TailscaleNetworkSectionState
 
   Widget _ipChip(String ip) {
     return ActionChip(
-      label: Text(ip, style: context.textTheme.bodySmall?.toJetBrainsMono),
+      label: Text(ip, style: AppTextStyle.footnote.of(context).toJetBrainsMono),
       avatar: const GlyphIcon(AppGlyphs.copy, size: 14),
       onPressed: () => _copy(ip),
     );
@@ -188,7 +189,7 @@ class TailscaleNetworkSectionState
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(peer.displayName, style: context.textTheme.titleSmall),
+          Text(peer.displayName, style: AppTextStyle.subheadline.of(context)),
           if (peer.shortDnsName.isNotEmpty)
             Text(
               peer.shortDnsName,
@@ -233,7 +234,7 @@ class TailscaleNetworkSectionState
         Expanded(
           child: Text(
             appLocalizations.tailscaleNetwork,
-            style: context.textTheme.titleMedium,
+            style: AppTextStyle.headline.of(context),
           ),
         ),
         refreshButton,
@@ -267,12 +268,12 @@ class TailscaleNetworkSectionState
         if (status.error case final error?)
           Text(
             error,
-            style: context.listCaptionStyle?.copyWith(
+            style: context.listCaptionStyle.copyWith(
               color: context.colorScheme.error,
             ),
           ),
         if (status.self case final self?)
-          generateSectionV3(
+          generateSection(
             title: appLocalizations.tailscaleLocalNode,
             items: [_buildPeer(self, self: true)],
           ),
@@ -286,7 +287,7 @@ class TailscaleNetworkSectionState
           ),
         ),
         const SizedBox(height: 8),
-        generateSectionV3(
+        generateSection(
           title: '${appLocalizations.tailscalePeers} (${status.peers.length})',
           items: [
             if (peers.isEmpty)

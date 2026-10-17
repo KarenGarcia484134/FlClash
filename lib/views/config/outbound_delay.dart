@@ -1,6 +1,7 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/icons/icons.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
+import 'package:fl_clash/ui/ui.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
@@ -67,7 +68,7 @@ class OutboundDelayBadge extends ConsumerWidget {
     final delay = ref.watch(delayProvider(proxyName: name));
     final phase = ref.watch(delayTestPhaseProvider(proxyName: name));
     final colorScheme = context.colorScheme;
-    final style = context.textTheme.labelSmall;
+    final style = AppTextStyle.caption2.of(context);
     final Widget child = switch (phase) {
       DelayTestPhase.running => SizedBox.square(
         dimension: size,
@@ -88,7 +89,7 @@ class OutboundDelayBadge extends ConsumerWidget {
             ? '$delay ms'
             : delayFailureText(delay, context.appLocalizations),
         maxLines: 1,
-        style: style?.copyWith(
+        style: style.copyWith(
           color: switch (latencyLevelOf(delay)) {
             LatencyLevel.good => colorScheme.success,
             LatencyLevel.fair => colorScheme.warning,

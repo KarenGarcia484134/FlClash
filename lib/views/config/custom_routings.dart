@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/features/form/form.dart';
-import 'package:fl_clash/icons/icons.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
+import 'package:fl_clash/ui/ui.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/views/config/choice_sheet.dart';
 import 'package:fl_clash/views/config/outbound_delay.dart';
 import 'package:fl_clash/views/config/tailscale.dart';
 import 'package:fl_clash/widgets/widgets.dart';
@@ -384,7 +386,7 @@ class _CustomRoutingItem extends ConsumerWidget {
           children: [
             TextSpan(
               text: target.isEmpty ? '-' : target,
-              style: captionStyle?.copyWith(
+              style: captionStyle.copyWith(
                 color: missing || target.isEmpty
                     ? context.colorScheme.error
                     : context.colorScheme.tertiary,
@@ -499,14 +501,12 @@ class _CustomRoutingEditViewState extends State<CustomRoutingEditView> {
   }
 
   Future<void> _handlePickAction(_ConditionDraft draft) async {
-    final res = await dialogs.showCommonDialog<RuleAction>(
-      context: context,
-      child: OptionsDialog<RuleAction>(
-        title: context.appLocalizations.ruleName,
-        options: CustomRoutingConditionExt.actions,
-        textBuilder: (item) => item.value,
-        value: draft.ruleAction,
-      ),
+    final res = await showChoiceSheet<RuleAction>(
+      context,
+      title: context.appLocalizations.rule,
+      options: CustomRoutingConditionExt.actions,
+      labelOf: (item) => item.value,
+      value: draft.ruleAction,
     );
     if (res == null) {
       return;
@@ -597,7 +597,7 @@ class _CustomRoutingEditViewState extends State<CustomRoutingEditView> {
               minLines: 2,
               maxLines: 8,
               keyboardType: TextInputType.multiline,
-              style: context.textTheme.bodyMedium?.toJetBrainsMono,
+              style: AppTextStyle.subheadline.of(context).toJetBrainsMono,
               validator: _validateValues,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               decoration: InputDecoration(
@@ -678,7 +678,13 @@ class _CustomRoutingEditViewState extends State<CustomRoutingEditView> {
               ListHeader(
                 title: appLocalizations.routingCondition,
                 padding: EdgeInsets.zero,
-                actions: [EntryButton.add(onPressed: _handleAddCondition)],
+                actions: [
+                  IconButtonData(
+                    glyph: AppGlyphs.addCircle,
+                    tooltip: appLocalizations.add,
+                    onPressed: _handleAddCondition,
+                  ),
+                ],
               ),
               const SizedBox(height: 8),
               for (final draft in _conditions) ...[
@@ -728,11 +734,14 @@ class _TargetRow extends ConsumerWidget {
             Flexible(
               child: Text(
                 name.isEmpty ? appLocalizations.routingTargetEmptyTip : name,
-                style: context.textTheme.bodyMedium?.toJetBrainsMono.copyWith(
-                  color: name.isEmpty || missing
-                      ? context.colorScheme.error
-                      : context.colorScheme.tertiary,
-                ),
+                style: AppTextStyle.subheadline
+                    .of(context)
+                    .toJetBrainsMono
+                    .copyWith(
+                      color: name.isEmpty || missing
+                          ? context.colorScheme.error
+                          : context.colorScheme.tertiary,
+                    ),
               ),
             ),
           ],
@@ -766,7 +775,7 @@ class CustomRoutingContent extends ConsumerWidget {
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: generateSectionV3(
+            child: generateSection(
               items: [
                 for (final routing in routings)
                   _CustomRoutingItem(

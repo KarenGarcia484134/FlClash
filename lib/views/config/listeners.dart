@@ -1,9 +1,11 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/features/features.dart';
-import 'package:fl_clash/icons/icons.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
+import 'package:fl_clash/ui/ui.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/views/config/choice_sheet.dart';
 import 'package:fl_clash/views/config/custom_routings.dart';
 import 'package:fl_clash/views/config/outbound_delay.dart';
 import 'package:fl_clash/views/config/tailscale.dart';
@@ -116,7 +118,7 @@ class ListenersView extends ConsumerWidget {
           16,
         ).copyWith(top: context.contentTopPadding),
         children: [
-          generateSectionV3(
+          generateSection(
             items: [
               FormRow(
                 title: l.listenersEnable,
@@ -233,7 +235,7 @@ class _ListenerItem extends StatelessWidget {
           children: [
             TextSpan(
               text: address,
-              style: captionStyle?.toJetBrainsMono.copyWith(
+              style: captionStyle.toJetBrainsMono.copyWith(
                 color: context.colorScheme.tertiary,
               ),
             ),
@@ -409,14 +411,12 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
 
   Future<void> _pickRule(List<String> subRules) async {
     final l = context.appLocalizations;
-    final res = await dialogs.showCommonDialog<String>(
-      context: context,
-      child: OptionsDialog<String>(
-        title: l.listenerSubRule,
-        options: ['', ...subRules],
-        textBuilder: (item) => item.isEmpty ? l.listenerFollowRules : item,
-        value: _rule,
-      ),
+    final res = await showChoiceSheet<String>(
+      context,
+      title: l.listenerSubRule,
+      options: ['', ...subRules],
+      labelOf: (item) => item.isEmpty ? l.listenerFollowRules : item,
+      value: _rule,
     );
     if (res != null) {
       setState(() => _rule = res);
@@ -476,7 +476,7 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _listen,
-                style: context.textTheme.bodyMedium?.toJetBrainsMono,
+                style: AppTextStyle.subheadline.of(context).toJetBrainsMono,
                 onChanged: (_) => setState(() {}),
                 validator: (value) => isValidListenAddress(value?.trim() ?? '')
                     ? null
@@ -505,9 +505,9 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
                 const SizedBox(height: 8),
                 Text(
                   l.listenerLanWarning,
-                  style: context.textTheme.bodySmall?.copyWith(
-                    color: context.colorScheme.error,
-                  ),
+                  style: AppTextStyle.footnote
+                      .of(context)
+                      .copyWith(color: context.colorScheme.error),
                 ),
               ],
               const SizedBox(height: 16),
@@ -515,7 +515,7 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
                 controller: _port,
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                style: context.textTheme.bodyMedium?.toJetBrainsMono,
+                style: AppTextStyle.subheadline.of(context).toJetBrainsMono,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (value) {
                   final port = int.tryParse(value?.trim() ?? '') ?? 0;
@@ -544,7 +544,9 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
                       Flexible(
                         child: Text(
                           _proxy.isEmpty ? l.listenerFollowRules : _proxy,
-                          style: context.textTheme.bodyMedium?.toJetBrainsMono
+                          style: AppTextStyle.subheadline
+                              .of(context)
+                              .toJetBrainsMono
                               .copyWith(color: context.colorScheme.tertiary),
                         ),
                       ),
@@ -563,7 +565,9 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
                     onPressed: () => _pickRule(subRules),
                     trailing: Text(
                       _rule.isEmpty ? l.listenerFollowRules : _rule,
-                      style: context.textTheme.bodyMedium?.toJetBrainsMono
+                      style: AppTextStyle.subheadline
+                          .of(context)
+                          .toJetBrainsMono
                           .copyWith(color: context.colorScheme.tertiary),
                     ),
                   ),
@@ -589,7 +593,9 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
                   title: l.listenerUsers,
                   padding: EdgeInsets.zero,
                   actions: [
-                    EntryButton.add(
+                    IconButtonData(
+                      glyph: AppGlyphs.addCircle,
+                      tooltip: l.add,
                       onPressed: () => setState(
                         () => _users.add(_UserDraft(const ListenerUser())),
                       ),
