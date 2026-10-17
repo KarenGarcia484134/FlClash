@@ -75,6 +75,7 @@ class _SelectionSheetState<T> extends ConsumerState<SelectionSheet<T>>
   final _selectedKey = GlobalKey();
   var _revealRequested = false;
   var _query = SearchQuery('');
+  final _scaffoldKey = GlobalKey<CommonScaffoldState>();
 
   @override
   void initState() {
@@ -97,7 +98,14 @@ class _SelectionSheetState<T> extends ConsumerState<SelectionSheet<T>>
   }
 
   void _handleSelected(T item) {
-    widget.onSelected(item);
+    // While searching, the bar holds a back layer on the route: a picker that
+    // pops with its pick would only end the search and lose the pick.
+    final scaffold = _scaffoldKey.currentState;
+    if (scaffold == null) {
+      widget.onSelected(item);
+    } else {
+      scaffold.runWithoutBackLayer(() => widget.onSelected(item));
+    }
     if (!widget.removeOnSelect) {
       return;
     }
@@ -310,6 +318,7 @@ class _SelectionSheetState<T> extends ConsumerState<SelectionSheet<T>>
         _query.isNotEmpty ||
         _countOf(widget.sections) >= sheetSearchMinItemCount;
     return CommonScaffold(
+      key: _scaffoldKey,
       title: widget.title,
       actions: widget.actions,
       searchState: searchable
