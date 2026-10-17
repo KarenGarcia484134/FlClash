@@ -1,0 +1,88 @@
+mixed-port: 7890
+dns:
+  enable: true
+  nameserver:
+    - "223.5.5.5"
+  nameserver-policy:
+    +.ts.net: "tailscale://Tailscale"
+listeners:
+  - name: "own"
+    type: "socks"
+    port: 17000
+    listen: "127.0.0.1"
+  - name: "via-auto"
+    type: "mixed"
+    listen: "127.0.0.1"
+    port: 17001
+    udp: true
+    proxy: "Auto"
+  - name: "via-sub"
+    type: "mixed"
+    listen: "127.0.0.1"
+    port: 17002
+    udp: true
+    rule: "sub"
+rule-providers: {}
+proxies:
+  - name: "HK"
+    dialer-proxy: "Auto"
+  - name: "JP"
+    dialer-proxy: null
+  - name: "Tailscale"
+    type: "tailscale"
+    auth-key: "tskey-test"
+    state-dir: "tailscale/flclash"
+    ephemeral: false
+    udp: true
+    accept-routes: true
+    dialer-proxy: "HK"
+external-controller: ""
+secret: ""
+external-controller-tls: ""
+external-controller-unix: ""
+external-controller-pipe: ""
+external-ui: ""
+interface-name: ""
+external-ui-url: ""
+tcp-concurrent: true
+unified-delay: true
+ipv6: false
+log-level: "error"
+port: 0
+socks-port: 0
+keep-alive-interval: 30
+keep-alive-idle: 15
+disable-keep-alive: false
+routing-mark: 0
+redir-port: 0
+tproxy-port: 0
+find-process-mode: "off"
+allow-lan: false
+authentication: []
+skip-auth-prefixes: []
+mode: "rule"
+tun:
+  dns-hijack:
+    - "any:53"
+  enable: false
+  device: "FlClash"
+  stack: "mips"
+  auto-route: true
+  auto-detect-interface: true
+geodata-loader: "memconservative"
+geo-auto-update: false
+geo-update-interval: 24
+profile:
+  store-selected: false
+geox-url:
+  mmdb: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb"
+  asn: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb"
+  geoip: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.dat"
+  geosite: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat"
+global-ua: "FlClash-Test"
+hosts: {}
+rules:
+  - "IP-CIDR,100.64.0.0/10,Tailscale,no-resolve"
+  - "IP-CIDR6,fd7a:115c:a1e9::/48,Tailscale,no-resolve"
+  - "DOMAIN-SUFFIX,ts.net,Tailscale"
+  - "DOMAIN-SUFFIX,routed.example,Auto"

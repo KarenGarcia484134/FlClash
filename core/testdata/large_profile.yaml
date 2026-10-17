@@ -1,0 +1,18 @@
+x-socks: &socks {type: socks5, server: 127.0.0.1}
+mixed-port: 7890
+dns:
+  enable: true
+  nameserver: [223.5.5.5]
+listeners:
+  - {name: own, type: socks, port: 17000, listen: 127.0.0.1}
+proxies:
+  - {<<: *socks, name: HK, port: 1081}
+  - {<<: *socks, name: JP, port: 1082, dialer-proxy: SG}
+  - {<<: *socks, name: SG, port: 1083}
+proxy-groups:
+  - {name: Auto, type: select, proxies: [JP, SG]}
+sub-rules:
+  sub: ["MATCH,Auto"]
+rules:
+  - DOMAIN-SUFFIX,example.com,Auto
+  - MATCH,DIRECT

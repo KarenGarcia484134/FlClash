@@ -10,6 +10,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/metacubex/mihomo/component/age"
@@ -45,9 +46,51 @@ func handleGetProfileBase(path string) (*ProfileBase, error) {
 			base.MatchRules = append(base.MatchRules, rule)
 		}
 	}
+	base.Outline = outlineOf(raw)
 	raw.Proxy, raw.ProxyGroup, raw.Rule, raw.SubRules = nil, nil, nil, nil
 	base.Config = raw
 	return base, nil
+}
+
+func outlineOf(raw *config.RawConfig) ProfileOutline {
+	outline := ProfileOutline{
+		Proxies:     make([]map[string]any, 0, len(raw.Proxy)),
+		ProxyGroups: make([]map[string]any, 0, len(raw.ProxyGroup)),
+		SubRules:    make([]string, 0, len(raw.SubRules)),
+	}
+	for _, proxy := range raw.Proxy {
+		name, _ := proxy["name"].(string)
+		if name == "" {
+			continue
+		}
+		item := map[string]any{"name": name, "type": proxy["type"]}
+		if via, ok := proxy["dialer-proxy"].(string); ok && via != "" {
+			item["dialer-proxy"] = via
+		}
+		outline.Proxies = append(outline.Proxies, item)
+	}
+	for _, group := range raw.ProxyGroup {
+		name, _ := group["name"].(string)
+		if name == "" {
+			continue
+		}
+		members := []string{}
+		if list, ok := group["proxies"].([]any); ok {
+			for _, member := range list {
+				if text, ok := member.(string); ok {
+					members = append(members, text)
+				}
+			}
+		}
+		outline.ProxyGroups = append(outline.ProxyGroups, map[string]any{
+			"name": name, "type": group["type"], "proxies": members,
+		})
+	}
+	for name := range raw.SubRules {
+		outline.SubRules = append(outline.SubRules, name)
+	}
+	sort.Strings(outline.SubRules)
+	return outline
 }
 
 func handleGetProfileOutbounds(path string) (*ProfileOutbounds, error) {
@@ -60,7 +103,15 @@ func handleGetProfileOutbounds(path string) (*ProfileOutbounds, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &ProfileOutbounds{Proxies: outboundsOf(raw.Proxy), ProxyGroups: outboundsOf(raw.ProxyGroup)}, nil
+	subRules := make(map[string][]string, len(raw.SubRules))
+	for name := range raw.SubRules {
+		subRules[name] = []string{}
+	}
+	return &ProfileOutbounds{
+		Proxies:     outboundsOf(raw.Proxy),
+		ProxyGroups: outboundsOf(raw.ProxyGroup),
+		SubRules:    subRules,
+	}, nil
 }
 
 func outboundsOf(mappings []map[string]any) []ProfileOutbound {
@@ -229,48 +280,86 @@ func setMappingValue(mapping *yaml.Node, key string, value *yaml.Node) {
 	)
 }
 
-// Overlay proxies whose names the profile lacks (the injected Tailscale node)
-// are prepended; a name the profile already has keeps the profile's entry.
+// The overlay's proxies are either new (the injected Tailscale node), put in
+// front of the profile's, or patches of a profile proxy by name, such as a
+// dialer-proxy set or, with a null value, removed.
 func mergeOverlayProxies(profile, overlay *yaml.Node) *yaml.Node {
 	profile, overlay = resolveAlias(profile), resolveAlias(overlay)
-	if profile == nil || isNull(profile) {
-		if overlay == nil || isNull(overlay) {
+	if overlay == nil || isNull(overlay) || overlay.Kind != yaml.SequenceNode || len(overlay.Content) == 0 {
+		if profile == nil || isNull(profile) {
 			return nil
 		}
-		return overlay
-	}
-	if overlay == nil || isNull(overlay) || overlay.Kind != yaml.SequenceNode || len(overlay.Content) == 0 {
 		return profile
+	}
+	if profile == nil || isNull(profile) {
+		profile = &yaml.Node{Kind: yaml.SequenceNode, Tag: "!!seq"}
 	}
 	if profile.Kind != yaml.SequenceNode {
 		return profile
 	}
-	taken := proxyNamesIn(profile)
+	index := make(map[string]int, len(profile.Content))
+	for i, item := range profile.Content {
+		if name := proxyNameOf(item); name != "" {
+			if _, seen := index[name]; !seen {
+				index[name] = i
+			}
+		}
+	}
+	items := append([]*yaml.Node(nil), profile.Content...)
 	extra := make([]*yaml.Node, 0, len(overlay.Content))
+	added := map[string]bool{}
 	for _, item := range overlay.Content {
 		name := proxyNameOf(item)
-		if name == "" || taken[name] {
+		if name == "" {
 			continue
 		}
+		if i, ok := index[name]; ok {
+			items[i] = patchMapping(items[i], item)
+			continue
+		}
+		if added[name] {
+			continue
+		}
+		added[name] = true
 		extra = append(extra, item)
-		taken[name] = true
 	}
-	if len(extra) == 0 {
-		return profile
-	}
-	content := make([]*yaml.Node, 0, len(extra)+len(profile.Content))
-	content = append(append(content, extra...), profile.Content...)
+	content := make([]*yaml.Node, 0, len(extra)+len(items))
+	content = append(append(content, extra...), items...)
 	return &yaml.Node{Kind: yaml.SequenceNode, Tag: "!!seq", Content: content}
 }
 
-func proxyNamesIn(list *yaml.Node) map[string]bool {
-	names := make(map[string]bool, len(list.Content))
-	for _, item := range list.Content {
-		if name := proxyNameOf(item); name != "" {
-			names[name] = true
+// A copy of base with every key of patch but its name set over it; a null
+// clears the key, also one that base only gets through a merge key.
+func patchMapping(base, patch *yaml.Node) *yaml.Node {
+	base, patch = resolveAlias(base), resolveAlias(patch)
+	if base.Kind != yaml.MappingNode || patch.Kind != yaml.MappingNode {
+		return base
+	}
+	out := &yaml.Node{Kind: yaml.MappingNode, Tag: "!!map", Content: append([]*yaml.Node(nil), base.Content...)}
+	for i := 0; i+1 < len(patch.Content); i += 2 {
+		key, value := patch.Content[i], resolveAlias(patch.Content[i+1])
+		if key.Kind != yaml.ScalarNode || key.Value == "name" {
+			continue
+		}
+		if !isNull(value) {
+			setMappingValue(out, key.Value, value)
+			continue
+		}
+		removeMappingKey(out, key.Value)
+		if mappingValue(out, key.Value) != nil {
+			setMappingValue(out, key.Value, &yaml.Node{Kind: yaml.ScalarNode, Tag: "!!str", Value: ""})
 		}
 	}
-	return names
+	return out
+}
+
+func removeMappingKey(mapping *yaml.Node, key string) {
+	for i := 0; i+1 < len(mapping.Content); i += 2 {
+		if name := mapping.Content[i]; name.Kind == yaml.ScalarNode && name.ShortTag() != "!!merge" && name.Value == key {
+			mapping.Content = append(mapping.Content[:i:i], mapping.Content[i+2:]...)
+			return
+		}
+	}
 }
 
 func proxyNameOf(item *yaml.Node) string {
