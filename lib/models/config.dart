@@ -183,14 +183,19 @@ const _retiredDashboardWidgets = {
   'overrideNtpButton',
 };
 
-/// The fork's cards are set aside while the upstream migration reads the
-/// rest, so a list that is the legacy default plus them still counts as the
-/// legacy default, and are put back after it.
+/// A saved layout (one with the current outbound card) is read as saved, the
+/// fork's cards in their places. Only a legacy layout goes through upstream's
+/// migration: the fork's cards are set aside so a list that is the legacy
+/// default plus them still counts as the legacy default, and are put back
+/// after it.
 List<DashboardWidget> dashboardWidgetsFromJson(
   List<dynamic>? dashboardWidgets,
 ) {
   if (dashboardWidgets == null) {
     return defaultDashboardWidgets;
+  }
+  if (dashboardWidgets.contains(DashboardWidget.currentOutbound.name)) {
+    return _upstreamDashboardWidgetsFromJson(dashboardWidgets);
   }
   final forkNames = seededDashboardWidgetNames.toSet();
   final forkCards = [

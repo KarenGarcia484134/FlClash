@@ -67,6 +67,57 @@ void main() {
     ]);
   });
 
+  group('a saved layout reads back as saved', () {
+    List<DashboardWidget> roundTrip(List<DashboardWidget> widgets) {
+      final props = const AppSettingProps().copyWith(dashboardWidgets: widgets);
+      final json = jsonDecode(jsonEncode(props)) as Map<String, dynamic>;
+      return AppSettingProps.fromJson(json).dashboardWidgets;
+    }
+
+    for (final layout in const [
+      [
+        DashboardWidget.customRouting,
+        DashboardWidget.currentOutbound,
+        DashboardWidget.networkSpeed,
+      ],
+      [
+        DashboardWidget.currentOutbound,
+        DashboardWidget.restartCore,
+        DashboardWidget.networkSpeed,
+        DashboardWidget.customRouting,
+      ],
+      [
+        DashboardWidget.networkSpeed,
+        DashboardWidget.currentOutbound,
+        DashboardWidget.restartCore,
+      ],
+      [DashboardWidget.currentOutbound],
+    ]) {
+      test(layout.map((e) => e.name).join(', '), () {
+        expect(roundTrip(layout), layout);
+        expect(roundTrip(roundTrip(layout)), layout);
+      });
+    }
+  });
+
+  test('a legacy default with the fork cards still becomes the default', () {
+    final props = AppSettingProps.fromJson({
+      'dashboardWidgets': [
+        'networkSpeed',
+        'systemProxyButton',
+        'tunButton',
+        'outboundMode',
+        'networkDetection',
+        'trafficUsage',
+        'intranetIp',
+        'customRouting',
+        'restartCore',
+      ],
+      'seededDashboardWidgets': ['customRouting', 'restartCore'],
+    });
+    expect(props.dashboardWidgets, defaultDashboardWidgets);
+  });
+
   test('card counts entries switched on and selected', () {
     final counts = customRoutingCounts(
       [(id: 1, enabled: true), (id: 2, enabled: false), (id: 3, enabled: true)],
