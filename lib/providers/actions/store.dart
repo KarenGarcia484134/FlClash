@@ -30,6 +30,17 @@ class StoreAction extends _$StoreAction {
     await Future.wait(pathsToDelete.map(safeDeletePath));
   }
 
+  /// Writes the settings now instead of after the debounce, for edits that
+  /// must survive the process being killed right after them.
+  Future<void> savePreferencesNow() async {
+    debouncer.cancel(FunctionTag.savePreferences);
+    await preferences.saveConfig(ref.read(configProvider));
+  }
+
+  void flushPreferences() {
+    debouncer.flush(FunctionTag.savePreferences);
+  }
+
   void savePreferencesDebounce() {
     debouncer.call(FunctionTag.savePreferences, () async {
       await preferences.saveConfig(ref.read(configProvider));

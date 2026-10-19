@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fl_clash/common/constant.dart';
 import 'package:fl_clash/database/database.dart';
 import 'package:fl_clash/enum/enum.dart';
@@ -101,7 +103,28 @@ class Migration {
   Future<Config> run() async {
     final configMap = await _store.getConfigMap();
     final config = await _migrate(configMap);
-    return _upgrade(config, installed: configMap != null);
+    final upgraded = await _upgrade(config, installed: configMap != null);
+    await _recordDashboard(configMap, upgraded);
+    return upgraded;
+  }
+
+  /// Seeding a card and moving a legacy layout happen while reading. Writing
+  /// the result back at once keeps them from depending on a later save.
+  Future<void> _recordDashboard(
+    Map<String, Object?>? configMap,
+    Config config,
+  ) async {
+    final stored = configMap?['appSettingProps'];
+    if (stored is! Map) {
+      return;
+    }
+    final current = jsonDecode(jsonEncode(config.appSettingProps)) as Map;
+    for (final key in _dashboardKeys) {
+      if (jsonEncode(stored[key]) != jsonEncode(current[key])) {
+        await _store.saveConfig(config);
+        return;
+      }
+    }
   }
 
   Future<Config> _upgrade(Config config, {required bool installed}) async {
@@ -208,6 +231,8 @@ Config _keepGlassLook(Config config) =>
         ),
       )
     : config;
+
+const _dashboardKeys = ['dashboardWidgets', 'seededDashboardWidgets'];
 
 bool _isV0(Map<String, Object?>? configMap) =>
     configMap?['proxiesStyle'] != null;

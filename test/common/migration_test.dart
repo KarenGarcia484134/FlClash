@@ -187,6 +187,41 @@ void main() {
       ]);
     });
 
+    test('writes back a dashboard seeded while reading, once', () async {
+      final configMap = _createConfigMap();
+      (configMap['appSettingProps'] as Map<String, Object?>)
+        ..['dashboardWidgets'] = ['networkSpeed', 'currentOutbound']
+        ..remove('seededDashboardWidgets');
+      final store = _FakeMigrationStore(
+        configMap: configMap,
+        version: Migration.currentVersion,
+      );
+
+      final config = await Migration(store: store).run();
+
+      expect(config.appSettingProps.dashboardWidgets, const [
+        DashboardWidget.networkSpeed,
+        DashboardWidget.currentOutbound,
+        DashboardWidget.customRouting,
+        DashboardWidget.restartCore,
+      ]);
+      expect(store.events, ['getConfigMap', 'getVersion', 'saveConfig']);
+
+      final later = _FakeMigrationStore(
+        configMap:
+            jsonDecode(jsonEncode(store.savedConfig)) as Map<String, Object?>,
+        version: Migration.currentVersion,
+      );
+      final kept = await Migration(store: later).run();
+      expect(kept.appSettingProps.dashboardWidgets, const [
+        DashboardWidget.networkSpeed,
+        DashboardWidget.currentOutbound,
+        DashboardWidget.customRouting,
+        DashboardWidget.restartCore,
+      ]);
+      expect(later.events, ['getConfigMap', 'getVersion']);
+    });
+
     group('upgrade', () {
       Map<String, Object?> customized() =>
           _createConfigMap()

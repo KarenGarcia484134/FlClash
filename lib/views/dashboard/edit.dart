@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'dart:math' as math;
 import 'dart:ui' show lerpDouble;
 
@@ -106,6 +108,7 @@ class _DashboardEditorState extends ConsumerState<DashboardEditor>
             ),
           ),
         );
+    unawaited(ref.read(storeActionProvider.notifier).savePreferencesNow());
   }
 
   /// Cards this platform cannot show stay where they were among the rest.

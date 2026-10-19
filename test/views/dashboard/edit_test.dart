@@ -1,3 +1,4 @@
+import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../helpers/test_app.dart';
 import '../../helpers/test_profiles.dart';
@@ -17,6 +19,7 @@ void main() {
   late ProviderContainer container;
 
   setUp(() {
+    SharedPreferences.setMockInitialValues({});
     container = ProviderContainer(
       overrides: [profilesProvider.overrideWith(TestProfiles.new)],
     );
@@ -185,6 +188,26 @@ void main() {
       greaterThan(top(tester, find.byType(ProfilesCard))),
     );
     expect(find.byTooltip('Add Network speed'), findsNothing);
+
+    await teardown(tester);
+  });
+
+  testWidgets('an edit is written to storage at once', (tester) async {
+    seed(const [
+      DashboardWidget.currentOutbound,
+      DashboardWidget.networkSpeed,
+      DashboardWidget.customRouting,
+    ]);
+    await pumpEditor(tester);
+
+    await tester.tap(find.byTooltip('Remove Network speed'));
+    await tester.pump();
+
+    final stored = await tester.runAsync(() async {
+      final config = await preferences.getConfigMap();
+      return (config!['appSettingProps'] as Map)['dashboardWidgets'];
+    });
+    expect(stored, ['currentOutbound', 'customRouting']);
 
     await teardown(tester);
   });

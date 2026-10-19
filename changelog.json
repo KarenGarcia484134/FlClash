@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.17",
+      "tag": "v0.9.17",
+      "date": "2026-10-19",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "d5b3f2d",
+              "scope": "dashboard",
+              "text": "修复仪表盘插件布局重启后还原：自定义分流、重启核心卡片的位置不再被移到末尾；增删、排序立即写入存储，切到后台时也会保存"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.16",
       "tag": "v0.9.16",
       "date": "2026-10-18",
