@@ -1066,5 +1066,20 @@
   "expressiveScheme": "Expressive",
   "contentScheme": "Content",
   "rainbowScheme": "Rainbow",
-  "fruitSaladScheme": "Fruit salad"
+  "fruitSaladScheme": "Fruit salad",
+  "tailscaleStatusConnecting": "Connecting",
+  "tailscalePing": "Test latency",
+  "tailscalePingAll": "Test all",
+  "tailscalePathDirect": "Direct",
+  "tailscalePathRelay": "Relay {relay}",
+  "tailscalePathPeerRelay": "Peer relay",
+  "tailscalePingFailed": "No reply",
+  "tailscalePingDesc": "Tap or long-press a device to test its latency. Offline devices are not tested.",
+  "@tailscalePathRelay": {
+    "placeholders": {
+      "relay": {
+        "type": "String"
+      }
+    }
+  }
 }

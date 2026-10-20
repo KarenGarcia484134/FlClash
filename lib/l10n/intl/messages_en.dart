@@ -226,16 +226,18 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m82(label) => "${label} must be a single item";
 
-  static String m83(value) => "Peak ${value}";
+  static String m83(relay) => "Relay ${relay}";
 
-  static String m84(value) => "Total ${value}";
+  static String m84(value) => "Peak ${value}";
 
-  static String m85(label) => "${label} must be a URL";
+  static String m85(value) => "Total ${value}";
 
-  static String m86(count) =>
+  static String m86(label) => "${label} must be a URL";
+
+  static String m87(count) =>
       "${Intl.plural(count, one: '1 year ago', other: '${count} years ago')}";
 
-  static String m87(count) => "${Intl.plural(count, other: '${count}y ago')}";
+  static String m88(count) => "${Intl.plural(count, other: '${count}y ago')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1969,7 +1971,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleOpenLogin": MessageLookupByLibrary.simpleMessage(
       "Open login page",
     ),
+    "tailscalePathDirect": MessageLookupByLibrary.simpleMessage("Direct"),
+    "tailscalePathPeerRelay": MessageLookupByLibrary.simpleMessage(
+      "Peer relay",
+    ),
+    "tailscalePathRelay": m83,
     "tailscalePeers": MessageLookupByLibrary.simpleMessage("Devices"),
+    "tailscalePing": MessageLookupByLibrary.simpleMessage("Test latency"),
+    "tailscalePingAll": MessageLookupByLibrary.simpleMessage("Test all"),
+    "tailscalePingDesc": MessageLookupByLibrary.simpleMessage(
+      "Tap or long-press a device to test its latency. Offline devices are not tested.",
+    ),
+    "tailscalePingFailed": MessageLookupByLibrary.simpleMessage("No reply"),
     "tailscaleRefresh": MessageLookupByLibrary.simpleMessage("Refresh"),
     "tailscaleReset": MessageLookupByLibrary.simpleMessage("Log out and reset"),
     "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
@@ -1980,6 +1993,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleSilentLogTip": MessageLookupByLibrary.simpleMessage(
       "The log level is silent, so the login link cannot be read. Choose another log level.",
+    ),
+    "tailscaleStatusConnecting": MessageLookupByLibrary.simpleMessage(
+      "Connecting",
     ),
     "tailscaleStatusIdle": MessageLookupByLibrary.simpleMessage("Not started"),
     "tailscaleStatusNeedsLogin": MessageLookupByLibrary.simpleMessage(
@@ -2019,8 +2035,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalUpload": MessageLookupByLibrary.simpleMessage("Uploaded"),
     "tproxyPort": MessageLookupByLibrary.simpleMessage("TProxy port"),
     "traffic": MessageLookupByLibrary.simpleMessage("Traffic"),
-    "trafficPeak": m83,
-    "trafficTotal": m84,
+    "trafficPeak": m84,
+    "trafficTotal": m85,
     "trafficUsage": MessageLookupByLibrary.simpleMessage("Traffic usage"),
     "transport": MessageLookupByLibrary.simpleMessage("Transport"),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
@@ -2061,7 +2077,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("Upload bandwidth"),
     "upstreamProject": MessageLookupByLibrary.simpleMessage("Upstream project"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m85,
+    "urlTip": m86,
     "useHosts": MessageLookupByLibrary.simpleMessage("Use hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("Use system hosts"),
     "usedShort": MessageLookupByLibrary.simpleMessage("used"),
@@ -2087,8 +2103,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "Write to system also sets the system clock; Android ignores it.",
     ),
-    "yearsAgo": m86,
-    "yearsAgoShort": m87,
+    "yearsAgo": m87,
+    "yearsAgoShort": m88,
     "yes": MessageLookupByLibrary.simpleMessage("Yes"),
     "zhCN": MessageLookupByLibrary.simpleMessage("Simplified Chinese"),
   };

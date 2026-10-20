@@ -129,6 +129,7 @@ class ApplicationState extends ConsumerState<Application> {
     List<ConnectivityResult> results,
   ) async {
     commonPrint.log('connectivityChanged ${results.toString()}');
+    ref.read(networkChangesProvider.notifier).bump();
     unawaited(systemDnsCoordinator?.resync() ?? Future.value());
     unawaited(ref.read(systemActionProvider.notifier).updateLocalIp());
     final hasVpn = results.contains(ConnectivityResult.vpn);

@@ -13,4 +13,10 @@ func tailscaleStatus(context.Context, TailscaleStatusParams) (TailscaleStatusRes
 
 func reconcileTailscale() {}
 
+func notifyTailscaleNetworkChange() {}
+
 func retireTailscaleNode(string) {}
+
+func tailscalePing(_ context.Context, _ string, target string) TailscalePingResult {
+	return TailscalePingResult{Target: target, LatencyMs: -1, Error: "tailscale is not built in"}
+}

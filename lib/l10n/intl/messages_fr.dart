@@ -235,16 +235,18 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m82(label) => "${label} doit être un seul élément";
 
-  static String m83(value) => "Pic ${value}";
+  static String m83(relay) => "Relais ${relay}";
 
-  static String m84(value) => "Total ${value}";
+  static String m84(value) => "Pic ${value}";
 
-  static String m85(label) => "${label} doit être une URL";
+  static String m85(value) => "Total ${value}";
 
-  static String m86(count) =>
-      "${Intl.plural(count, one: 'il y a 1 an', other: 'il y a ${count} ans')}";
+  static String m86(label) => "${label} doit être une URL";
 
   static String m87(count) =>
+      "${Intl.plural(count, one: 'il y a 1 an', other: 'il y a ${count} ans')}";
+
+  static String m88(count) =>
       "${Intl.plural(count, other: 'il y a ${count} a')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -2107,7 +2109,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleOpenLogin": MessageLookupByLibrary.simpleMessage(
       "Open login page",
     ),
+    "tailscalePathDirect": MessageLookupByLibrary.simpleMessage("Direct"),
+    "tailscalePathPeerRelay": MessageLookupByLibrary.simpleMessage(
+      "Relais pair",
+    ),
+    "tailscalePathRelay": m83,
     "tailscalePeers": MessageLookupByLibrary.simpleMessage("Devices"),
+    "tailscalePing": MessageLookupByLibrary.simpleMessage("Tester la latence"),
+    "tailscalePingAll": MessageLookupByLibrary.simpleMessage("Tout tester"),
+    "tailscalePingDesc": MessageLookupByLibrary.simpleMessage(
+      "Touchez ou appuyez longuement sur un appareil pour tester sa latence. Les appareils hors ligne ne sont pas testés.",
+    ),
+    "tailscalePingFailed": MessageLookupByLibrary.simpleMessage(
+      "Aucune réponse",
+    ),
     "tailscaleRefresh": MessageLookupByLibrary.simpleMessage("Refresh"),
     "tailscaleReset": MessageLookupByLibrary.simpleMessage("Log out and reset"),
     "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
@@ -2118,6 +2133,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleSilentLogTip": MessageLookupByLibrary.simpleMessage(
       "The log level is silent, so the login link cannot be read. Choose another log level.",
+    ),
+    "tailscaleStatusConnecting": MessageLookupByLibrary.simpleMessage(
+      "Connexion…",
     ),
     "tailscaleStatusIdle": MessageLookupByLibrary.simpleMessage("Not started"),
     "tailscaleStatusNeedsLogin": MessageLookupByLibrary.simpleMessage(
@@ -2161,8 +2179,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalUpload": MessageLookupByLibrary.simpleMessage("Envoyé"),
     "tproxyPort": MessageLookupByLibrary.simpleMessage("Port TProxy"),
     "traffic": MessageLookupByLibrary.simpleMessage("Trafic"),
-    "trafficPeak": m83,
-    "trafficTotal": m84,
+    "trafficPeak": m84,
+    "trafficTotal": m85,
     "trafficUsage": MessageLookupByLibrary.simpleMessage("Trafic utilisé"),
     "transport": MessageLookupByLibrary.simpleMessage("Transport"),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
@@ -2209,7 +2227,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Projet d\'origine",
     ),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m85,
+    "urlTip": m86,
     "useHosts": MessageLookupByLibrary.simpleMessage("Utiliser hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage(
       "Utiliser les hosts du système",
@@ -2239,8 +2257,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "Écrire dans le système règle aussi l’horloge système ; Android l’ignore.",
     ),
-    "yearsAgo": m86,
-    "yearsAgoShort": m87,
+    "yearsAgo": m87,
+    "yearsAgoShort": m88,
     "yes": MessageLookupByLibrary.simpleMessage("Oui"),
     "zhCN": MessageLookupByLibrary.simpleMessage("Chinois simplifié"),
   };

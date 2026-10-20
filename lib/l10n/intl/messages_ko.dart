@@ -203,15 +203,17 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m82(label) => "${label}은(는) 하나만 입력해야 합니다";
 
-  static String m83(value) => "최고 ${value}";
+  static String m83(relay) => "릴레이 ${relay}";
 
-  static String m84(value) => "합계 ${value}";
+  static String m84(value) => "최고 ${value}";
 
-  static String m85(label) => "${label}은(는) URL이어야 합니다";
+  static String m85(value) => "합계 ${value}";
 
-  static String m86(count) => "${Intl.plural(count, other: '${count}년 전')}";
+  static String m86(label) => "${label}은(는) URL이어야 합니다";
 
   static String m87(count) => "${Intl.plural(count, other: '${count}년 전')}";
+
+  static String m88(count) => "${Intl.plural(count, other: '${count}년 전')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1692,7 +1694,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleOpenLogin": MessageLookupByLibrary.simpleMessage(
       "Open login page",
     ),
+    "tailscalePathDirect": MessageLookupByLibrary.simpleMessage("직접 연결"),
+    "tailscalePathPeerRelay": MessageLookupByLibrary.simpleMessage("피어 릴레이"),
+    "tailscalePathRelay": m83,
     "tailscalePeers": MessageLookupByLibrary.simpleMessage("Devices"),
+    "tailscalePing": MessageLookupByLibrary.simpleMessage("지연 시간 테스트"),
+    "tailscalePingAll": MessageLookupByLibrary.simpleMessage("모두 테스트"),
+    "tailscalePingDesc": MessageLookupByLibrary.simpleMessage(
+      "기기를 탭하거나 길게 눌러 지연 시간을 테스트합니다. 오프라인 기기는 테스트하지 않습니다.",
+    ),
+    "tailscalePingFailed": MessageLookupByLibrary.simpleMessage("응답 없음"),
     "tailscaleRefresh": MessageLookupByLibrary.simpleMessage("Refresh"),
     "tailscaleReset": MessageLookupByLibrary.simpleMessage("Log out and reset"),
     "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
@@ -1704,6 +1715,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleSilentLogTip": MessageLookupByLibrary.simpleMessage(
       "The log level is silent, so the login link cannot be read. Choose another log level.",
     ),
+    "tailscaleStatusConnecting": MessageLookupByLibrary.simpleMessage("연결 중"),
     "tailscaleStatusIdle": MessageLookupByLibrary.simpleMessage("Not started"),
     "tailscaleStatusNeedsLogin": MessageLookupByLibrary.simpleMessage(
       "Needs login",
@@ -1740,8 +1752,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalUpload": MessageLookupByLibrary.simpleMessage("업로드량"),
     "tproxyPort": MessageLookupByLibrary.simpleMessage("TProxy 포트"),
     "traffic": MessageLookupByLibrary.simpleMessage("트래픽"),
-    "trafficPeak": m83,
-    "trafficTotal": m84,
+    "trafficPeak": m84,
+    "trafficTotal": m85,
     "trafficUsage": MessageLookupByLibrary.simpleMessage("트래픽 사용량"),
     "transport": MessageLookupByLibrary.simpleMessage("전송"),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
@@ -1780,7 +1792,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("업로드 대역폭"),
     "upstreamProject": MessageLookupByLibrary.simpleMessage("업스트림 프로젝트"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m85,
+    "urlTip": m86,
     "useHosts": MessageLookupByLibrary.simpleMessage("hosts 사용"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("시스템 hosts 사용"),
     "usedShort": MessageLookupByLibrary.simpleMessage("사용"),
@@ -1804,8 +1816,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "시스템에 기록하면 시스템 시계도 설정합니다. Android에서는 무시됩니다.",
     ),
-    "yearsAgo": m86,
-    "yearsAgoShort": m87,
+    "yearsAgo": m87,
+    "yearsAgoShort": m88,
     "yes": MessageLookupByLibrary.simpleMessage("예"),
     "zhCN": MessageLookupByLibrary.simpleMessage("중국어 간체"),
   };

@@ -196,11 +196,13 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
     );
     final label = switch (status.phase) {
       TailscalePhase.idle => appLocalizations.tailscaleStatusIdle,
+      TailscalePhase.connecting => appLocalizations.tailscaleStatusConnecting,
       TailscalePhase.needsLogin => appLocalizations.tailscaleStatusNeedsLogin,
       TailscalePhase.running => appLocalizations.tailscaleStatusRunning,
     };
     final color = switch (status.phase) {
-      TailscalePhase.idle => context.colorScheme.onSurfaceVariant,
+      TailscalePhase.idle ||
+      TailscalePhase.connecting => context.colorScheme.onSurfaceVariant,
       TailscalePhase.needsLogin => context.colorScheme.error,
       TailscalePhase.running => context.colorScheme.primary,
     };
@@ -291,7 +293,10 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
           spacing: 12,
           children: [
             FilledButton.tonal(
-              onPressed: props.enable ? _handleConnect : null,
+              onPressed:
+                  props.enable && status.phase != TailscalePhase.connecting
+                  ? _handleConnect
+                  : null,
               child: Text(appLocalizations.tailscaleConnect),
             ),
             TextButton(

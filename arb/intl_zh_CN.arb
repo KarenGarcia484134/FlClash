@@ -1056,5 +1056,20 @@
   "expressiveScheme": "表现力",
   "contentScheme": "内容主题",
   "rainbowScheme": "彩虹",
-  "fruitSaladScheme": "果缤纷"
+  "fruitSaladScheme": "果缤纷",
+  "tailscaleStatusConnecting": "连接中",
+  "tailscalePing": "测试延迟",
+  "tailscalePingAll": "全部测试",
+  "tailscalePathDirect": "直连",
+  "tailscalePathRelay": "中继 {relay}",
+  "tailscalePathPeerRelay": "对等中继",
+  "tailscalePingFailed": "无响应",
+  "tailscalePingDesc": "点按或长按设备可测试其延迟，离线设备不测试。",
+  "@tailscalePathRelay": {
+    "placeholders": {
+      "relay": {
+        "type": "String"
+      }
+    }
+  }
 }

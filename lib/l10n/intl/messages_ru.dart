@@ -225,16 +225,18 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m82(label) => "«${label}» — только одно значение";
 
-  static String m83(value) => "Пик ${value}";
+  static String m83(relay) => "Ретранслятор ${relay}";
 
-  static String m84(value) => "Всего ${value}";
+  static String m84(value) => "Пик ${value}";
 
-  static String m85(label) => "Значение «${label}» должно быть URL";
+  static String m85(value) => "Всего ${value}";
 
-  static String m86(count) =>
-      "${Intl.plural(count, one: '${count} год назад', few: '${count} года назад', many: '${count} лет назад', other: '${count} года назад')}";
+  static String m86(label) => "Значение «${label}» должно быть URL";
 
   static String m87(count) =>
+      "${Intl.plural(count, one: '${count} год назад', few: '${count} года назад', many: '${count} лет назад', other: '${count} года назад')}";
+
+  static String m88(count) =>
       "${Intl.plural(count, one: '${count} г. назад', few: '${count} г. назад', many: '${count} л. назад', other: '${count} г. назад')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -2067,7 +2069,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleOpenLogin": MessageLookupByLibrary.simpleMessage(
       "Открыть страницу входа",
     ),
+    "tailscalePathDirect": MessageLookupByLibrary.simpleMessage("Напрямую"),
+    "tailscalePathPeerRelay": MessageLookupByLibrary.simpleMessage(
+      "Пиринговый ретранслятор",
+    ),
+    "tailscalePathRelay": m83,
     "tailscalePeers": MessageLookupByLibrary.simpleMessage("Устройства"),
+    "tailscalePing": MessageLookupByLibrary.simpleMessage("Проверить задержку"),
+    "tailscalePingAll": MessageLookupByLibrary.simpleMessage("Проверить все"),
+    "tailscalePingDesc": MessageLookupByLibrary.simpleMessage(
+      "Нажмите на устройство или удерживайте его, чтобы проверить задержку. Устройства не в сети не проверяются.",
+    ),
+    "tailscalePingFailed": MessageLookupByLibrary.simpleMessage("Нет ответа"),
     "tailscaleRefresh": MessageLookupByLibrary.simpleMessage("Обновить"),
     "tailscaleReset": MessageLookupByLibrary.simpleMessage("Выйти и сбросить"),
     "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
@@ -2078,6 +2091,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleSilentLogTip": MessageLookupByLibrary.simpleMessage(
       "Уровень журнала silent, ссылку для входа прочитать нельзя. Выберите другой уровень.",
+    ),
+    "tailscaleStatusConnecting": MessageLookupByLibrary.simpleMessage(
+      "Подключение",
     ),
     "tailscaleStatusIdle": MessageLookupByLibrary.simpleMessage("Не запущен"),
     "tailscaleStatusNeedsLogin": MessageLookupByLibrary.simpleMessage(
@@ -2125,8 +2141,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalUpload": MessageLookupByLibrary.simpleMessage("Отдано"),
     "tproxyPort": MessageLookupByLibrary.simpleMessage("Порт TProxy"),
     "traffic": MessageLookupByLibrary.simpleMessage("Трафик"),
-    "trafficPeak": m83,
-    "trafficTotal": m84,
+    "trafficPeak": m84,
+    "trafficTotal": m85,
     "trafficUsage": MessageLookupByLibrary.simpleMessage("Статистика трафика"),
     "transport": MessageLookupByLibrary.simpleMessage("Транспорт"),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
@@ -2169,7 +2185,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("Скорость отдачи"),
     "upstreamProject": MessageLookupByLibrary.simpleMessage("Исходный проект"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m85,
+    "urlTip": m86,
     "useHosts": MessageLookupByLibrary.simpleMessage("Использовать hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage(
       "Использовать системный hosts",
@@ -2203,8 +2219,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "«Записывать в систему» также устанавливает системные часы; Android это игнорирует.",
     ),
-    "yearsAgo": m86,
-    "yearsAgoShort": m87,
+    "yearsAgo": m87,
+    "yearsAgoShort": m88,
     "yes": MessageLookupByLibrary.simpleMessage("Да"),
     "zhCN": MessageLookupByLibrary.simpleMessage("Упрощённый китайский"),
   };

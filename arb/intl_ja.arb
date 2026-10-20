@@ -1056,5 +1056,20 @@
   "expressiveScheme": "エクスプレッシブ",
   "contentScheme": "コンテンツ",
   "rainbowScheme": "レインボー",
-  "fruitSaladScheme": "フルーツサラダ"
+  "fruitSaladScheme": "フルーツサラダ",
+  "tailscaleStatusConnecting": "接続中",
+  "tailscalePing": "遅延をテスト",
+  "tailscalePingAll": "すべてテスト",
+  "tailscalePathDirect": "直接接続",
+  "tailscalePathRelay": "中継 {relay}",
+  "tailscalePathPeerRelay": "ピアリレー",
+  "tailscalePingFailed": "応答なし",
+  "tailscalePingDesc": "デバイスをタップまたは長押しすると遅延をテストします。オフラインのデバイスはテストしません。",
+  "@tailscalePathRelay": {
+    "placeholders": {
+      "relay": {
+        "type": "String"
+      }
+    }
+  }
 }

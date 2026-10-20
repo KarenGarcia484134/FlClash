@@ -201,15 +201,17 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m82(label) => "${label}は1項目のみ指定できます";
 
-  static String m83(value) => "ピーク ${value}";
+  static String m83(relay) => "中継 ${relay}";
 
-  static String m84(value) => "累計 ${value}";
+  static String m84(value) => "ピーク ${value}";
 
-  static String m85(label) => "${label}はURLである必要があります";
+  static String m85(value) => "累計 ${value}";
 
-  static String m86(count) => "${count} 年前";
+  static String m86(label) => "${label}はURLである必要があります";
 
   static String m87(count) => "${count} 年前";
+
+  static String m88(count) => "${count} 年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1676,7 +1678,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleOffline": MessageLookupByLibrary.simpleMessage("オフライン"),
     "tailscaleOnline": MessageLookupByLibrary.simpleMessage("オンライン"),
     "tailscaleOpenLogin": MessageLookupByLibrary.simpleMessage("ログインページを開く"),
+    "tailscalePathDirect": MessageLookupByLibrary.simpleMessage("直接接続"),
+    "tailscalePathPeerRelay": MessageLookupByLibrary.simpleMessage("ピアリレー"),
+    "tailscalePathRelay": m83,
     "tailscalePeers": MessageLookupByLibrary.simpleMessage("デバイス"),
+    "tailscalePing": MessageLookupByLibrary.simpleMessage("遅延をテスト"),
+    "tailscalePingAll": MessageLookupByLibrary.simpleMessage("すべてテスト"),
+    "tailscalePingDesc": MessageLookupByLibrary.simpleMessage(
+      "デバイスをタップまたは長押しすると遅延をテストします。オフラインのデバイスはテストしません。",
+    ),
+    "tailscalePingFailed": MessageLookupByLibrary.simpleMessage("応答なし"),
     "tailscaleRefresh": MessageLookupByLibrary.simpleMessage("更新"),
     "tailscaleReset": MessageLookupByLibrary.simpleMessage("ログアウトしてリセット"),
     "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
@@ -1688,6 +1699,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleSilentLogTip": MessageLookupByLibrary.simpleMessage(
       "ログレベルが silent のため、ログインリンクを読み取れません。別のログレベルを選んでください。",
     ),
+    "tailscaleStatusConnecting": MessageLookupByLibrary.simpleMessage("接続中"),
     "tailscaleStatusIdle": MessageLookupByLibrary.simpleMessage("未起動"),
     "tailscaleStatusNeedsLogin": MessageLookupByLibrary.simpleMessage(
       "ログインが必要",
@@ -1724,8 +1736,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalUpload": MessageLookupByLibrary.simpleMessage("アップロード量"),
     "tproxyPort": MessageLookupByLibrary.simpleMessage("TProxyポート"),
     "traffic": MessageLookupByLibrary.simpleMessage("通信量"),
-    "trafficPeak": m83,
-    "trafficTotal": m84,
+    "trafficPeak": m84,
+    "trafficTotal": m85,
     "trafficUsage": MessageLookupByLibrary.simpleMessage("トラフィック統計"),
     "transport": MessageLookupByLibrary.simpleMessage("トランスポート"),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
@@ -1762,7 +1774,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("アップロード帯域幅"),
     "upstreamProject": MessageLookupByLibrary.simpleMessage("上流プロジェクト"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m85,
+    "urlTip": m86,
     "useHosts": MessageLookupByLibrary.simpleMessage("Hostsを使用"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("システムのHostsを使用"),
     "usedShort": MessageLookupByLibrary.simpleMessage("使用済み"),
@@ -1786,8 +1798,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "システムに書き込むを有効にするとシステムクロックも設定します。Android では無視されます。",
     ),
-    "yearsAgo": m86,
-    "yearsAgoShort": m87,
+    "yearsAgo": m87,
+    "yearsAgoShort": m88,
     "yes": MessageLookupByLibrary.simpleMessage("はい"),
     "zhCN": MessageLookupByLibrary.simpleMessage("簡体字中国語"),
   };

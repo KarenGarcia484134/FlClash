@@ -36,7 +36,7 @@ abstract class TailscaleProps with _$TailscaleProps {
       _$TailscalePropsFromJson(json);
 }
 
-enum TailscalePhase { idle, needsLogin, running }
+enum TailscalePhase { idle, connecting, needsLogin, running }
 
 @freezed
 abstract class TailscaleStatus with _$TailscaleStatus {
@@ -69,11 +69,16 @@ TailscaleStatus? parseTailscaleLog(String payload, TailscaleStatus current) {
     );
   }
   if (_authLoopPattern.firstMatch(message) case final state?) {
+    final running = state.group(1) == 'Running';
     return current.copyWith(
-      phase: state.group(1) == 'Running'
-          ? TailscalePhase.running
-          : TailscalePhase.needsLogin,
-      loginUrl: state.group(1) == 'Running' ? null : current.loginUrl,
+      phase: switch (state.group(1)) {
+        'Running' => TailscalePhase.running,
+        'NeedsLogin' || 'NeedsMachineAuth' => TailscalePhase.needsLogin,
+        // The login loop also ends on Starting, when the saved key is
+        // accepted and the node is still on its way up.
+        _ => TailscalePhase.connecting,
+      },
+      loginUrl: running ? null : current.loginUrl,
       proxyName: name,
     );
   }
@@ -276,15 +281,47 @@ List<CustomRoutingCondition> tailscalePeerConditions(TailscalePeer peer) {
   ];
 }
 
+/// Whether the node stays in its state without more work of its own. A node
+/// with a saved key passes through NeedsLogin before the control client has
+/// logged in, so NeedsLogin only counts once there is a login URL.
+bool isTailscaleSettled(TailscaleNetStatus net) {
+  if (net.error != null || !net.started) {
+    return true;
+  }
+  return switch (net.backendState) {
+    'Running' || 'NeedsMachineAuth' || 'Stopped' => true,
+    'NeedsLogin' => net.authUrl?.isNotEmpty == true,
+    _ => false,
+  };
+}
+
 /// Folds a status read from the node into the phase the page shows, so it
-/// follows the node itself rather than only the log lines.
+/// follows the node itself rather than only the log lines. While [settling]
+/// after a connect, a state the node is only passing through reads as
+/// connecting.
 TailscaleStatus applyTailscaleNetStatus(
   TailscaleStatus current,
   TailscaleNetStatus net,
-  String proxyName,
-) {
+  String proxyName, {
+  bool settling = false,
+}) {
   if (!net.started) {
-    return current;
+    if (settling && net.error == null) {
+      return current.copyWith(
+        phase: TailscalePhase.connecting,
+        proxyName: proxyName,
+      );
+    }
+    return current.phase == TailscalePhase.connecting
+        ? current.copyWith(phase: TailscalePhase.idle)
+        : current;
+  }
+  if (settling && !isTailscaleSettled(net)) {
+    return current.copyWith(
+      phase: TailscalePhase.connecting,
+      proxyName: proxyName,
+      health: net.health,
+    );
   }
   return switch (net.backendState) {
     'Running' => TailscaleStatus(
@@ -300,9 +337,52 @@ TailscaleStatus applyTailscaleNetStatus(
       proxyName: proxyName,
       health: net.health,
     ),
+    'NoState' || 'Starting' => current.copyWith(
+      phase: TailscalePhase.connecting,
+      proxyName: proxyName,
+      health: net.health,
+    ),
     _ => current.copyWith(proxyName: proxyName, health: net.health),
   };
 }
+
+@freezed
+abstract class TailscalePingResult with _$TailscalePingResult {
+  const factory TailscalePingResult({
+    @Default('') String target,
+    @Default(-1) int latencyMs,
+    String? endpoint,
+    int? derpRegionId,
+    String? derpRegionCode,
+    String? peerRelay,
+    String? error,
+  }) = _TailscalePingResult;
+
+  factory TailscalePingResult.fromJson(Map<String, Object?> json) =>
+      _$TailscalePingResultFromJson(json);
+}
+
+enum TailscalePath { direct, peerRelay, derp, unknown }
+
+extension TailscalePingResultExt on TailscalePingResult {
+  bool get ok => latencyMs > 0 && (error?.isEmpty ?? true);
+
+  TailscalePath get path {
+    if (endpoint?.isNotEmpty == true) return TailscalePath.direct;
+    if (peerRelay?.isNotEmpty == true) return TailscalePath.peerRelay;
+    if (derpRegionId != null && derpRegionId! > 0) return TailscalePath.derp;
+    return TailscalePath.unknown;
+  }
+
+  /// The DERP region as people know it, such as DERP-tok.
+  String get derpLabel {
+    final code = derpRegionCode?.trim() ?? '';
+    return 'DERP-${code.isNotEmpty ? code : derpRegionId}';
+  }
+}
+
+/// The address a peer is pinged at: its IPv4 one when it has one.
+String? tailscalePingTarget(TailscalePeer peer) => peer.ipv4 ?? peer.ipv6;
 
 enum TailscaleIssue { none, authKey, network }
 

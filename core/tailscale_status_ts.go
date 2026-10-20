@@ -6,6 +6,8 @@ import (
 	"context"
 	"errors"
 	"maps"
+	"net/netip"
+	"slices"
 	"sort"
 	"sync"
 	"time"
@@ -15,7 +17,53 @@ import (
 	C "github.com/metacubex/mihomo/constant"
 	"github.com/metacubex/mihomo/tunnel"
 	"github.com/metacubex/tailscale/ipn/ipnstate"
+	"github.com/metacubex/tailscale/tailcfg"
 )
+
+// tailscalePing sends one disco ping, which shows whether the path is direct
+// or relayed. A disco ping cannot get through where WireGuard does not run,
+// so a failed one is retried once as TSMP, which only measures the latency.
+func tailscalePing(ctx context.Context, name, target string) TailscalePingResult {
+	result := TailscalePingResult{Target: target, LatencyMs: -1}
+	ip, err := netip.ParseAddr(target)
+	if err != nil {
+		result.Error = err.Error()
+		return result
+	}
+	node, ok := findTailscaleNode(tunnel.AllProxies(), name)
+	if !ok {
+		result.Error = errTailscaleNodeMissing.Error()
+		return result
+	}
+	res, err := node.Ping(ctx, ip, tailcfg.PingDisco)
+	if (err != nil || res.Err != "") && ctx.Err() == nil {
+		if tsmp, tsmpErr := node.Ping(ctx, ip, tailcfg.PingTSMP); tsmpErr == nil && tsmp.Err == "" {
+			res, err = tsmp, nil
+		}
+	}
+	if err != nil {
+		result.Error = err.Error()
+		return result
+	}
+	return convertTailscalePing(target, res)
+}
+
+func convertTailscalePing(target string, res *ipnstate.PingResult) TailscalePingResult {
+	result := TailscalePingResult{
+		Target:    target,
+		LatencyMs: -1,
+		Endpoint:  res.Endpoint,
+		DERPID:    res.DERPRegionID,
+		DERPCode:  res.DERPRegionCode,
+		PeerRelay: res.PeerRelay,
+		Error:     res.Err,
+	}
+	if res.Err == "" {
+		ms := int(res.LatencySeconds*1000 + 0.5)
+		result.LatencyMs = max(ms, 1)
+	}
+	return result
+}
 
 func findTailscaleNode(proxies map[string]C.Proxy, name string) (*outbound.Tailscale, bool) {
 	if proxy, ok := proxies[name]; ok && proxy != nil {
@@ -35,6 +83,14 @@ func tailscaleStatus(ctx context.Context, params TailscaleStatusParams) (Tailsca
 		if err := node.Start(ctx); err != nil {
 			return TailscaleStatusResult{Started: node.Started()}, err
 		}
+	}
+	if params.Rebind {
+		node.NetworkChanged()
+	}
+	if params.Wait && node.Started() {
+		waitCtx, cancel := context.WithTimeout(ctx, tailscaleSettleTimeout)
+		_, _, _ = node.WaitSettled(waitCtx)
+		cancel()
 	}
 	status, err := node.Status(ctx)
 	if errors.Is(err, outbound.ErrTailscaleNotStarted) {
@@ -167,6 +223,19 @@ func reconcileTailscaleNodes(current map[string]C.Proxy) (map[string]C.Proxy, bo
 		return current, false
 	}
 	return next, true
+}
+
+// notifyTailscaleNetworkChange tells every running node the network changed,
+// so it rebinds instead of waiting for tsnet's own slow poll.
+func notifyTailscaleNetworkChange() {
+	liveTailscaleMu.Lock()
+	proxies := slices.Collect(maps.Values(liveTailscale))
+	liveTailscaleMu.Unlock()
+	for _, proxy := range proxies {
+		if node, ok := outbound.UnwrapTailscale(proxy.Adapter()); ok {
+			node.NetworkChanged()
+		}
+	}
 }
 
 func reconcileTailscale() {

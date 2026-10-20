@@ -250,4 +250,148 @@ void main() {
       stale,
     );
   });
+
+  group('connecting', () {
+    const name = 'Tailscale';
+    const passing = TailscaleNetStatus(
+      started: true,
+      backendState: 'NeedsLogin',
+    );
+
+    test(
+      'a node with a saved key passing through NeedsLogin is not settled',
+      () {
+        expect(isTailscaleSettled(passing), isFalse);
+        for (final state in ['', 'NoState', 'Starting']) {
+          expect(
+            isTailscaleSettled(
+              TailscaleNetStatus(started: true, backendState: state),
+            ),
+            isFalse,
+            reason: state,
+          );
+        }
+        for (final state in ['Running', 'NeedsMachineAuth', 'Stopped']) {
+          expect(
+            isTailscaleSettled(
+              TailscaleNetStatus(started: true, backendState: state),
+            ),
+            isTrue,
+            reason: state,
+          );
+        }
+        expect(
+          isTailscaleSettled(
+            passing.copyWith(authUrl: 'https://login.tailscale.com/a/x'),
+          ),
+          isTrue,
+        );
+        expect(isTailscaleSettled(passing.copyWith(error: 'boom')), isTrue);
+      },
+    );
+
+    test('while settling a passing state reads as connecting', () {
+      const idle = TailscaleStatus();
+      final connecting = applyTailscaleNetStatus(
+        idle,
+        passing,
+        name,
+        settling: true,
+      );
+      expect(connecting.phase, TailscalePhase.connecting);
+      expect(connecting.loginUrl, isNull);
+      expect(
+        applyTailscaleNetStatus(
+          idle,
+          const TailscaleNetStatus(started: true, backendState: 'Starting'),
+          name,
+        ).phase,
+        TailscalePhase.connecting,
+      );
+    });
+
+    test('a real NeedsLogin still shows the login', () {
+      final login = applyTailscaleNetStatus(
+        const TailscaleStatus(phase: TailscalePhase.connecting),
+        passing.copyWith(authUrl: 'https://login.tailscale.com/a/x'),
+        name,
+        settling: true,
+      );
+      expect(login.phase, TailscalePhase.needsLogin);
+      expect(login.loginUrl, 'https://login.tailscale.com/a/x');
+      final timedOut = applyTailscaleNetStatus(
+        const TailscaleStatus(phase: TailscalePhase.connecting),
+        passing,
+        name,
+      );
+      expect(timedOut.phase, TailscalePhase.needsLogin);
+    });
+
+    test('a node that never started leaves connecting once settled', () {
+      expect(
+        applyTailscaleNetStatus(
+          const TailscaleStatus(phase: TailscalePhase.connecting),
+          const TailscaleNetStatus(),
+          name,
+        ).phase,
+        TailscalePhase.idle,
+      );
+    });
+
+    test('the login loop ending on Starting is not a login prompt', () {
+      final next = parseTailscaleLog(
+        '[Tailscale](Tailscale) AuthLoop: state is Starting; done',
+        const TailscaleStatus(),
+      )!;
+      expect(next.phase, TailscalePhase.connecting);
+    });
+  });
+
+  group('ping', () {
+    test('decodes a direct, relayed and failed result', () {
+      final direct = TailscalePingResult.fromJson({
+        'target': '100.64.0.2',
+        'latencyMs': 12,
+        'endpoint': '1.2.3.4:41641',
+      });
+      expect(direct.ok, isTrue);
+      expect(direct.path, TailscalePath.direct);
+      final relayed = TailscalePingResult.fromJson({
+        'target': '100.64.0.3',
+        'latencyMs': 180,
+        'derpRegionId': 11,
+        'derpRegionCode': 'tok',
+      });
+      expect(relayed.path, TailscalePath.derp);
+      expect(relayed.derpLabel, 'DERP-tok');
+      expect(
+        const TailscalePingResult(latencyMs: 90, derpRegionId: 7).derpLabel,
+        'DERP-7',
+      );
+      expect(
+        const TailscalePingResult(latencyMs: 30, peerRelay: '5.6.7.8:7').path,
+        TailscalePath.peerRelay,
+      );
+      final failed = TailscalePingResult.fromJson({
+        'target': '100.64.0.4',
+        'latencyMs': -1,
+        'error': 'timeout',
+      });
+      expect(failed.ok, isFalse);
+    });
+
+    test('a peer is pinged at its IPv4 address first', () {
+      expect(
+        tailscalePingTarget(
+          const TailscalePeer(ips: ['fd7a:115c:a1e9::2', '100.64.0.2']),
+        ),
+        '100.64.0.2',
+      );
+      expect(
+        tailscalePingTarget(const TailscalePeer(ips: ['fd7a:115c:a1e9::2'])),
+        'fd7a:115c:a1e9::2',
+      );
+      expect(tailscalePingTarget(const TailscalePeer()), isNull);
+    });
+  });
 }

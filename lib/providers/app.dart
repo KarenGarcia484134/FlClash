@@ -24,6 +24,16 @@ class AuthorizedTunEnable extends _$AuthorizedTunEnable
   }
 }
 
+/// Counts the device's network changes, for views that must re-check what
+/// they showed about the old network.
+@Riverpod(keepAlive: true)
+class NetworkChanges extends _$NetworkChanges with AutoDisposeNotifierMixin {
+  @override
+  int build() => 0;
+
+  void bump() => update((state) => state + 1);
+}
+
 /// What the Core last logged about the injected Tailscale node.
 @Riverpod(keepAlive: true)
 class TailscaleState extends _$TailscaleState with AutoDisposeNotifierMixin {
@@ -38,8 +48,24 @@ class TailscaleState extends _$TailscaleState with AutoDisposeNotifierMixin {
     }
   }
 
-  void onStatus(TailscaleNetStatus net, String proxyName) {
-    update((state) => applyTailscaleNetStatus(state, net, proxyName));
+  void onStatus(
+    TailscaleNetStatus net,
+    String proxyName, {
+    bool settling = false,
+  }) {
+    update(
+      (state) =>
+          applyTailscaleNetStatus(state, net, proxyName, settling: settling),
+    );
+  }
+
+  void onConnecting(String proxyName) {
+    update(
+      (state) => state.copyWith(
+        phase: TailscalePhase.connecting,
+        proxyName: proxyName,
+      ),
+    );
   }
 
   void reset() {

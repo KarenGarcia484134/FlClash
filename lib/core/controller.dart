@@ -288,7 +288,20 @@ class CoreController {
     String name, {
     bool start = false,
     bool reset = false,
-  }) => _interface.tailscaleStatus(name, start: start, reset: reset);
+    bool wait = false,
+    bool rebind = false,
+  }) => _interface.tailscaleStatus(
+    name,
+    start: start,
+    reset: reset,
+    wait: wait,
+    rebind: rebind,
+  );
+
+  Future<List<TailscalePingResult>> tailscalePing(
+    String name,
+    List<String> targets,
+  ) => _interface.tailscalePing(name, targets);
 
   Future<List<ServiceCheckItem>> serviceCheck(ServiceCheckParams params) =>
       _interface.serviceCheck(params);

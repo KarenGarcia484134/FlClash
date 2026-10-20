@@ -47,9 +47,12 @@ func handleResetConnections() bool {
 
 // A connection that went out over a network the device has left hangs until
 // TCP gives up on it, and so do the DNS clients' pooled connections.
+// Tailscale nodes are told as well, which Android's tsnet would otherwise
+// only notice on its ten-minute poll.
 func handleResetNetwork() {
 	handleCloseConnections()
 	resolver.ResetConnection()
+	notifyTailscaleNetworkChange()
 }
 
 func handleCloseConnection(connectionId string) bool {

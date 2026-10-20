@@ -10,6 +10,27 @@ type TailscaleStatusParams struct {
 	Name  string `json:"name"`
 	Start bool   `json:"start"`
 	Reset bool   `json:"reset"`
+	// Wait follows a started node until it settles, so a connect does not
+	// report the passing NeedsLogin a node with a saved key goes through.
+	Wait bool `json:"wait"`
+	// Rebind reports a network change to the node first.
+	Rebind bool `json:"rebind"`
+}
+
+type TailscalePingParams struct {
+	Name    string   `json:"name"`
+	Targets []string `json:"targets"`
+}
+
+type TailscalePingResult struct {
+	Target string `json:"target"`
+	// LatencyMs is -1 when the ping failed.
+	LatencyMs int    `json:"latencyMs"`
+	Endpoint  string `json:"endpoint,omitempty"`
+	DERPID    int    `json:"derpRegionId,omitempty"`
+	DERPCode  string `json:"derpRegionCode,omitempty"`
+	PeerRelay string `json:"peerRelay,omitempty"`
+	Error     string `json:"error,omitempty"`
 }
 
 type TailscalePeer struct {
@@ -37,7 +58,31 @@ type TailscaleStatusResult struct {
 
 var errTailscaleNodeMissing = errors.New("tailscale node not found")
 
-const tailscaleStatusTimeout = 15 * time.Second
+const (
+	tailscaleStatusTimeout = 15 * time.Second
+	tailscaleSettleTimeout = 10 * time.Second
+	tailscalePingTimeout   = 5 * time.Second
+	tailscalePingParallel  = 8
+)
+
+func handleTailscalePing(params TailscalePingParams) []TailscalePingResult {
+	results := make([]TailscalePingResult, len(params.Targets))
+	sem := make(chan struct{}, tailscalePingParallel)
+	done := make(chan struct{})
+	for i, target := range params.Targets {
+		go func() {
+			sem <- struct{}{}
+			defer func() { <-sem; done <- struct{}{} }()
+			ctx, cancel := context.WithTimeout(context.Background(), tailscalePingTimeout)
+			defer cancel()
+			results[i] = tailscalePing(ctx, params.Name, target)
+		}()
+	}
+	for range params.Targets {
+		<-done
+	}
+	return results
+}
 
 func handleTailscaleStatus(params TailscaleStatusParams) TailscaleStatusResult {
 	ctx, cancel := context.WithTimeout(context.Background(), tailscaleStatusTimeout)
