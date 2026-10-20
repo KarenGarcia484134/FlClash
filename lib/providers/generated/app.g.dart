@@ -102,6 +102,68 @@ abstract class _$AuthorizedTunEnable extends $Notifier<TunAuthorizationState> {
   }
 }
 
+/// Counts the device's network changes, for views that must re-check what
+/// they showed about the old network.
+
+@ProviderFor(NetworkChanges)
+final networkChangesProvider = NetworkChangesProvider._();
+
+/// Counts the device's network changes, for views that must re-check what
+/// they showed about the old network.
+final class NetworkChangesProvider
+    extends $NotifierProvider<NetworkChanges, int> {
+  /// Counts the device's network changes, for views that must re-check what
+  /// they showed about the old network.
+  NetworkChangesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'networkChangesProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$networkChangesHash();
+
+  @$internal
+  @override
+  NetworkChanges create() => NetworkChanges();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
+String _$networkChangesHash() => r'508910780161d7eefa08cbf8c8d539b04a104713';
+
+/// Counts the device's network changes, for views that must re-check what
+/// they showed about the old network.
+
+abstract class _$NetworkChanges extends $Notifier<int> {
+  int build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
 /// What the Core last logged about the injected Tailscale node.
 
 @ProviderFor(TailscaleState)
@@ -138,7 +200,7 @@ final class TailscaleStateProvider
   }
 }
 
-String _$tailscaleStateHash() => r'63a9416dc4d053c27294cf87dec44b5d8047e73e';
+String _$tailscaleStateHash() => r'28c1027d20c23b845b0085a0156a8c52dd5003ea';
 
 /// What the Core last logged about the injected Tailscale node.
 

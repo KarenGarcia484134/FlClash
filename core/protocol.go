@@ -64,6 +64,7 @@ const (
 	clearEffectMethod              CoreMethod = "clearEffect"
 	watchRouteMethod               CoreMethod = "watchRoute"
 	tailscaleStatusMethod          CoreMethod = "tailscaleStatus"
+	tailscalePingMethod            CoreMethod = "tailscalePing"
 )
 
 type MessageType string

@@ -99,3 +99,26 @@ Map<String, dynamic> _$TailscaleNetStatusToJson(_TailscaleNetStatus instance) =>
       'peers': instance.peers,
       'error': instance.error,
     };
+
+_TailscalePingResult _$TailscalePingResultFromJson(Map<String, dynamic> json) =>
+    _TailscalePingResult(
+      target: json['target'] as String? ?? '',
+      latencyMs: (json['latencyMs'] as num?)?.toInt() ?? -1,
+      endpoint: json['endpoint'] as String?,
+      derpRegionId: (json['derpRegionId'] as num?)?.toInt(),
+      derpRegionCode: json['derpRegionCode'] as String?,
+      peerRelay: json['peerRelay'] as String?,
+      error: json['error'] as String?,
+    );
+
+Map<String, dynamic> _$TailscalePingResultToJson(
+  _TailscalePingResult instance,
+) => <String, dynamic>{
+  'target': instance.target,
+  'latencyMs': instance.latencyMs,
+  'endpoint': instance.endpoint,
+  'derpRegionId': instance.derpRegionId,
+  'derpRegionCode': instance.derpRegionCode,
+  'peerRelay': instance.peerRelay,
+  'error': instance.error,
+};

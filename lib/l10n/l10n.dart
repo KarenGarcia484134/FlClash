@@ -8911,6 +8911,86 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Connecting`
+  String get tailscaleStatusConnecting {
+    return Intl.message(
+      'Connecting',
+      name: 'tailscaleStatusConnecting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Test latency`
+  String get tailscalePing {
+    return Intl.message(
+      'Test latency',
+      name: 'tailscalePing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Test all`
+  String get tailscalePingAll {
+    return Intl.message(
+      'Test all',
+      name: 'tailscalePingAll',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Direct`
+  String get tailscalePathDirect {
+    return Intl.message(
+      'Direct',
+      name: 'tailscalePathDirect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Relay {relay}`
+  String tailscalePathRelay(String relay) {
+    return Intl.message(
+      'Relay $relay',
+      name: 'tailscalePathRelay',
+      desc: '',
+      args: [relay],
+    );
+  }
+
+  /// `Peer relay`
+  String get tailscalePathPeerRelay {
+    return Intl.message(
+      'Peer relay',
+      name: 'tailscalePathPeerRelay',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No reply`
+  String get tailscalePingFailed {
+    return Intl.message(
+      'No reply',
+      name: 'tailscalePingFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap or long-press a device to test its latency. Offline devices are not tested.`
+  String get tailscalePingDesc {
+    return Intl.message(
+      'Tap or long-press a device to test its latency. Offline devices are not tested.',
+      name: 'tailscalePingDesc',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -1066,5 +1066,20 @@
   "listenerMissingRule": "Sub-rule not in this profile, skipped",
   "listenerActive": "Listening",
   "listenerInactive": "Not listening",
-  "listenerMissingTarget": "Outbound not in this profile, skipped"
+  "listenerMissingTarget": "Outbound not in this profile, skipped",
+  "tailscaleStatusConnecting": "Connexion…",
+  "tailscalePing": "Tester la latence",
+  "tailscalePingAll": "Tout tester",
+  "tailscalePathDirect": "Direct",
+  "tailscalePathRelay": "Relais {relay}",
+  "tailscalePathPeerRelay": "Relais pair",
+  "tailscalePingFailed": "Aucune réponse",
+  "tailscalePingDesc": "Touchez ou appuyez longuement sur un appareil pour tester sa latence. Les appareils hors ligne ne sont pas testés.",
+  "@tailscalePathRelay": {
+    "placeholders": {
+      "relay": {
+        "type": "String"
+      }
+    }
+  }
 }

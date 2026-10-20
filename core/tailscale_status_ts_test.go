@@ -112,3 +112,60 @@ func TestFindTailscaleNodeUnwraps(t *testing.T) {
 		t.Fatal("the parsed node must be found through its wrapper")
 	}
 }
+
+func TestConvertTailscalePing(t *testing.T) {
+	direct := convertTailscalePing("100.64.0.2", &ipnstate.PingResult{LatencySeconds: 0.0123, Endpoint: "1.2.3.4:41641"})
+	if direct.LatencyMs != 12 || direct.Endpoint != "1.2.3.4:41641" || direct.Error != "" {
+		t.Fatalf("direct: %+v", direct)
+	}
+	relayed := convertTailscalePing("100.64.0.3", &ipnstate.PingResult{LatencySeconds: 0.2, DERPRegionID: 11, DERPRegionCode: "tok"})
+	if relayed.LatencyMs != 200 || relayed.Endpoint != "" || relayed.DERPCode != "tok" || relayed.DERPID != 11 {
+		t.Fatalf("relayed: %+v", relayed)
+	}
+	tiny := convertTailscalePing("100.64.0.4", &ipnstate.PingResult{LatencySeconds: 0.0001, Endpoint: "x"})
+	if tiny.LatencyMs != 1 {
+		t.Fatalf("a reply must never read as 0 ms: %+v", tiny)
+	}
+	failed := convertTailscalePing("100.64.0.5", &ipnstate.PingResult{Err: "timeout"})
+	if failed.LatencyMs != -1 || failed.Error != "timeout" {
+		t.Fatalf("failed: %+v", failed)
+	}
+}
+
+func TestTailscalePingKeepsTargetOrder(t *testing.T) {
+	results := handleTailscalePing(TailscalePingParams{
+		Name:    "missing",
+		Targets: []string{"100.64.0.1", "not-an-ip", "100.64.0.2"},
+	})
+	if len(results) != 3 {
+		t.Fatalf("got %d results", len(results))
+	}
+	for i, target := range []string{"100.64.0.1", "not-an-ip", "100.64.0.2"} {
+		if results[i].Target != target || results[i].LatencyMs != -1 || results[i].Error == "" {
+			t.Fatalf("result %d: %+v", i, results[i])
+		}
+	}
+	if !strings.Contains(results[0].Error, "not found") {
+		t.Fatalf("a missing node must say so: %+v", results[0])
+	}
+}
+
+func TestNetworkChangeKeepsTheNode(t *testing.T) {
+	C.SetHomeDir(t.TempDir())
+	liveTailscale = map[string]C.Proxy{}
+	t.Cleanup(func() { liveTailscale = map[string]C.Proxy{} })
+
+	node := parseTestTailscale(t, "k")
+	t.Cleanup(func() { _ = node.Adapter().Close() })
+	reconcileTailscaleNodes(map[string]C.Proxy{"Tailscale": node})
+
+	handleResetNetwork()
+
+	if liveTailscale["Tailscale"] != node {
+		t.Fatal("a network change must keep the running node, not build a new one")
+	}
+	again := parseTestTailscale(t, "k")
+	if next, changed := reconcileTailscaleNodes(map[string]C.Proxy{"Tailscale": again}); !changed || next["Tailscale"] != node {
+		t.Fatal("the node must still be the one later applies keep")
+	}
+}

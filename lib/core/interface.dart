@@ -58,7 +58,14 @@ mixin CoreInterface {
     String name, {
     bool start = false,
     bool reset = false,
+    bool wait = false,
+    bool rebind = false,
   });
+
+  Future<List<TailscalePingResult>> tailscalePing(
+    String name,
+    List<String> targets,
+  );
 
   Future<List<ServiceCheckItem>> serviceCheck(ServiceCheckParams params);
 
@@ -601,15 +608,40 @@ abstract class CoreHandlerInterface with CoreInterface {
     String name, {
     bool start = false,
     bool reset = false,
+    bool wait = false,
+    bool rebind = false,
   }) async {
     final data = await _invokeMethod<Map<String, dynamic>>(
       method: CoreMethod.tailscaleStatus,
-      arguments: {'name': name, 'start': start, 'reset': reset},
+      arguments: {
+        'name': name,
+        'start': start,
+        'reset': reset,
+        'wait': wait,
+        'rebind': rebind,
+      },
       timeout: const Duration(seconds: 20),
     );
     return data == null
         ? const TailscaleNetStatus(error: 'no response')
         : TailscaleNetStatus.fromJson(data);
+  }
+
+  @override
+  Future<List<TailscalePingResult>> tailscalePing(
+    String name,
+    List<String> targets,
+  ) async {
+    final data = await _invokeMethod<List<dynamic>>(
+      method: CoreMethod.tailscalePing,
+      arguments: {'name': name, 'targets': targets},
+      timeout: const Duration(seconds: 20),
+    );
+    return [
+      for (final item in data ?? const [])
+        if (item is Map)
+          TailscalePingResult.fromJson(Map<String, Object?>.from(item)),
+    ];
   }
 
   @override

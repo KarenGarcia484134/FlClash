@@ -198,15 +198,17 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m82(label) => "${label}只能是一项";
 
-  static String m83(value) => "峰值 ${value}";
+  static String m83(relay) => "中继 ${relay}";
 
-  static String m84(value) => "累计 ${value}";
+  static String m84(value) => "峰值 ${value}";
 
-  static String m85(label) => "${label}必须为URL";
+  static String m85(value) => "累计 ${value}";
 
-  static String m86(count) => "${count} 年前";
+  static String m86(label) => "${label}必须为URL";
 
   static String m87(count) => "${count} 年前";
+
+  static String m88(count) => "${count} 年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1513,7 +1515,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleOffline": MessageLookupByLibrary.simpleMessage("离线"),
     "tailscaleOnline": MessageLookupByLibrary.simpleMessage("在线"),
     "tailscaleOpenLogin": MessageLookupByLibrary.simpleMessage("打开登录页面"),
+    "tailscalePathDirect": MessageLookupByLibrary.simpleMessage("直连"),
+    "tailscalePathPeerRelay": MessageLookupByLibrary.simpleMessage("对等中继"),
+    "tailscalePathRelay": m83,
     "tailscalePeers": MessageLookupByLibrary.simpleMessage("设备"),
+    "tailscalePing": MessageLookupByLibrary.simpleMessage("测试延迟"),
+    "tailscalePingAll": MessageLookupByLibrary.simpleMessage("全部测试"),
+    "tailscalePingDesc": MessageLookupByLibrary.simpleMessage(
+      "点按或长按设备可测试其延迟，离线设备不测试。",
+    ),
+    "tailscalePingFailed": MessageLookupByLibrary.simpleMessage("无响应"),
     "tailscaleRefresh": MessageLookupByLibrary.simpleMessage("刷新"),
     "tailscaleReset": MessageLookupByLibrary.simpleMessage("退出登录并重置"),
     "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
@@ -1523,6 +1534,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleSilentLogTip": MessageLookupByLibrary.simpleMessage(
       "日志等级为 silent，无法读取登录链接，请换成其他日志等级。",
     ),
+    "tailscaleStatusConnecting": MessageLookupByLibrary.simpleMessage("连接中"),
     "tailscaleStatusIdle": MessageLookupByLibrary.simpleMessage("未启动"),
     "tailscaleStatusNeedsLogin": MessageLookupByLibrary.simpleMessage("需要登录"),
     "tailscaleStatusRunning": MessageLookupByLibrary.simpleMessage("已连接"),
@@ -1555,8 +1567,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalUpload": MessageLookupByLibrary.simpleMessage("上传总量"),
     "tproxyPort": MessageLookupByLibrary.simpleMessage("Tproxy端口"),
     "traffic": MessageLookupByLibrary.simpleMessage("流量"),
-    "trafficPeak": m83,
-    "trafficTotal": m84,
+    "trafficPeak": m84,
+    "trafficTotal": m85,
     "trafficUsage": MessageLookupByLibrary.simpleMessage("流量统计"),
     "transport": MessageLookupByLibrary.simpleMessage("传输协议"),
     "tun": MessageLookupByLibrary.simpleMessage("虚拟网卡"),
@@ -1593,7 +1605,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("上行带宽"),
     "upstreamProject": MessageLookupByLibrary.simpleMessage("上游项目"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m85,
+    "urlTip": m86,
     "useHosts": MessageLookupByLibrary.simpleMessage("使用Hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("使用系统Hosts"),
     "usedShort": MessageLookupByLibrary.simpleMessage("已用"),
@@ -1617,8 +1629,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "写入系统会同时设置系统时钟，Android 上不生效。",
     ),
-    "yearsAgo": m86,
-    "yearsAgoShort": m87,
+    "yearsAgo": m87,
+    "yearsAgoShort": m88,
     "yes": MessageLookupByLibrary.simpleMessage("是"),
     "zhCN": MessageLookupByLibrary.simpleMessage("中文简体"),
   };

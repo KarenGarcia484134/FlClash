@@ -224,6 +224,7 @@ var methodHandlers = map[CoreMethod]methodHandler{
 	compileRuleSetMethod:           withFallible(handleCompileRuleSet),
 	clearEffectMethod:              withMessage(handleClearEffect),
 	tailscaleStatusMethod:          withArguments(handleTailscaleStatus),
+	tailscalePingMethod:            withArguments(handleTailscalePing),
 }
 
 func watchRouteHandler(call *MethodCall) (any, error) {

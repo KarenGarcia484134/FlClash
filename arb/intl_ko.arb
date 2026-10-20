@@ -1066,5 +1066,20 @@
   "listenerMissingRule": "Sub-rule not in this profile, skipped",
   "listenerActive": "Listening",
   "listenerInactive": "Not listening",
-  "listenerMissingTarget": "Outbound not in this profile, skipped"
+  "listenerMissingTarget": "Outbound not in this profile, skipped",
+  "tailscaleStatusConnecting": "연결 중",
+  "tailscalePing": "지연 시간 테스트",
+  "tailscalePingAll": "모두 테스트",
+  "tailscalePathDirect": "직접 연결",
+  "tailscalePathRelay": "릴레이 {relay}",
+  "tailscalePathPeerRelay": "피어 릴레이",
+  "tailscalePingFailed": "응답 없음",
+  "tailscalePingDesc": "기기를 탭하거나 길게 눌러 지연 시간을 테스트합니다. 오프라인 기기는 테스트하지 않습니다.",
+  "@tailscalePathRelay": {
+    "placeholders": {
+      "relay": {
+        "type": "String"
+      }
+    }
+  }
 }

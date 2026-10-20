@@ -14,6 +14,11 @@ import 'package:material_ui/material_ui.dart';
 
 const _refreshInterval = Duration(seconds: 10);
 
+/// How long a connect keeps reading the node after the core's own wait,
+/// and how often.
+const tailscaleSettleTimeout = Duration(seconds: 20);
+const tailscaleSettleInterval = Duration(seconds: 1);
+
 /// The live node and peer list, polled while the page is on screen and the
 /// app is in the foreground.
 class TailscaleNetworkSection extends ConsumerStatefulWidget {
@@ -40,6 +45,9 @@ class TailscaleNetworkSectionState
   bool _loading = false;
   String _query = '';
   Timer? _timer;
+  bool _settling = false;
+  final Map<String, TailscalePingResult> _pings = {};
+  final Set<String> _pinging = {};
 
   @override
   void initState() {
@@ -79,7 +87,12 @@ class TailscaleNetworkSectionState
     _timer = Timer.periodic(_refreshInterval, (_) => refresh(silent: true));
   }
 
-  Future<void> refresh({bool silent = false, bool start = false}) async {
+  Future<void> refresh({
+    bool silent = false,
+    bool start = false,
+    bool wait = false,
+    bool rebind = false,
+  }) async {
     final name = widget.proxyName;
     if (name == null) {
       if (mounted) setState(() => _status = null);
@@ -92,10 +105,16 @@ class TailscaleNetworkSectionState
     try {
       final status = await ref
           .read(coreHandlerProvider)
-          .tailscaleStatus(name, start: start);
+          .tailscaleStatus(name, start: start, wait: wait, rebind: rebind);
       if (!mounted) return;
-      setState(() => _status = status);
-      ref.read(tailscaleStateProvider.notifier).onStatus(status, name);
+      setState(() {
+        _status = status;
+        final ids = {for (final peer in status.peers) peer.id};
+        _pings.removeWhere((id, _) => !ids.contains(id));
+      });
+      ref
+          .read(tailscaleStateProvider.notifier)
+          .onStatus(status, name, settling: _settling);
     } catch (e) {
       if (mounted) {
         setState(() => _status = TailscaleNetStatus(error: e.toString()));
@@ -106,14 +125,91 @@ class TailscaleNetworkSectionState
   }
 
   /// Starts the node without rebuilding it, applying the profile first only
-  /// when the running config does not carry the node yet.
-  Future<void> connect() async {
-    await refresh(start: true);
-    if (!mounted || _status?.started == true) {
+  /// when the running config does not carry the node yet. A node that logs
+  /// in with its saved key passes through NeedsLogin and Starting on its way
+  /// up, so the page shows it connecting and keeps reading until it settles.
+  Future<void> connect() => _settle(start: true);
+
+  /// After a network change the node rebinds; the page re-reads it, shows it
+  /// connecting until it settles, and drops latencies measured on the old
+  /// network.
+  Future<void> onNetworkChanged() async {
+    if (!mounted) return;
+    setState(_pings.clear);
+    if (_status?.started == true) {
+      await _settle(rebind: true);
+    }
+  }
+
+  Future<void> _settle({bool start = false, bool rebind = false}) async {
+    final name = widget.proxyName;
+    if (name == null || _settling) {
       return;
     }
-    await widget.onApply();
-    await refresh(start: true);
+    _settling = true;
+    ref.read(tailscaleStateProvider.notifier).onConnecting(name);
+    try {
+      while (_loading && mounted) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+      await refresh(start: start, wait: true, rebind: rebind);
+      if (!mounted) return;
+      if (start && _status?.started != true && _status?.error == null) {
+        await widget.onApply();
+        if (!mounted) return;
+        await refresh(start: true, wait: true);
+      }
+      final deadline = DateTime.now().add(tailscaleSettleTimeout);
+      while (mounted &&
+          _status != null &&
+          !isTailscaleSettled(_status!) &&
+          DateTime.now().isBefore(deadline)) {
+        await Future<void>.delayed(tailscaleSettleInterval);
+        await refresh(silent: true);
+      }
+    } finally {
+      _settling = false;
+      final status = _status;
+      if (mounted && status != null) {
+        ref.read(tailscaleStateProvider.notifier).onStatus(status, name);
+      }
+    }
+  }
+
+  Future<void> _ping(List<TailscalePeer> peers) async {
+    final name = widget.proxyName;
+    final targets = {
+      for (final peer in peers)
+        if (peer.online && !_pinging.contains(peer.id))
+          peer.id: ?tailscalePingTarget(peer),
+    };
+    if (name == null || targets.isEmpty) {
+      return;
+    }
+    setState(() => _pinging.addAll(targets.keys));
+    try {
+      final results = await ref
+          .read(coreHandlerProvider)
+          .tailscalePing(name, targets.values.toList());
+      final byTarget = {for (final item in results) item.target: item};
+      if (!mounted) return;
+      setState(() {
+        for (final MapEntry(key: id, value: ip) in targets.entries) {
+          _pings[id] =
+              byTarget[ip] ??
+              TailscalePingResult(target: ip, error: 'no reply');
+        }
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        for (final MapEntry(key: id, value: ip) in targets.entries) {
+          _pings[id] = TailscalePingResult(target: ip, error: e.toString());
+        }
+      });
+    } finally {
+      if (mounted) setState(() => _pinging.removeAll(targets.keys));
+    }
   }
 
   Future<void> _copy(String text) async {
@@ -163,8 +259,53 @@ class TailscaleNetworkSectionState
     );
   }
 
+  String? _pathLabel(TailscalePingResult? ping) {
+    if (ping == null || !ping.ok) {
+      return null;
+    }
+    final appLocalizations = context.appLocalizations;
+    return switch (ping.path) {
+      TailscalePath.direct => appLocalizations.tailscalePathDirect,
+      TailscalePath.peerRelay => appLocalizations.tailscalePathPeerRelay,
+      TailscalePath.derp => appLocalizations.tailscalePathRelay(ping.derpLabel),
+      TailscalePath.unknown => null,
+    };
+  }
+
+  Widget _latencyBadge(TailscalePeer peer) {
+    final appLocalizations = context.appLocalizations;
+    if (_pinging.contains(peer.id)) {
+      return const Padding(
+        padding: EdgeInsets.all(12),
+        child: CommonCircleLoading(size: 16),
+      );
+    }
+    final ping = _pings[peer.id];
+    if (ping == null) {
+      return IconButton(
+        tooltip: appLocalizations.tailscalePing,
+        onPressed: () => _ping([peer]),
+        icon: const GlyphIcon(AppGlyphs.bolt),
+      );
+    }
+    final delay = ping.ok ? ping.latencyMs : -1;
+    return Tooltip(
+      message: ping.ok ? appLocalizations.tailscalePing : (ping.error ?? ''),
+      child: TextButton(
+        onPressed: () => _ping([peer]),
+        child: Text(
+          ping.ok ? '$delay ms' : appLocalizations.tailscalePingFailed,
+          style: AppTextStyle.caption2
+              .of(context, emphasized: true)
+              .copyWith(color: context.colorScheme.delayColor(delay)),
+        ),
+      ),
+    );
+  }
+
   Widget _buildPeer(TailscalePeer peer, {bool self = false}) {
     final appLocalizations = context.appLocalizations;
+    final testable = !self && peer.online && tailscalePingTarget(peer) != null;
     final tags = [
       peer.online
           ? appLocalizations.tailscaleOnline
@@ -173,8 +314,10 @@ class TailscaleNetworkSectionState
       if (peer.exitNode) appLocalizations.tailscaleCurrentExitNode,
       if (!peer.exitNode && peer.exitNodeOption)
         appLocalizations.tailscaleExitNodeOption,
+      if (testable) ?_pathLabel(_pings[peer.id]),
     ];
-    return DecorationListItem(
+    final item = DecorationListItem(
+      onPressed: testable ? () => _ping([peer]) : null,
       leading: SizedBox.square(
         dimension: 10,
         child: DecoratedBox(
@@ -207,16 +350,27 @@ class TailscaleNetworkSectionState
       ),
       trailing: self
           ? null
-          : IconButton(
-              tooltip: appLocalizations.tailscaleAddRouting,
-              onPressed: () => _addRouting(peer),
-              icon: const GlyphIcon(AppGlyphs.listAdd),
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (testable) _latencyBadge(peer),
+                IconButton(
+                  tooltip: appLocalizations.tailscaleAddRouting,
+                  onPressed: () => _addRouting(peer),
+                  icon: const GlyphIcon(AppGlyphs.listAdd),
+                ),
+              ],
             ),
     );
+    if (!testable) {
+      return item;
+    }
+    return GestureDetector(onLongPress: () => _ping([peer]), child: item);
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(networkChangesProvider, (_, _) => onNetworkChanged());
     final appLocalizations = context.appLocalizations;
     final status = _status;
     final refreshButton = IconButton(
@@ -258,6 +412,9 @@ class TailscaleNetworkSectionState
       );
     }
     final peers = status.peers.where((peer) => peer.matches(_query)).toList();
+    final testable = status.peers.any(
+      (peer) => peer.online && !_pinging.contains(peer.id),
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -286,6 +443,14 @@ class TailscaleNetworkSectionState
         const SizedBox(height: 8),
         generateSection(
           title: '${appLocalizations.tailscalePeers} (${status.peers.length})',
+          actions: [
+            IconButtonData(
+              glyph: AppGlyphs.bolt,
+              tooltip: appLocalizations.tailscalePingAll,
+              isLoading: _pinging.isNotEmpty,
+              onPressed: testable ? () => _ping(status.peers) : null,
+            ),
+          ],
           items: [
             if (peers.isEmpty)
               FormRow(
@@ -294,6 +459,13 @@ class TailscaleNetworkSectionState
               ),
             for (final peer in peers) _buildPeer(peer),
           ],
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Text(
+            appLocalizations.tailscalePingDesc,
+            style: context.listCaptionStyle,
+          ),
         ),
       ],
     );

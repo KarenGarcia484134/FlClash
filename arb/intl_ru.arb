@@ -1056,5 +1056,20 @@
   "expressiveScheme": "Экспрессивная",
   "contentScheme": "Контентная",
   "rainbowScheme": "Радуга",
-  "fruitSaladScheme": "Фруктовый микс"
+  "fruitSaladScheme": "Фруктовый микс",
+  "tailscaleStatusConnecting": "Подключение",
+  "tailscalePing": "Проверить задержку",
+  "tailscalePingAll": "Проверить все",
+  "tailscalePathDirect": "Напрямую",
+  "tailscalePathRelay": "Ретранслятор {relay}",
+  "tailscalePathPeerRelay": "Пиринговый ретранслятор",
+  "tailscalePingFailed": "Нет ответа",
+  "tailscalePingDesc": "Нажмите на устройство или удерживайте его, чтобы проверить задержку. Устройства не в сети не проверяются.",
+  "@tailscalePathRelay": {
+    "placeholders": {
+      "relay": {
+        "type": "String"
+      }
+    }
+  }
 }

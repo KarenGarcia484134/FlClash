@@ -1221,4 +1221,292 @@ $TailscalePeerCopyWith<$Res>? get self {
 }
 }
 
+
+/// @nodoc
+mixin _$TailscalePingResult {
+
+ String get target; int get latencyMs; String? get endpoint; int? get derpRegionId; String? get derpRegionCode; String? get peerRelay; String? get error;
+/// Create a copy of TailscalePingResult
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$TailscalePingResultCopyWith<TailscalePingResult> get copyWith => _$TailscalePingResultCopyWithImpl<TailscalePingResult>(this as TailscalePingResult, _$identity);
+
+  /// Serializes this TailscalePingResult to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as TailscalePingResult;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TailscalePingResult&&(identical(other.target, _this.target) || other.target == _this.target)&&(identical(other.latencyMs, _this.latencyMs) || other.latencyMs == _this.latencyMs)&&(identical(other.endpoint, _this.endpoint) || other.endpoint == _this.endpoint)&&(identical(other.derpRegionId, _this.derpRegionId) || other.derpRegionId == _this.derpRegionId)&&(identical(other.derpRegionCode, _this.derpRegionCode) || other.derpRegionCode == _this.derpRegionCode)&&(identical(other.peerRelay, _this.peerRelay) || other.peerRelay == _this.peerRelay)&&(identical(other.error, _this.error) || other.error == _this.error));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+  final _this = this as TailscalePingResult;
+  return Object.hash(runtimeType,_this.target,_this.latencyMs,_this.endpoint,_this.derpRegionId,_this.derpRegionCode,_this.peerRelay,_this.error);
+}
+
+@override
+String toString() {
+  final _this = this as TailscalePingResult;
+  return 'TailscalePingResult(target: ${_this.target}, latencyMs: ${_this.latencyMs}, endpoint: ${_this.endpoint}, derpRegionId: ${_this.derpRegionId}, derpRegionCode: ${_this.derpRegionCode}, peerRelay: ${_this.peerRelay}, error: ${_this.error})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $TailscalePingResultCopyWith<$Res>  {
+  factory $TailscalePingResultCopyWith(TailscalePingResult value, $Res Function(TailscalePingResult) _then) = _$TailscalePingResultCopyWithImpl;
+@useResult
+$Res call({
+ String target, int latencyMs, String? endpoint, int? derpRegionId, String? derpRegionCode, String? peerRelay, String? error
+});
+
+
+
+
+}
+/// @nodoc
+class _$TailscalePingResultCopyWithImpl<$Res>
+    implements $TailscalePingResultCopyWith<$Res> {
+  _$TailscalePingResultCopyWithImpl(this._self, this._then);
+
+  final TailscalePingResult _self;
+  final $Res Function(TailscalePingResult) _then;
+
+/// Create a copy of TailscalePingResult
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? target = null,Object? latencyMs = null,Object? endpoint = freezed,Object? derpRegionId = freezed,Object? derpRegionCode = freezed,Object? peerRelay = freezed,Object? error = freezed,}) {
+  return _then(TailscalePingResult(
+target: null == target ? _self.target : target // ignore: cast_nullable_to_non_nullable
+as String,latencyMs: null == latencyMs ? _self.latencyMs : latencyMs // ignore: cast_nullable_to_non_nullable
+as int,endpoint: freezed == endpoint ? _self.endpoint : endpoint // ignore: cast_nullable_to_non_nullable
+as String?,derpRegionId: freezed == derpRegionId ? _self.derpRegionId : derpRegionId // ignore: cast_nullable_to_non_nullable
+as int?,derpRegionCode: freezed == derpRegionCode ? _self.derpRegionCode : derpRegionCode // ignore: cast_nullable_to_non_nullable
+as String?,peerRelay: freezed == peerRelay ? _self.peerRelay : peerRelay // ignore: cast_nullable_to_non_nullable
+as String?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [TailscalePingResult].
+extension TailscalePingResultPatterns on TailscalePingResult {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _TailscalePingResult value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _TailscalePingResult() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _TailscalePingResult value)  $default,){
+final _that = this;
+switch (_that) {
+case _TailscalePingResult():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _TailscalePingResult value)?  $default,){
+final _that = this;
+switch (_that) {
+case _TailscalePingResult() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String target,  int latencyMs,  String? endpoint,  int? derpRegionId,  String? derpRegionCode,  String? peerRelay,  String? error)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _TailscalePingResult() when $default != null:
+return $default(_that.target,_that.latencyMs,_that.endpoint,_that.derpRegionId,_that.derpRegionCode,_that.peerRelay,_that.error);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String target,  int latencyMs,  String? endpoint,  int? derpRegionId,  String? derpRegionCode,  String? peerRelay,  String? error)  $default,) {final _that = this;
+switch (_that) {
+case _TailscalePingResult():
+return $default(_that.target,_that.latencyMs,_that.endpoint,_that.derpRegionId,_that.derpRegionCode,_that.peerRelay,_that.error);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String target,  int latencyMs,  String? endpoint,  int? derpRegionId,  String? derpRegionCode,  String? peerRelay,  String? error)?  $default,) {final _that = this;
+switch (_that) {
+case _TailscalePingResult() when $default != null:
+return $default(_that.target,_that.latencyMs,_that.endpoint,_that.derpRegionId,_that.derpRegionCode,_that.peerRelay,_that.error);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _TailscalePingResult implements TailscalePingResult {
+  const _TailscalePingResult({this.target = '', this.latencyMs = -1, this.endpoint, this.derpRegionId, this.derpRegionCode, this.peerRelay, this.error});
+  factory _TailscalePingResult.fromJson(Map<String, dynamic> json) => _$TailscalePingResultFromJson(json);
+
+@override@JsonKey() final  String target;
+@override@JsonKey() final  int latencyMs;
+@override final  String? endpoint;
+@override final  int? derpRegionId;
+@override final  String? derpRegionCode;
+@override final  String? peerRelay;
+@override final  String? error;
+
+/// Create a copy of TailscalePingResult
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$TailscalePingResultCopyWith<_TailscalePingResult> get copyWith => __$TailscalePingResultCopyWithImpl<_TailscalePingResult>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$TailscalePingResultToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TailscalePingResult&&(identical(other.target, target) || other.target == target)&&(identical(other.latencyMs, latencyMs) || other.latencyMs == latencyMs)&&(identical(other.endpoint, endpoint) || other.endpoint == endpoint)&&(identical(other.derpRegionId, derpRegionId) || other.derpRegionId == derpRegionId)&&(identical(other.derpRegionCode, derpRegionCode) || other.derpRegionCode == derpRegionCode)&&(identical(other.peerRelay, peerRelay) || other.peerRelay == peerRelay)&&(identical(other.error, error) || other.error == error));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+    return Object.hash(runtimeType,target,latencyMs,endpoint,derpRegionId,derpRegionCode,peerRelay,error);
+}
+
+@override
+String toString() {
+    return 'TailscalePingResult(target: $target, latencyMs: $latencyMs, endpoint: $endpoint, derpRegionId: $derpRegionId, derpRegionCode: $derpRegionCode, peerRelay: $peerRelay, error: $error)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$TailscalePingResultCopyWith<$Res> implements $TailscalePingResultCopyWith<$Res> {
+  factory _$TailscalePingResultCopyWith(_TailscalePingResult value, $Res Function(_TailscalePingResult) _then) = __$TailscalePingResultCopyWithImpl;
+@override @useResult
+$Res call({
+ String target, int latencyMs, String? endpoint, int? derpRegionId, String? derpRegionCode, String? peerRelay, String? error
+});
+
+
+
+
+}
+/// @nodoc
+class __$TailscalePingResultCopyWithImpl<$Res>
+    implements _$TailscalePingResultCopyWith<$Res> {
+  __$TailscalePingResultCopyWithImpl(this._self, this._then);
+
+  final _TailscalePingResult _self;
+  final $Res Function(_TailscalePingResult) _then;
+
+/// Create a copy of TailscalePingResult
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? target = null,Object? latencyMs = null,Object? endpoint = freezed,Object? derpRegionId = freezed,Object? derpRegionCode = freezed,Object? peerRelay = freezed,Object? error = freezed,}) {
+  return _then(_TailscalePingResult(
+target: null == target ? _self.target : target // ignore: cast_nullable_to_non_nullable
+as String,latencyMs: null == latencyMs ? _self.latencyMs : latencyMs // ignore: cast_nullable_to_non_nullable
+as int,endpoint: freezed == endpoint ? _self.endpoint : endpoint // ignore: cast_nullable_to_non_nullable
+as String?,derpRegionId: freezed == derpRegionId ? _self.derpRegionId : derpRegionId // ignore: cast_nullable_to_non_nullable
+as int?,derpRegionCode: freezed == derpRegionCode ? _self.derpRegionCode : derpRegionCode // ignore: cast_nullable_to_non_nullable
+as String?,peerRelay: freezed == peerRelay ? _self.peerRelay : peerRelay // ignore: cast_nullable_to_non_nullable
+as String?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
 // dart format on
