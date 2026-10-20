@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'card.dart';
 import 'common.dart';
+import 'group_failure.dart';
 
 const _pinnedHeaderGap = 8.0;
 const _headerInset = 10.0;
@@ -22,7 +23,10 @@ const _groupMaxColumns = 3;
 const _lastRowGrowth = _headerInset - proxyGridSpacing;
 
 class ProxiesListView extends ConsumerStatefulWidget {
-  const ProxiesListView({super.key});
+  const ProxiesListView({super.key, this.focusGroupName});
+
+  /// Scrolled to the top on open, for a sheet opened for one group.
+  final String? focusGroupName;
 
   @override
   ConsumerState<ProxiesListView> createState() => _ProxiesListViewState();
@@ -38,6 +42,23 @@ class _ProxiesListViewState extends ConsumerState<ProxiesListView> {
   void initState() {
     super.initState();
     _controller = sheetScrollController(context);
+    final focusGroupName = widget.focusGroupName;
+    if (focusGroupName != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _focusGroup(focusGroupName);
+      });
+    }
+  }
+
+  void _focusGroup(String groupName) {
+    if (!mounted || !_controller.hasClients) {
+      return;
+    }
+    final position = _controller.position;
+    final offset = _getGroupOffsets().offsetOf(groupName);
+    _controller.jumpTo(
+      offset.clamp(position.minScrollExtent, position.maxScrollExtent),
+    );
   }
 
   @override
@@ -631,7 +652,7 @@ class ListHeader extends ConsumerWidget {
               child: Row(
                 children: [
                   _GroupIcon(src: group.icon, name: groupName),
-                  Flexible(child: _GroupSummary(groupName: groupName)),
+                  Flexible(child: _GroupSummary(group: group)),
                 ],
               ),
             ),
@@ -762,9 +783,9 @@ class _GroupIcon extends ConsumerWidget {
 }
 
 class _GroupSummary extends StatelessWidget {
-  const _GroupSummary({required this.groupName});
+  const _GroupSummary({required this.group});
 
-  final String groupName;
+  final Group group;
 
   @override
   Widget build(BuildContext context) {
@@ -772,14 +793,21 @@ class _GroupSummary extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        EmojiText(
-          groupName,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: AppTextStyle.callout.of(context, emphasized: true),
+        Row(
+          children: [
+            Flexible(
+              child: EmojiText(
+                group.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyle.callout.of(context, emphasized: true),
+              ),
+            ),
+            GroupFailureTag(group: group),
+          ],
         ),
         const SizedBox(height: 2),
-        Flexible(flex: 1, child: _SelectedProxyName(groupName: groupName)),
+        Flexible(flex: 1, child: _SelectedProxyName(groupName: group.name)),
       ],
     );
   }

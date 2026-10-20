@@ -1081,5 +1081,10 @@
         "type": "String"
       }
     }
-  }
+  },
+  "timedOutGroups": "Groupes en délai dépassé",
+  "timedOutGroupsDesc": "Le nœud actuellement utilisé par chacun de ces groupes a échoué à son dernier test de latence (délai dépassé ou erreur). Touchez un groupe pour y accéder.",
+  "noTimedOutGroups": "Aucun groupe en délai dépassé",
+  "groupFailureDetail": "Nœud actuel : {node} · {result}",
+  "showTimedOutGroups": "Afficher les groupes en délai dépassé"
 }

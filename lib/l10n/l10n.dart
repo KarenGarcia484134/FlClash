@@ -8991,6 +8991,56 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Timed-out groups`
+  String get timedOutGroups {
+    return Intl.message(
+      'Timed-out groups',
+      name: 'timedOutGroups',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The node each of these groups currently uses failed its last delay test (timed out or errored). Tap a group to jump to it.`
+  String get timedOutGroupsDesc {
+    return Intl.message(
+      'The node each of these groups currently uses failed its last delay test (timed out or errored). Tap a group to jump to it.',
+      name: 'timedOutGroupsDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No groups have timed out`
+  String get noTimedOutGroups {
+    return Intl.message(
+      'No groups have timed out',
+      name: 'noTimedOutGroups',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current node: {node} · {result}`
+  String groupFailureDetail(String node, String result) {
+    return Intl.message(
+      'Current node: $node · $result',
+      name: 'groupFailureDetail',
+      desc: '',
+      args: [node, result],
+    );
+  }
+
+  /// `Show timed-out groups`
+  String get showTimedOutGroups {
+    return Intl.message(
+      'Show timed-out groups',
+      name: 'showTimedOutGroups',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

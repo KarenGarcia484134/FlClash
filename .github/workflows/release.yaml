@@ -73,7 +73,7 @@ jobs:
             arch: amd64
             desktop: true
           - platform: macos
-            os: macos-latest
+            os: macos-15
             arch: arm64
             desktop: true
           # Intel Macs, built natively like upstream so the Go core (with the

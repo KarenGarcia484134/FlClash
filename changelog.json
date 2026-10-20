@@ -2,6 +2,29 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.19",
+      "tag": "v0.9.19",
+      "date": "2026-10-20",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "959218d",
+              "scope": "dashboard",
+              "text": "仪表盘「策略组」卡片的超时徽章可点按，列出超时的策略组（当前节点及失败原因）并一键跳转；代理页在超时策略组名旁标注「超时」，标签页布局显示当前节点的失败提示"
+            },
+            {
+              "id": "c2ce9ac",
+              "scope": "macos",
+              "text": "新增 Intel (x64) 版 macOS 安装包"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.18",
       "tag": "v0.9.18",
       "date": "2026-10-20",
