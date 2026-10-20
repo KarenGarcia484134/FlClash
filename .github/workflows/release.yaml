@@ -255,14 +255,16 @@ jobs:
           hdiutil attach -nobrowse -readonly -mountpoint "$mnt" "$dmg" >/dev/null
           trap 'hdiutil detach "$mnt" >/dev/null || true' EXIT
           app="$(ls -d "$mnt"/*.app | head -1)"
-          bad=0
+          bad=0 count=0
           while IFS= read -r -d '' bin; do
-            if file "$bin" | grep -q 'Mach-O'; then
+            if file -b "$bin" | grep -q 'Mach-O'; then
               archs="$(lipo -archs "$bin" 2>/dev/null || true)"
               echo "$archs  ${bin#"$mnt"/}"
+              count=$((count + 1))
               [[ " $archs " == *" $WANT "* ]] || bad=1
             fi
-          done < <(find "$app" -type f \( -perm -111 -o -name '*.dylib' \) -print0)
+          done < <(find "$app" -type f -print0)
+          test "$count" -gt 0 || { echo "::error::no Mach-O binary found in $dmg" >&2; exit 1; }
           test "$bad" = 0 || { echo "::error::$dmg has binaries without $WANT" >&2; exit 1; }
 
       - name: Upload artifact
