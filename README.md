@@ -70,7 +70,7 @@ Based on [chen08209/FlClash](https://github.com/chen08209/FlClash). Thanks to th
 
 Get builds from this repository's [Releases](https://github.com/KarenGarcia484134/FlClash/releases):
 
-- `v*` tags are stable releases with Android, Windows, macOS and Linux packages
+- `v*` tags are stable releases with Android, Windows, macOS and Linux packages; macOS comes as `macos-arm64.dmg` (Apple silicon) and `macos-amd64.dmg` (Intel)
 - `build-…` releases are development previews (pre-releases)
 
 ## Installation

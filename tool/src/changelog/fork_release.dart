@@ -28,11 +28,15 @@ class _Asset {
 }
 
 class _Platform {
-  const _Platform(this.name, this.assets, this.hint);
+  const _Platform(this.name, this.assets, this.hint, {this.partialHints});
 
   final String name;
   final List<_Asset> assets;
   final String hint;
+
+  /// The hint for a release that published only the asset with this suffix,
+  /// such as one from before the Intel Mac build.
+  final Map<String, String>? partialHints;
 }
 
 const _platforms = <_Platform>[
@@ -45,7 +49,18 @@ const _platforms = <_Platform>[
     _Asset('安装版 setup.exe', 'windows-amd64-setup.exe'),
     _Asset('便携版 zip', 'windows-amd64.zip'),
   ], 'x64'),
-  _Platform('macOS', [_Asset('DMG', 'macos-arm64.dmg')], '仅 Apple 芯片（arm64）'),
+  _Platform(
+    'macOS',
+    [
+      _Asset('Apple 芯片 arm64', 'macos-arm64.dmg'),
+      _Asset('Intel x64', 'macos-amd64.dmg'),
+    ],
+    'M1/M2/M3/M4 等 Apple 芯片选 arm64；Intel 处理器的 Mac 选 x64',
+    partialHints: {
+      'macos-arm64.dmg': '仅 Apple 芯片（arm64）',
+      'macos-amd64.dmg': '仅 Intel 处理器（x64）',
+    },
+  ),
   _Platform('Linux', [
     _Asset('AppImage', 'linux-amd64.AppImage'),
     _Asset('deb', 'linux-amd64.deb'),
@@ -98,18 +113,22 @@ String renderForkRelease(
     ..writeln('| --- | --- | --- |');
   for (final platform in _platforms) {
     final links = <String>[];
+    final published = <String>[];
     for (final asset in platform.assets) {
       final file = 'FlClash-${version.version}-${asset.suffix}';
       if (assets == null || assets.contains(file)) {
+        published.add(asset.suffix);
         links.add(
           '[${asset.label}]($base/releases/download/${version.tag}/$file)',
         );
       }
     }
     if (links.isNotEmpty) {
-      buffer.writeln(
-        '| ${platform.name} | ${links.join(' · ')} | ${platform.hint} |',
-      );
+      final partialHints = platform.partialHints ?? const {};
+      final hint =
+          (published.length == 1 ? partialHints[published.single] : null) ??
+          platform.hint;
+      buffer.writeln('| ${platform.name} | ${links.join(' · ')} | $hint |');
     }
   }
   buffer
