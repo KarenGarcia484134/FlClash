@@ -76,6 +76,13 @@ jobs:
             os: macos-latest
             arch: arm64
             desktop: true
+          # Intel Macs, built natively like upstream so the Go core (with the
+          # Tailscale with_gvisor tag), the Rust libraries and the Flutter app
+          # are all x86_64.
+          - platform: macos
+            os: macos-15-intel
+            arch: amd64
+            desktop: true
     steps:
       - name: Skip desktop
         id: gate
@@ -183,6 +190,11 @@ jobs:
           sed -i.bak "s/^version: .*/version: $VERSION/" pubspec.yaml && rm pubspec.yaml.bak
           grep '^version:' pubspec.yaml
 
+      # Upstream turns Impeller off on Intel Macs (see its flutter-upgrade notes).
+      - name: Disable Impeller on Intel macOS
+        if: steps.gate.outputs.skip != 'true' && matrix.platform == 'macos' && matrix.arch == 'amd64'
+        run: plutil -replace FLTEnableImpeller -bool NO macos/Runner/Info.plist
+
       - name: Get Flutter dependencies
         if: steps.gate.outputs.skip != 'true'
         run: |
@@ -231,6 +243,29 @@ jobs:
                 echo "::error::$apk is not signed with the $scheme scheme" >&2; exit 1; }
             done
           done
+
+      - name: Check macOS architecture
+        if: steps.gate.outputs.skip != 'true' && matrix.platform == 'macos'
+        env:
+          WANT: ${{ matrix.arch == 'amd64' && 'x86_64' || 'arm64' }}
+        run: |
+          set -euo pipefail
+          dmg="$(ls dist/*-macos-${{ matrix.arch }}.dmg)"
+          mnt="$(mktemp -d)"
+          hdiutil attach -nobrowse -readonly -mountpoint "$mnt" "$dmg" >/dev/null
+          trap 'hdiutil detach "$mnt" >/dev/null || true' EXIT
+          app="$(ls -d "$mnt"/*.app | head -1)"
+          bad=0 count=0
+          while IFS= read -r -d '' bin; do
+            if file -b "$bin" | grep -q 'Mach-O'; then
+              archs="$(lipo -archs "$bin" 2>/dev/null || true)"
+              echo "$archs  ${bin#"$mnt"/}"
+              count=$((count + 1))
+              [[ " $archs " == *" $WANT "* ]] || bad=1
+            fi
+          done < <(find "$app" -type f -print0)
+          test "$count" -gt 0 || { echo "::error::no Mach-O binary found in $dmg" >&2; exit 1; }
+          test "$bad" = 0 || { echo "::error::$dmg has binaries without $WANT" >&2; exit 1; }
 
       - name: Upload artifact
         if: steps.gate.outputs.skip != 'true'
@@ -285,6 +320,7 @@ jobs:
               echo "Automated build of \`${GITHUB_REF_NAME}\` @ \`${GITHUB_SHA::7}\`."
               echo
               echo "Android: use \`*-android-arm64-v8a.apk\` for most phones."
+              echo "macOS: \`*-macos-arm64.dmg\` for Apple silicon, \`*-macos-amd64.dmg\` for Intel Macs."
               echo
               echo "Build log: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
             } > notes.md

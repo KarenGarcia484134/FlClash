@@ -70,7 +70,7 @@
 
 前往本仓库的 [Releases](https://github.com/KarenGarcia484134/FlClash/releases) 下载：
 
-- `v*` 标签为正式版，包含 Android、Windows、macOS、Linux 安装包
+- `v*` 标签为正式版，包含 Android、Windows、macOS、Linux 安装包；macOS 分为 `macos-arm64.dmg`（Apple 芯片）和 `macos-amd64.dmg`（Intel 处理器）
 - `build-…` 开头的为开发预览版（预发布）
 
 ## 安装说明

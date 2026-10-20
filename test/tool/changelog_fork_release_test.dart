@@ -61,6 +61,7 @@ void main() {
       'FlClash-0.9.13-android-arm64-v8a.apk',
       'FlClash-0.9.13-windows-amd64-setup.exe',
       'FlClash-0.9.13-macos-arm64.dmg',
+      'FlClash-0.9.13-macos-amd64.dmg',
       'FlClash-0.9.13-linux-amd64.AppImage',
     ]) {
       expect(
@@ -83,6 +84,18 @@ void main() {
     expect(body, isNot(contains('armeabi-v7a](')));
     expect(body, isNot(contains('| Windows |')));
     expect(body, isNot(contains('/compare/')));
+  });
+
+  test('macOS lists both chips, and an older release only its own', () {
+    expect(
+      _render(),
+      contains('[Intel x64](https://github.com/owner/FlClash/releases/'),
+    );
+    expect(_render(), contains('Intel 处理器的 Mac 选 x64'));
+    final old = _render(assets: {'FlClash-0.9.13-macos-arm64.dmg'});
+    expect(old, contains('| macOS | [Apple 芯片 arm64]'));
+    expect(old, isNot(contains('macos-amd64.dmg')));
+    expect(old, contains('仅 Apple 芯片（arm64）'));
   });
 
   test('carries the structured payload the update dialog reads', () {
