@@ -1081,5 +1081,10 @@
         "type": "String"
       }
     }
-  }
+  },
+  "timedOutGroups": "시간 초과된 그룹",
+  "timedOutGroupsDesc": "이 그룹들이 현재 사용 중인 노드가 마지막 지연 테스트에서 시간 초과되었거나 실패했습니다. 그룹을 탭하면 해당 그룹으로 이동합니다.",
+  "noTimedOutGroups": "시간 초과된 그룹이 없습니다",
+  "groupFailureDetail": "현재 노드: {node} · {result}",
+  "showTimedOutGroups": "시간 초과된 그룹 보기"
 }

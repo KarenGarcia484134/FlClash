@@ -5,6 +5,7 @@ import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/views/dashboard/layout.dart';
 import 'package:fl_clash/views/dashboard/style.dart';
+import 'package:fl_clash/views/proxies/group_failure.dart';
 import 'package:fl_clash/views/proxies/proxies.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,7 +35,7 @@ Future<void> showProxiesSheet(BuildContext context, {String? groupName}) async {
   container.read(query.notifier).value = '';
   await showSheet<void>(
     context: context,
-    builder: (_) => const ProxiesView(picker: true),
+    builder: (_) => ProxiesView(picker: true, focusGroupName: groupName),
   );
   container.read(query.notifier).value = pageQuery;
 }
@@ -149,21 +150,28 @@ class _TimeoutChip extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var timedOut = 0;
-    for (final group in groups) {
-      final delay = ref.watch(
-        delayProvider(proxyName: group.name, testUrl: group.testUrl),
-      );
-      if (delay != null && delay < 0) {
-        timedOut++;
-      }
-    }
+    final timedOut = watchFailedGroups(ref, groups).length;
     if (timedOut == 0) {
       return const SizedBox.shrink();
     }
-    return DashboardChip(
-      label: context.appLocalizations.groupTimeoutCount(timedOut),
-      tone: DashboardChipTone.warn,
+    final appLocalizations = context.appLocalizations;
+    return Tooltip(
+      message: appLocalizations.showTimedOutGroups,
+      child: GestureDetector(
+        key: const ValueKey('dashboard-timeout-chip'),
+        behavior: HitTestBehavior.opaque,
+        onTap: () => showFailedGroupsSheet(
+          context,
+          groups: groups,
+          onSelected: (groupName) {
+            showProxiesSheet(context, groupName: groupName);
+          },
+        ),
+        child: DashboardChip(
+          label: appLocalizations.groupTimeoutCount(timedOut),
+          tone: DashboardChipTone.warn,
+        ),
+      ),
     );
   }
 }

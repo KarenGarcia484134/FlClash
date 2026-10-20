@@ -11,11 +11,14 @@ import 'setting.dart';
 import 'tab.dart';
 
 class ProxiesView extends ConsumerStatefulWidget {
-  const ProxiesView({super.key, this.picker = false});
+  const ProxiesView({super.key, this.picker = false, this.focusGroupName});
 
   /// Leaves the bar only its search and delay test, for picking a proxy from a
   /// sheet.
   final bool picker;
+
+  /// The group a sheet was opened for, scrolled to in the list layout.
+  final String? focusGroupName;
 
   @override
   ConsumerState<ProxiesView> createState() => _ProxiesViewState();
@@ -115,7 +118,9 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
       searchState: AppBarSearchState(onSearch: _onSearch),
       body: switch (proxiesType) {
         ProxiesType.tab => _tabView,
-        ProxiesType.list => const ProxiesListView(),
+        ProxiesType.list => ProxiesListView(
+          focusGroupName: widget.focusGroupName,
+        ),
       },
     );
   }

@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'card.dart';
 import 'common.dart';
+import 'group_failure.dart';
 import 'group_tabs.dart';
 
 class ProxiesTabView extends ConsumerStatefulWidget {
@@ -250,7 +251,7 @@ class ProxyGroupView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final proxies = group.all;
-    return CommonScrollBar(
+    final grid = CommonScrollBar(
       controller: controller,
       thumbVisibility: true,
       child: GridView.builder(
@@ -280,6 +281,12 @@ class ProxyGroupView extends ConsumerWidget {
           );
         },
       ),
+    );
+    return Column(
+      children: [
+        GroupFailureBanner(group: group),
+        Expanded(child: grid),
+      ],
     );
   }
 }

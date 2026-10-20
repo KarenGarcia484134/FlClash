@@ -394,4 +394,63 @@ void main() {
     await pumpCard(tester, density: DashboardDensity.mobile);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('the timeout chip lists the timed out groups and opens one', (
+    tester,
+  ) async {
+    container.read(groupsProvider.notifier).value = [
+      _group('Auto', ['HK-01'], now: 'HK-01'),
+      _group('Media', ['JP-01', 'US-01'], now: 'JP-01'),
+      _group('Game', ['SG-01'], now: 'SG-01'),
+    ];
+    container.read(delayDataSourceProvider.notifier).value = {
+      _testUrl: {'HK-01': 48, 'JP-01': -1, 'SG-01': -2},
+    };
+    await pumpCard(tester);
+
+    await tester.tap(find.byKey(const ValueKey('dashboard-timeout-chip')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('failed-group-Media')), findsOneWidget);
+    expect(find.byKey(const ValueKey('failed-group-Game')), findsOneWidget);
+    expect(find.byKey(const ValueKey('failed-group-Auto')), findsNothing);
+    expect(find.text('Current node: JP-01 · Timeout'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('failed-group-Media')));
+    await tester.pumpAndSettle();
+
+    expect(container.read(currentProfileProvider)!.currentGroupName, 'Media');
+    expect(
+      inSheet(find.byKey(const ValueKey('group-failure-banner-Media'))),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('the list layout tags only the timed out group headers', (
+    tester,
+  ) async {
+    container
+        .read(proxiesStyleSettingProvider.notifier)
+        .update((state) => state.copyWith(type: ProxiesType.list));
+    container.read(groupsProvider.notifier).value = [
+      _group('Auto', ['HK-01'], now: 'HK-01'),
+      _group('Media', ['JP-01'], now: 'JP-01'),
+    ];
+    container.read(delayDataSourceProvider.notifier).value = {
+      _testUrl: {'HK-01': 48, 'JP-01': -1},
+    };
+    await pumpCard(tester);
+
+    await tester.tap(name('Media').first);
+    await tester.pumpAndSettle();
+
+    expect(
+      inSheet(find.byKey(const ValueKey('group-failure-tag-Media'))),
+      findsOneWidget,
+    );
+    expect(
+      inSheet(find.byKey(const ValueKey('group-failure-tag-Auto'))),
+      findsNothing,
+    );
+  });
 }

@@ -1081,5 +1081,10 @@
         "type": "String"
       }
     }
-  }
+  },
+  "timedOutGroups": "Grupos con tiempo agotado",
+  "timedOutGroupsDesc": "El nodo que usa actualmente cada uno de estos grupos falló su última prueba de latencia (tiempo agotado o error). Toca un grupo para ir a él.",
+  "noTimedOutGroups": "Ningún grupo ha agotado el tiempo",
+  "groupFailureDetail": "Nodo actual: {node} · {result}",
+  "showTimedOutGroups": "Ver grupos con tiempo agotado"
 }

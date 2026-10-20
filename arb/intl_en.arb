@@ -1081,5 +1081,20 @@
         "type": "String"
       }
     }
+  },
+  "timedOutGroups": "Timed-out groups",
+  "timedOutGroupsDesc": "The node each of these groups currently uses failed its last delay test (timed out or errored). Tap a group to jump to it.",
+  "noTimedOutGroups": "No groups have timed out",
+  "groupFailureDetail": "Current node: {node} · {result}",
+  "showTimedOutGroups": "Show timed-out groups",
+  "@groupFailureDetail": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      },
+      "result": {
+        "type": "String"
+      }
+    }
   }
 }
