@@ -1441,6 +1441,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Private key passphrase",
     ),
     "process": MessageLookupByLibrary.simpleMessage("Process"),
+    "processPath": MessageLookupByLibrary.simpleMessage("Process path"),
     "profile": MessageLookupByLibrary.simpleMessage("Profile"),
     "profileAutoUpdateIntervalInvalidValidationDesc":
         MessageLookupByLibrary.simpleMessage("Please enter a valid interval"),

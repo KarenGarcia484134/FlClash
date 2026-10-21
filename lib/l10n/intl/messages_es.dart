@@ -1536,6 +1536,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Frase de contraseña de la clave privada",
     ),
     "process": MessageLookupByLibrary.simpleMessage("Proceso"),
+    "processPath": MessageLookupByLibrary.simpleMessage("Ruta del proceso"),
     "profile": MessageLookupByLibrary.simpleMessage("Perfil"),
     "profileAutoUpdateIntervalInvalidValidationDesc":
         MessageLookupByLibrary.simpleMessage("Introduce un intervalo válido"),

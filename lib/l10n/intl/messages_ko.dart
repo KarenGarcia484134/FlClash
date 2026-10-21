@@ -1232,6 +1232,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "privateKey": MessageLookupByLibrary.simpleMessage("개인 키"),
     "privateKeyPassphrase": MessageLookupByLibrary.simpleMessage("개인 키 암호"),
     "process": MessageLookupByLibrary.simpleMessage("프로세스"),
+    "processPath": MessageLookupByLibrary.simpleMessage("프로세스 경로"),
     "profile": MessageLookupByLibrary.simpleMessage("프로필"),
     "profileAutoUpdateIntervalInvalidValidationDesc":
         MessageLookupByLibrary.simpleMessage("올바른 간격을 입력하세요"),

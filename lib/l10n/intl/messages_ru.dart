@@ -1509,6 +1509,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Пароль закрытого ключа",
     ),
     "process": MessageLookupByLibrary.simpleMessage("Процесс"),
+    "processPath": MessageLookupByLibrary.simpleMessage("Путь процесса"),
     "profile": MessageLookupByLibrary.simpleMessage("Профиль"),
     "profileAutoUpdateIntervalInvalidValidationDesc":
         MessageLookupByLibrary.simpleMessage("Введите корректный интервал"),

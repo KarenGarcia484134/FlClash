@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.20",
+      "tag": "v0.9.20",
+      "date": "2026-10-21",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "7c0700d",
+              "scope": "connections",
+              "text": "修复 Windows 上实时连接大量条目进程名为空：Windows 默认开启「查找进程」（仅在原为关闭时自动开启一次）；进程名为空时用进程路径中的文件名补全，内核自身发起的连接显示为 mihomo；连接详情新增进程路径"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.19",
       "tag": "v0.9.19",
       "date": "2026-10-20",

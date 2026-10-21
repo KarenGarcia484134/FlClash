@@ -717,8 +717,8 @@ List<RecordColumn<TrackerInfo>> _connectionColumns(
   return [
     RecordColumn(
       TableColumn('source', appLocalizations.source, width: wide ? 160 : 140),
-      cell: (_, info) => _Source(info.metadata.process),
-      sortKey: (info) => info.metadata.process.toLowerCase(),
+      cell: (_, info) => _Source(info.metadata.processName),
+      sortKey: (info) => info.metadata.processName.toLowerCase(),
     ),
     RecordColumn(
       TableColumn('target', appLocalizations.target, flex: wide ? 1.3 : 1),
@@ -801,8 +801,8 @@ List<RecordColumn<TrackerInfo>> _requestColumns(BuildContext context) {
     ),
     RecordColumn(
       TableColumn('source', appLocalizations.source, width: 140),
-      cell: (_, info) => _Source(info.metadata.process),
-      sortKey: (info) => info.metadata.process.toLowerCase(),
+      cell: (_, info) => _Source(info.metadata.processName),
+      sortKey: (info) => info.metadata.processName.toLowerCase(),
     ),
     RecordColumn(
       TableColumn('target', appLocalizations.target, flex: 1.2),

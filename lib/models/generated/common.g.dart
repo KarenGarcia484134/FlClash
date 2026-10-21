@@ -33,6 +33,7 @@ _Metadata _$MetadataFromJson(Map<String, dynamic> json) => _Metadata(
   dnsMode: $enumDecodeNullable(_$DnsModeEnumMap, json['dnsMode']),
   process: json['process'] as String? ?? '',
   processPath: json['processPath'] as String? ?? '',
+  type: json['type'] as String? ?? '',
   remoteDestination: json['remoteDestination'] as String? ?? '',
   sourceGeoIP:
       (json['sourceGeoIP'] as List<dynamic>?)
@@ -61,6 +62,7 @@ Map<String, dynamic> _$MetadataToJson(_Metadata instance) => <String, dynamic>{
   'dnsMode': _$DnsModeEnumMap[instance.dnsMode],
   'process': instance.process,
   'processPath': instance.processPath,
+  'type': instance.type,
   'remoteDestination': instance.remoteDestination,
   'sourceGeoIP': instance.sourceGeoIP,
   'destinationGeoIP': instance.destinationGeoIP,

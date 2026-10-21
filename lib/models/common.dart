@@ -92,6 +92,7 @@ abstract class Metadata with _$Metadata {
     DnsMode? dnsMode,
     @Default('') String process,
     @Default('') String processPath,
+    @Default('') String type,
     @Default('') String remoteDestination,
     @Default([]) List<String> sourceGeoIP,
     @Default([]) List<String> destinationGeoIP,
@@ -138,6 +139,28 @@ List<TrackerInfo> trackerInfosOf(Object? data) {
 
 typedef RequestTraffic = ({int upload, int download});
 
+const coreProcessName = 'mihomo';
+
+extension MetadataExt on Metadata {
+  /// The process as the Core names it, else the file name of its path, else
+  /// the Core itself for the connections it opens on its own.
+  String get processName {
+    final name = process.trim();
+    if (name.isNotEmpty) {
+      return name;
+    }
+    final path = processPath.trim();
+    if (path.isNotEmpty) {
+      final base = path.split(RegExp(r'[\\/]')).last;
+      return base.isEmpty ? path : base;
+    }
+    if (type == 'Inner') {
+      return coreProcessName;
+    }
+    return '';
+  }
+}
+
 extension TrackerInfoExt on TrackerInfo {
   String get title {
     final host = metadata.host;
@@ -148,7 +171,7 @@ extension TrackerInfoExt on TrackerInfo {
   }
 
   String get progressText {
-    final process = metadata.process;
+    final process = metadata.processName;
     final uid = metadata.uid;
     if (uid != 0) {
       return '$process($uid)'.trim();
@@ -164,6 +187,7 @@ extension TrackerInfoExt on TrackerInfo {
     metadata.sourceIP,
     metadata.sourcePort,
     metadata.process,
+    metadata.processName,
     metadata.processPath,
     metadata.remoteDestination,
     metadata.destinationIPASN,
@@ -253,6 +277,7 @@ extension TrackerInfosStateExt on TrackerInfosState {
           (trackerInfo) => keywords.every(
             (keyword) =>
                 keyword == trackerInfo.metadata.process ||
+                keyword == trackerInfo.metadata.processName ||
                 trackerInfo.chains.contains(keyword),
           ),
         )

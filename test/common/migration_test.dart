@@ -293,6 +293,50 @@ void main() {
         expect(await upgrade('standard', 2), LiquidGlassMode.standard);
       });
 
+      test('turns process lookup on once on Windows only', () async {
+        Future<FindProcessMode> upgrade(
+          String mode, {
+          required int from,
+          required bool windows,
+        }) async {
+          final configMap = _createConfigMap();
+          final clash = Map<String, Object?>.from(
+            (configMap['patchClashConfig'] as Map?) ?? const {},
+          )..['find-process-mode'] = mode;
+          configMap['patchClashConfig'] = clash;
+          final store = _FakeMigrationStore(
+            configMap: configMap,
+            version: Migration.currentVersion,
+            upgradeVersion: from,
+          );
+          final config = await Migration(store: store, windows: windows).run();
+          return config.patchClashConfig.findProcessMode;
+        }
+
+        expect(
+          await upgrade('off', from: 2, windows: true),
+          FindProcessMode.always,
+        );
+        expect(
+          await upgrade('off', from: 2, windows: false),
+          FindProcessMode.off,
+        );
+        expect(
+          await upgrade('off', from: 3, windows: true),
+          FindProcessMode.off,
+        );
+      });
+
+      test('a new Windows install looks processes up', () async {
+        final store = _FakeMigrationStore(
+          configMap: null,
+          version: 0,
+          upgradeVersion: 0,
+        );
+        final config = await Migration(store: store, windows: true).run();
+        expect(config.patchClashConfig.findProcessMode, FindProcessMode.always);
+      });
+
       test('a new install only records it', () async {
         final store = _FakeMigrationStore(
           configMap: null,
