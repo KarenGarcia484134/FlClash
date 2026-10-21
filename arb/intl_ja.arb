@@ -1076,5 +1076,6 @@
   "timedOutGroupsDesc": "これらのグループで現在使用中のノードは、前回の遅延テストでタイムアウトまたは失敗しました。タップするとそのグループへ移動します。",
   "noTimedOutGroups": "タイムアウトしたグループはありません",
   "groupFailureDetail": "現在のノード：{node} · {result}",
-  "showTimedOutGroups": "タイムアウトしたグループを表示"
+  "showTimedOutGroups": "タイムアウトしたグループを表示",
+  "processPath": "プロセスのパス"
 }

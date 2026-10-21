@@ -264,6 +264,7 @@ class TrackerInfoDetailView extends StatelessWidget {
             (appLocalizations.creationTime, trackerInfo.start.showFull),
             (appLocalizations.networkType, metadata.network),
             (appLocalizations.process, trackerInfo.progressText),
+            (appLocalizations.processPath, metadata.processPath),
             (appLocalizations.rule, _ruleText(trackerInfo)),
             (appLocalizations.upload, trackerInfo.upload.traffic.show),
             (appLocalizations.download, trackerInfo.download.traffic.show),

@@ -1076,5 +1076,6 @@
   "timedOutGroupsDesc": "以下策略组当前使用的节点上次延迟测试超时或失败，点按可跳转到该策略组。",
   "noTimedOutGroups": "没有超时的策略组",
   "groupFailureDetail": "当前节点：{node} · {result}",
-  "showTimedOutGroups": "查看超时的策略组"
+  "showTimedOutGroups": "查看超时的策略组",
+  "processPath": "进程路径"
 }

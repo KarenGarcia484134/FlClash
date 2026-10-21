@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:fl_clash/common/constant.dart';
 import 'package:fl_clash/database/database.dart';
@@ -85,15 +86,21 @@ class Migration {
   final MigrationStore _store;
   final MigrationTransform _migrateV0;
 
-  Migration({required MigrationStore store, MigrationTransform? migrateV0})
-    : _store = store,
-      _migrateV0 = migrateV0 ?? oldToNowTask;
+  Migration({
+    required MigrationStore store,
+    MigrationTransform? migrateV0,
+    bool? windows,
+  }) : _store = store,
+       _migrateV0 = migrateV0 ?? oldToNowTask,
+       _windows = windows ?? Platform.isWindows;
+
+  final bool _windows;
 
   static const currentVersion = 1;
 
   /// One-off setting changes for upgrades, apart from [currentVersion], which
   /// backups carry and an older app refuses when it is newer than its own.
-  static const upgradeVersion = 2;
+  static const upgradeVersion = 3;
 
   static const Map<int, Config Function(Config config)> _upgrades = {
     1: _resetThemeColors,
@@ -135,8 +142,12 @@ class Migration {
     var upgraded = config;
     if (installed) {
       for (var version = from + 1; version <= upgradeVersion; version++) {
-        upgraded = _upgrades[version]!(upgraded);
+        upgraded = version == 3
+            ? findProcessesOnWindows(upgraded, windows: _windows)
+            : _upgrades[version]!(upgraded);
       }
+    } else {
+      upgraded = findProcessesOnWindows(upgraded, windows: _windows);
     }
     if (upgraded != config && !await _store.saveConfig(upgraded)) {
       return config;
@@ -247,3 +258,15 @@ String? _getStoredDavPassword(Map<String, Object?>? configMap) {
 }
 
 final migration = Migration(store: const _AppMigrationStore());
+
+/// Windows has no per-app identity besides the process, and with lookup off
+/// the connections page lists every one without a name.
+Config findProcessesOnWindows(Config config, {required bool windows}) {
+  if (!windows ||
+      config.patchClashConfig.findProcessMode != FindProcessMode.off) {
+    return config;
+  }
+  return config.copyWith.patchClashConfig(
+    findProcessMode: FindProcessMode.always,
+  );
+}

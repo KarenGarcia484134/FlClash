@@ -1541,6 +1541,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Phrase secrète de la clé privée",
     ),
     "process": MessageLookupByLibrary.simpleMessage("Processus"),
+    "processPath": MessageLookupByLibrary.simpleMessage("Chemin du processus"),
     "profile": MessageLookupByLibrary.simpleMessage("Profil"),
     "profileAutoUpdateIntervalInvalidValidationDesc":
         MessageLookupByLibrary.simpleMessage(

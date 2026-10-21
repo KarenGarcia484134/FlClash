@@ -9041,6 +9041,16 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Process path`
+  String get processPath {
+    return Intl.message(
+      'Process path',
+      name: 'processPath',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
