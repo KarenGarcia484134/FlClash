@@ -177,7 +177,7 @@ class _FailedGroupsListState extends ConsumerState<_FailedGroupsList> {
                     : () => _retry(failedNames),
                 icon: anyTesting
                     ? const CommonCircleLoading(size: 16)
-                    : const GlyphIcon(AppGlyphs.bolt),
+                    : const GlyphIcon(AppGlyphs.bolt, fill: 1),
                 label: Text(
                   anyTesting
                       ? appLocalizations.retryingTimedOutGroups
