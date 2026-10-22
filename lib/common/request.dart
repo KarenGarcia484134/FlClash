@@ -85,6 +85,24 @@ class Request {
     }
   }
 
+  /// Goes through the running proxy like other downloads, which helps where
+  /// GitHub is slow or blocked.
+  Future<void> downloadToFile(
+    String url,
+    String path, {
+    required CancelToken cancelToken,
+    void Function(int received, int total)? onProgress,
+  }) async {
+    final target = downloadTarget(url);
+    await _clashDio.downloadUri(
+      target.uri,
+      path,
+      cancelToken: cancelToken,
+      onReceiveProgress: onProgress,
+      options: Options(headers: target.headers),
+    );
+  }
+
   /// Null when this build is current; throws when GitHub cannot be asked.
   Future<Map<String, dynamic>?> checkForUpdate() async {
     final release = await latestRelease();

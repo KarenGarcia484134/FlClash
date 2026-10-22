@@ -1077,5 +1077,14 @@
   "noTimedOutGroups": "没有超时的策略组",
   "groupFailureDetail": "当前节点：{node} · {result}",
   "showTimedOutGroups": "查看超时的策略组",
-  "processPath": "进程路径"
+  "processPath": "进程路径",
+  "updateNow": "立即更新",
+  "openReleasePage": "打开网页",
+  "downloadingUpdate": "正在下载更新",
+  "updateDownloadFailed": "下载更新失败：{error}\n可以改为在发布页面中手动下载。",
+  "updateChecksumMismatch": "下载的文件未通过 SHA256 校验，已删除。",
+  "allowUnknownAppsTip": "请在系统设置中允许 FlClash 安装未知应用，然后返回并点按「继续」。",
+  "continueInstall": "继续",
+  "updateDmgOpened": "安装镜像已打开，请将 FlClash 拖入「应用程序」以完成更新。",
+  "updateInstallFailed": "无法启动安装程序：{error}"
 }

@@ -15,6 +15,7 @@ import android.os.Looper
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
@@ -47,6 +48,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import java.io.File
 
 class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware {
 
@@ -195,6 +197,19 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
                 result.success(true)
             }
 
+            "installApk" -> {
+                val path = call.argument<String>("path")
+                if (path == null) {
+                    result.error("INVALID_ARGUMENT", "No APK path", null)
+                } else {
+                    try {
+                        result.success(installApk(path))
+                    } catch (error: Exception) {
+                        result.error("INSTALL_FAILED", error.toString(), null)
+                    }
+                }
+            }
+
             "openAppSettings" -> {
                 result.success(openAppSettings())
             }
@@ -207,6 +222,30 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
                 result.notImplemented()
             }
         }
+    }
+
+    private fun installApk(path: String): String {
+        val context = activity ?: GlobalState.application
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            !context.packageManager.canRequestPackageInstalls()
+        ) {
+            val intent = Intent(
+                Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                "package:${context.packageName}".toUri(),
+            ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+            return "permission"
+        }
+        val uri = FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.updates",
+            File(path),
+        )
+        val intent = Intent(Intent.ACTION_VIEW)
+            .setDataAndType(uri, "application/vnd.android.package-archive")
+            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+        return "started"
     }
 
     private fun handleGetPackageIcon(call: MethodCall, result: Result) = reply(result) {

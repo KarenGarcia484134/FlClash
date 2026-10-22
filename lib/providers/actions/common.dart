@@ -139,6 +139,12 @@ class CommonAction extends _$CommonAction {
   }) async {
     if (data != null) {
       final context = globalState.navigatorKey.currentContext!;
+      final selection = await selectUpdateForThisDevice(
+        data,
+      ).catchError((_) => null);
+      if (!context.mounted) {
+        return;
+      }
       final res = await dialogs.showMessage(
         title: currentAppLocalizations.discoverNewVersion,
         message: _releaseSpan(
@@ -146,13 +152,30 @@ class CommonAction extends _$CommonAction {
           data['tag_name'] as String,
           data['body'] as String?,
         ),
-        confirmText: currentAppLocalizations.goDownload,
+        confirmText: selection != null
+            ? currentAppLocalizations.updateNow
+            : currentAppLocalizations.goDownload,
         cancelText: isUser ? null : currentAppLocalizations.noLongerRemind,
       );
-      if (res == true) {
-        unawaited(
-          launchUrl(Uri.parse(releasePageUrl(data['tag_name'] as String?))),
-        );
+      final page = Uri.parse(releasePageUrl(data['tag_name'] as String?));
+      if (res == true && selection == null) {
+        unawaited(launchUrl(page));
+      } else if (res == true) {
+        try {
+          await runAppUpdate(
+            selection!,
+            exitApp: () => ref.read(systemActionProvider.notifier).handleExit(),
+          );
+        } on UpdateFailure catch (failure) {
+          final open = await dialogs.showMessage(
+            title: currentAppLocalizations.checkUpdate,
+            message: TextSpan(text: failure.message),
+            confirmText: currentAppLocalizations.openReleasePage,
+          );
+          if (open == true) {
+            unawaited(launchUrl(page));
+          }
+        }
       } else if (!isUser && res == false) {
         ref
             .read(appSettingProvider.notifier)

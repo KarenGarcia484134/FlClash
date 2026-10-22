@@ -1087,5 +1087,14 @@
   "noTimedOutGroups": "Ningún grupo ha agotado el tiempo",
   "groupFailureDetail": "Nodo actual: {node} · {result}",
   "showTimedOutGroups": "Ver grupos con tiempo agotado",
-  "processPath": "Ruta del proceso"
+  "processPath": "Ruta del proceso",
+  "updateNow": "Actualizar ahora",
+  "openReleasePage": "Abrir página web",
+  "downloadingUpdate": "Descargando actualización",
+  "updateDownloadFailed": "No se pudo descargar la actualización: {error}\nPuedes descargarla desde la página de la versión.",
+  "updateChecksumMismatch": "El archivo descargado no superó la comprobación SHA256 y se eliminó.",
+  "allowUnknownAppsTip": "Permite que FlClash instale aplicaciones desconocidas en los ajustes del sistema y vuelve para tocar Continuar.",
+  "continueInstall": "Continuar",
+  "updateDmgOpened": "La imagen de disco está abierta. Arrastra FlClash a Aplicaciones para terminar la actualización.",
+  "updateInstallFailed": "No se pudo iniciar el instalador: {error}"
 }

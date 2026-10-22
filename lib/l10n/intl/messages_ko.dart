@@ -211,11 +211,16 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m86(value) => "합계 ${value}";
 
-  static String m87(label) => "${label}은(는) URL이어야 합니다";
+  static String m87(error) =>
+      "업데이트를 다운로드하지 못했습니다: ${error}\n릴리스 페이지에서 직접 다운로드할 수 있습니다.";
 
-  static String m88(count) => "${Intl.plural(count, other: '${count}년 전')}";
+  static String m88(error) => "설치 프로그램을 시작하지 못했습니다: ${error}";
 
-  static String m89(count) => "${Intl.plural(count, other: '${count}년 전')}";
+  static String m89(label) => "${label}은(는) URL이어야 합니다";
+
+  static String m90(count) => "${Intl.plural(count, other: '${count}년 전')}";
+
+  static String m91(count) => "${Intl.plural(count, other: '${count}년 전')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -286,6 +291,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "allowBypass": MessageLookupByLibrary.simpleMessage("앱의 VPN 우회 허용"),
     "allowLan": MessageLookupByLibrary.simpleMessage("LAN 허용"),
+    "allowUnknownAppsTip": MessageLookupByLibrary.simpleMessage(
+      "시스템 설정에서 FlClash의 알 수 없는 앱 설치를 허용한 뒤 돌아와 \'계속\'을 누르세요.",
+    ),
     "allowedIps": MessageLookupByLibrary.simpleMessage("허용 IP"),
     "answers": MessageLookupByLibrary.simpleMessage("응답"),
     "app": MessageLookupByLibrary.simpleMessage("앱"),
@@ -438,6 +446,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "content": MessageLookupByLibrary.simpleMessage("내용"),
     "contentNotEmpty": MessageLookupByLibrary.simpleMessage("내용을 입력하세요"),
     "contentScheme": MessageLookupByLibrary.simpleMessage("콘텐츠"),
+    "continueInstall": MessageLookupByLibrary.simpleMessage("계속"),
     "controlGlobalAddedRules": MessageLookupByLibrary.simpleMessage(
       "전역 추가 규칙 관리",
     ),
@@ -668,6 +677,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "done": MessageLookupByLibrary.simpleMessage("완료"),
     "download": MessageLookupByLibrary.simpleMessage("다운로드"),
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage("다운로드 대역폭"),
+    "downloadingUpdate": MessageLookupByLibrary.simpleMessage("업데이트 다운로드 중"),
     "duration": MessageLookupByLibrary.simpleMessage("소요 시간"),
     "edit": MessageLookupByLibrary.simpleMessage("편집"),
     "editCustomRouting": MessageLookupByLibrary.simpleMessage(
@@ -1186,6 +1196,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "필요 시 실행은 제외된 Wi-Fi에서 프록시를 일시 중지합니다.",
     ),
     "onlyStatisticsProxy": MessageLookupByLibrary.simpleMessage("프록시 트래픽만 집계"),
+    "openReleasePage": MessageLookupByLibrary.simpleMessage("웹페이지 열기"),
     "optional": MessageLookupByLibrary.simpleMessage("선택 사항"),
     "options": MessageLookupByLibrary.simpleMessage("옵션"),
     "other": MessageLookupByLibrary.simpleMessage("기타"),
@@ -1798,11 +1809,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "unnamed": MessageLookupByLibrary.simpleMessage("이름 없음"),
     "unpinWindow": MessageLookupByLibrary.simpleMessage("창 고정 해제"),
     "update": MessageLookupByLibrary.simpleMessage("업데이트"),
+    "updateChecksumMismatch": MessageLookupByLibrary.simpleMessage(
+      "다운로드한 파일이 SHA256 검사에 실패하여 삭제했습니다.",
+    ),
+    "updateDmgOpened": MessageLookupByLibrary.simpleMessage(
+      "디스크 이미지를 열었습니다. FlClash를 응용 프로그램으로 드래그하여 업데이트를 완료하세요.",
+    ),
+    "updateDownloadFailed": m87,
+    "updateInstallFailed": m88,
+    "updateNow": MessageLookupByLibrary.simpleMessage("지금 업데이트"),
     "upload": MessageLookupByLibrary.simpleMessage("업로드"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("업로드 대역폭"),
     "upstreamProject": MessageLookupByLibrary.simpleMessage("업스트림 프로젝트"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m87,
+    "urlTip": m89,
     "useHosts": MessageLookupByLibrary.simpleMessage("hosts 사용"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("시스템 hosts 사용"),
     "usedShort": MessageLookupByLibrary.simpleMessage("사용"),
@@ -1826,8 +1846,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "시스템에 기록하면 시스템 시계도 설정합니다. Android에서는 무시됩니다.",
     ),
-    "yearsAgo": m88,
-    "yearsAgoShort": m89,
+    "yearsAgo": m90,
+    "yearsAgoShort": m91,
     "yes": MessageLookupByLibrary.simpleMessage("예"),
     "zhCN": MessageLookupByLibrary.simpleMessage("중국어 간체"),
   };

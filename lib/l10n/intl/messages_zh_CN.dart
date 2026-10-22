@@ -206,11 +206,15 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m86(value) => "累计 ${value}";
 
-  static String m87(label) => "${label}必须为URL";
+  static String m87(error) => "下载更新失败：${error}\n可以改为在发布页面中手动下载。";
 
-  static String m88(count) => "${count} 年前";
+  static String m88(error) => "无法启动安装程序：${error}";
 
-  static String m89(count) => "${count} 年前";
+  static String m89(label) => "${label}必须为URL";
+
+  static String m90(count) => "${count} 年前";
+
+  static String m91(count) => "${count} 年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -277,6 +281,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "allowBypass": MessageLookupByLibrary.simpleMessage("允许应用绕过VPN"),
     "allowLan": MessageLookupByLibrary.simpleMessage("局域网代理"),
+    "allowUnknownAppsTip": MessageLookupByLibrary.simpleMessage(
+      "请在系统设置中允许 FlClash 安装未知应用，然后返回并点按「继续」。",
+    ),
     "allowedIps": MessageLookupByLibrary.simpleMessage("允许的 IP"),
     "answers": MessageLookupByLibrary.simpleMessage("应答"),
     "app": MessageLookupByLibrary.simpleMessage("应用"),
@@ -413,6 +420,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "content": MessageLookupByLibrary.simpleMessage("内容"),
     "contentNotEmpty": MessageLookupByLibrary.simpleMessage("内容不能为空"),
     "contentScheme": MessageLookupByLibrary.simpleMessage("内容主题"),
+    "continueInstall": MessageLookupByLibrary.simpleMessage("继续"),
     "controlGlobalAddedRules": MessageLookupByLibrary.simpleMessage("控制全局附加规则"),
     "copy": MessageLookupByLibrary.simpleMessage("复制"),
     "copyEnvVar": MessageLookupByLibrary.simpleMessage("复制环境变量"),
@@ -611,6 +619,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "done": MessageLookupByLibrary.simpleMessage("完成"),
     "download": MessageLookupByLibrary.simpleMessage("下载"),
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage("下行带宽"),
+    "downloadingUpdate": MessageLookupByLibrary.simpleMessage("正在下载更新"),
     "duration": MessageLookupByLibrary.simpleMessage("时长"),
     "edit": MessageLookupByLibrary.simpleMessage("编辑"),
     "editCustomRouting": MessageLookupByLibrary.simpleMessage("编辑自定义分流"),
@@ -1075,6 +1084,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "按需运行会在连上排除的 Wi-Fi 时暂停代理。",
     ),
     "onlyStatisticsProxy": MessageLookupByLibrary.simpleMessage("仅统计代理流量"),
+    "openReleasePage": MessageLookupByLibrary.simpleMessage("打开网页"),
     "optional": MessageLookupByLibrary.simpleMessage("可选"),
     "options": MessageLookupByLibrary.simpleMessage("选项"),
     "other": MessageLookupByLibrary.simpleMessage("其他"),
@@ -1611,11 +1621,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "unnamed": MessageLookupByLibrary.simpleMessage("未命名"),
     "unpinWindow": MessageLookupByLibrary.simpleMessage("取消置顶"),
     "update": MessageLookupByLibrary.simpleMessage("更新"),
+    "updateChecksumMismatch": MessageLookupByLibrary.simpleMessage(
+      "下载的文件未通过 SHA256 校验，已删除。",
+    ),
+    "updateDmgOpened": MessageLookupByLibrary.simpleMessage(
+      "安装镜像已打开，请将 FlClash 拖入「应用程序」以完成更新。",
+    ),
+    "updateDownloadFailed": m87,
+    "updateInstallFailed": m88,
+    "updateNow": MessageLookupByLibrary.simpleMessage("立即更新"),
     "upload": MessageLookupByLibrary.simpleMessage("上传"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("上行带宽"),
     "upstreamProject": MessageLookupByLibrary.simpleMessage("上游项目"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m87,
+    "urlTip": m89,
     "useHosts": MessageLookupByLibrary.simpleMessage("使用Hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("使用系统Hosts"),
     "usedShort": MessageLookupByLibrary.simpleMessage("已用"),
@@ -1639,8 +1658,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "写入系统会同时设置系统时钟，Android 上不生效。",
     ),
-    "yearsAgo": m88,
-    "yearsAgoShort": m89,
+    "yearsAgo": m90,
+    "yearsAgoShort": m91,
     "yes": MessageLookupByLibrary.simpleMessage("是"),
     "zhCN": MessageLookupByLibrary.simpleMessage("中文简体"),
   };

@@ -1097,5 +1097,28 @@
       }
     }
   },
-  "processPath": "Process path"
+  "processPath": "Process path",
+  "updateNow": "Update now",
+  "openReleasePage": "Open webpage",
+  "downloadingUpdate": "Downloading update",
+  "updateDownloadFailed": "Couldn't download the update: {error}\nYou can download it from the release page instead.",
+  "updateChecksumMismatch": "The downloaded file failed its SHA256 check and was deleted.",
+  "allowUnknownAppsTip": "Allow FlClash to install unknown apps in the system settings, then come back and tap Continue.",
+  "continueInstall": "Continue",
+  "updateDmgOpened": "The disk image is open. Drag FlClash into Applications to finish updating.",
+  "updateInstallFailed": "Couldn't start the installer: {error}",
+  "@updateDownloadFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@updateInstallFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

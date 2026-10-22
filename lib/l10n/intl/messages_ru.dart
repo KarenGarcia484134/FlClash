@@ -233,12 +233,17 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m86(value) => "Всего ${value}";
 
-  static String m87(label) => "Значение «${label}» должно быть URL";
+  static String m87(error) =>
+      "Не удалось загрузить обновление: ${error}\nМожно скачать его вручную со страницы релиза.";
 
-  static String m88(count) =>
+  static String m88(error) => "Не удалось запустить установщик: ${error}";
+
+  static String m89(label) => "Значение «${label}» должно быть URL";
+
+  static String m90(count) =>
       "${Intl.plural(count, one: '${count} год назад', few: '${count} года назад', many: '${count} лет назад', other: '${count} года назад')}";
 
-  static String m89(count) =>
+  static String m91(count) =>
       "${Intl.plural(count, one: '${count} г. назад', few: '${count} г. назад', many: '${count} л. назад', other: '${count} г. назад')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -336,6 +341,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Разрешить приложениям обходить VPN",
     ),
     "allowLan": MessageLookupByLibrary.simpleMessage("Разрешить LAN"),
+    "allowUnknownAppsTip": MessageLookupByLibrary.simpleMessage(
+      "Разрешите FlClash устанавливать неизвестные приложения в настройках системы, затем вернитесь и нажмите «Продолжить».",
+    ),
     "allowedIps": MessageLookupByLibrary.simpleMessage("Разрешённые IP"),
     "answers": MessageLookupByLibrary.simpleMessage("Ответы"),
     "app": MessageLookupByLibrary.simpleMessage("Приложение"),
@@ -548,6 +556,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Содержимое не может быть пустым",
     ),
     "contentScheme": MessageLookupByLibrary.simpleMessage("Контентная"),
+    "continueInstall": MessageLookupByLibrary.simpleMessage("Продолжить"),
     "controlGlobalAddedRules": MessageLookupByLibrary.simpleMessage(
       "Управление глобальными добавленными правилами",
     ),
@@ -813,6 +822,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "download": MessageLookupByLibrary.simpleMessage("Загрузка"),
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Скорость загрузки",
+    ),
+    "downloadingUpdate": MessageLookupByLibrary.simpleMessage(
+      "Загрузка обновления",
     ),
     "duration": MessageLookupByLibrary.simpleMessage("Длительность"),
     "edit": MessageLookupByLibrary.simpleMessage("Редактировать"),
@@ -1441,6 +1453,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "onlyStatisticsProxy": MessageLookupByLibrary.simpleMessage(
       "Учитывать только трафик прокси",
     ),
+    "openReleasePage": MessageLookupByLibrary.simpleMessage("Открыть страницу"),
     "optional": MessageLookupByLibrary.simpleMessage("Необязательно"),
     "options": MessageLookupByLibrary.simpleMessage("Опции"),
     "other": MessageLookupByLibrary.simpleMessage("Другое"),
@@ -2197,11 +2210,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "unnamed": MessageLookupByLibrary.simpleMessage("Без названия"),
     "unpinWindow": MessageLookupByLibrary.simpleMessage("Открепить окно"),
     "update": MessageLookupByLibrary.simpleMessage("Обновить"),
+    "updateChecksumMismatch": MessageLookupByLibrary.simpleMessage(
+      "Загруженный файл не прошёл проверку SHA256 и был удалён.",
+    ),
+    "updateDmgOpened": MessageLookupByLibrary.simpleMessage(
+      "Образ диска открыт. Перетащите FlClash в «Программы», чтобы завершить обновление.",
+    ),
+    "updateDownloadFailed": m87,
+    "updateInstallFailed": m88,
+    "updateNow": MessageLookupByLibrary.simpleMessage("Обновить сейчас"),
     "upload": MessageLookupByLibrary.simpleMessage("Отдача"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("Скорость отдачи"),
     "upstreamProject": MessageLookupByLibrary.simpleMessage("Исходный проект"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m87,
+    "urlTip": m89,
     "useHosts": MessageLookupByLibrary.simpleMessage("Использовать hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage(
       "Использовать системный hosts",
@@ -2235,8 +2257,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "«Записывать в систему» также устанавливает системные часы; Android это игнорирует.",
     ),
-    "yearsAgo": m88,
-    "yearsAgoShort": m89,
+    "yearsAgo": m90,
+    "yearsAgoShort": m91,
     "yes": MessageLookupByLibrary.simpleMessage("Да"),
     "zhCN": MessageLookupByLibrary.simpleMessage("Упрощённый китайский"),
   };
