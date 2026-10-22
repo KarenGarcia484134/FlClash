@@ -340,6 +340,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Este perfil está cifrado con age y necesita una clave secreta de age para descifrarse",
     ),
     "agree": MessageLookupByLibrary.simpleMessage("Aceptar"),
+    "allGroupsRecovered": MessageLookupByLibrary.simpleMessage(
+      "Todos los grupos se han recuperado",
+    ),
     "allReferencedProxies": MessageLookupByLibrary.simpleMessage(
       "Todos los proxies referenciados",
     ),
@@ -1001,6 +1004,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "groupCount": m33,
     "groupCountUnit": MessageLookupByLibrary.simpleMessage("grupos"),
     "groupFailureDetail": m34,
+    "groupRecovered": MessageLookupByLibrary.simpleMessage("Recuperado"),
     "groupTimeoutCount": m35,
     "hasCacheChange": MessageLookupByLibrary.simpleMessage(
       "¿Guardar los cambios en la caché?",
@@ -1704,6 +1708,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "result": MessageLookupByLibrary.simpleMessage("Resultado"),
     "retry": MessageLookupByLibrary.simpleMessage("Reintentar"),
+    "retryTimedOutGroups": MessageLookupByLibrary.simpleMessage(
+      "Reintentar todo",
+    ),
+    "retryingTimedOutGroups": MessageLookupByLibrary.simpleMessage(
+      "Reintentando…",
+    ),
     "routeAddress": MessageLookupByLibrary.simpleMessage("Direcciones de ruta"),
     "routeExcludeAddress": MessageLookupByLibrary.simpleMessage(
       "Direcciones excluidas de la ruta",

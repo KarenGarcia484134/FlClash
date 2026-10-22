@@ -285,6 +285,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "이 프로필은 age로 암호화되어 있어 복호화하려면 age 비밀 키가 필요합니다",
     ),
     "agree": MessageLookupByLibrary.simpleMessage("동의"),
+    "allGroupsRecovered": MessageLookupByLibrary.simpleMessage(
+      "모든 그룹이 복구되었습니다",
+    ),
     "allReferencedProxies": MessageLookupByLibrary.simpleMessage("참조된 모든 프록시"),
     "allReferencedProxyProviders": MessageLookupByLibrary.simpleMessage(
       "참조된 모든 프록시 공급자",
@@ -802,6 +805,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "groupCount": m33,
     "groupCountUnit": MessageLookupByLibrary.simpleMessage("개"),
     "groupFailureDetail": m34,
+    "groupRecovered": MessageLookupByLibrary.simpleMessage("복구됨"),
     "groupTimeoutCount": m35,
     "hasCacheChange": MessageLookupByLibrary.simpleMessage("변경 사항을 캐시하시겠습니까?"),
     "hashByInUser": MessageLookupByLibrary.simpleMessage("인바운드 사용자별 해시"),
@@ -1362,6 +1366,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "restoreSuccess": MessageLookupByLibrary.simpleMessage("복원 완료"),
     "result": MessageLookupByLibrary.simpleMessage("결과"),
     "retry": MessageLookupByLibrary.simpleMessage("다시 시도"),
+    "retryTimedOutGroups": MessageLookupByLibrary.simpleMessage("모두 재시도"),
+    "retryingTimedOutGroups": MessageLookupByLibrary.simpleMessage("재시도 중…"),
     "routeAddress": MessageLookupByLibrary.simpleMessage("라우팅 주소"),
     "routeExcludeAddress": MessageLookupByLibrary.simpleMessage("라우팅 제외 주소"),
     "routingCondition": MessageLookupByLibrary.simpleMessage("Condition"),

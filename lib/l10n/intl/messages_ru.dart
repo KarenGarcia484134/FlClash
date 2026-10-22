@@ -331,6 +331,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Профиль зашифрован с помощью age, для расшифровки нужен секретный ключ age",
     ),
     "agree": MessageLookupByLibrary.simpleMessage("Согласен"),
+    "allGroupsRecovered": MessageLookupByLibrary.simpleMessage(
+      "Все группы восстановились",
+    ),
     "allReferencedProxies": MessageLookupByLibrary.simpleMessage(
       "Все используемые прокси",
     ),
@@ -984,6 +987,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "groupCount": m33,
     "groupCountUnit": MessageLookupByLibrary.simpleMessage("групп"),
     "groupFailureDetail": m34,
+    "groupRecovered": MessageLookupByLibrary.simpleMessage("Восстановлено"),
     "groupTimeoutCount": m35,
     "hasCacheChange": MessageLookupByLibrary.simpleMessage(
       "Кэшировать изменения?",
@@ -1671,6 +1675,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "result": MessageLookupByLibrary.simpleMessage("Результат"),
     "retry": MessageLookupByLibrary.simpleMessage("Повторить"),
+    "retryTimedOutGroups": MessageLookupByLibrary.simpleMessage(
+      "Повторить все",
+    ),
+    "retryingTimedOutGroups": MessageLookupByLibrary.simpleMessage(
+      "Повторная проверка…",
+    ),
     "routeAddress": MessageLookupByLibrary.simpleMessage("Адреса маршрутов"),
     "routeExcludeAddress": MessageLookupByLibrary.simpleMessage(
       "Исключённые адреса маршрутов",

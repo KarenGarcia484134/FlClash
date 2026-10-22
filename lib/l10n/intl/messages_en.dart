@@ -325,6 +325,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "This profile is encrypted with age and needs an age secret key to decrypt",
     ),
     "agree": MessageLookupByLibrary.simpleMessage("Agree"),
+    "allGroupsRecovered": MessageLookupByLibrary.simpleMessage(
+      "All groups have recovered",
+    ),
     "allReferencedProxies": MessageLookupByLibrary.simpleMessage(
       "All referenced proxies",
     ),
@@ -946,6 +949,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "groupCount": m33,
     "groupCountUnit": MessageLookupByLibrary.simpleMessage("groups"),
     "groupFailureDetail": m34,
+    "groupRecovered": MessageLookupByLibrary.simpleMessage("Recovered"),
     "groupTimeoutCount": m35,
     "hasCacheChange": MessageLookupByLibrary.simpleMessage(
       "Cache the changes?",
@@ -1597,6 +1601,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "result": MessageLookupByLibrary.simpleMessage("Result"),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
+    "retryTimedOutGroups": MessageLookupByLibrary.simpleMessage("Retry all"),
+    "retryingTimedOutGroups": MessageLookupByLibrary.simpleMessage("Retrying…"),
     "routeAddress": MessageLookupByLibrary.simpleMessage("Route addresses"),
     "routeExcludeAddress": MessageLookupByLibrary.simpleMessage(
       "Route exclude addresses",

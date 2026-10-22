@@ -1096,5 +1096,9 @@
   "allowUnknownAppsTip": "시스템 설정에서 FlClash의 알 수 없는 앱 설치를 허용한 뒤 돌아와 '계속'을 누르세요.",
   "continueInstall": "계속",
   "updateDmgOpened": "디스크 이미지를 열었습니다. FlClash를 응용 프로그램으로 드래그하여 업데이트를 완료하세요.",
-  "updateInstallFailed": "설치 프로그램을 시작하지 못했습니다: {error}"
+  "updateInstallFailed": "설치 프로그램을 시작하지 못했습니다: {error}",
+  "retryTimedOutGroups": "모두 재시도",
+  "retryingTimedOutGroups": "재시도 중…",
+  "allGroupsRecovered": "모든 그룹이 복구되었습니다",
+  "groupRecovered": "복구됨"
 }

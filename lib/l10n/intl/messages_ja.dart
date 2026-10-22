@@ -281,6 +281,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "このプロファイルは age で暗号化されており、復号には age 秘密鍵が必要です",
     ),
     "agree": MessageLookupByLibrary.simpleMessage("同意する"),
+    "allGroupsRecovered": MessageLookupByLibrary.simpleMessage(
+      "すべてのグループが回復しました",
+    ),
     "allReferencedProxies": MessageLookupByLibrary.simpleMessage(
       "参照されているすべてのプロキシ",
     ),
@@ -800,6 +803,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "groupCount": m33,
     "groupCountUnit": MessageLookupByLibrary.simpleMessage("個"),
     "groupFailureDetail": m34,
+    "groupRecovered": MessageLookupByLibrary.simpleMessage("回復"),
     "groupTimeoutCount": m35,
     "hasCacheChange": MessageLookupByLibrary.simpleMessage("変更をキャッシュしますか？"),
     "hashByInUser": MessageLookupByLibrary.simpleMessage("インバウンドユーザーでハッシュ"),
@@ -1356,6 +1360,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "restoreSuccess": MessageLookupByLibrary.simpleMessage("復元が完了しました"),
     "result": MessageLookupByLibrary.simpleMessage("結果"),
     "retry": MessageLookupByLibrary.simpleMessage("再試行"),
+    "retryTimedOutGroups": MessageLookupByLibrary.simpleMessage("すべて再試行"),
+    "retryingTimedOutGroups": MessageLookupByLibrary.simpleMessage("再試行中…"),
     "routeAddress": MessageLookupByLibrary.simpleMessage("ルートアドレス"),
     "routeExcludeAddress": MessageLookupByLibrary.simpleMessage("ルート除外アドレス"),
     "routingCondition": MessageLookupByLibrary.simpleMessage("条件"),

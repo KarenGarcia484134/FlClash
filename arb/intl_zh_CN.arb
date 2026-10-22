@@ -1086,5 +1086,9 @@
   "allowUnknownAppsTip": "请在系统设置中允许 FlClash 安装未知应用，然后返回并点按「继续」。",
   "continueInstall": "继续",
   "updateDmgOpened": "安装镜像已打开，请将 FlClash 拖入「应用程序」以完成更新。",
-  "updateInstallFailed": "无法启动安装程序：{error}"
+  "updateInstallFailed": "无法启动安装程序：{error}",
+  "retryTimedOutGroups": "全部重试",
+  "retryingTimedOutGroups": "正在重试…",
+  "allGroupsRecovered": "所有策略组均已恢复",
+  "groupRecovered": "已恢复"
 }

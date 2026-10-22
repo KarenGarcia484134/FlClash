@@ -1096,5 +1096,9 @@
   "allowUnknownAppsTip": "Autorisez FlClash à installer des applications inconnues dans les réglages du système, puis revenez et touchez Continuer.",
   "continueInstall": "Continuer",
   "updateDmgOpened": "L’image disque est ouverte. Faites glisser FlClash dans Applications pour terminer la mise à jour.",
-  "updateInstallFailed": "Impossible de lancer l’installateur : {error}"
+  "updateInstallFailed": "Impossible de lancer l’installateur : {error}",
+  "retryTimedOutGroups": "Tout réessayer",
+  "retryingTimedOutGroups": "Nouvel essai…",
+  "allGroupsRecovered": "Tous les groupes sont rétablis",
+  "groupRecovered": "Rétabli"
 }
