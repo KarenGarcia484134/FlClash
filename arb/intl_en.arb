@@ -1120,5 +1120,9 @@
         "type": "String"
       }
     }
-  }
+  },
+  "retryTimedOutGroups": "Retry all",
+  "retryingTimedOutGroups": "Retrying…",
+  "allGroupsRecovered": "All groups have recovered",
+  "groupRecovered": "Recovered"
 }

@@ -9136,6 +9136,46 @@ class AppLocalizations {
       args: [error],
     );
   }
+
+  /// `Retry all`
+  String get retryTimedOutGroups {
+    return Intl.message(
+      'Retry all',
+      name: 'retryTimedOutGroups',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Retrying…`
+  String get retryingTimedOutGroups {
+    return Intl.message(
+      'Retrying…',
+      name: 'retryingTimedOutGroups',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All groups have recovered`
+  String get allGroupsRecovered {
+    return Intl.message(
+      'All groups have recovered',
+      name: 'allGroupsRecovered',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recovered`
+  String get groupRecovered {
+    return Intl.message(
+      'Recovered',
+      name: 'groupRecovered',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

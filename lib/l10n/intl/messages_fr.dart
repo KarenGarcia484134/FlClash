@@ -341,6 +341,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ce profil est chiffré avec age et nécessite une clé secrète age pour être déchiffré",
     ),
     "agree": MessageLookupByLibrary.simpleMessage("Accepter"),
+    "allGroupsRecovered": MessageLookupByLibrary.simpleMessage(
+      "Tous les groupes sont rétablis",
+    ),
     "allReferencedProxies": MessageLookupByLibrary.simpleMessage(
       "Tous les proxys référencés",
     ),
@@ -1004,6 +1007,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "groupCount": m33,
     "groupCountUnit": MessageLookupByLibrary.simpleMessage("groupes"),
     "groupFailureDetail": m34,
+    "groupRecovered": MessageLookupByLibrary.simpleMessage("Rétabli"),
     "groupTimeoutCount": m35,
     "hasCacheChange": MessageLookupByLibrary.simpleMessage(
       "Mettre les modifications en cache ?",
@@ -1713,6 +1717,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "result": MessageLookupByLibrary.simpleMessage("Résultat"),
     "retry": MessageLookupByLibrary.simpleMessage("Réessayer"),
+    "retryTimedOutGroups": MessageLookupByLibrary.simpleMessage(
+      "Tout réessayer",
+    ),
+    "retryingTimedOutGroups": MessageLookupByLibrary.simpleMessage(
+      "Nouvel essai…",
+    ),
     "routeAddress": MessageLookupByLibrary.simpleMessage("Adresses de route"),
     "routeExcludeAddress": MessageLookupByLibrary.simpleMessage(
       "Adresses de route exclues",

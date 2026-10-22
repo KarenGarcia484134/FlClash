@@ -453,4 +453,43 @@ void main() {
       findsNothing,
     );
   });
+
+  testWidgets('the timed out sheet marks recovered groups and retries', (
+    tester,
+  ) async {
+    container.read(groupsProvider.notifier).value = [
+      _group('Auto', ['HK-01'], now: 'HK-01'),
+      _group('Media', ['JP-01'], now: 'JP-01'),
+      _group('Game', ['SG-01'], now: 'SG-01'),
+    ];
+    container.read(delayDataSourceProvider.notifier).value = {
+      _testUrl: {'HK-01': 48, 'JP-01': -1, 'SG-01': -1},
+    };
+    await pumpCard(tester);
+    await tester.tap(find.byKey(const ValueKey('dashboard-timeout-chip')));
+    await tester.pumpAndSettle();
+    expect(find.text('Retry all'), findsOneWidget);
+
+    container.read(delayTestingGroupsProvider.notifier).start('Media');
+    await tester.pump();
+    expect(find.text('Retrying…'), findsOneWidget);
+    container.read(delayTestingGroupsProvider.notifier).stop('Media');
+
+    container.read(delayDataSourceProvider.notifier).value = {
+      _testUrl: {'HK-01': 48, 'JP-01': 120, 'SG-01': -1},
+    };
+    await tester.pump();
+    expect(
+      find.byKey(const ValueKey('group-recovered-tag-Media')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const ValueKey('failed-group-Auto')), findsNothing);
+    expect(find.byKey(const ValueKey('failed-groups-recovered')), findsNothing);
+
+    container.read(delayDataSourceProvider.notifier).value = {
+      _testUrl: {'HK-01': 48, 'JP-01': 120, 'SG-01': 90},
+    };
+    await tester.pump();
+    expect(find.text('All groups have recovered'), findsOneWidget);
+  });
 }

@@ -1,6 +1,7 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
@@ -114,15 +115,46 @@ Future<void> showFailedGroupsSheet(
   );
 }
 
-class _FailedGroupsList extends ConsumerWidget {
+class _FailedGroupsList extends ConsumerStatefulWidget {
   const _FailedGroupsList({required this.groups, required this.onSelected});
 
   final List<Group> groups;
   final void Function(String groupName) onSelected;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final failed = watchFailedGroups(ref, groups);
+  ConsumerState<_FailedGroupsList> createState() => _FailedGroupsListState();
+}
+
+class _FailedGroupsListState extends ConsumerState<_FailedGroupsList> {
+  /// The groups listed when the sheet opened, kept so a recovered one stays
+  /// in view as recovered instead of vanishing under the finger.
+  late final Set<String> _listed = {
+    for (final group in widget.groups)
+      if (isFailedDelay(
+        ref.read(delayProvider(proxyName: group.name, testUrl: group.testUrl)),
+      ))
+        group.name,
+  };
+
+  Future<void> _retry(Iterable<String> names) {
+    final action = ref.read(proxiesActionProvider.notifier);
+    return Future.wait([
+      for (final name in names)
+        action.delayTestPageGroup(name, matchSearch: false),
+    ]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final failed = watchFailedGroups(ref, widget.groups);
+    final failedNames = {for (final group in failed) group.name};
+    final shown = [
+      for (final group in widget.groups)
+        if (_listed.contains(group.name) || failedNames.contains(group.name))
+          group,
+    ];
+    final testing = ref.watch(delayTestingGroupsProvider);
+    final anyTesting = shown.any((group) => testing.contains(group.name));
     final appLocalizations = context.appLocalizations;
     return AppBarClearance(
       child: ListView(
@@ -135,12 +167,35 @@ class _FailedGroupsList extends ConsumerWidget {
               style: AppTextStyle.footnote.of(context).toLight,
             ),
           ),
-          if (failed.isEmpty)
+          if (shown.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(appLocalizations.noTimedOutGroups),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: FilledButton.tonalIcon(
+                key: const ValueKey('retry-failed-groups'),
+                onPressed: anyTesting || failed.isEmpty
+                    ? null
+                    : () => _retry(failedNames),
+                icon: anyTesting
+                    ? const CommonCircleLoading(size: 16)
+                    : const GlyphIcon(AppGlyphs.bolt, fill: 1),
+                label: Text(
+                  anyTesting
+                      ? appLocalizations.retryingTimedOutGroups
+                      : appLocalizations.retryTimedOutGroups,
+                ),
+              ),
             ),
-          for (final group in failed)
+          if (failed.isEmpty && !anyTesting)
+            Padding(
+              key: const ValueKey('failed-groups-recovered'),
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                shown.isEmpty
+                    ? appLocalizations.noTimedOutGroups
+                    : appLocalizations.allGroupsRecovered,
+              ),
+            ),
+          for (final group in shown)
             KeyedSubtree(
               key: ValueKey('failed-group-${group.name}'),
               child: ListItem(
@@ -153,14 +208,54 @@ class _FailedGroupsList extends ConsumerWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    GroupFailureTag(group: group),
+                    if (failedNames.contains(group.name))
+                      GroupFailureTag(group: group)
+                    else
+                      _RecoveredTag(groupName: group.name),
                   ],
                 ),
                 subtitle: _FailedGroupNode(group: group),
-                onTap: () => onSelected(group.name),
+                trailing: IconButton(
+                  key: ValueKey('retry-group-${group.name}'),
+                  tooltip: appLocalizations.retry,
+                  onPressed: testing.contains(group.name)
+                      ? null
+                      : () => _retry([group.name]),
+                  icon: testing.contains(group.name)
+                      ? const CommonCircleLoading(size: 16)
+                      : const GlyphIcon(AppGlyphs.bolt),
+                ),
+                onTap: () => widget.onSelected(group.name),
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class _RecoveredTag extends StatelessWidget {
+  const _RecoveredTag({required this.groupName});
+
+  final String groupName;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    return Container(
+      key: ValueKey('group-recovered-tag-$groupName'),
+      margin: const EdgeInsetsDirectional.only(start: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 6),
+      decoration: ShapeDecoration(
+        color: colorScheme.primaryContainer,
+        shape: AppShape.full,
+      ),
+      child: Text(
+        context.appLocalizations.groupRecovered,
+        maxLines: 1,
+        style: AppTextStyle.caption2
+            .of(context, emphasized: true)
+            .copyWith(color: colorScheme.onPrimaryContainer),
       ),
     );
   }
@@ -181,7 +276,7 @@ class _FailedGroupNode extends ConsumerWidget {
     return Text(
       appLocalizations.groupFailureDetail(
         node.isEmpty ? '-' : node,
-        delayFailureText(delay, appLocalizations),
+        delay < 0 ? delayFailureText(delay, appLocalizations) : '$delay ms',
       ),
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
