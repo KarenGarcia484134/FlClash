@@ -9051,6 +9051,91 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Update now`
+  String get updateNow {
+    return Intl.message('Update now', name: 'updateNow', desc: '', args: []);
+  }
+
+  /// `Open webpage`
+  String get openReleasePage {
+    return Intl.message(
+      'Open webpage',
+      name: 'openReleasePage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Downloading update`
+  String get downloadingUpdate {
+    return Intl.message(
+      'Downloading update',
+      name: 'downloadingUpdate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't download the update: {error}\nYou can download it from the release page instead.`
+  String updateDownloadFailed(String error) {
+    return Intl.message(
+      'Couldn\'t download the update: $error\nYou can download it from the release page instead.',
+      name: 'updateDownloadFailed',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `The downloaded file failed its SHA256 check and was deleted.`
+  String get updateChecksumMismatch {
+    return Intl.message(
+      'The downloaded file failed its SHA256 check and was deleted.',
+      name: 'updateChecksumMismatch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allow FlClash to install unknown apps in the system settings, then come back and tap Continue.`
+  String get allowUnknownAppsTip {
+    return Intl.message(
+      'Allow FlClash to install unknown apps in the system settings, then come back and tap Continue.',
+      name: 'allowUnknownAppsTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Continue`
+  String get continueInstall {
+    return Intl.message(
+      'Continue',
+      name: 'continueInstall',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The disk image is open. Drag FlClash into Applications to finish updating.`
+  String get updateDmgOpened {
+    return Intl.message(
+      'The disk image is open. Drag FlClash into Applications to finish updating.',
+      name: 'updateDmgOpened',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't start the installer: {error}`
+  String updateInstallFailed(String error) {
+    return Intl.message(
+      'Couldn\'t start the installer: $error',
+      name: 'updateInstallFailed',
+      desc: '',
+      args: [error],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

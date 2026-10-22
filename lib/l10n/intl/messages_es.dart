@@ -239,12 +239,17 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m86(value) => "Total: ${value}";
 
-  static String m87(label) => "${label} debe ser una URL";
+  static String m87(error) =>
+      "No se pudo descargar la actualización: ${error}\nPuedes descargarla desde la página de la versión.";
 
-  static String m88(count) =>
+  static String m88(error) => "No se pudo iniciar el instalador: ${error}";
+
+  static String m89(label) => "${label} debe ser una URL";
+
+  static String m90(count) =>
       "${Intl.plural(count, one: 'hace 1 año', other: 'hace ${count} años')}";
 
-  static String m89(count) => "${Intl.plural(count, other: 'hace ${count} a')}";
+  static String m91(count) => "${Intl.plural(count, other: 'hace ${count} a')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -345,6 +350,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Permitir que las apps eludan la VPN",
     ),
     "allowLan": MessageLookupByLibrary.simpleMessage("Permitir LAN"),
+    "allowUnknownAppsTip": MessageLookupByLibrary.simpleMessage(
+      "Permite que FlClash instale aplicaciones desconocidas en los ajustes del sistema y vuelve para tocar Continuar.",
+    ),
     "allowedIps": MessageLookupByLibrary.simpleMessage("IP permitidas"),
     "answers": MessageLookupByLibrary.simpleMessage("Respuestas"),
     "app": MessageLookupByLibrary.simpleMessage("App"),
@@ -565,6 +573,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "El contenido no puede estar vacío",
     ),
     "contentScheme": MessageLookupByLibrary.simpleMessage("Contenido"),
+    "continueInstall": MessageLookupByLibrary.simpleMessage("Continuar"),
     "controlGlobalAddedRules": MessageLookupByLibrary.simpleMessage(
       "Controlar las reglas añadidas globales",
     ),
@@ -826,6 +835,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "download": MessageLookupByLibrary.simpleMessage("Descarga"),
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Ancho de banda de descarga",
+    ),
+    "downloadingUpdate": MessageLookupByLibrary.simpleMessage(
+      "Descargando actualización",
     ),
     "duration": MessageLookupByLibrary.simpleMessage("Duración"),
     "edit": MessageLookupByLibrary.simpleMessage("Editar"),
@@ -1476,6 +1488,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "onlyStatisticsProxy": MessageLookupByLibrary.simpleMessage(
       "Contar solo el tráfico del proxy",
     ),
+    "openReleasePage": MessageLookupByLibrary.simpleMessage("Abrir página web"),
     "optional": MessageLookupByLibrary.simpleMessage("Opcional"),
     "options": MessageLookupByLibrary.simpleMessage("Opciones"),
     "other": MessageLookupByLibrary.simpleMessage("Otros"),
@@ -2228,6 +2241,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "unnamed": MessageLookupByLibrary.simpleMessage("Sin nombre"),
     "unpinWindow": MessageLookupByLibrary.simpleMessage("Desfijar ventana"),
     "update": MessageLookupByLibrary.simpleMessage("Actualizar"),
+    "updateChecksumMismatch": MessageLookupByLibrary.simpleMessage(
+      "El archivo descargado no superó la comprobación SHA256 y se eliminó.",
+    ),
+    "updateDmgOpened": MessageLookupByLibrary.simpleMessage(
+      "La imagen de disco está abierta. Arrastra FlClash a Aplicaciones para terminar la actualización.",
+    ),
+    "updateDownloadFailed": m87,
+    "updateInstallFailed": m88,
+    "updateNow": MessageLookupByLibrary.simpleMessage("Actualizar ahora"),
     "upload": MessageLookupByLibrary.simpleMessage("Subida"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Ancho de banda de subida",
@@ -2236,7 +2258,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Proyecto original",
     ),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m87,
+    "urlTip": m89,
     "useHosts": MessageLookupByLibrary.simpleMessage("Usar hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage(
       "Usar hosts del sistema",
@@ -2266,8 +2288,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "Escribir en el sistema también ajusta el reloj del sistema; Android lo ignora.",
     ),
-    "yearsAgo": m88,
-    "yearsAgoShort": m89,
+    "yearsAgo": m90,
+    "yearsAgoShort": m91,
     "yes": MessageLookupByLibrary.simpleMessage("Sí"),
     "zhCN": MessageLookupByLibrary.simpleMessage("Chino simplificado"),
   };

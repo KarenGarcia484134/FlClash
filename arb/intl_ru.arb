@@ -1077,5 +1077,14 @@
   "noTimedOutGroups": "Нет групп с тайм-аутом",
   "groupFailureDetail": "Текущий узел: {node} · {result}",
   "showTimedOutGroups": "Показать группы с тайм-аутом",
-  "processPath": "Путь процесса"
+  "processPath": "Путь процесса",
+  "updateNow": "Обновить сейчас",
+  "openReleasePage": "Открыть страницу",
+  "downloadingUpdate": "Загрузка обновления",
+  "updateDownloadFailed": "Не удалось загрузить обновление: {error}\nМожно скачать его вручную со страницы релиза.",
+  "updateChecksumMismatch": "Загруженный файл не прошёл проверку SHA256 и был удалён.",
+  "allowUnknownAppsTip": "Разрешите FlClash устанавливать неизвестные приложения в настройках системы, затем вернитесь и нажмите «Продолжить».",
+  "continueInstall": "Продолжить",
+  "updateDmgOpened": "Образ диска открыт. Перетащите FlClash в «Программы», чтобы завершить обновление.",
+  "updateInstallFailed": "Не удалось запустить установщик: {error}"
 }

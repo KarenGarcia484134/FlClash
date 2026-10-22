@@ -209,11 +209,16 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m86(value) => "累計 ${value}";
 
-  static String m87(label) => "${label}はURLである必要があります";
+  static String m87(error) =>
+      "アップデートをダウンロードできませんでした：${error}\nリリースページから手動でダウンロードできます。";
 
-  static String m88(count) => "${count} 年前";
+  static String m88(error) => "インストーラーを起動できませんでした：${error}";
 
-  static String m89(count) => "${count} 年前";
+  static String m89(label) => "${label}はURLである必要があります";
+
+  static String m90(count) => "${count} 年前";
+
+  static String m91(count) => "${count} 年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -284,6 +289,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "allowBypass": MessageLookupByLibrary.simpleMessage("アプリによるVPNバイパスを許可"),
     "allowLan": MessageLookupByLibrary.simpleMessage("LANプロキシ"),
+    "allowUnknownAppsTip": MessageLookupByLibrary.simpleMessage(
+      "システム設定で FlClash に不明なアプリのインストールを許可してから、戻って「続行」をタップしてください。",
+    ),
     "allowedIps": MessageLookupByLibrary.simpleMessage("許可する IP"),
     "answers": MessageLookupByLibrary.simpleMessage("応答"),
     "app": MessageLookupByLibrary.simpleMessage("アプリ"),
@@ -444,6 +452,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "content": MessageLookupByLibrary.simpleMessage("内容"),
     "contentNotEmpty": MessageLookupByLibrary.simpleMessage("内容は空にできません"),
     "contentScheme": MessageLookupByLibrary.simpleMessage("コンテンツ"),
+    "continueInstall": MessageLookupByLibrary.simpleMessage("続行"),
     "controlGlobalAddedRules": MessageLookupByLibrary.simpleMessage(
       "グローバル追加ルールを管理",
     ),
@@ -668,6 +677,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "done": MessageLookupByLibrary.simpleMessage("完了"),
     "download": MessageLookupByLibrary.simpleMessage("ダウンロード"),
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage("ダウンロード帯域幅"),
+    "downloadingUpdate": MessageLookupByLibrary.simpleMessage("アップデートをダウンロード中"),
     "duration": MessageLookupByLibrary.simpleMessage("経過時間"),
     "edit": MessageLookupByLibrary.simpleMessage("編集"),
     "editCustomRouting": MessageLookupByLibrary.simpleMessage("カスタムルーティングを編集"),
@@ -1184,6 +1194,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "onlyStatisticsProxy": MessageLookupByLibrary.simpleMessage(
       "プロキシトラフィックのみ集計",
     ),
+    "openReleasePage": MessageLookupByLibrary.simpleMessage("Web ページを開く"),
     "optional": MessageLookupByLibrary.simpleMessage("任意"),
     "options": MessageLookupByLibrary.simpleMessage("オプション"),
     "other": MessageLookupByLibrary.simpleMessage("その他"),
@@ -1784,11 +1795,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "unnamed": MessageLookupByLibrary.simpleMessage("名称未設定"),
     "unpinWindow": MessageLookupByLibrary.simpleMessage("固定を解除"),
     "update": MessageLookupByLibrary.simpleMessage("更新"),
+    "updateChecksumMismatch": MessageLookupByLibrary.simpleMessage(
+      "ダウンロードしたファイルが SHA256 チェックに失敗したため削除しました。",
+    ),
+    "updateDmgOpened": MessageLookupByLibrary.simpleMessage(
+      "ディスクイメージを開きました。FlClash を「アプリケーション」にドラッグして更新を完了してください。",
+    ),
+    "updateDownloadFailed": m87,
+    "updateInstallFailed": m88,
+    "updateNow": MessageLookupByLibrary.simpleMessage("今すぐ更新"),
     "upload": MessageLookupByLibrary.simpleMessage("アップロード"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("アップロード帯域幅"),
     "upstreamProject": MessageLookupByLibrary.simpleMessage("上流プロジェクト"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m87,
+    "urlTip": m89,
     "useHosts": MessageLookupByLibrary.simpleMessage("Hostsを使用"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("システムのHostsを使用"),
     "usedShort": MessageLookupByLibrary.simpleMessage("使用済み"),
@@ -1812,8 +1832,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "システムに書き込むを有効にするとシステムクロックも設定します。Android では無視されます。",
     ),
-    "yearsAgo": m88,
-    "yearsAgoShort": m89,
+    "yearsAgo": m90,
+    "yearsAgoShort": m91,
     "yes": MessageLookupByLibrary.simpleMessage("はい"),
     "zhCN": MessageLookupByLibrary.simpleMessage("簡体字中国語"),
   };

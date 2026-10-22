@@ -1087,5 +1087,14 @@
   "noTimedOutGroups": "Aucun groupe en délai dépassé",
   "groupFailureDetail": "Nœud actuel : {node} · {result}",
   "showTimedOutGroups": "Afficher les groupes en délai dépassé",
-  "processPath": "Chemin du processus"
+  "processPath": "Chemin du processus",
+  "updateNow": "Mettre à jour",
+  "openReleasePage": "Ouvrir la page web",
+  "downloadingUpdate": "Téléchargement de la mise à jour",
+  "updateDownloadFailed": "Impossible de télécharger la mise à jour : {error}\nVous pouvez la télécharger depuis la page de la version.",
+  "updateChecksumMismatch": "Le fichier téléchargé a échoué à la vérification SHA256 et a été supprimé.",
+  "allowUnknownAppsTip": "Autorisez FlClash à installer des applications inconnues dans les réglages du système, puis revenez et touchez Continuer.",
+  "continueInstall": "Continuer",
+  "updateDmgOpened": "L’image disque est ouverte. Faites glisser FlClash dans Applications pour terminer la mise à jour.",
+  "updateInstallFailed": "Impossible de lancer l’installateur : {error}"
 }

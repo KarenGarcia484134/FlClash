@@ -1077,5 +1077,14 @@
   "noTimedOutGroups": "タイムアウトしたグループはありません",
   "groupFailureDetail": "現在のノード：{node} · {result}",
   "showTimedOutGroups": "タイムアウトしたグループを表示",
-  "processPath": "プロセスのパス"
+  "processPath": "プロセスのパス",
+  "updateNow": "今すぐ更新",
+  "openReleasePage": "Web ページを開く",
+  "downloadingUpdate": "アップデートをダウンロード中",
+  "updateDownloadFailed": "アップデートをダウンロードできませんでした：{error}\nリリースページから手動でダウンロードできます。",
+  "updateChecksumMismatch": "ダウンロードしたファイルが SHA256 チェックに失敗したため削除しました。",
+  "allowUnknownAppsTip": "システム設定で FlClash に不明なアプリのインストールを許可してから、戻って「続行」をタップしてください。",
+  "continueInstall": "続行",
+  "updateDmgOpened": "ディスクイメージを開きました。FlClash を「アプリケーション」にドラッグして更新を完了してください。",
+  "updateInstallFailed": "インストーラーを起動できませんでした：{error}"
 }

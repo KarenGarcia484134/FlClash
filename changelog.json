@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.21",
+      "tag": "v0.9.21",
+      "date": "2026-10-22",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "317be11",
+              "scope": "update",
+              "text": "发现新版本时可点「立即更新」在应用内直接下载并安装：自动选择对应平台与架构的安装包，显示可取消的下载进度并校验 SHA256；Android 调起系统安装器（首次需允许安装未知应用），Windows 运行安装程序后退出，macOS 打开 dmg；Linux 及下载失败时可改为打开发布网页；已连接时通过应用代理下载"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.20",
       "tag": "v0.9.20",
       "date": "2026-10-21",

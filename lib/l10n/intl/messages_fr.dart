@@ -243,12 +243,17 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m86(value) => "Total ${value}";
 
-  static String m87(label) => "${label} doit être une URL";
+  static String m87(error) =>
+      "Impossible de télécharger la mise à jour : ${error}\nVous pouvez la télécharger depuis la page de la version.";
 
-  static String m88(count) =>
+  static String m88(error) => "Impossible de lancer l’installateur : ${error}";
+
+  static String m89(label) => "${label} doit être une URL";
+
+  static String m90(count) =>
       "${Intl.plural(count, one: 'il y a 1 an', other: 'il y a ${count} ans')}";
 
-  static String m89(count) =>
+  static String m91(count) =>
       "${Intl.plural(count, other: 'il y a ${count} a')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -346,6 +351,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Autoriser les apps à contourner le VPN",
     ),
     "allowLan": MessageLookupByLibrary.simpleMessage("Autoriser le LAN"),
+    "allowUnknownAppsTip": MessageLookupByLibrary.simpleMessage(
+      "Autorisez FlClash à installer des applications inconnues dans les réglages du système, puis revenez et touchez Continuer.",
+    ),
     "allowedIps": MessageLookupByLibrary.simpleMessage("IP autorisées"),
     "answers": MessageLookupByLibrary.simpleMessage("Réponses"),
     "app": MessageLookupByLibrary.simpleMessage("App"),
@@ -566,6 +574,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Le contenu ne peut pas être vide",
     ),
     "contentScheme": MessageLookupByLibrary.simpleMessage("Contenu"),
+    "continueInstall": MessageLookupByLibrary.simpleMessage("Continuer"),
     "controlGlobalAddedRules": MessageLookupByLibrary.simpleMessage(
       "Gérer les règles ajoutées globales",
     ),
@@ -829,6 +838,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "download": MessageLookupByLibrary.simpleMessage("Réception"),
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Bande passante de réception",
+    ),
+    "downloadingUpdate": MessageLookupByLibrary.simpleMessage(
+      "Téléchargement de la mise à jour",
     ),
     "duration": MessageLookupByLibrary.simpleMessage("Durée"),
     "edit": MessageLookupByLibrary.simpleMessage("Modifier"),
@@ -1476,6 +1488,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "onlyStatisticsProxy": MessageLookupByLibrary.simpleMessage(
       "Ne compter que le trafic proxy",
+    ),
+    "openReleasePage": MessageLookupByLibrary.simpleMessage(
+      "Ouvrir la page web",
     ),
     "optional": MessageLookupByLibrary.simpleMessage("Facultatif"),
     "options": MessageLookupByLibrary.simpleMessage("Options"),
@@ -2235,6 +2250,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "Désépingler la fenêtre",
     ),
     "update": MessageLookupByLibrary.simpleMessage("Mettre à jour"),
+    "updateChecksumMismatch": MessageLookupByLibrary.simpleMessage(
+      "Le fichier téléchargé a échoué à la vérification SHA256 et a été supprimé.",
+    ),
+    "updateDmgOpened": MessageLookupByLibrary.simpleMessage(
+      "L’image disque est ouverte. Faites glisser FlClash dans Applications pour terminer la mise à jour.",
+    ),
+    "updateDownloadFailed": m87,
+    "updateInstallFailed": m88,
+    "updateNow": MessageLookupByLibrary.simpleMessage("Mettre à jour"),
     "upload": MessageLookupByLibrary.simpleMessage("Envoi"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Bande passante d’envoi",
@@ -2243,7 +2267,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Projet d\'origine",
     ),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m87,
+    "urlTip": m89,
     "useHosts": MessageLookupByLibrary.simpleMessage("Utiliser hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage(
       "Utiliser les hosts du système",
@@ -2273,8 +2297,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "Écrire dans le système règle aussi l’horloge système ; Android l’ignore.",
     ),
-    "yearsAgo": m88,
-    "yearsAgoShort": m89,
+    "yearsAgo": m90,
+    "yearsAgoShort": m91,
     "yes": MessageLookupByLibrary.simpleMessage("Oui"),
     "zhCN": MessageLookupByLibrary.simpleMessage("Chinois simplifié"),
   };

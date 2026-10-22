@@ -142,6 +142,11 @@ class App {
     });
   }
 
+  /// `started`, or `permission` once the unknown-apps setting was opened.
+  Future<String?> installApk(String path) {
+    return methodChannel.invokeMethod<String>('installApk', {'path': path});
+  }
+
   Future<bool?> openAppSettings() async {
     if (!Platform.isAndroid) return false;
     return methodChannel.invokeMethod<bool>('openAppSettings');

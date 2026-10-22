@@ -234,12 +234,17 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m86(value) => "Total ${value}";
 
-  static String m87(label) => "${label} must be a URL";
+  static String m87(error) =>
+      "Couldn\'t download the update: ${error}\nYou can download it from the release page instead.";
 
-  static String m88(count) =>
+  static String m88(error) => "Couldn\'t start the installer: ${error}";
+
+  static String m89(label) => "${label} must be a URL";
+
+  static String m90(count) =>
       "${Intl.plural(count, one: '1 year ago', other: '${count} years ago')}";
 
-  static String m89(count) => "${Intl.plural(count, other: '${count}y ago')}";
+  static String m91(count) => "${Intl.plural(count, other: '${count}y ago')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -330,6 +335,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Allow apps to bypass VPN",
     ),
     "allowLan": MessageLookupByLibrary.simpleMessage("Allow LAN"),
+    "allowUnknownAppsTip": MessageLookupByLibrary.simpleMessage(
+      "Allow FlClash to install unknown apps in the system settings, then come back and tap Continue.",
+    ),
     "allowedIps": MessageLookupByLibrary.simpleMessage("Allowed IPs"),
     "answers": MessageLookupByLibrary.simpleMessage("Answers"),
     "app": MessageLookupByLibrary.simpleMessage("App"),
@@ -526,6 +534,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Content cannot be empty",
     ),
     "contentScheme": MessageLookupByLibrary.simpleMessage("Content"),
+    "continueInstall": MessageLookupByLibrary.simpleMessage("Continue"),
     "controlGlobalAddedRules": MessageLookupByLibrary.simpleMessage(
       "Control global added rules",
     ),
@@ -785,6 +794,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "download": MessageLookupByLibrary.simpleMessage("Download"),
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Download bandwidth",
+    ),
+    "downloadingUpdate": MessageLookupByLibrary.simpleMessage(
+      "Downloading update",
     ),
     "duration": MessageLookupByLibrary.simpleMessage("Duration"),
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
@@ -1383,6 +1395,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "onlyStatisticsProxy": MessageLookupByLibrary.simpleMessage(
       "Only count proxy traffic",
     ),
+    "openReleasePage": MessageLookupByLibrary.simpleMessage("Open webpage"),
     "optional": MessageLookupByLibrary.simpleMessage("Optional"),
     "options": MessageLookupByLibrary.simpleMessage("Options"),
     "other": MessageLookupByLibrary.simpleMessage("Other"),
@@ -2087,11 +2100,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "unnamed": MessageLookupByLibrary.simpleMessage("Unnamed"),
     "unpinWindow": MessageLookupByLibrary.simpleMessage("Unpin window"),
     "update": MessageLookupByLibrary.simpleMessage("Update"),
+    "updateChecksumMismatch": MessageLookupByLibrary.simpleMessage(
+      "The downloaded file failed its SHA256 check and was deleted.",
+    ),
+    "updateDmgOpened": MessageLookupByLibrary.simpleMessage(
+      "The disk image is open. Drag FlClash into Applications to finish updating.",
+    ),
+    "updateDownloadFailed": m87,
+    "updateInstallFailed": m88,
+    "updateNow": MessageLookupByLibrary.simpleMessage("Update now"),
     "upload": MessageLookupByLibrary.simpleMessage("Upload"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("Upload bandwidth"),
     "upstreamProject": MessageLookupByLibrary.simpleMessage("Upstream project"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m87,
+    "urlTip": m89,
     "useHosts": MessageLookupByLibrary.simpleMessage("Use hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("Use system hosts"),
     "usedShort": MessageLookupByLibrary.simpleMessage("used"),
@@ -2117,8 +2139,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "Write to system also sets the system clock; Android ignores it.",
     ),
-    "yearsAgo": m88,
-    "yearsAgoShort": m89,
+    "yearsAgo": m90,
+    "yearsAgoShort": m91,
     "yes": MessageLookupByLibrary.simpleMessage("Yes"),
     "zhCN": MessageLookupByLibrary.simpleMessage("Simplified Chinese"),
   };
