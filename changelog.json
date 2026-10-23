@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.23",
+      "tag": "v0.9.23",
+      "date": "2026-10-23",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "274d7ad",
+              "scope": "dashboard",
+              "text": "桌面端仪表盘新增「自定义分流」与「重启内核」快捷卡片：位于策略组卡片下方（窗口较矮时并排在策略组摘要旁，两列布局中单独成行），可直接查看生效分流数量并进入设置"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.22",
       "tag": "v0.9.22",
       "date": "2026-10-22",
