@@ -24,7 +24,10 @@ import 'card.dart';
 }
 
 class CustomRoutingCard extends ConsumerWidget {
-  const CustomRoutingCard({super.key});
+  const CustomRoutingCard({super.key, this.dense = false});
+
+  /// One line, the count beside the title, for the desktop's tile row.
+  final bool dense;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,9 +42,23 @@ class CustomRoutingCard extends ConsumerWidget {
       routings.map((item) => (id: item.id, enabled: item.enabled)),
       selected,
     );
+    final summary = profileId == null
+        ? appLocalizations.customRoutingCardNoProfile
+        : appLocalizations.customRoutingCardCount(counts.applied, counts.total);
+    void open() => BaseNavigator.push(context, const CustomRoutingsView());
+    if (dense) {
+      return DashboardTileCard(
+        semanticLabel: appLocalizations.customRouting,
+        onTap: open,
+        glyph: AppGlyphs.split,
+        title: appLocalizations.customRouting,
+        status: Text(summary, maxLines: 1, overflow: TextOverflow.ellipsis),
+        chevron: true,
+      );
+    }
     return DashboardCard(
       semanticLabel: appLocalizations.customRouting,
-      onTap: () => BaseNavigator.push(context, const CustomRoutingsView()),
+      onTap: open,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 12,
@@ -52,12 +69,7 @@ class CustomRoutingCard extends ConsumerWidget {
             chevron: true,
           ),
           Text(
-            profileId == null
-                ? appLocalizations.customRoutingCardNoProfile
-                : appLocalizations.customRoutingCardCount(
-                    counts.applied,
-                    counts.total,
-                  ),
+            summary,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: AppTextStyle.subheadline.of(context),

@@ -170,6 +170,24 @@ class _DesktopDashboard extends StatelessWidget {
               ]
             : const [(2, VpnTile())];
         final half = columns ~/ 2;
+        final shortcuts = row([
+          (half, const CustomRoutingCard(dense: true)),
+          (half, const RestartCoreCard(dense: true)),
+        ]);
+        Widget shortcutTiles(Axis direction) => Flex(
+          direction: direction,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: gap,
+          children: const [
+            Expanded(child: CustomRoutingCard(dense: true)),
+            Expanded(child: RestartCoreCard(dense: true)),
+          ],
+        );
+        final shortSummaries = row([
+          (half, const ConnectionStatsCard()),
+          (half - 1, const ProxyGroupsSummaryCard()),
+          (1, shortcutTiles(Axis.vertical)),
+        ]);
         final summaries = row([
           (half, const ConnectionStatsCard()),
           (half, const ProxyGroupsSummaryCard()),
@@ -205,6 +223,7 @@ class _DesktopDashboard extends StatelessWidget {
                   middleHeight,
                   row(const [(1, ServiceStatusCard()), (1, MemoryInfo())]),
                 ),
+                sized(controlHeight, shortcuts),
                 sized(summaryHeight, summaries),
               ],
             ),
@@ -259,8 +278,8 @@ class _DesktopDashboard extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         spacing: gap,
-                        children: const [
-                          Expanded(
+                        children: [
+                          const Expanded(
                             flex: 3,
                             child: RepaintBoundary(
                               child: ConnectionsTableCard(),
@@ -268,15 +287,29 @@ class _DesktopDashboard extends StatelessWidget {
                           ),
                           Expanded(
                             flex: 2,
-                            child: RepaintBoundary(child: ProxyGroupsCard()),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              spacing: gap,
+                              children: [
+                                const Expanded(
+                                  child: RepaintBoundary(
+                                    child: ProxyGroupsCard(),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: controlHeight,
+                                  child: shortcutTiles(Axis.horizontal),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
                     )
                   else if (fills)
-                    Expanded(child: summaries)
+                    Expanded(child: shortSummaries)
                   else
-                    sized(summaryHeight, summaries),
+                    sized(summaryHeight, shortSummaries),
                 ],
               ),
             ),
