@@ -166,6 +166,30 @@ void main() {
     }
   });
 
+  testWidgets('custom routing and restart sit in the desktop grid at every '
+      'width', (tester) async {
+    for (final (size, beside) in [
+      (const Size(1220, 824), true),
+      (const Size(1440, 900), true),
+      (const Size(1220, 600), false),
+      (const Size(760, 900), false),
+    ]) {
+      await pumpDashboard(tester, size);
+      final routing = rectOf(tester, CustomRoutingCard);
+      final restart = rectOf(tester, RestartCoreCard);
+      expect(routing.height, greaterThanOrEqualTo(44), reason: '$size');
+      expect(restart.height, routing.height, reason: '$size');
+      if (beside) {
+        final groups = rectOf(tester, ProxyGroupsCard);
+        expect(routing.top, groups.bottom + 16, reason: '$size');
+        expect(routing.left, closeTo(groups.left, 0.01), reason: '$size');
+        expect(restart.right, closeTo(groups.right, 0.01), reason: '$size');
+      }
+      expect(tester.takeException(), isNull, reason: '$size');
+      await teardown(tester);
+    }
+  });
+
   testWidgets('a wide window gives the memory card a column beside the '
       'services', (tester) async {
     await pumpDashboard(tester, const Size(1440, 900));

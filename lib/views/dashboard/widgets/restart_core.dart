@@ -35,12 +35,26 @@ Future<void> confirmRestartCore(BuildContext context, WidgetRef ref) async {
 }
 
 class RestartCoreCard extends ConsumerWidget {
-  const RestartCoreCard({super.key});
+  const RestartCoreCard({super.key, this.dense = false});
+
+  /// One line for the desktop's tile row.
+  final bool dense;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appLocalizations = context.appLocalizations;
     final restarting = ref.watch(coreStatusProvider) == CoreStatus.connecting;
+    if (dense) {
+      return DashboardTileCard(
+        semanticLabel: appLocalizations.restartCore,
+        onTap: restarting ? null : () => confirmRestartCore(context, ref),
+        glyph: AppGlyphs.refresh,
+        title: appLocalizations.restartCore,
+        status: restarting
+            ? const CommonCircleLoading(size: 14)
+            : const SizedBox.shrink(),
+      );
+    }
     return DashboardCard(
       semanticLabel: appLocalizations.restartCore,
       onTap: restarting ? null : () => confirmRestartCore(context, ref),

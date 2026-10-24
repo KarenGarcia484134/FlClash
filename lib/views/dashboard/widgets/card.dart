@@ -896,3 +896,50 @@ class DashboardIconButton extends StatelessWidget {
     );
   }
 }
+
+/// A [DashboardCard] as tall as a switch tile: the header alone, with a short
+/// status at its end.
+class DashboardTileCard extends StatelessWidget {
+  const DashboardTileCard({
+    super.key,
+    required this.glyph,
+    required this.title,
+    required this.status,
+    this.semanticLabel,
+    this.onTap,
+    this.chevron = false,
+  });
+
+  final Glyph glyph;
+  final String title;
+  final Widget status;
+  final String? semanticLabel;
+  final VoidCallback? onTap;
+  final bool chevron;
+
+  @override
+  Widget build(BuildContext context) {
+    final density = DashboardDensityScope.of(context);
+    final padding = dashboardCardPadding(density);
+    return DashboardCard(
+      semanticLabel: semanticLabel,
+      onTap: onTap,
+      padding: EdgeInsets.symmetric(horizontal: padding.left),
+      child: Center(
+        child: DashboardCardHeader(
+          glyph: glyph,
+          title: title,
+          chevron: chevron,
+          trailing: [
+            DefaultTextStyle.merge(
+              style: AppTextStyle.subheadline
+                  .of(context)
+                  .copyWith(color: context.colorScheme.onSurfaceVariant),
+              child: status,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
