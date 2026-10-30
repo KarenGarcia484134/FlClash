@@ -49,6 +49,9 @@ abstract class TailscaleStatus with _$TailscaleStatus {
     /// What the running node's own traffic really goes through, as the Core
     /// reports it: empty for directly, null while unknown.
     String? dialerProxy,
+
+    /// Why the configured exit node could not be set, as the Core reports.
+    String? exitNodeError,
   }) = _TailscaleStatus;
 }
 
@@ -219,6 +222,11 @@ abstract class TailscaleNetStatus with _$TailscaleNetStatus {
     @Default([]) List<TailscalePeer> peers,
     String? error,
     String? dialerProxy,
+
+    /// How the node last reached each DERP region, by region code: `direct`
+    /// or `proxy`.
+    @Default({}) Map<String, String> derpRoutes,
+    String? exitNodeError,
   }) = _TailscaleNetStatus;
 
   factory TailscaleNetStatus.fromJson(Map<String, Object?> json) =>
@@ -327,6 +335,7 @@ TailscaleStatus applyTailscaleNetStatus(
       proxyName: proxyName,
       health: net.health,
       dialerProxy: net.dialerProxy ?? '',
+      exitNodeError: net.exitNodeError,
     );
   }
   return switch (net.backendState) {
@@ -335,6 +344,7 @@ TailscaleStatus applyTailscaleNetStatus(
       proxyName: proxyName,
       health: net.health,
       dialerProxy: net.dialerProxy ?? '',
+      exitNodeError: net.exitNodeError,
     ),
     'NeedsLogin' || 'NeedsMachineAuth' => TailscaleStatus(
       phase: TailscalePhase.needsLogin,
@@ -344,17 +354,20 @@ TailscaleStatus applyTailscaleNetStatus(
       proxyName: proxyName,
       health: net.health,
       dialerProxy: net.dialerProxy ?? '',
+      exitNodeError: net.exitNodeError,
     ),
     'NoState' || 'Starting' => current.copyWith(
       phase: TailscalePhase.connecting,
       proxyName: proxyName,
       health: net.health,
       dialerProxy: net.dialerProxy ?? '',
+      exitNodeError: net.exitNodeError,
     ),
     _ => current.copyWith(
       proxyName: proxyName,
       health: net.health,
       dialerProxy: net.dialerProxy ?? '',
+      exitNodeError: net.exitNodeError,
     ),
   };
 }
@@ -428,25 +441,85 @@ TailscaleIssue classifyTailscaleHealth(List<String> messages) {
   return TailscaleIssue.none;
 }
 
-enum TailscaleRouteHint { none, direct, dropped }
+enum TailscaleRouteHint { none, direct, dropped, pending }
 
-/// Why the node may not reach its control server: [configured] is the
-/// connection proxy picked on the page and [effective] what the running node
-/// really uses (empty for directly, null while unknown). A pick the current
-/// profile does not have is dropped, so the node dials directly, which a
-/// censored network resets; that is worth saying even before it fails.
+/// Why the node may not reach its control server. [configured] is the
+/// connection proxy picked on the page, [available] whether the profile the
+/// node is built from has it (null while unknown), and [effective] what the
+/// running node really uses (empty for directly, null while unknown).
+///
+/// Only a pick the profile lacks is dropped; one the running node does not
+/// use yet is only pending until the next apply.
 TailscaleRouteHint tailscaleRouteHint({
   required String configured,
+  required bool? available,
   required String? effective,
   required List<String> health,
 }) {
-  if (effective == null || effective.isNotEmpty) {
-    return TailscaleRouteHint.none;
-  }
-  if (configured.trim().isNotEmpty) {
+  final pick = configured.trim();
+  if (pick.isNotEmpty && available == false) {
     return TailscaleRouteHint.dropped;
   }
-  return classifyTailscaleHealth(health) == TailscaleIssue.network
-      ? TailscaleRouteHint.direct
-      : TailscaleRouteHint.none;
+  if (effective == null) {
+    return TailscaleRouteHint.none;
+  }
+  if (effective != pick) {
+    return TailscaleRouteHint.pending;
+  }
+  if (effective.isEmpty &&
+      classifyTailscaleHealth(health) == TailscaleIssue.network) {
+    return TailscaleRouteHint.direct;
+  }
+  return TailscaleRouteHint.none;
 }
+
+/// The outbounds a node's connection proxy can be picked from, read from the
+/// same config the node is built from.
+class TailscaleDialerCandidates {
+  const TailscaleDialerCandidates({
+    this.groups = const {},
+    this.proxies = const {},
+  });
+
+  /// Group name to its type as the profile writes it.
+  final Map<String, String> groups;
+
+  /// Proxy name to its type.
+  final Map<String, String> proxies;
+
+  bool contains(String name) =>
+      groups.containsKey(name) || proxies.containsKey(name);
+
+  /// What a profile's config offers, without the injected node [own] and
+  /// any Tailscale node of the profile's own.
+  factory TailscaleDialerCandidates.fromConfig(
+    Map<dynamic, dynamic> config, {
+    String? own,
+  }) {
+    Map<String, String> read(Object? section, {bool tailscale = true}) => {
+      if (section is List)
+        for (final item in section)
+          if (item is Map &&
+              item['name'] is String &&
+              item['name'] != own &&
+              (tailscale || '${item['type']}'.toLowerCase() != 'tailscale'))
+            item['name'] as String: '${item['type'] ?? ''}',
+    };
+    return TailscaleDialerCandidates(
+      groups: read(config['proxy-groups']),
+      proxies: read(config['proxies'], tailscale: false),
+    );
+  }
+}
+
+/// Whether a type names a group the user picks by hand.
+bool isSelectGroupType(String type) {
+  final value = type.toLowerCase();
+  return value == 'select' || value == 'selector';
+}
+
+/// The exit node value for [peer]: its IPv4 address, which the node checks
+/// against the netmap.
+String? tailscaleExitNodeValue(TailscalePeer peer) => peer.ipv4 ?? peer.ipv6;
+
+const tailscaleAutoExitNode = 'auto:any';

@@ -990,7 +990,7 @@
   "tailscaleRefresh": "更新",
   "tailscaleAuthKeyNotAccepted": "コントロールサーバーが認証キーを受け付けませんでした（期限切れ、使用済み、失効、または入力ミス）。新しいキーを作成するか、上の URL でログインしてください。",
   "tailscaleDialerProxy": "接続プロキシ",
-  "tailscaleDialerProxyDesc": "コントロールサーバー、Tailscale 公式の DERP リレー、ピアへの Tailscale 自身の通信はこのプロキシまたはグループを経由します。セルフホストの DERP サーバー（tailscale.com 以外）は低遅延のため直接接続し、直接接続に失敗した場合のみこのプロキシを使います。コントロールサーバーに直接接続できない場合は選択してください。",
+  "tailscaleDialerProxyDesc": "コントロールサーバーと Tailscale 公式の DERP リレーへの Tailscale 自身の通信はこのプロキシまたはグループを経由します。セルフホストの DERP サーバー（tailscale.com 以外）とピア間の UDP は低遅延のため直接接続し、失敗した場合のみこのプロキシを使います。コントロールサーバーに直接接続できない場合は選択してください。",
   "tailscaleNetworkIssue": "コントロールサーバーに接続できませんでした（ネットワークのタイムアウト）。認証キーではなくネットワークの問題です。上で接続プロキシを選んで再接続してください。",
   "recommended": "おすすめ",
   "testAllDelays": "すべてテスト",
@@ -1105,5 +1105,16 @@
   "hideSecret": "非表示",
   "tailscaleReconnect": "再接続",
   "tailscaleDialerProxyDropped": "接続プロキシ「{name}」は現在のプロファイルにないため、ノードは直接接続しています。プロファイルにあるものを選んでください。",
-  "tailscaleDirectBlocked": "ノードはコントロールサーバーに直接接続しており、接続がリセットされました。上で接続プロキシを選び、「再接続」をタップしてください。"
+  "tailscaleDirectBlocked": "ノードはコントロールサーバーに直接接続しており、接続がリセットされました。上で接続プロキシを選び、「再接続」をタップしてください。",
+  "tailscalePathRelayVia": "中継 {relay}（{route}）",
+  "tailscaleRouteDirect": "直接",
+  "tailscaleRouteProxy": "プロキシ経由",
+  "tailscaleExitNodeManual": "手動で入力",
+  "tailscaleExitNodeNone": "使用しない",
+  "tailscaleExitNodeAuto": "自動（auto:any）",
+  "tailscaleExitNodeNoOffers": "出口ノードを提供しているデバイスはありません",
+  "tailscaleExitNodeHint": "Tailscale IP またはデバイス名",
+  "tailscaleExitNodeFailed": "出口ノードを設定できませんでした：{error}",
+  "tailscaleDialerProxyPending": "選んだ接続プロキシはまだ使われていません。「再接続」をタップすると適用されます。",
+  "tailscaleNodeName": "ノード名"
 }

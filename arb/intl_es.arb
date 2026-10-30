@@ -1003,7 +1003,7 @@
   "tailscaleRefresh": "Refresh",
   "tailscaleAuthKeyNotAccepted": "The control server did not accept the auth key (expired, already used, revoked or mistyped). Create a new key, or log in with the URL above.",
   "tailscaleDialerProxy": "Connection proxy",
-  "tailscaleDialerProxyDesc": "El tráfico propio de Tailscale hacia su servidor de control, los relés DERP oficiales de Tailscale y los pares pasa por este proxy o grupo. Los servidores DERP propios (los que no están bajo tailscale.com) se conectan directamente para reducir la latencia, y por este proxy solo si la conexión directa falla. Elige uno si no se puede llegar directamente al servidor de control.",
+  "tailscaleDialerProxyDesc": "El tráfico propio de Tailscale hacia su servidor de control y los relés DERP oficiales pasa por este proxy o grupo. Los servidores DERP propios (fuera de tailscale.com) y el UDP directo entre dispositivos se conectan directamente para reducir la latencia, y usan este proxy solo si falla la conexión directa. Elige uno si no se puede llegar directamente al servidor de control.",
   "tailscaleNetworkIssue": "The control server could not be reached (network timeout). This is a network problem, not the auth key: choose a connection proxy above and connect again.",
   "recommended": "Recommended",
   "testAllDelays": "Test all",
@@ -1115,5 +1115,16 @@
   "hideSecret": "Ocultar",
   "tailscaleReconnect": "Reconectar",
   "tailscaleDialerProxyDropped": "El proxy de conexión «{name}» no está en el perfil actual, así que el nodo se conecta directamente. Elige uno del perfil.",
-  "tailscaleDirectBlocked": "El nodo se conecta directamente al servidor de control y la conexión se restableció. Elige un proxy de conexión arriba y toca Reconectar."
+  "tailscaleDirectBlocked": "El nodo se conecta directamente al servidor de control y la conexión se restableció. Elige un proxy de conexión arriba y toca Reconectar.",
+  "tailscalePathRelayVia": "Relé {relay} ({route})",
+  "tailscaleRouteDirect": "directo",
+  "tailscaleRouteProxy": "por proxy",
+  "tailscaleExitNodeManual": "Escribir a mano",
+  "tailscaleExitNodeNone": "Ninguno",
+  "tailscaleExitNodeAuto": "Automático (auto:any)",
+  "tailscaleExitNodeNoOffers": "Ningún dispositivo se ofrece como nodo de salida",
+  "tailscaleExitNodeHint": "IP de Tailscale o nombre del dispositivo",
+  "tailscaleExitNodeFailed": "No se pudo establecer el nodo de salida: {error}",
+  "tailscaleDialerProxyPending": "El proxy de conexión elegido aún no está en uso. Toca Reconectar para aplicarlo.",
+  "tailscaleNodeName": "Nombre del nodo"
 }

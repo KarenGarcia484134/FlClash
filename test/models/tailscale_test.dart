@@ -404,50 +404,93 @@ void main() {
       'a direct node whose control dial is reset is told to pick a proxy',
       () {
         expect(
-          tailscaleRouteHint(configured: '', effective: '', health: reset),
+          tailscaleRouteHint(
+            configured: '',
+            available: null,
+            effective: '',
+            health: reset,
+          ),
           TailscaleRouteHint.direct,
         );
         expect(
-          tailscaleRouteHint(configured: '', effective: '', health: const []),
+          tailscaleRouteHint(
+            configured: '',
+            available: null,
+            effective: '',
+            health: const [],
+          ),
           TailscaleRouteHint.none,
         );
       },
     );
-    test('a picked proxy the profile lacks is reported as dropped', () {
+    test('only a pick the profile really lacks is dropped', () {
       expect(
         tailscaleRouteHint(
-          configured: 'Proxy',
+          configured: '[自建]香港-yt1',
+          available: false,
           effective: '',
           health: const [],
         ),
         TailscaleRouteHint.dropped,
       );
     });
-    test('a node going through its proxy, or unknown, has no hint', () {
-      expect(
-        tailscaleRouteHint(
-          configured: 'Proxy',
-          effective: 'Proxy',
-          health: reset,
-        ),
-        TailscaleRouteHint.none,
-      );
-      expect(
-        tailscaleRouteHint(configured: '', effective: null, health: reset),
-        TailscaleRouteHint.none,
-      );
-    });
+    test(
+      'a pick the running node does not use yet is pending, not missing',
+      () {
+        // The regression: picking a node and tapping Reconnect without leaving
+        // the page used to claim the node was not in the profile.
+        expect(
+          tailscaleRouteHint(
+            configured: '[自建]香港-yt1',
+            available: true,
+            effective: '',
+            health: reset,
+          ),
+          TailscaleRouteHint.pending,
+        );
+        expect(
+          tailscaleRouteHint(
+            configured: '[自建]美国-dmit',
+            available: true,
+            effective: '[自建]香港-yt1',
+            health: const [],
+          ),
+          TailscaleRouteHint.pending,
+        );
+        expect(
+          tailscaleRouteHint(
+            configured: '[自建]美国-dmit',
+            available: true,
+            effective: '[自建]美国-dmit',
+            health: reset,
+          ),
+          TailscaleRouteHint.none,
+        );
+        expect(
+          tailscaleRouteHint(
+            configured: 'Proxy',
+            available: null,
+            effective: null,
+            health: reset,
+          ),
+          TailscaleRouteHint.none,
+        );
+      },
+    );
     test('the status keeps what the core says the node dials through', () {
       final next = applyTailscaleNetStatus(
         const TailscaleStatus(),
         TailscaleNetStatus.fromJson({
           'started': true,
-          'backendState': 'NeedsLogin',
+          'backendState': 'Running',
           'dialerProxy': 'Proxy',
+          'derpRoutes': {'tx-cd-derp': 'direct', 'fra': 'proxy'},
+          'exitNodeError': 'node 100.64.0.9 is not advertising an exit node',
         }),
         'Tailscale',
       );
       expect(next.dialerProxy, 'Proxy');
+      expect(next.exitNodeError, contains('not advertising'));
       final direct = applyTailscaleNetStatus(
         const TailscaleStatus(),
         const TailscaleNetStatus(started: true, backendState: 'Starting'),
@@ -455,5 +498,67 @@ void main() {
       );
       expect(direct.dialerProxy, '');
     });
+  });
+
+  group('dialer candidates', () {
+    test('match bracketed names exactly and skip the injected node', () {
+      final candidates = TailscaleDialerCandidates.fromConfig({
+        'proxies': [
+          {'name': '[自建]香港-yt1', 'type': 'vless'},
+          {'name': '[自建]美国-dmit', 'type': 'trojan'},
+          {'name': 'ts-own', 'type': 'tailscale'},
+        ],
+        'proxy-groups': [
+          {'name': 'Tailscale', 'type': 'select'},
+          {'name': '🚀 节点选择', 'type': 'select'},
+        ],
+      }, own: 'Tailscale-FlClash');
+      expect(candidates.contains('[自建]香港-yt1'), isTrue);
+      expect(candidates.contains('[自建]美国-dmit'), isTrue);
+      expect(candidates.contains('自建]香港-yt1'), isFalse);
+      expect(candidates.contains('ts-own'), isFalse);
+      expect(candidates.groups.keys, contains('🚀 节点选择'));
+      expect(isSelectGroupType(candidates.groups['Tailscale']!), isTrue);
+    });
+    test('a provider proxy is not a top-level candidate, as for the core', () {
+      final config = {
+        'proxies': [
+          {'name': '[自建]美国-dmit', 'type': 'trojan'},
+        ],
+        'proxy-providers': {
+          'sub': {'type': 'http', 'url': 'https://example.com'},
+        },
+        'proxy-groups': [
+          {
+            'name': 'Auto',
+            'type': 'url-test',
+            'use': ['sub'],
+          },
+        ],
+      };
+      final candidates = TailscaleDialerCandidates.fromConfig(config);
+      // A node only a provider brings is reached through its group.
+      expect(candidates.contains('Auto'), isTrue);
+      expect(candidates.contains('[自建]香港-yt1'), isFalse);
+      // The injection keeps exactly what the picker offers.
+      for (final pick in ['Auto', '[自建]美国-dmit']) {
+        final raw = Map<String, dynamic>.from(config);
+        injectTailscale(raw, TailscaleProps(enable: true, dialerProxy: pick));
+        final node = (raw['proxies'] as List).firstWhere(
+          (item) => item['type'] == 'tailscale',
+        );
+        expect(node['dialer-proxy'], pick);
+      }
+    });
+  });
+
+  test('exit node values come from peers offering one', () {
+    expect(
+      tailscaleExitNodeValue(
+        const TailscalePeer(ips: ['fd7a:115c:a1e9::2', '100.64.0.2']),
+      ),
+      '100.64.0.2',
+    );
+    expect(tailscaleAutoExitNode, 'auto:any');
   });
 }
