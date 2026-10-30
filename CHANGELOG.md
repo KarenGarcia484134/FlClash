@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9.26 (2026-10-30)
+
+**Features**
+
+- **tailscale** Tailscale 自建 DERP 服务器自动直连：域名不在 tailscale.com 下的 DERP 节点（及其所在区域）不再经过连接代理，避免中继延迟被绕到国外（如 40ms 变成 400ms）；直连在 Android 上绑定到实际网络，不会绕回 VPN；直连失败时自动改走连接代理；官方 DERP 和控制服务器仍走所选代理 (7a5b151)
+
 ## v0.9.25 (2026-10-30)
 
 **Bug Fixes**

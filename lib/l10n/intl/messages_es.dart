@@ -2132,7 +2132,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Connection proxy",
     ),
     "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
-      "Tailscale\'s own traffic to its control server, DERP relays and peers goes through this proxy or group. Choose one if the control server cannot be reached directly.",
+      "El tráfico propio de Tailscale hacia su servidor de control, los relés DERP oficiales de Tailscale y los pares pasa por este proxy o grupo. Los servidores DERP propios (los que no están bajo tailscale.com) se conectan directamente para reducir la latencia, y por este proxy solo si la conexión directa falla. Elige uno si no se puede llegar directamente al servidor de control.",
     ),
     "tailscaleDialerProxyDropped": m85,
     "tailscaleDirectBlocked": MessageLookupByLibrary.simpleMessage(

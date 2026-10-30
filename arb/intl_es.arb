@@ -1003,7 +1003,7 @@
   "tailscaleRefresh": "Refresh",
   "tailscaleAuthKeyNotAccepted": "The control server did not accept the auth key (expired, already used, revoked or mistyped). Create a new key, or log in with the URL above.",
   "tailscaleDialerProxy": "Connection proxy",
-  "tailscaleDialerProxyDesc": "Tailscale's own traffic to its control server, DERP relays and peers goes through this proxy or group. Choose one if the control server cannot be reached directly.",
+  "tailscaleDialerProxyDesc": "El tráfico propio de Tailscale hacia su servidor de control, los relés DERP oficiales de Tailscale y los pares pasa por este proxy o grupo. Los servidores DERP propios (los que no están bajo tailscale.com) se conectan directamente para reducir la latencia, y por este proxy solo si la conexión directa falla. Elige uno si no se puede llegar directamente al servidor de control.",
   "tailscaleNetworkIssue": "The control server could not be reached (network timeout). This is a network problem, not the auth key: choose a connection proxy above and connect again.",
   "recommended": "Recommended",
   "testAllDelays": "Test all",

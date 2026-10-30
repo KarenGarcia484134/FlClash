@@ -1530,7 +1530,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleDialerProxy": MessageLookupByLibrary.simpleMessage("连接代理"),
     "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
-      "Tailscale 自身连接控制服务器、DERP 中继和其他设备的流量会经过这里选择的代理或代理组。直连无法访问控制服务器时请选择一个。",
+      "Tailscale 自身连接控制服务器、官方 DERP 中继和其他设备的流量会经过这里选择的代理或代理组。自建 DERP 服务器（域名不在 tailscale.com 下的）会自动直连以降低延迟，直连失败时才改走这里的代理。直连无法访问控制服务器时请选择一个。",
     ),
     "tailscaleDialerProxyDropped": m85,
     "tailscaleDirectBlocked": MessageLookupByLibrary.simpleMessage(
