@@ -42,6 +42,9 @@ class TailscaleNetworkSectionState
     extends ConsumerState<TailscaleNetworkSection>
     with WidgetsBindingObserver {
   TailscaleNetStatus? _status;
+
+  /// The node and peers as last read, for the page's exit node picker.
+  TailscaleNetStatus? get status => _status;
   bool _loading = false;
   String _query = '';
   Timer? _timer;
@@ -267,7 +270,17 @@ class TailscaleNetworkSectionState
     return switch (ping.path) {
       TailscalePath.direct => appLocalizations.tailscalePathDirect,
       TailscalePath.peerRelay => appLocalizations.tailscalePathPeerRelay,
-      TailscalePath.derp => appLocalizations.tailscalePathRelay(ping.derpLabel),
+      TailscalePath.derp => switch (_status?.derpRoutes[ping.derpRegionCode]) {
+        'direct' => appLocalizations.tailscalePathRelayVia(
+          ping.derpLabel,
+          appLocalizations.tailscaleRouteDirect,
+        ),
+        'proxy' => appLocalizations.tailscalePathRelayVia(
+          ping.derpLabel,
+          appLocalizations.tailscaleRouteProxy,
+        ),
+        _ => appLocalizations.tailscalePathRelay(ping.derpLabel),
+      },
       TailscalePath.unknown => null,
     };
   }

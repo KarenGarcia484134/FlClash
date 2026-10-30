@@ -87,6 +87,12 @@ _TailscaleNetStatus _$TailscaleNetStatusFromJson(Map<String, dynamic> json) =>
           const [],
       error: json['error'] as String?,
       dialerProxy: json['dialerProxy'] as String?,
+      derpRoutes:
+          (json['derpRoutes'] as Map<String, dynamic>?)?.map(
+            (k, e) => MapEntry(k, e as String),
+          ) ??
+          const {},
+      exitNodeError: json['exitNodeError'] as String?,
     );
 
 Map<String, dynamic> _$TailscaleNetStatusToJson(_TailscaleNetStatus instance) =>
@@ -100,6 +106,8 @@ Map<String, dynamic> _$TailscaleNetStatusToJson(_TailscaleNetStatus instance) =>
       'peers': instance.peers,
       'error': instance.error,
       'dialerProxy': instance.dialerProxy,
+      'derpRoutes': instance.derpRoutes,
+      'exitNodeError': instance.exitNodeError,
     };
 
 _TailscalePingResult _$TailscalePingResultFromJson(Map<String, dynamic> json) =>

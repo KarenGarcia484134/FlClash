@@ -109,6 +109,8 @@ func tailscaleStatus(ctx context.Context, params TailscaleStatusParams) (Tailsca
 	}
 	result := convertTailscaleStatus(status)
 	result.DialerProxy = node.DialerProxy()
+	result.DERPRoutes = node.DERPRoutes()
+	result.ExitNodeError = node.ExitNodeError()
 	return result, nil
 }
 

@@ -8317,10 +8317,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Tailscale's own traffic to its control server, Tailscale's DERP relays and peers goes through this proxy or group. Self-hosted DERP servers (any not under tailscale.com) are reached directly for low latency, and through this proxy only if the direct connection fails. Choose one if the control server cannot be reached directly.`
+  /// `Tailscale's own traffic to its control server and Tailscale's DERP relays goes through this proxy or group. Self-hosted DERP servers (any not under tailscale.com) and peer-to-peer UDP connect directly for low latency, and use this proxy only when the direct connection fails. Choose one if the control server cannot be reached directly.`
   String get tailscaleDialerProxyDesc {
     return Intl.message(
-      'Tailscale\'s own traffic to its control server, Tailscale\'s DERP relays and peers goes through this proxy or group. Self-hosted DERP servers (any not under tailscale.com) are reached directly for low latency, and through this proxy only if the direct connection fails. Choose one if the control server cannot be reached directly.',
+      'Tailscale\'s own traffic to its control server and Tailscale\'s DERP relays goes through this proxy or group. Self-hosted DERP servers (any not under tailscale.com) and peer-to-peer UDP connect directly for low latency, and use this proxy only when the direct connection fails. Choose one if the control server cannot be reached directly.',
       name: 'tailscaleDialerProxyDesc',
       desc: '',
       args: [],
@@ -9292,6 +9292,116 @@ class AppLocalizations {
     return Intl.message(
       'The node reaches the control server directly and the connection was reset, which is common on networks that block Tailscale. Pick a connection proxy above, then tap Reconnect.',
       name: 'tailscaleDirectBlocked',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Relay {relay} ({route})`
+  String tailscalePathRelayVia(String relay, String route) {
+    return Intl.message(
+      'Relay $relay ($route)',
+      name: 'tailscalePathRelayVia',
+      desc: '',
+      args: [relay, route],
+    );
+  }
+
+  /// `direct`
+  String get tailscaleRouteDirect {
+    return Intl.message(
+      'direct',
+      name: 'tailscaleRouteDirect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `via proxy`
+  String get tailscaleRouteProxy {
+    return Intl.message(
+      'via proxy',
+      name: 'tailscaleRouteProxy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter manually`
+  String get tailscaleExitNodeManual {
+    return Intl.message(
+      'Enter manually',
+      name: 'tailscaleExitNodeManual',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `None`
+  String get tailscaleExitNodeNone {
+    return Intl.message(
+      'None',
+      name: 'tailscaleExitNodeNone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Automatic (auto:any)`
+  String get tailscaleExitNodeAuto {
+    return Intl.message(
+      'Automatic (auto:any)',
+      name: 'tailscaleExitNodeAuto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No device offers itself as an exit node`
+  String get tailscaleExitNodeNoOffers {
+    return Intl.message(
+      'No device offers itself as an exit node',
+      name: 'tailscaleExitNodeNoOffers',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tailscale IP or device name`
+  String get tailscaleExitNodeHint {
+    return Intl.message(
+      'Tailscale IP or device name',
+      name: 'tailscaleExitNodeHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The exit node could not be set: {error}`
+  String tailscaleExitNodeFailed(String error) {
+    return Intl.message(
+      'The exit node could not be set: $error',
+      name: 'tailscaleExitNodeFailed',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `The connection proxy you picked is not in use yet. Tap Reconnect to apply it.`
+  String get tailscaleDialerProxyPending {
+    return Intl.message(
+      'The connection proxy you picked is not in use yet. Tap Reconnect to apply it.',
+      name: 'tailscaleDialerProxyPending',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Node name`
+  String get tailscaleNodeName {
+    return Intl.message(
+      'Node name',
+      name: 'tailscaleNodeName',
       desc: '',
       args: [],
     );

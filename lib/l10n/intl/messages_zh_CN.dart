@@ -205,21 +205,25 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m85(name) =>
       "所选连接代理「${name}」不在当前配置中，节点正在直连。请重新选择一个当前配置中有的代理或代理组。";
 
-  static String m86(relay) => "中继 ${relay}";
+  static String m86(error) => "无法设置出口节点：${error}";
 
-  static String m87(value) => "峰值 ${value}";
+  static String m87(relay) => "中继 ${relay}";
 
-  static String m88(value) => "累计 ${value}";
+  static String m88(relay, route) => "中继 ${relay}（${route}）";
 
-  static String m89(error) => "下载更新失败：${error}\n可以改为在发布页面中手动下载。";
+  static String m89(value) => "峰值 ${value}";
 
-  static String m90(error) => "无法启动安装程序：${error}";
+  static String m90(value) => "累计 ${value}";
 
-  static String m91(label) => "${label}必须为URL";
+  static String m91(error) => "下载更新失败：${error}\n可以改为在发布页面中手动下载。";
 
-  static String m92(count) => "${count} 年前";
+  static String m92(error) => "无法启动安装程序：${error}";
 
-  static String m93(count) => "${count} 年前";
+  static String m93(label) => "${label}必须为URL";
+
+  static String m94(count) => "${count} 年前";
+
+  static String m95(count) => "${count} 年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1530,9 +1534,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleDialerProxy": MessageLookupByLibrary.simpleMessage("连接代理"),
     "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
-      "Tailscale 自身连接控制服务器、官方 DERP 中继和其他设备的流量会经过这里选择的代理或代理组。自建 DERP 服务器（域名不在 tailscale.com 下的）会自动直连以降低延迟，直连失败时才改走这里的代理。直连无法访问控制服务器时请选择一个。",
+      "Tailscale 自身连接控制服务器和官方 DERP 中继的流量会经过这里选择的代理或代理组。自建 DERP 服务器（域名不在 tailscale.com 下的）和设备间的点对点 UDP 会直连以降低延迟，直连失败时才改走这里的代理。直连无法访问控制服务器时请选择一个。",
     ),
     "tailscaleDialerProxyDropped": m85,
+    "tailscaleDialerProxyPending": MessageLookupByLibrary.simpleMessage(
+      "所选连接代理尚未生效，点「重新连接」即可应用。",
+    ),
     "tailscaleDirectBlocked": MessageLookupByLibrary.simpleMessage(
       "节点当前直连控制服务器，连接被重置（屏蔽 Tailscale 的网络中很常见）。请在上方选择一个连接代理，然后点「重新连接」。",
     ),
@@ -1542,6 +1549,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleEnable": MessageLookupByLibrary.simpleMessage("启用 Tailscale"),
     "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage("临时节点"),
     "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("出口节点"),
+    "tailscaleExitNodeAuto": MessageLookupByLibrary.simpleMessage(
+      "自动（auto:any）",
+    ),
+    "tailscaleExitNodeFailed": m86,
+    "tailscaleExitNodeHint": MessageLookupByLibrary.simpleMessage(
+      "Tailscale IP 或设备名",
+    ),
+    "tailscaleExitNodeManual": MessageLookupByLibrary.simpleMessage("手动输入"),
+    "tailscaleExitNodeNoOffers": MessageLookupByLibrary.simpleMessage(
+      "没有设备提供出口节点",
+    ),
+    "tailscaleExitNodeNone": MessageLookupByLibrary.simpleMessage("不使用"),
     "tailscaleExitNodeOption": MessageLookupByLibrary.simpleMessage("可作出口节点"),
     "tailscaleHostname": MessageLookupByLibrary.simpleMessage("主机名"),
     "tailscaleLocalNode": MessageLookupByLibrary.simpleMessage("本机"),
@@ -1553,6 +1572,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "无法连接到控制服务器（网络超时）。这是网络问题，不是认证密钥的问题：请在上方选择一个连接代理后重新连接。",
     ),
     "tailscaleNode": MessageLookupByLibrary.simpleMessage("节点"),
+    "tailscaleNodeName": MessageLookupByLibrary.simpleMessage("节点名"),
     "tailscaleNotStarted": MessageLookupByLibrary.simpleMessage(
       "节点尚未启动，连接后即可查看设备列表。",
     ),
@@ -1561,7 +1581,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleOpenLogin": MessageLookupByLibrary.simpleMessage("打开登录页面"),
     "tailscalePathDirect": MessageLookupByLibrary.simpleMessage("直连"),
     "tailscalePathPeerRelay": MessageLookupByLibrary.simpleMessage("对等中继"),
-    "tailscalePathRelay": m86,
+    "tailscalePathRelay": m87,
+    "tailscalePathRelayVia": m88,
     "tailscalePeers": MessageLookupByLibrary.simpleMessage("设备"),
     "tailscalePing": MessageLookupByLibrary.simpleMessage("测试延迟"),
     "tailscalePingAll": MessageLookupByLibrary.simpleMessage("全部测试"),
@@ -1575,6 +1596,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
       "这会删除本设备保存的 Tailscale 登录状态，之后需要重新登录。继续吗？",
     ),
+    "tailscaleRouteDirect": MessageLookupByLibrary.simpleMessage("直连"),
+    "tailscaleRouteProxy": MessageLookupByLibrary.simpleMessage("代理"),
     "tailscaleRoutingAdded": MessageLookupByLibrary.simpleMessage("已添加到自定义分流"),
     "tailscaleSilentLogTip": MessageLookupByLibrary.simpleMessage(
       "日志等级为 silent，无法读取登录链接，请换成其他日志等级。",
@@ -1616,8 +1639,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalUpload": MessageLookupByLibrary.simpleMessage("上传总量"),
     "tproxyPort": MessageLookupByLibrary.simpleMessage("Tproxy端口"),
     "traffic": MessageLookupByLibrary.simpleMessage("流量"),
-    "trafficPeak": m87,
-    "trafficTotal": m88,
+    "trafficPeak": m89,
+    "trafficTotal": m90,
     "trafficUsage": MessageLookupByLibrary.simpleMessage("流量统计"),
     "transport": MessageLookupByLibrary.simpleMessage("传输协议"),
     "tun": MessageLookupByLibrary.simpleMessage("虚拟网卡"),
@@ -1656,14 +1679,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateDmgOpened": MessageLookupByLibrary.simpleMessage(
       "安装镜像已打开，请将 FlClash 拖入「应用程序」以完成更新。",
     ),
-    "updateDownloadFailed": m89,
-    "updateInstallFailed": m90,
+    "updateDownloadFailed": m91,
+    "updateInstallFailed": m92,
     "updateNow": MessageLookupByLibrary.simpleMessage("立即更新"),
     "upload": MessageLookupByLibrary.simpleMessage("上传"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("上行带宽"),
     "upstreamProject": MessageLookupByLibrary.simpleMessage("上游项目"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m91,
+    "urlTip": m93,
     "useHosts": MessageLookupByLibrary.simpleMessage("使用Hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("使用系统Hosts"),
     "usedShort": MessageLookupByLibrary.simpleMessage("已用"),
@@ -1688,8 +1711,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "写入系统会同时设置系统时钟，Android 上不生效。",
     ),
-    "yearsAgo": m92,
-    "yearsAgoShort": m93,
+    "yearsAgo": m94,
+    "yearsAgoShort": m95,
     "yes": MessageLookupByLibrary.simpleMessage("是"),
     "zhCN": MessageLookupByLibrary.simpleMessage("中文简体"),
   };

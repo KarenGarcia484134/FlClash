@@ -242,23 +242,28 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m85(name) =>
       "Le proxy de connexion « ${name} » n’est pas dans le profil actuel ; le nœud se connecte donc directement. Choisissez-en un du profil.";
 
-  static String m86(relay) => "Relais ${relay}";
+  static String m86(error) =>
+      "Impossible de définir le nœud de sortie : ${error}";
 
-  static String m87(value) => "Pic ${value}";
+  static String m87(relay) => "Relais ${relay}";
 
-  static String m88(value) => "Total ${value}";
+  static String m88(relay, route) => "Relais ${relay} (${route})";
 
-  static String m89(error) =>
+  static String m89(value) => "Pic ${value}";
+
+  static String m90(value) => "Total ${value}";
+
+  static String m91(error) =>
       "Impossible de télécharger la mise à jour : ${error}\nVous pouvez la télécharger depuis la page de la version.";
 
-  static String m90(error) => "Impossible de lancer l’installateur : ${error}";
+  static String m92(error) => "Impossible de lancer l’installateur : ${error}";
 
-  static String m91(label) => "${label} doit être une URL";
+  static String m93(label) => "${label} doit être une URL";
 
-  static String m92(count) =>
+  static String m94(count) =>
       "${Intl.plural(count, one: 'il y a 1 an', other: 'il y a ${count} ans')}";
 
-  static String m93(count) =>
+  static String m95(count) =>
       "${Intl.plural(count, other: 'il y a ${count} a')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -2135,9 +2140,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Connection proxy",
     ),
     "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
-      "Le trafic propre de Tailscale vers son serveur de contrôle, les relais DERP officiels de Tailscale et les pairs passe par ce proxy ou ce groupe. Les serveurs DERP auto-hébergés (hors tailscale.com) sont joints en direct pour réduire la latence, et via ce proxy seulement si la connexion directe échoue. Choisissez-en un si le serveur de contrôle n’est pas joignable en direct.",
+      "Le trafic propre de Tailscale vers son serveur de contrôle et les relais DERP officiels passe par ce proxy ou ce groupe. Les serveurs DERP auto-hébergés (hors tailscale.com) et l’UDP pair à pair se connectent en direct pour réduire la latence, et n’utilisent ce proxy que si la connexion directe échoue. Choisissez-en un si le serveur de contrôle n’est pas joignable en direct.",
     ),
     "tailscaleDialerProxyDropped": m85,
+    "tailscaleDialerProxyPending": MessageLookupByLibrary.simpleMessage(
+      "Le proxy de connexion choisi n’est pas encore utilisé. Touchez Reconnecter pour l’appliquer.",
+    ),
     "tailscaleDirectBlocked": MessageLookupByLibrary.simpleMessage(
       "Le nœud joint le serveur de contrôle en direct et la connexion a été réinitialisée. Choisissez un proxy de connexion ci-dessus, puis touchez Reconnecter.",
     ),
@@ -2149,6 +2157,20 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ephemeral node",
     ),
     "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("Exit node"),
+    "tailscaleExitNodeAuto": MessageLookupByLibrary.simpleMessage(
+      "Automatique (auto:any)",
+    ),
+    "tailscaleExitNodeFailed": m86,
+    "tailscaleExitNodeHint": MessageLookupByLibrary.simpleMessage(
+      "IP Tailscale ou nom de l’appareil",
+    ),
+    "tailscaleExitNodeManual": MessageLookupByLibrary.simpleMessage(
+      "Saisir à la main",
+    ),
+    "tailscaleExitNodeNoOffers": MessageLookupByLibrary.simpleMessage(
+      "Aucun appareil ne se propose comme nœud de sortie",
+    ),
+    "tailscaleExitNodeNone": MessageLookupByLibrary.simpleMessage("Aucun"),
     "tailscaleExitNodeOption": MessageLookupByLibrary.simpleMessage(
       "Can be exit node",
     ),
@@ -2162,6 +2184,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "The control server could not be reached (network timeout). This is a network problem, not the auth key: choose a connection proxy above and connect again.",
     ),
     "tailscaleNode": MessageLookupByLibrary.simpleMessage("Node"),
+    "tailscaleNodeName": MessageLookupByLibrary.simpleMessage("Nom du nœud"),
     "tailscaleNotStarted": MessageLookupByLibrary.simpleMessage(
       "The node is not running yet. Connect to load the device list.",
     ),
@@ -2174,7 +2197,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscalePathPeerRelay": MessageLookupByLibrary.simpleMessage(
       "Relais pair",
     ),
-    "tailscalePathRelay": m86,
+    "tailscalePathRelay": m87,
+    "tailscalePathRelayVia": m88,
     "tailscalePeers": MessageLookupByLibrary.simpleMessage("Devices"),
     "tailscalePing": MessageLookupByLibrary.simpleMessage("Tester la latence"),
     "tailscalePingAll": MessageLookupByLibrary.simpleMessage("Tout tester"),
@@ -2190,6 +2214,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
       "This deletes the saved Tailscale login of this device, so it has to log in again. Continue?",
     ),
+    "tailscaleRouteDirect": MessageLookupByLibrary.simpleMessage("direct"),
+    "tailscaleRouteProxy": MessageLookupByLibrary.simpleMessage("via le proxy"),
     "tailscaleRoutingAdded": MessageLookupByLibrary.simpleMessage(
       "Added to custom routing",
     ),
@@ -2247,8 +2273,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalUpload": MessageLookupByLibrary.simpleMessage("Envoyé"),
     "tproxyPort": MessageLookupByLibrary.simpleMessage("Port TProxy"),
     "traffic": MessageLookupByLibrary.simpleMessage("Trafic"),
-    "trafficPeak": m87,
-    "trafficTotal": m88,
+    "trafficPeak": m89,
+    "trafficTotal": m90,
     "trafficUsage": MessageLookupByLibrary.simpleMessage("Trafic utilisé"),
     "transport": MessageLookupByLibrary.simpleMessage("Transport"),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
@@ -2293,8 +2319,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateDmgOpened": MessageLookupByLibrary.simpleMessage(
       "L’image disque est ouverte. Faites glisser FlClash dans Applications pour terminer la mise à jour.",
     ),
-    "updateDownloadFailed": m89,
-    "updateInstallFailed": m90,
+    "updateDownloadFailed": m91,
+    "updateInstallFailed": m92,
     "updateNow": MessageLookupByLibrary.simpleMessage("Mettre à jour"),
     "upload": MessageLookupByLibrary.simpleMessage("Envoi"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage(
@@ -2304,7 +2330,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Projet d\'origine",
     ),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m91,
+    "urlTip": m93,
     "useHosts": MessageLookupByLibrary.simpleMessage("Utiliser hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage(
       "Utiliser les hosts du système",
@@ -2337,8 +2363,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "Écrire dans le système règle aussi l’horloge système ; Android l’ignore.",
     ),
-    "yearsAgo": m92,
-    "yearsAgoShort": m93,
+    "yearsAgo": m94,
+    "yearsAgoShort": m95,
     "yes": MessageLookupByLibrary.simpleMessage("Oui"),
     "zhCN": MessageLookupByLibrary.simpleMessage("Chinois simplifié"),
   };

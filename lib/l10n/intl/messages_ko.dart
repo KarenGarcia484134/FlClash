@@ -210,22 +210,26 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m85(name) =>
       "연결 프록시 \"${name}\"이(가) 현재 프로필에 없어 노드가 직접 연결 중입니다. 프로필에 있는 항목을 선택하세요.";
 
-  static String m86(relay) => "릴레이 ${relay}";
+  static String m86(error) => "출구 노드를 설정하지 못했습니다: ${error}";
 
-  static String m87(value) => "최고 ${value}";
+  static String m87(relay) => "릴레이 ${relay}";
 
-  static String m88(value) => "합계 ${value}";
+  static String m88(relay, route) => "릴레이 ${relay} (${route})";
 
-  static String m89(error) =>
+  static String m89(value) => "최고 ${value}";
+
+  static String m90(value) => "합계 ${value}";
+
+  static String m91(error) =>
       "업데이트를 다운로드하지 못했습니다: ${error}\n릴리스 페이지에서 직접 다운로드할 수 있습니다.";
 
-  static String m90(error) => "설치 프로그램을 시작하지 못했습니다: ${error}";
+  static String m92(error) => "설치 프로그램을 시작하지 못했습니다: ${error}";
 
-  static String m91(label) => "${label}은(는) URL이어야 합니다";
+  static String m93(label) => "${label}은(는) URL이어야 합니다";
 
-  static String m92(count) => "${Intl.plural(count, other: '${count}년 전')}";
+  static String m94(count) => "${Intl.plural(count, other: '${count}년 전')}";
 
-  static String m93(count) => "${Intl.plural(count, other: '${count}년 전')}";
+  static String m95(count) => "${Intl.plural(count, other: '${count}년 전')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1706,9 +1710,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Connection proxy",
     ),
     "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
-      "제어 서버, Tailscale 공식 DERP 릴레이, 피어로 가는 Tailscale 자체 트래픽은 이 프록시 또는 그룹을 거칩니다. 자체 호스팅 DERP 서버(tailscale.com 이외)는 지연을 줄이기 위해 직접 연결하며, 직접 연결에 실패할 때만 이 프록시를 사용합니다. 제어 서버에 직접 연결할 수 없으면 하나를 선택하세요.",
+      "제어 서버와 Tailscale 공식 DERP 릴레이로 가는 Tailscale 자체 트래픽은 이 프록시 또는 그룹을 거칩니다. 자체 호스팅 DERP 서버(tailscale.com 이외)와 기기 간 P2P UDP는 지연을 줄이기 위해 직접 연결하며, 실패할 때만 이 프록시를 사용합니다. 제어 서버에 직접 연결할 수 없으면 하나를 선택하세요.",
     ),
     "tailscaleDialerProxyDropped": m85,
+    "tailscaleDialerProxyPending": MessageLookupByLibrary.simpleMessage(
+      "선택한 연결 프록시가 아직 적용되지 않았습니다. \"다시 연결\"을 누르면 적용됩니다.",
+    ),
     "tailscaleDirectBlocked": MessageLookupByLibrary.simpleMessage(
       "노드가 제어 서버에 직접 연결하다가 연결이 재설정되었습니다. 위에서 연결 프록시를 선택한 뒤 \"다시 연결\"을 누르세요.",
     ),
@@ -1720,6 +1727,18 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ephemeral node",
     ),
     "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("Exit node"),
+    "tailscaleExitNodeAuto": MessageLookupByLibrary.simpleMessage(
+      "자동 (auto:any)",
+    ),
+    "tailscaleExitNodeFailed": m86,
+    "tailscaleExitNodeHint": MessageLookupByLibrary.simpleMessage(
+      "Tailscale IP 또는 기기 이름",
+    ),
+    "tailscaleExitNodeManual": MessageLookupByLibrary.simpleMessage("직접 입력"),
+    "tailscaleExitNodeNoOffers": MessageLookupByLibrary.simpleMessage(
+      "출구 노드를 제공하는 기기가 없습니다",
+    ),
+    "tailscaleExitNodeNone": MessageLookupByLibrary.simpleMessage("사용 안 함"),
     "tailscaleExitNodeOption": MessageLookupByLibrary.simpleMessage(
       "Can be exit node",
     ),
@@ -1733,6 +1752,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "The control server could not be reached (network timeout). This is a network problem, not the auth key: choose a connection proxy above and connect again.",
     ),
     "tailscaleNode": MessageLookupByLibrary.simpleMessage("Node"),
+    "tailscaleNodeName": MessageLookupByLibrary.simpleMessage("노드 이름"),
     "tailscaleNotStarted": MessageLookupByLibrary.simpleMessage(
       "The node is not running yet. Connect to load the device list.",
     ),
@@ -1743,7 +1763,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscalePathDirect": MessageLookupByLibrary.simpleMessage("직접 연결"),
     "tailscalePathPeerRelay": MessageLookupByLibrary.simpleMessage("피어 릴레이"),
-    "tailscalePathRelay": m86,
+    "tailscalePathRelay": m87,
+    "tailscalePathRelayVia": m88,
     "tailscalePeers": MessageLookupByLibrary.simpleMessage("Devices"),
     "tailscalePing": MessageLookupByLibrary.simpleMessage("지연 시간 테스트"),
     "tailscalePingAll": MessageLookupByLibrary.simpleMessage("모두 테스트"),
@@ -1757,6 +1778,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
       "This deletes the saved Tailscale login of this device, so it has to log in again. Continue?",
     ),
+    "tailscaleRouteDirect": MessageLookupByLibrary.simpleMessage("직접"),
+    "tailscaleRouteProxy": MessageLookupByLibrary.simpleMessage("프록시 경유"),
     "tailscaleRoutingAdded": MessageLookupByLibrary.simpleMessage(
       "Added to custom routing",
     ),
@@ -1804,8 +1827,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalUpload": MessageLookupByLibrary.simpleMessage("업로드량"),
     "tproxyPort": MessageLookupByLibrary.simpleMessage("TProxy 포트"),
     "traffic": MessageLookupByLibrary.simpleMessage("트래픽"),
-    "trafficPeak": m87,
-    "trafficTotal": m88,
+    "trafficPeak": m89,
+    "trafficTotal": m90,
     "trafficUsage": MessageLookupByLibrary.simpleMessage("트래픽 사용량"),
     "transport": MessageLookupByLibrary.simpleMessage("전송"),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
@@ -1846,14 +1869,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateDmgOpened": MessageLookupByLibrary.simpleMessage(
       "디스크 이미지를 열었습니다. FlClash를 응용 프로그램으로 드래그하여 업데이트를 완료하세요.",
     ),
-    "updateDownloadFailed": m89,
-    "updateInstallFailed": m90,
+    "updateDownloadFailed": m91,
+    "updateInstallFailed": m92,
     "updateNow": MessageLookupByLibrary.simpleMessage("지금 업데이트"),
     "upload": MessageLookupByLibrary.simpleMessage("업로드"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("업로드 대역폭"),
     "upstreamProject": MessageLookupByLibrary.simpleMessage("업스트림 프로젝트"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m91,
+    "urlTip": m93,
     "useHosts": MessageLookupByLibrary.simpleMessage("hosts 사용"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("시스템 hosts 사용"),
     "usedShort": MessageLookupByLibrary.simpleMessage("사용"),
@@ -1878,8 +1901,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "시스템에 기록하면 시스템 시계도 설정합니다. Android에서는 무시됩니다.",
     ),
-    "yearsAgo": m92,
-    "yearsAgoShort": m93,
+    "yearsAgo": m94,
+    "yearsAgoShort": m95,
     "yes": MessageLookupByLibrary.simpleMessage("예"),
     "zhCN": MessageLookupByLibrary.simpleMessage("중국어 간체"),
   };

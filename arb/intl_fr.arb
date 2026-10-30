@@ -1003,7 +1003,7 @@
   "tailscaleRefresh": "Refresh",
   "tailscaleAuthKeyNotAccepted": "The control server did not accept the auth key (expired, already used, revoked or mistyped). Create a new key, or log in with the URL above.",
   "tailscaleDialerProxy": "Connection proxy",
-  "tailscaleDialerProxyDesc": "Le trafic propre de Tailscale vers son serveur de contrôle, les relais DERP officiels de Tailscale et les pairs passe par ce proxy ou ce groupe. Les serveurs DERP auto-hébergés (hors tailscale.com) sont joints en direct pour réduire la latence, et via ce proxy seulement si la connexion directe échoue. Choisissez-en un si le serveur de contrôle n’est pas joignable en direct.",
+  "tailscaleDialerProxyDesc": "Le trafic propre de Tailscale vers son serveur de contrôle et les relais DERP officiels passe par ce proxy ou ce groupe. Les serveurs DERP auto-hébergés (hors tailscale.com) et l’UDP pair à pair se connectent en direct pour réduire la latence, et n’utilisent ce proxy que si la connexion directe échoue. Choisissez-en un si le serveur de contrôle n’est pas joignable en direct.",
   "tailscaleNetworkIssue": "The control server could not be reached (network timeout). This is a network problem, not the auth key: choose a connection proxy above and connect again.",
   "recommended": "Recommended",
   "testAllDelays": "Test all",
@@ -1115,5 +1115,16 @@
   "hideSecret": "Masquer",
   "tailscaleReconnect": "Reconnecter",
   "tailscaleDialerProxyDropped": "Le proxy de connexion « {name} » n’est pas dans le profil actuel ; le nœud se connecte donc directement. Choisissez-en un du profil.",
-  "tailscaleDirectBlocked": "Le nœud joint le serveur de contrôle en direct et la connexion a été réinitialisée. Choisissez un proxy de connexion ci-dessus, puis touchez Reconnecter."
+  "tailscaleDirectBlocked": "Le nœud joint le serveur de contrôle en direct et la connexion a été réinitialisée. Choisissez un proxy de connexion ci-dessus, puis touchez Reconnecter.",
+  "tailscalePathRelayVia": "Relais {relay} ({route})",
+  "tailscaleRouteDirect": "direct",
+  "tailscaleRouteProxy": "via le proxy",
+  "tailscaleExitNodeManual": "Saisir à la main",
+  "tailscaleExitNodeNone": "Aucun",
+  "tailscaleExitNodeAuto": "Automatique (auto:any)",
+  "tailscaleExitNodeNoOffers": "Aucun appareil ne se propose comme nœud de sortie",
+  "tailscaleExitNodeHint": "IP Tailscale ou nom de l’appareil",
+  "tailscaleExitNodeFailed": "Impossible de définir le nœud de sortie : {error}",
+  "tailscaleDialerProxyPending": "Le proxy de connexion choisi n’est pas encore utilisé. Touchez Reconnecter pour l’appliquer.",
+  "tailscaleNodeName": "Nom du nœud"
 }

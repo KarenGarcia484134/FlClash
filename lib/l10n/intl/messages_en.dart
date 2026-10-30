@@ -233,23 +233,27 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m85(name) =>
       "The connection proxy \"${name}\" is not in the current profile, so the node is dialing directly. Pick one the profile has.";
 
-  static String m86(relay) => "Relay ${relay}";
+  static String m86(error) => "The exit node could not be set: ${error}";
 
-  static String m87(value) => "Peak ${value}";
+  static String m87(relay) => "Relay ${relay}";
 
-  static String m88(value) => "Total ${value}";
+  static String m88(relay, route) => "Relay ${relay} (${route})";
 
-  static String m89(error) =>
+  static String m89(value) => "Peak ${value}";
+
+  static String m90(value) => "Total ${value}";
+
+  static String m91(error) =>
       "Couldn\'t download the update: ${error}\nYou can download it from the release page instead.";
 
-  static String m90(error) => "Couldn\'t start the installer: ${error}";
+  static String m92(error) => "Couldn\'t start the installer: ${error}";
 
-  static String m91(label) => "${label} must be a URL";
+  static String m93(label) => "${label} must be a URL";
 
-  static String m92(count) =>
+  static String m94(count) =>
       "${Intl.plural(count, one: '1 year ago', other: '${count} years ago')}";
 
-  static String m93(count) => "${Intl.plural(count, other: '${count}y ago')}";
+  static String m95(count) => "${Intl.plural(count, other: '${count}y ago')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1991,9 +1995,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Connection proxy",
     ),
     "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
-      "Tailscale\'s own traffic to its control server, Tailscale\'s DERP relays and peers goes through this proxy or group. Self-hosted DERP servers (any not under tailscale.com) are reached directly for low latency, and through this proxy only if the direct connection fails. Choose one if the control server cannot be reached directly.",
+      "Tailscale\'s own traffic to its control server and Tailscale\'s DERP relays goes through this proxy or group. Self-hosted DERP servers (any not under tailscale.com) and peer-to-peer UDP connect directly for low latency, and use this proxy only when the direct connection fails. Choose one if the control server cannot be reached directly.",
     ),
     "tailscaleDialerProxyDropped": m85,
+    "tailscaleDialerProxyPending": MessageLookupByLibrary.simpleMessage(
+      "The connection proxy you picked is not in use yet. Tap Reconnect to apply it.",
+    ),
     "tailscaleDirectBlocked": MessageLookupByLibrary.simpleMessage(
       "The node reaches the control server directly and the connection was reset, which is common on networks that block Tailscale. Pick a connection proxy above, then tap Reconnect.",
     ),
@@ -2005,6 +2012,20 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ephemeral node",
     ),
     "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("Exit node"),
+    "tailscaleExitNodeAuto": MessageLookupByLibrary.simpleMessage(
+      "Automatic (auto:any)",
+    ),
+    "tailscaleExitNodeFailed": m86,
+    "tailscaleExitNodeHint": MessageLookupByLibrary.simpleMessage(
+      "Tailscale IP or device name",
+    ),
+    "tailscaleExitNodeManual": MessageLookupByLibrary.simpleMessage(
+      "Enter manually",
+    ),
+    "tailscaleExitNodeNoOffers": MessageLookupByLibrary.simpleMessage(
+      "No device offers itself as an exit node",
+    ),
+    "tailscaleExitNodeNone": MessageLookupByLibrary.simpleMessage("None"),
     "tailscaleExitNodeOption": MessageLookupByLibrary.simpleMessage(
       "Can be exit node",
     ),
@@ -2018,6 +2039,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "The control server could not be reached (network timeout). This is a network problem, not the auth key: choose a connection proxy above and connect again.",
     ),
     "tailscaleNode": MessageLookupByLibrary.simpleMessage("Node"),
+    "tailscaleNodeName": MessageLookupByLibrary.simpleMessage("Node name"),
     "tailscaleNotStarted": MessageLookupByLibrary.simpleMessage(
       "The node is not running yet. Connect to load the device list.",
     ),
@@ -2030,7 +2052,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscalePathPeerRelay": MessageLookupByLibrary.simpleMessage(
       "Peer relay",
     ),
-    "tailscalePathRelay": m86,
+    "tailscalePathRelay": m87,
+    "tailscalePathRelayVia": m88,
     "tailscalePeers": MessageLookupByLibrary.simpleMessage("Devices"),
     "tailscalePing": MessageLookupByLibrary.simpleMessage("Test latency"),
     "tailscalePingAll": MessageLookupByLibrary.simpleMessage("Test all"),
@@ -2044,6 +2067,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
       "This deletes the saved Tailscale login of this device, so it has to log in again. Continue?",
     ),
+    "tailscaleRouteDirect": MessageLookupByLibrary.simpleMessage("direct"),
+    "tailscaleRouteProxy": MessageLookupByLibrary.simpleMessage("via proxy"),
     "tailscaleRoutingAdded": MessageLookupByLibrary.simpleMessage(
       "Added to custom routing",
     ),
@@ -2095,8 +2120,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalUpload": MessageLookupByLibrary.simpleMessage("Uploaded"),
     "tproxyPort": MessageLookupByLibrary.simpleMessage("TProxy port"),
     "traffic": MessageLookupByLibrary.simpleMessage("Traffic"),
-    "trafficPeak": m87,
-    "trafficTotal": m88,
+    "trafficPeak": m89,
+    "trafficTotal": m90,
     "trafficUsage": MessageLookupByLibrary.simpleMessage("Traffic usage"),
     "transport": MessageLookupByLibrary.simpleMessage("Transport"),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
@@ -2139,14 +2164,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateDmgOpened": MessageLookupByLibrary.simpleMessage(
       "The disk image is open. Drag FlClash into Applications to finish updating.",
     ),
-    "updateDownloadFailed": m89,
-    "updateInstallFailed": m90,
+    "updateDownloadFailed": m91,
+    "updateInstallFailed": m92,
     "updateNow": MessageLookupByLibrary.simpleMessage("Update now"),
     "upload": MessageLookupByLibrary.simpleMessage("Upload"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("Upload bandwidth"),
     "upstreamProject": MessageLookupByLibrary.simpleMessage("Upstream project"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m91,
+    "urlTip": m93,
     "useHosts": MessageLookupByLibrary.simpleMessage("Use hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("Use system hosts"),
     "usedShort": MessageLookupByLibrary.simpleMessage("used"),
@@ -2173,8 +2198,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "Write to system also sets the system clock; Android ignores it.",
     ),
-    "yearsAgo": m92,
-    "yearsAgoShort": m93,
+    "yearsAgo": m94,
+    "yearsAgoShort": m95,
     "yes": MessageLookupByLibrary.simpleMessage("Yes"),
     "zhCN": MessageLookupByLibrary.simpleMessage("Simplified Chinese"),
   };

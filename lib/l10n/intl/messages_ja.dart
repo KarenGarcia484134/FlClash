@@ -208,22 +208,26 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m85(name) =>
       "接続プロキシ「${name}」は現在のプロファイルにないため、ノードは直接接続しています。プロファイルにあるものを選んでください。";
 
-  static String m86(relay) => "中継 ${relay}";
+  static String m86(error) => "出口ノードを設定できませんでした：${error}";
 
-  static String m87(value) => "ピーク ${value}";
+  static String m87(relay) => "中継 ${relay}";
 
-  static String m88(value) => "累計 ${value}";
+  static String m88(relay, route) => "中継 ${relay}（${route}）";
 
-  static String m89(error) =>
+  static String m89(value) => "ピーク ${value}";
+
+  static String m90(value) => "累計 ${value}";
+
+  static String m91(error) =>
       "アップデートをダウンロードできませんでした：${error}\nリリースページから手動でダウンロードできます。";
 
-  static String m90(error) => "インストーラーを起動できませんでした：${error}";
+  static String m92(error) => "インストーラーを起動できませんでした：${error}";
 
-  static String m91(label) => "${label}はURLである必要があります";
+  static String m93(label) => "${label}はURLである必要があります";
 
-  static String m92(count) => "${count} 年前";
+  static String m94(count) => "${count} 年前";
 
-  static String m93(count) => "${count} 年前";
+  static String m95(count) => "${count} 年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1700,9 +1704,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleDialerProxy": MessageLookupByLibrary.simpleMessage("接続プロキシ"),
     "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
-      "コントロールサーバー、Tailscale 公式の DERP リレー、ピアへの Tailscale 自身の通信はこのプロキシまたはグループを経由します。セルフホストの DERP サーバー（tailscale.com 以外）は低遅延のため直接接続し、直接接続に失敗した場合のみこのプロキシを使います。コントロールサーバーに直接接続できない場合は選択してください。",
+      "コントロールサーバーと Tailscale 公式の DERP リレーへの Tailscale 自身の通信はこのプロキシまたはグループを経由します。セルフホストの DERP サーバー（tailscale.com 以外）とピア間の UDP は低遅延のため直接接続し、失敗した場合のみこのプロキシを使います。コントロールサーバーに直接接続できない場合は選択してください。",
     ),
     "tailscaleDialerProxyDropped": m85,
+    "tailscaleDialerProxyPending": MessageLookupByLibrary.simpleMessage(
+      "選んだ接続プロキシはまだ使われていません。「再接続」をタップすると適用されます。",
+    ),
     "tailscaleDirectBlocked": MessageLookupByLibrary.simpleMessage(
       "ノードはコントロールサーバーに直接接続しており、接続がリセットされました。上で接続プロキシを選び、「再接続」をタップしてください。",
     ),
@@ -1712,6 +1719,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleEnable": MessageLookupByLibrary.simpleMessage("Tailscale を有効化"),
     "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage("エフェメラルノード"),
     "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("出口ノード"),
+    "tailscaleExitNodeAuto": MessageLookupByLibrary.simpleMessage(
+      "自動（auto:any）",
+    ),
+    "tailscaleExitNodeFailed": m86,
+    "tailscaleExitNodeHint": MessageLookupByLibrary.simpleMessage(
+      "Tailscale IP またはデバイス名",
+    ),
+    "tailscaleExitNodeManual": MessageLookupByLibrary.simpleMessage("手動で入力"),
+    "tailscaleExitNodeNoOffers": MessageLookupByLibrary.simpleMessage(
+      "出口ノードを提供しているデバイスはありません",
+    ),
+    "tailscaleExitNodeNone": MessageLookupByLibrary.simpleMessage("使用しない"),
     "tailscaleExitNodeOption": MessageLookupByLibrary.simpleMessage("出口ノード可"),
     "tailscaleHostname": MessageLookupByLibrary.simpleMessage("ホスト名"),
     "tailscaleLocalNode": MessageLookupByLibrary.simpleMessage("このデバイス"),
@@ -1723,6 +1742,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "コントロールサーバーに接続できませんでした（ネットワークのタイムアウト）。認証キーではなくネットワークの問題です。上で接続プロキシを選んで再接続してください。",
     ),
     "tailscaleNode": MessageLookupByLibrary.simpleMessage("ノード"),
+    "tailscaleNodeName": MessageLookupByLibrary.simpleMessage("ノード名"),
     "tailscaleNotStarted": MessageLookupByLibrary.simpleMessage(
       "ノードはまだ起動していません。接続するとデバイス一覧を表示します。",
     ),
@@ -1731,7 +1751,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleOpenLogin": MessageLookupByLibrary.simpleMessage("ログインページを開く"),
     "tailscalePathDirect": MessageLookupByLibrary.simpleMessage("直接接続"),
     "tailscalePathPeerRelay": MessageLookupByLibrary.simpleMessage("ピアリレー"),
-    "tailscalePathRelay": m86,
+    "tailscalePathRelay": m87,
+    "tailscalePathRelayVia": m88,
     "tailscalePeers": MessageLookupByLibrary.simpleMessage("デバイス"),
     "tailscalePing": MessageLookupByLibrary.simpleMessage("遅延をテスト"),
     "tailscalePingAll": MessageLookupByLibrary.simpleMessage("すべてテスト"),
@@ -1745,6 +1766,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
       "このデバイスに保存された Tailscale のログイン状態を削除し、再ログインが必要になります。続行しますか？",
     ),
+    "tailscaleRouteDirect": MessageLookupByLibrary.simpleMessage("直接"),
+    "tailscaleRouteProxy": MessageLookupByLibrary.simpleMessage("プロキシ経由"),
     "tailscaleRoutingAdded": MessageLookupByLibrary.simpleMessage(
       "カスタムルーティングに追加しました",
     ),
@@ -1792,8 +1815,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalUpload": MessageLookupByLibrary.simpleMessage("アップロード量"),
     "tproxyPort": MessageLookupByLibrary.simpleMessage("TProxyポート"),
     "traffic": MessageLookupByLibrary.simpleMessage("通信量"),
-    "trafficPeak": m87,
-    "trafficTotal": m88,
+    "trafficPeak": m89,
+    "trafficTotal": m90,
     "trafficUsage": MessageLookupByLibrary.simpleMessage("トラフィック統計"),
     "transport": MessageLookupByLibrary.simpleMessage("トランスポート"),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
@@ -1832,14 +1855,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateDmgOpened": MessageLookupByLibrary.simpleMessage(
       "ディスクイメージを開きました。FlClash を「アプリケーション」にドラッグして更新を完了してください。",
     ),
-    "updateDownloadFailed": m89,
-    "updateInstallFailed": m90,
+    "updateDownloadFailed": m91,
+    "updateInstallFailed": m92,
     "updateNow": MessageLookupByLibrary.simpleMessage("今すぐ更新"),
     "upload": MessageLookupByLibrary.simpleMessage("アップロード"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("アップロード帯域幅"),
     "upstreamProject": MessageLookupByLibrary.simpleMessage("上流プロジェクト"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m91,
+    "urlTip": m93,
     "useHosts": MessageLookupByLibrary.simpleMessage("Hostsを使用"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("システムのHostsを使用"),
     "usedShort": MessageLookupByLibrary.simpleMessage("使用済み"),
@@ -1864,8 +1887,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "システムに書き込むを有効にするとシステムクロックも設定します。Android では無視されます。",
     ),
-    "yearsAgo": m92,
-    "yearsAgoShort": m93,
+    "yearsAgo": m94,
+    "yearsAgoShort": m95,
     "yes": MessageLookupByLibrary.simpleMessage("はい"),
     "zhCN": MessageLookupByLibrary.simpleMessage("簡体字中国語"),
   };

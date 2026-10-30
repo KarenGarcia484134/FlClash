@@ -57,6 +57,11 @@ type TailscaleStatusResult struct {
 	// DialerProxy is what the running node's own traffic really goes
 	// through; empty means directly.
 	DialerProxy string `json:"dialerProxy,omitempty"`
+	// DERPRoutes tells, by DERP region code, whether the node's connection
+	// to that relay went "direct" or through the "proxy".
+	DERPRoutes map[string]string `json:"derpRoutes,omitempty"`
+	// ExitNodeError is why the configured exit node could not be set.
+	ExitNodeError string `json:"exitNodeError,omitempty"`
 }
 
 var errTailscaleNodeMissing = errors.New("tailscale node not found")

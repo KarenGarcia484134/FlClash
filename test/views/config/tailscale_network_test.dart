@@ -264,4 +264,34 @@ void main() {
     expect(find.byTooltip('Test all'), findsNothing);
     await teardown(tester);
   });
+
+  testWidgets('a relayed path says whether its DERP is reached directly', (
+    tester,
+  ) async {
+    answerStatus([
+      _running.copyWith(
+        derpRoutes: const {'tx-cd-derp': 'direct', 'fra': 'proxy'},
+      ),
+    ]);
+    when(() => core.tailscalePing(any(), any())).thenAnswer(
+      (invocation) async => [
+        for (final target in invocation.positionalArguments[1] as List<String>)
+          TailscalePingResult(
+            target: target,
+            latencyMs: target == '100.64.0.2' ? 41 : 900,
+            derpRegionId: target == '100.64.0.2' ? 900 : 4,
+            derpRegionCode: target == '100.64.0.2' ? 'tx-cd-derp' : 'fra',
+          ),
+      ],
+    );
+    await pump(tester);
+    await tester.tap(find.byTooltip('Test all'));
+    await tester.pump();
+    expect(
+      find.textContaining('Relay DERP-tx-cd-derp (direct)'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Relay DERP-fra (via proxy)'), findsOneWidget);
+    await teardown(tester);
+  });
 }

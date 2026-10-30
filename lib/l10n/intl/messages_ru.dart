@@ -232,23 +232,27 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m85(name) =>
       "Прокси подключения «${name}» нет в текущем профиле, поэтому узел подключается напрямую. Выберите прокси из профиля.";
 
-  static String m86(relay) => "Ретранслятор ${relay}";
+  static String m86(error) => "Не удалось задать выходной узел: ${error}";
 
-  static String m87(value) => "Пик ${value}";
+  static String m87(relay) => "Ретранслятор ${relay}";
 
-  static String m88(value) => "Всего ${value}";
+  static String m88(relay, route) => "Ретранслятор ${relay} (${route})";
 
-  static String m89(error) =>
+  static String m89(value) => "Пик ${value}";
+
+  static String m90(value) => "Всего ${value}";
+
+  static String m91(error) =>
       "Не удалось загрузить обновление: ${error}\nМожно скачать его вручную со страницы релиза.";
 
-  static String m90(error) => "Не удалось запустить установщик: ${error}";
+  static String m92(error) => "Не удалось запустить установщик: ${error}";
 
-  static String m91(label) => "Значение «${label}» должно быть URL";
+  static String m93(label) => "Значение «${label}» должно быть URL";
 
-  static String m92(count) =>
+  static String m94(count) =>
       "${Intl.plural(count, one: '${count} год назад', few: '${count} года назад', many: '${count} лет назад', other: '${count} года назад')}";
 
-  static String m93(count) =>
+  static String m95(count) =>
       "${Intl.plural(count, one: '${count} г. назад', few: '${count} г. назад', many: '${count} л. назад', other: '${count} г. назад')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -2087,9 +2091,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Прокси подключения",
     ),
     "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
-      "Собственный трафик Tailscale к серверу управления, официальным ретрансляторам DERP и узлам идёт через этот прокси или группу. Собственные серверы DERP (не в домене tailscale.com) подключаются напрямую ради низкой задержки, а через этот прокси — только если прямое подключение не удалось. Выберите прокси, если сервер управления недоступен напрямую.",
+      "Собственный трафик Tailscale к серверу управления и официальным ретрансляторам DERP идёт через этот прокси или группу. Собственные серверы DERP (не в домене tailscale.com) и прямой UDP между устройствами подключаются напрямую ради низкой задержки, а через прокси — только если прямое подключение не удалось. Выберите прокси, если сервер управления недоступен напрямую.",
     ),
     "tailscaleDialerProxyDropped": m85,
+    "tailscaleDialerProxyPending": MessageLookupByLibrary.simpleMessage(
+      "Выбранный прокси подключения ещё не применён. Нажмите «Переподключить».",
+    ),
     "tailscaleDirectBlocked": MessageLookupByLibrary.simpleMessage(
       "Узел подключается к серверу управления напрямую, и соединение сброшено. Выберите прокси подключения выше и нажмите «Переподключить».",
     ),
@@ -2103,6 +2110,22 @@ class MessageLookup extends MessageLookupByLibrary {
       "Временный узел",
     ),
     "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("Выходной узел"),
+    "tailscaleExitNodeAuto": MessageLookupByLibrary.simpleMessage(
+      "Автоматически (auto:any)",
+    ),
+    "tailscaleExitNodeFailed": m86,
+    "tailscaleExitNodeHint": MessageLookupByLibrary.simpleMessage(
+      "IP Tailscale или имя устройства",
+    ),
+    "tailscaleExitNodeManual": MessageLookupByLibrary.simpleMessage(
+      "Ввести вручную",
+    ),
+    "tailscaleExitNodeNoOffers": MessageLookupByLibrary.simpleMessage(
+      "Ни одно устройство не предлагает себя как выходной узел",
+    ),
+    "tailscaleExitNodeNone": MessageLookupByLibrary.simpleMessage(
+      "Не использовать",
+    ),
     "tailscaleExitNodeOption": MessageLookupByLibrary.simpleMessage(
       "Может быть выходным узлом",
     ),
@@ -2118,6 +2141,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Не удалось связаться с сервером управления (тайм-аут сети). Это проблема сети, а не ключа: выберите прокси подключения выше и подключитесь снова.",
     ),
     "tailscaleNode": MessageLookupByLibrary.simpleMessage("Узел"),
+    "tailscaleNodeName": MessageLookupByLibrary.simpleMessage("Имя узла"),
     "tailscaleNotStarted": MessageLookupByLibrary.simpleMessage(
       "Узел ещё не запущен. Подключитесь, чтобы загрузить список устройств.",
     ),
@@ -2130,7 +2154,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscalePathPeerRelay": MessageLookupByLibrary.simpleMessage(
       "Пиринговый ретранслятор",
     ),
-    "tailscalePathRelay": m86,
+    "tailscalePathRelay": m87,
+    "tailscalePathRelayVia": m88,
     "tailscalePeers": MessageLookupByLibrary.simpleMessage("Устройства"),
     "tailscalePing": MessageLookupByLibrary.simpleMessage("Проверить задержку"),
     "tailscalePingAll": MessageLookupByLibrary.simpleMessage("Проверить все"),
@@ -2146,6 +2171,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
       "Сохранённый вход Tailscale на этом устройстве будет удалён, потребуется войти снова. Продолжить?",
     ),
+    "tailscaleRouteDirect": MessageLookupByLibrary.simpleMessage("напрямую"),
+    "tailscaleRouteProxy": MessageLookupByLibrary.simpleMessage("через прокси"),
     "tailscaleRoutingAdded": MessageLookupByLibrary.simpleMessage(
       "Добавлено в пользовательскую маршрутизацию",
     ),
@@ -2207,8 +2234,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalUpload": MessageLookupByLibrary.simpleMessage("Отдано"),
     "tproxyPort": MessageLookupByLibrary.simpleMessage("Порт TProxy"),
     "traffic": MessageLookupByLibrary.simpleMessage("Трафик"),
-    "trafficPeak": m87,
-    "trafficTotal": m88,
+    "trafficPeak": m89,
+    "trafficTotal": m90,
     "trafficUsage": MessageLookupByLibrary.simpleMessage("Статистика трафика"),
     "transport": MessageLookupByLibrary.simpleMessage("Транспорт"),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
@@ -2253,14 +2280,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateDmgOpened": MessageLookupByLibrary.simpleMessage(
       "Образ диска открыт. Перетащите FlClash в «Программы», чтобы завершить обновление.",
     ),
-    "updateDownloadFailed": m89,
-    "updateInstallFailed": m90,
+    "updateDownloadFailed": m91,
+    "updateInstallFailed": m92,
     "updateNow": MessageLookupByLibrary.simpleMessage("Обновить сейчас"),
     "upload": MessageLookupByLibrary.simpleMessage("Отдача"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("Скорость отдачи"),
     "upstreamProject": MessageLookupByLibrary.simpleMessage("Исходный проект"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m91,
+    "urlTip": m93,
     "useHosts": MessageLookupByLibrary.simpleMessage("Использовать hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage(
       "Использовать системный hosts",
@@ -2295,8 +2322,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "«Записывать в систему» также устанавливает системные часы; Android это игнорирует.",
     ),
-    "yearsAgo": m92,
-    "yearsAgoShort": m93,
+    "yearsAgo": m94,
+    "yearsAgoShort": m95,
     "yes": MessageLookupByLibrary.simpleMessage("Да"),
     "zhCN": MessageLookupByLibrary.simpleMessage("Упрощённый китайский"),
   };

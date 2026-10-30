@@ -990,7 +990,7 @@
   "tailscaleRefresh": "刷新",
   "tailscaleAuthKeyNotAccepted": "控制服务器没有接受认证密钥（可能已过期、一次性密钥已被使用、已撤销或填写有误）。请生成新密钥，或使用上面的链接登录。",
   "tailscaleDialerProxy": "连接代理",
-  "tailscaleDialerProxyDesc": "Tailscale 自身连接控制服务器、官方 DERP 中继和其他设备的流量会经过这里选择的代理或代理组。自建 DERP 服务器（域名不在 tailscale.com 下的）会自动直连以降低延迟，直连失败时才改走这里的代理。直连无法访问控制服务器时请选择一个。",
+  "tailscaleDialerProxyDesc": "Tailscale 自身连接控制服务器和官方 DERP 中继的流量会经过这里选择的代理或代理组。自建 DERP 服务器（域名不在 tailscale.com 下的）和设备间的点对点 UDP 会直连以降低延迟，直连失败时才改走这里的代理。直连无法访问控制服务器时请选择一个。",
   "tailscaleNetworkIssue": "无法连接到控制服务器（网络超时）。这是网络问题，不是认证密钥的问题：请在上方选择一个连接代理后重新连接。",
   "recommended": "推荐",
   "testAllDelays": "全部测速",
@@ -1105,5 +1105,16 @@
   "hideSecret": "隐藏",
   "tailscaleReconnect": "重新连接",
   "tailscaleDialerProxyDropped": "所选连接代理「{name}」不在当前配置中，节点正在直连。请重新选择一个当前配置中有的代理或代理组。",
-  "tailscaleDirectBlocked": "节点当前直连控制服务器，连接被重置（屏蔽 Tailscale 的网络中很常见）。请在上方选择一个连接代理，然后点「重新连接」。"
+  "tailscaleDirectBlocked": "节点当前直连控制服务器，连接被重置（屏蔽 Tailscale 的网络中很常见）。请在上方选择一个连接代理，然后点「重新连接」。",
+  "tailscalePathRelayVia": "中继 {relay}（{route}）",
+  "tailscaleRouteDirect": "直连",
+  "tailscaleRouteProxy": "代理",
+  "tailscaleExitNodeManual": "手动输入",
+  "tailscaleExitNodeNone": "不使用",
+  "tailscaleExitNodeAuto": "自动（auto:any）",
+  "tailscaleExitNodeNoOffers": "没有设备提供出口节点",
+  "tailscaleExitNodeHint": "Tailscale IP 或设备名",
+  "tailscaleExitNodeFailed": "无法设置出口节点：{error}",
+  "tailscaleDialerProxyPending": "所选连接代理尚未生效，点「重新连接」即可应用。",
+  "tailscaleNodeName": "节点名"
 }
