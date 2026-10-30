@@ -229,23 +229,26 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m84(label) => "«${label}» — только одно значение";
 
-  static String m85(relay) => "Ретранслятор ${relay}";
+  static String m85(name) =>
+      "Прокси подключения «${name}» нет в текущем профиле, поэтому узел подключается напрямую. Выберите прокси из профиля.";
 
-  static String m86(value) => "Пик ${value}";
+  static String m86(relay) => "Ретранслятор ${relay}";
 
-  static String m87(value) => "Всего ${value}";
+  static String m87(value) => "Пик ${value}";
 
-  static String m88(error) =>
+  static String m88(value) => "Всего ${value}";
+
+  static String m89(error) =>
       "Не удалось загрузить обновление: ${error}\nМожно скачать его вручную со страницы релиза.";
 
-  static String m89(error) => "Не удалось запустить установщик: ${error}";
+  static String m90(error) => "Не удалось запустить установщик: ${error}";
 
-  static String m90(label) => "Значение «${label}» должно быть URL";
-
-  static String m91(count) =>
-      "${Intl.plural(count, one: '${count} год назад', few: '${count} года назад', many: '${count} лет назад', other: '${count} года назад')}";
+  static String m91(label) => "Значение «${label}» должно быть URL";
 
   static String m92(count) =>
+      "${Intl.plural(count, one: '${count} год назад', few: '${count} года назад', many: '${count} лет назад', other: '${count} года назад')}";
+
+  static String m93(count) =>
       "${Intl.plural(count, one: '${count} г. назад', few: '${count} г. назад', many: '${count} л. назад', other: '${count} г. назад')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -2086,6 +2089,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
       "Собственный трафик Tailscale к серверу управления, ретрансляторам DERP и узлам идёт через этот прокси или группу. Выберите его, если сервер недоступен напрямую.",
     ),
+    "tailscaleDialerProxyDropped": m85,
+    "tailscaleDirectBlocked": MessageLookupByLibrary.simpleMessage(
+      "Узел подключается к серверу управления напрямую, и соединение сброшено. Выберите прокси подключения выше и нажмите «Переподключить».",
+    ),
     "tailscaleDnsSuffixes": MessageLookupByLibrary.simpleMessage(
       "DNS-суффиксы tailnet",
     ),
@@ -2123,7 +2130,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscalePathPeerRelay": MessageLookupByLibrary.simpleMessage(
       "Пиринговый ретранслятор",
     ),
-    "tailscalePathRelay": m85,
+    "tailscalePathRelay": m86,
     "tailscalePeers": MessageLookupByLibrary.simpleMessage("Устройства"),
     "tailscalePing": MessageLookupByLibrary.simpleMessage("Проверить задержку"),
     "tailscalePingAll": MessageLookupByLibrary.simpleMessage("Проверить все"),
@@ -2131,6 +2138,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Нажмите на устройство или удерживайте его, чтобы проверить задержку. Устройства не в сети не проверяются.",
     ),
     "tailscalePingFailed": MessageLookupByLibrary.simpleMessage("Нет ответа"),
+    "tailscaleReconnect": MessageLookupByLibrary.simpleMessage(
+      "Переподключить",
+    ),
     "tailscaleRefresh": MessageLookupByLibrary.simpleMessage("Обновить"),
     "tailscaleReset": MessageLookupByLibrary.simpleMessage("Выйти и сбросить"),
     "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
@@ -2197,8 +2207,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalUpload": MessageLookupByLibrary.simpleMessage("Отдано"),
     "tproxyPort": MessageLookupByLibrary.simpleMessage("Порт TProxy"),
     "traffic": MessageLookupByLibrary.simpleMessage("Трафик"),
-    "trafficPeak": m86,
-    "trafficTotal": m87,
+    "trafficPeak": m87,
+    "trafficTotal": m88,
     "trafficUsage": MessageLookupByLibrary.simpleMessage("Статистика трафика"),
     "transport": MessageLookupByLibrary.simpleMessage("Транспорт"),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
@@ -2243,14 +2253,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateDmgOpened": MessageLookupByLibrary.simpleMessage(
       "Образ диска открыт. Перетащите FlClash в «Программы», чтобы завершить обновление.",
     ),
-    "updateDownloadFailed": m88,
-    "updateInstallFailed": m89,
+    "updateDownloadFailed": m89,
+    "updateInstallFailed": m90,
     "updateNow": MessageLookupByLibrary.simpleMessage("Обновить сейчас"),
     "upload": MessageLookupByLibrary.simpleMessage("Отдача"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("Скорость отдачи"),
     "upstreamProject": MessageLookupByLibrary.simpleMessage("Исходный проект"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m90,
+    "urlTip": m91,
     "useHosts": MessageLookupByLibrary.simpleMessage("Использовать hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage(
       "Использовать системный hosts",
@@ -2285,8 +2295,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "«Записывать в систему» также устанавливает системные часы; Android это игнорирует.",
     ),
-    "yearsAgo": m91,
-    "yearsAgoShort": m92,
+    "yearsAgo": m92,
+    "yearsAgoShort": m93,
     "yes": MessageLookupByLibrary.simpleMessage("Да"),
     "zhCN": MessageLookupByLibrary.simpleMessage("Упрощённый китайский"),
   };

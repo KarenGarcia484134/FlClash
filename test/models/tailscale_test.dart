@@ -394,4 +394,66 @@ void main() {
       expect(tailscalePingTarget(const TailscalePeer()), isNull);
     });
   });
+
+  group('route hint', () {
+    const error =
+        'You are logged out. The last login error was: fetch control key: '
+        'read tcp 1.2.3.4:1->192.200.0.115:443: read: connection reset by peer';
+    const reset = [error];
+    test(
+      'a direct node whose control dial is reset is told to pick a proxy',
+      () {
+        expect(
+          tailscaleRouteHint(configured: '', effective: '', health: reset),
+          TailscaleRouteHint.direct,
+        );
+        expect(
+          tailscaleRouteHint(configured: '', effective: '', health: const []),
+          TailscaleRouteHint.none,
+        );
+      },
+    );
+    test('a picked proxy the profile lacks is reported as dropped', () {
+      expect(
+        tailscaleRouteHint(
+          configured: 'Proxy',
+          effective: '',
+          health: const [],
+        ),
+        TailscaleRouteHint.dropped,
+      );
+    });
+    test('a node going through its proxy, or unknown, has no hint', () {
+      expect(
+        tailscaleRouteHint(
+          configured: 'Proxy',
+          effective: 'Proxy',
+          health: reset,
+        ),
+        TailscaleRouteHint.none,
+      );
+      expect(
+        tailscaleRouteHint(configured: '', effective: null, health: reset),
+        TailscaleRouteHint.none,
+      );
+    });
+    test('the status keeps what the core says the node dials through', () {
+      final next = applyTailscaleNetStatus(
+        const TailscaleStatus(),
+        TailscaleNetStatus.fromJson({
+          'started': true,
+          'backendState': 'NeedsLogin',
+          'dialerProxy': 'Proxy',
+        }),
+        'Tailscale',
+      );
+      expect(next.dialerProxy, 'Proxy');
+      final direct = applyTailscaleNetStatus(
+        const TailscaleStatus(),
+        const TailscaleNetStatus(started: true, backendState: 'Starting'),
+        'Tailscale',
+      );
+      expect(direct.dialerProxy, '');
+    });
+  });
 }

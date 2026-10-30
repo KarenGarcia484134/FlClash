@@ -1112,5 +1112,8 @@
   "copyAsJson": "Copier en JSON",
   "nodeConfigCopyTip": "La configuration copiée contient les mots de passe et les clés en clair.",
   "revealSecret": "Afficher",
-  "hideSecret": "Masquer"
+  "hideSecret": "Masquer",
+  "tailscaleReconnect": "Reconnecter",
+  "tailscaleDialerProxyDropped": "Le proxy de connexion « {name} » n’est pas dans le profil actuel ; le nœud se connecte donc directement. Choisissez-en un du profil.",
+  "tailscaleDirectBlocked": "Le nœud joint le serveur de contrôle en direct et la connexion a été réinitialisée. Choisissez un proxy de connexion ci-dessus, puis touchez Reconnecter."
 }

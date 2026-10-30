@@ -1112,5 +1112,8 @@
   "copyAsJson": "JSON으로 복사",
   "nodeConfigCopyTip": "복사한 설정에는 비밀번호와 키가 평문으로 포함됩니다.",
   "revealSecret": "표시",
-  "hideSecret": "숨기기"
+  "hideSecret": "숨기기",
+  "tailscaleReconnect": "다시 연결",
+  "tailscaleDialerProxyDropped": "연결 프록시 \"{name}\"이(가) 현재 프로필에 없어 노드가 직접 연결 중입니다. 프로필에 있는 항목을 선택하세요.",
+  "tailscaleDirectBlocked": "노드가 제어 서버에 직접 연결하다가 연결이 재설정되었습니다. 위에서 연결 프록시를 선택한 뒤 \"다시 연결\"을 누르세요."
 }

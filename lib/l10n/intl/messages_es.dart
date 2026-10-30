@@ -235,23 +235,26 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m84(label) => "${label} debe ser un solo elemento";
 
-  static String m85(relay) => "Relé ${relay}";
+  static String m85(name) =>
+      "El proxy de conexión «${name}» no está en el perfil actual, así que el nodo se conecta directamente. Elige uno del perfil.";
 
-  static String m86(value) => "Pico: ${value}";
+  static String m86(relay) => "Relé ${relay}";
 
-  static String m87(value) => "Total: ${value}";
+  static String m87(value) => "Pico: ${value}";
 
-  static String m88(error) =>
+  static String m88(value) => "Total: ${value}";
+
+  static String m89(error) =>
       "No se pudo descargar la actualización: ${error}\nPuedes descargarla desde la página de la versión.";
 
-  static String m89(error) => "No se pudo iniciar el instalador: ${error}";
+  static String m90(error) => "No se pudo iniciar el instalador: ${error}";
 
-  static String m90(label) => "${label} debe ser una URL";
+  static String m91(label) => "${label} debe ser una URL";
 
-  static String m91(count) =>
+  static String m92(count) =>
       "${Intl.plural(count, one: 'hace 1 año', other: 'hace ${count} años')}";
 
-  static String m92(count) => "${Intl.plural(count, other: 'hace ${count} a')}";
+  static String m93(count) => "${Intl.plural(count, other: 'hace ${count} a')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -2131,6 +2134,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
       "Tailscale\'s own traffic to its control server, DERP relays and peers goes through this proxy or group. Choose one if the control server cannot be reached directly.",
     ),
+    "tailscaleDialerProxyDropped": m85,
+    "tailscaleDirectBlocked": MessageLookupByLibrary.simpleMessage(
+      "El nodo se conecta directamente al servidor de control y la conexión se restableció. Elige un proxy de conexión arriba y toca Reconectar.",
+    ),
     "tailscaleDnsSuffixes": MessageLookupByLibrary.simpleMessage(
       "Tailnet DNS suffixes",
     ),
@@ -2164,7 +2171,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscalePathPeerRelay": MessageLookupByLibrary.simpleMessage(
       "Relé entre pares",
     ),
-    "tailscalePathRelay": m85,
+    "tailscalePathRelay": m86,
     "tailscalePeers": MessageLookupByLibrary.simpleMessage("Devices"),
     "tailscalePing": MessageLookupByLibrary.simpleMessage("Probar latencia"),
     "tailscalePingAll": MessageLookupByLibrary.simpleMessage("Probar todos"),
@@ -2174,6 +2181,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscalePingFailed": MessageLookupByLibrary.simpleMessage(
       "Sin respuesta",
     ),
+    "tailscaleReconnect": MessageLookupByLibrary.simpleMessage("Reconectar"),
     "tailscaleRefresh": MessageLookupByLibrary.simpleMessage("Refresh"),
     "tailscaleReset": MessageLookupByLibrary.simpleMessage("Log out and reset"),
     "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
@@ -2234,8 +2242,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalUpload": MessageLookupByLibrary.simpleMessage("Subido"),
     "tproxyPort": MessageLookupByLibrary.simpleMessage("Puerto TProxy"),
     "traffic": MessageLookupByLibrary.simpleMessage("Tráfico"),
-    "trafficPeak": m86,
-    "trafficTotal": m87,
+    "trafficPeak": m87,
+    "trafficTotal": m88,
     "trafficUsage": MessageLookupByLibrary.simpleMessage("Uso de tráfico"),
     "transport": MessageLookupByLibrary.simpleMessage("Transporte"),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
@@ -2280,8 +2288,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateDmgOpened": MessageLookupByLibrary.simpleMessage(
       "La imagen de disco está abierta. Arrastra FlClash a Aplicaciones para terminar la actualización.",
     ),
-    "updateDownloadFailed": m88,
-    "updateInstallFailed": m89,
+    "updateDownloadFailed": m89,
+    "updateInstallFailed": m90,
     "updateNow": MessageLookupByLibrary.simpleMessage("Actualizar ahora"),
     "upload": MessageLookupByLibrary.simpleMessage("Subida"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage(
@@ -2291,7 +2299,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Proyecto original",
     ),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m90,
+    "urlTip": m91,
     "useHosts": MessageLookupByLibrary.simpleMessage("Usar hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage(
       "Usar hosts del sistema",
@@ -2324,8 +2332,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "Escribir en el sistema también ajusta el reloj del sistema; Android lo ignora.",
     ),
-    "yearsAgo": m91,
-    "yearsAgoShort": m92,
+    "yearsAgo": m92,
+    "yearsAgoShort": m93,
     "yes": MessageLookupByLibrary.simpleMessage("Sí"),
     "zhCN": MessageLookupByLibrary.simpleMessage("Chino simplificado"),
   };

@@ -318,7 +318,9 @@ as String,
 /// @nodoc
 mixin _$TailscaleStatus {
 
- TailscalePhase get phase; String? get loginUrl; String? get proxyName; List<String> get health;
+ TailscalePhase get phase; String? get loginUrl; String? get proxyName; List<String> get health;/// What the running node's own traffic really goes through, as the Core
+/// reports it: empty for directly, null while unknown.
+ String? get dialerProxy;
 /// Create a copy of TailscaleStatus
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -330,20 +332,20 @@ $TailscaleStatusCopyWith<TailscaleStatus> get copyWith => _$TailscaleStatusCopyW
 @override
 bool operator ==(Object other) {
   final _this = this as TailscaleStatus;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TailscaleStatus&&(identical(other.phase, _this.phase) || other.phase == _this.phase)&&(identical(other.loginUrl, _this.loginUrl) || other.loginUrl == _this.loginUrl)&&(identical(other.proxyName, _this.proxyName) || other.proxyName == _this.proxyName)&&const DeepCollectionEquality().equals(other.health, _this.health));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TailscaleStatus&&(identical(other.phase, _this.phase) || other.phase == _this.phase)&&(identical(other.loginUrl, _this.loginUrl) || other.loginUrl == _this.loginUrl)&&(identical(other.proxyName, _this.proxyName) || other.proxyName == _this.proxyName)&&const DeepCollectionEquality().equals(other.health, _this.health)&&(identical(other.dialerProxy, _this.dialerProxy) || other.dialerProxy == _this.dialerProxy));
 }
 
 
 @override
 int get hashCode {
   final _this = this as TailscaleStatus;
-  return Object.hash(runtimeType,_this.phase,_this.loginUrl,_this.proxyName,const DeepCollectionEquality().hash(_this.health));
+  return Object.hash(runtimeType,_this.phase,_this.loginUrl,_this.proxyName,const DeepCollectionEquality().hash(_this.health),_this.dialerProxy);
 }
 
 @override
 String toString() {
   final _this = this as TailscaleStatus;
-  return 'TailscaleStatus(phase: ${_this.phase}, loginUrl: ${_this.loginUrl}, proxyName: ${_this.proxyName}, health: ${_this.health})';
+  return 'TailscaleStatus(phase: ${_this.phase}, loginUrl: ${_this.loginUrl}, proxyName: ${_this.proxyName}, health: ${_this.health}, dialerProxy: ${_this.dialerProxy})';
 }
 
 
@@ -354,7 +356,7 @@ abstract mixin class $TailscaleStatusCopyWith<$Res>  {
   factory $TailscaleStatusCopyWith(TailscaleStatus value, $Res Function(TailscaleStatus) _then) = _$TailscaleStatusCopyWithImpl;
 @useResult
 $Res call({
- TailscalePhase phase, String? loginUrl, String? proxyName, List<String> health
+ TailscalePhase phase, String? loginUrl, String? proxyName, List<String> health, String? dialerProxy
 });
 
 
@@ -371,13 +373,14 @@ class _$TailscaleStatusCopyWithImpl<$Res>
 
 /// Create a copy of TailscaleStatus
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? phase = null,Object? loginUrl = freezed,Object? proxyName = freezed,Object? health = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? phase = null,Object? loginUrl = freezed,Object? proxyName = freezed,Object? health = null,Object? dialerProxy = freezed,}) {
   return _then(TailscaleStatus(
 phase: null == phase ? _self.phase : phase // ignore: cast_nullable_to_non_nullable
 as TailscalePhase,loginUrl: freezed == loginUrl ? _self.loginUrl : loginUrl // ignore: cast_nullable_to_non_nullable
 as String?,proxyName: freezed == proxyName ? _self.proxyName : proxyName // ignore: cast_nullable_to_non_nullable
 as String?,health: null == health ? _self.health : health // ignore: cast_nullable_to_non_nullable
-as List<String>,
+as List<String>,dialerProxy: freezed == dialerProxy ? _self.dialerProxy : dialerProxy // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -462,10 +465,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( TailscalePhase phase,  String? loginUrl,  String? proxyName,  List<String> health)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( TailscalePhase phase,  String? loginUrl,  String? proxyName,  List<String> health,  String? dialerProxy)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TailscaleStatus() when $default != null:
-return $default(_that.phase,_that.loginUrl,_that.proxyName,_that.health);case _:
+return $default(_that.phase,_that.loginUrl,_that.proxyName,_that.health,_that.dialerProxy);case _:
   return orElse();
 
 }
@@ -483,10 +486,10 @@ return $default(_that.phase,_that.loginUrl,_that.proxyName,_that.health);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( TailscalePhase phase,  String? loginUrl,  String? proxyName,  List<String> health)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( TailscalePhase phase,  String? loginUrl,  String? proxyName,  List<String> health,  String? dialerProxy)  $default,) {final _that = this;
 switch (_that) {
 case _TailscaleStatus():
-return $default(_that.phase,_that.loginUrl,_that.proxyName,_that.health);case _:
+return $default(_that.phase,_that.loginUrl,_that.proxyName,_that.health,_that.dialerProxy);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -503,10 +506,10 @@ return $default(_that.phase,_that.loginUrl,_that.proxyName,_that.health);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( TailscalePhase phase,  String? loginUrl,  String? proxyName,  List<String> health)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( TailscalePhase phase,  String? loginUrl,  String? proxyName,  List<String> health,  String? dialerProxy)?  $default,) {final _that = this;
 switch (_that) {
 case _TailscaleStatus() when $default != null:
-return $default(_that.phase,_that.loginUrl,_that.proxyName,_that.health);case _:
+return $default(_that.phase,_that.loginUrl,_that.proxyName,_that.health,_that.dialerProxy);case _:
   return null;
 
 }
@@ -518,7 +521,7 @@ return $default(_that.phase,_that.loginUrl,_that.proxyName,_that.health);case _:
 
 
 class _TailscaleStatus implements TailscaleStatus {
-  const _TailscaleStatus({this.phase = TailscalePhase.idle, this.loginUrl, this.proxyName,  List<String> health = const []}): _health = health;
+  const _TailscaleStatus({this.phase = TailscalePhase.idle, this.loginUrl, this.proxyName,  List<String> health = const [], this.dialerProxy}): _health = health;
   
 
 @override@JsonKey() final  TailscalePhase phase;
@@ -531,6 +534,9 @@ class _TailscaleStatus implements TailscaleStatus {
   return EqualUnmodifiableListView(_health);
 }
 
+/// What the running node's own traffic really goes through, as the Core
+/// reports it: empty for directly, null while unknown.
+@override final  String? dialerProxy;
 
 /// Create a copy of TailscaleStatus
 /// with the given fields replaced by the non-null parameter values.
@@ -542,18 +548,18 @@ _$TailscaleStatusCopyWith<_TailscaleStatus> get copyWith => __$TailscaleStatusCo
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TailscaleStatus&&(identical(other.phase, phase) || other.phase == phase)&&(identical(other.loginUrl, loginUrl) || other.loginUrl == loginUrl)&&(identical(other.proxyName, proxyName) || other.proxyName == proxyName)&&const DeepCollectionEquality().equals(other.health, _health));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TailscaleStatus&&(identical(other.phase, phase) || other.phase == phase)&&(identical(other.loginUrl, loginUrl) || other.loginUrl == loginUrl)&&(identical(other.proxyName, proxyName) || other.proxyName == proxyName)&&const DeepCollectionEquality().equals(other.health, _health)&&(identical(other.dialerProxy, dialerProxy) || other.dialerProxy == dialerProxy));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,phase,loginUrl,proxyName,const DeepCollectionEquality().hash(_health));
+    return Object.hash(runtimeType,phase,loginUrl,proxyName,const DeepCollectionEquality().hash(_health),dialerProxy);
 }
 
 @override
 String toString() {
-    return 'TailscaleStatus(phase: $phase, loginUrl: $loginUrl, proxyName: $proxyName, health: $health)';
+    return 'TailscaleStatus(phase: $phase, loginUrl: $loginUrl, proxyName: $proxyName, health: $health, dialerProxy: $dialerProxy)';
 }
 
 
@@ -564,7 +570,7 @@ abstract mixin class _$TailscaleStatusCopyWith<$Res> implements $TailscaleStatus
   factory _$TailscaleStatusCopyWith(_TailscaleStatus value, $Res Function(_TailscaleStatus) _then) = __$TailscaleStatusCopyWithImpl;
 @override @useResult
 $Res call({
- TailscalePhase phase, String? loginUrl, String? proxyName, List<String> health
+ TailscalePhase phase, String? loginUrl, String? proxyName, List<String> health, String? dialerProxy
 });
 
 
@@ -581,13 +587,14 @@ class __$TailscaleStatusCopyWithImpl<$Res>
 
 /// Create a copy of TailscaleStatus
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? phase = null,Object? loginUrl = freezed,Object? proxyName = freezed,Object? health = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? phase = null,Object? loginUrl = freezed,Object? proxyName = freezed,Object? health = null,Object? dialerProxy = freezed,}) {
   return _then(_TailscaleStatus(
 phase: null == phase ? _self.phase : phase // ignore: cast_nullable_to_non_nullable
 as TailscalePhase,loginUrl: freezed == loginUrl ? _self.loginUrl : loginUrl // ignore: cast_nullable_to_non_nullable
 as String?,proxyName: freezed == proxyName ? _self.proxyName : proxyName // ignore: cast_nullable_to_non_nullable
 as String?,health: null == health ? _self._health : health // ignore: cast_nullable_to_non_nullable
-as List<String>,
+as List<String>,dialerProxy: freezed == dialerProxy ? _self.dialerProxy : dialerProxy // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -898,7 +905,7 @@ as String?,
 /// @nodoc
 mixin _$TailscaleNetStatus {
 
- bool get started; String get backendState; String? get authUrl; List<String> get health; String get magicDnsSuffix; TailscalePeer? get self; List<TailscalePeer> get peers; String? get error;
+ bool get started; String get backendState; String? get authUrl; List<String> get health; String get magicDnsSuffix; TailscalePeer? get self; List<TailscalePeer> get peers; String? get error; String? get dialerProxy;
 /// Create a copy of TailscaleNetStatus
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -912,20 +919,20 @@ $TailscaleNetStatusCopyWith<TailscaleNetStatus> get copyWith => _$TailscaleNetSt
 @override
 bool operator ==(Object other) {
   final _this = this as TailscaleNetStatus;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TailscaleNetStatus&&(identical(other.started, _this.started) || other.started == _this.started)&&(identical(other.backendState, _this.backendState) || other.backendState == _this.backendState)&&(identical(other.authUrl, _this.authUrl) || other.authUrl == _this.authUrl)&&const DeepCollectionEquality().equals(other.health, _this.health)&&(identical(other.magicDnsSuffix, _this.magicDnsSuffix) || other.magicDnsSuffix == _this.magicDnsSuffix)&&(identical(other.self, _this.self) || other.self == _this.self)&&const DeepCollectionEquality().equals(other.peers, _this.peers)&&(identical(other.error, _this.error) || other.error == _this.error));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TailscaleNetStatus&&(identical(other.started, _this.started) || other.started == _this.started)&&(identical(other.backendState, _this.backendState) || other.backendState == _this.backendState)&&(identical(other.authUrl, _this.authUrl) || other.authUrl == _this.authUrl)&&const DeepCollectionEquality().equals(other.health, _this.health)&&(identical(other.magicDnsSuffix, _this.magicDnsSuffix) || other.magicDnsSuffix == _this.magicDnsSuffix)&&(identical(other.self, _this.self) || other.self == _this.self)&&const DeepCollectionEquality().equals(other.peers, _this.peers)&&(identical(other.error, _this.error) || other.error == _this.error)&&(identical(other.dialerProxy, _this.dialerProxy) || other.dialerProxy == _this.dialerProxy));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as TailscaleNetStatus;
-  return Object.hash(runtimeType,_this.started,_this.backendState,_this.authUrl,const DeepCollectionEquality().hash(_this.health),_this.magicDnsSuffix,_this.self,const DeepCollectionEquality().hash(_this.peers),_this.error);
+  return Object.hash(runtimeType,_this.started,_this.backendState,_this.authUrl,const DeepCollectionEquality().hash(_this.health),_this.magicDnsSuffix,_this.self,const DeepCollectionEquality().hash(_this.peers),_this.error,_this.dialerProxy);
 }
 
 @override
 String toString() {
   final _this = this as TailscaleNetStatus;
-  return 'TailscaleNetStatus(started: ${_this.started}, backendState: ${_this.backendState}, authUrl: ${_this.authUrl}, health: ${_this.health}, magicDnsSuffix: ${_this.magicDnsSuffix}, self: ${_this.self}, peers: ${_this.peers}, error: ${_this.error})';
+  return 'TailscaleNetStatus(started: ${_this.started}, backendState: ${_this.backendState}, authUrl: ${_this.authUrl}, health: ${_this.health}, magicDnsSuffix: ${_this.magicDnsSuffix}, self: ${_this.self}, peers: ${_this.peers}, error: ${_this.error}, dialerProxy: ${_this.dialerProxy})';
 }
 
 
@@ -936,7 +943,7 @@ abstract mixin class $TailscaleNetStatusCopyWith<$Res>  {
   factory $TailscaleNetStatusCopyWith(TailscaleNetStatus value, $Res Function(TailscaleNetStatus) _then) = _$TailscaleNetStatusCopyWithImpl;
 @useResult
 $Res call({
- bool started, String backendState, String? authUrl, List<String> health, String magicDnsSuffix, TailscalePeer? self, List<TailscalePeer> peers, String? error
+ bool started, String backendState, String? authUrl, List<String> health, String magicDnsSuffix, TailscalePeer? self, List<TailscalePeer> peers, String? error, String? dialerProxy
 });
 
 
@@ -953,7 +960,7 @@ class _$TailscaleNetStatusCopyWithImpl<$Res>
 
 /// Create a copy of TailscaleNetStatus
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? started = null,Object? backendState = null,Object? authUrl = freezed,Object? health = null,Object? magicDnsSuffix = null,Object? self = freezed,Object? peers = null,Object? error = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? started = null,Object? backendState = null,Object? authUrl = freezed,Object? health = null,Object? magicDnsSuffix = null,Object? self = freezed,Object? peers = null,Object? error = freezed,Object? dialerProxy = freezed,}) {
   return _then(TailscaleNetStatus(
 started: null == started ? _self.started : started // ignore: cast_nullable_to_non_nullable
 as bool,backendState: null == backendState ? _self.backendState : backendState // ignore: cast_nullable_to_non_nullable
@@ -963,6 +970,7 @@ as List<String>,magicDnsSuffix: null == magicDnsSuffix ? _self.magicDnsSuffix : 
 as String,self: freezed == self ? _self.self : self // ignore: cast_nullable_to_non_nullable
 as TailscalePeer?,peers: null == peers ? _self.peers : peers // ignore: cast_nullable_to_non_nullable
 as List<TailscalePeer>,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as String?,dialerProxy: freezed == dialerProxy ? _self.dialerProxy : dialerProxy // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -1060,10 +1068,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool started,  String backendState,  String? authUrl,  List<String> health,  String magicDnsSuffix,  TailscalePeer? self,  List<TailscalePeer> peers,  String? error)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool started,  String backendState,  String? authUrl,  List<String> health,  String magicDnsSuffix,  TailscalePeer? self,  List<TailscalePeer> peers,  String? error,  String? dialerProxy)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TailscaleNetStatus() when $default != null:
-return $default(_that.started,_that.backendState,_that.authUrl,_that.health,_that.magicDnsSuffix,_that.self,_that.peers,_that.error);case _:
+return $default(_that.started,_that.backendState,_that.authUrl,_that.health,_that.magicDnsSuffix,_that.self,_that.peers,_that.error,_that.dialerProxy);case _:
   return orElse();
 
 }
@@ -1081,10 +1089,10 @@ return $default(_that.started,_that.backendState,_that.authUrl,_that.health,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool started,  String backendState,  String? authUrl,  List<String> health,  String magicDnsSuffix,  TailscalePeer? self,  List<TailscalePeer> peers,  String? error)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool started,  String backendState,  String? authUrl,  List<String> health,  String magicDnsSuffix,  TailscalePeer? self,  List<TailscalePeer> peers,  String? error,  String? dialerProxy)  $default,) {final _that = this;
 switch (_that) {
 case _TailscaleNetStatus():
-return $default(_that.started,_that.backendState,_that.authUrl,_that.health,_that.magicDnsSuffix,_that.self,_that.peers,_that.error);case _:
+return $default(_that.started,_that.backendState,_that.authUrl,_that.health,_that.magicDnsSuffix,_that.self,_that.peers,_that.error,_that.dialerProxy);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1101,10 +1109,10 @@ return $default(_that.started,_that.backendState,_that.authUrl,_that.health,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool started,  String backendState,  String? authUrl,  List<String> health,  String magicDnsSuffix,  TailscalePeer? self,  List<TailscalePeer> peers,  String? error)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool started,  String backendState,  String? authUrl,  List<String> health,  String magicDnsSuffix,  TailscalePeer? self,  List<TailscalePeer> peers,  String? error,  String? dialerProxy)?  $default,) {final _that = this;
 switch (_that) {
 case _TailscaleNetStatus() when $default != null:
-return $default(_that.started,_that.backendState,_that.authUrl,_that.health,_that.magicDnsSuffix,_that.self,_that.peers,_that.error);case _:
+return $default(_that.started,_that.backendState,_that.authUrl,_that.health,_that.magicDnsSuffix,_that.self,_that.peers,_that.error,_that.dialerProxy);case _:
   return null;
 
 }
@@ -1116,7 +1124,7 @@ return $default(_that.started,_that.backendState,_that.authUrl,_that.health,_tha
 @JsonSerializable()
 
 class _TailscaleNetStatus implements TailscaleNetStatus {
-  const _TailscaleNetStatus({this.started = false, this.backendState = '', this.authUrl,  List<String> health = const [], this.magicDnsSuffix = '', this.self,  List<TailscalePeer> peers = const [], this.error}): _health = health,_peers = peers;
+  const _TailscaleNetStatus({this.started = false, this.backendState = '', this.authUrl,  List<String> health = const [], this.magicDnsSuffix = '', this.self,  List<TailscalePeer> peers = const [], this.error, this.dialerProxy}): _health = health,_peers = peers;
   factory _TailscaleNetStatus.fromJson(Map<String, dynamic> json) => _$TailscaleNetStatusFromJson(json);
 
 @override@JsonKey() final  bool started;
@@ -1139,6 +1147,7 @@ class _TailscaleNetStatus implements TailscaleNetStatus {
 }
 
 @override final  String? error;
+@override final  String? dialerProxy;
 
 /// Create a copy of TailscaleNetStatus
 /// with the given fields replaced by the non-null parameter values.
@@ -1153,18 +1162,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TailscaleNetStatus&&(identical(other.started, started) || other.started == started)&&(identical(other.backendState, backendState) || other.backendState == backendState)&&(identical(other.authUrl, authUrl) || other.authUrl == authUrl)&&const DeepCollectionEquality().equals(other.health, _health)&&(identical(other.magicDnsSuffix, magicDnsSuffix) || other.magicDnsSuffix == magicDnsSuffix)&&(identical(other.self, self) || other.self == self)&&const DeepCollectionEquality().equals(other.peers, _peers)&&(identical(other.error, error) || other.error == error));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TailscaleNetStatus&&(identical(other.started, started) || other.started == started)&&(identical(other.backendState, backendState) || other.backendState == backendState)&&(identical(other.authUrl, authUrl) || other.authUrl == authUrl)&&const DeepCollectionEquality().equals(other.health, _health)&&(identical(other.magicDnsSuffix, magicDnsSuffix) || other.magicDnsSuffix == magicDnsSuffix)&&(identical(other.self, self) || other.self == self)&&const DeepCollectionEquality().equals(other.peers, _peers)&&(identical(other.error, error) || other.error == error)&&(identical(other.dialerProxy, dialerProxy) || other.dialerProxy == dialerProxy));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,started,backendState,authUrl,const DeepCollectionEquality().hash(_health),magicDnsSuffix,self,const DeepCollectionEquality().hash(_peers),error);
+    return Object.hash(runtimeType,started,backendState,authUrl,const DeepCollectionEquality().hash(_health),magicDnsSuffix,self,const DeepCollectionEquality().hash(_peers),error,dialerProxy);
 }
 
 @override
 String toString() {
-    return 'TailscaleNetStatus(started: $started, backendState: $backendState, authUrl: $authUrl, health: $health, magicDnsSuffix: $magicDnsSuffix, self: $self, peers: $peers, error: $error)';
+    return 'TailscaleNetStatus(started: $started, backendState: $backendState, authUrl: $authUrl, health: $health, magicDnsSuffix: $magicDnsSuffix, self: $self, peers: $peers, error: $error, dialerProxy: $dialerProxy)';
 }
 
 
@@ -1175,7 +1184,7 @@ abstract mixin class _$TailscaleNetStatusCopyWith<$Res> implements $TailscaleNet
   factory _$TailscaleNetStatusCopyWith(_TailscaleNetStatus value, $Res Function(_TailscaleNetStatus) _then) = __$TailscaleNetStatusCopyWithImpl;
 @override @useResult
 $Res call({
- bool started, String backendState, String? authUrl, List<String> health, String magicDnsSuffix, TailscalePeer? self, List<TailscalePeer> peers, String? error
+ bool started, String backendState, String? authUrl, List<String> health, String magicDnsSuffix, TailscalePeer? self, List<TailscalePeer> peers, String? error, String? dialerProxy
 });
 
 
@@ -1192,7 +1201,7 @@ class __$TailscaleNetStatusCopyWithImpl<$Res>
 
 /// Create a copy of TailscaleNetStatus
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? started = null,Object? backendState = null,Object? authUrl = freezed,Object? health = null,Object? magicDnsSuffix = null,Object? self = freezed,Object? peers = null,Object? error = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? started = null,Object? backendState = null,Object? authUrl = freezed,Object? health = null,Object? magicDnsSuffix = null,Object? self = freezed,Object? peers = null,Object? error = freezed,Object? dialerProxy = freezed,}) {
   return _then(_TailscaleNetStatus(
 started: null == started ? _self.started : started // ignore: cast_nullable_to_non_nullable
 as bool,backendState: null == backendState ? _self.backendState : backendState // ignore: cast_nullable_to_non_nullable
@@ -1202,6 +1211,7 @@ as List<String>,magicDnsSuffix: null == magicDnsSuffix ? _self.magicDnsSuffix : 
 as String,self: freezed == self ? _self.self : self // ignore: cast_nullable_to_non_nullable
 as TailscalePeer?,peers: null == peers ? _self._peers : peers // ignore: cast_nullable_to_non_nullable
 as List<TailscalePeer>,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as String?,dialerProxy: freezed == dialerProxy ? _self.dialerProxy : dialerProxy // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

@@ -1143,5 +1143,15 @@
         "type": "int"
       }
     }
+  },
+  "tailscaleReconnect": "Reconnect",
+  "tailscaleDialerProxyDropped": "The connection proxy \"{name}\" is not in the current profile, so the node is dialing directly. Pick one the profile has.",
+  "tailscaleDirectBlocked": "The node reaches the control server directly and the connection was reset, which is common on networks that block Tailscale. Pick a connection proxy above, then tap Reconnect.",
+  "@tailscaleDialerProxyDropped": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   }
 }

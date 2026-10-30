@@ -81,7 +81,15 @@ func tailscaleStatus(ctx context.Context, params TailscaleStatusParams) (Tailsca
 	}
 	if params.Start && !node.Started() {
 		if err := node.Start(ctx); err != nil {
-			return TailscaleStatusResult{Started: node.Started()}, err
+			return TailscaleStatusResult{Started: node.Started(), DialerProxy: node.DialerProxy()}, err
+		}
+	} else if params.Start {
+		// A connect on a node that is already up but stuck logged out after
+		// a failed control dial retries the login now: on a fresh network,
+		// with whatever dialer-proxy the node has now.
+		node.NetworkChanged()
+		if err := node.Reconnect(ctx); err != nil {
+			return TailscaleStatusResult{Started: true, DialerProxy: node.DialerProxy()}, err
 		}
 	}
 	if params.Rebind {
@@ -94,12 +102,14 @@ func tailscaleStatus(ctx context.Context, params TailscaleStatusParams) (Tailsca
 	}
 	status, err := node.Status(ctx)
 	if errors.Is(err, outbound.ErrTailscaleNotStarted) {
-		return TailscaleStatusResult{}, nil
+		return TailscaleStatusResult{DialerProxy: node.DialerProxy()}, nil
 	}
 	if err != nil {
-		return TailscaleStatusResult{Started: true}, err
+		return TailscaleStatusResult{Started: true, DialerProxy: node.DialerProxy()}, err
 	}
-	return convertTailscaleStatus(status), nil
+	result := convertTailscaleStatus(status)
+	result.DialerProxy = node.DialerProxy()
+	return result, nil
 }
 
 func convertTailscaleStatus(status *ipnstate.Status) TailscaleStatusResult {

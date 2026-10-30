@@ -244,4 +244,24 @@ void main() {
 
     await teardown(tester);
   });
+
+  testWidgets('the section has no connect of its own', (tester) async {
+    answerStatus([
+      const TailscaleNetStatus(),
+      const TailscaleNetStatus(
+        started: true,
+        backendState: 'NeedsLogin',
+        self: TailscalePeer(id: 's', hostName: 'localhost', os: 'android'),
+      ),
+    ]);
+    final key = await pump(tester);
+    await tester.pumpAndSettle();
+    expect(find.text('Connect'), findsNothing);
+    await key.currentState!.refresh();
+    await tester.pumpAndSettle();
+    expect(find.text('Connect'), findsNothing);
+    // With no device to test there is no lightning action either.
+    expect(find.byTooltip('Test all'), findsNothing);
+    await teardown(tester);
+  });
 }
