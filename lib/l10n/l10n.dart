@@ -8317,10 +8317,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Tailscale's own traffic to its control server, DERP relays and peers goes through this proxy or group. Choose one if the control server cannot be reached directly.`
+  /// `Tailscale's own traffic to its control server, Tailscale's DERP relays and peers goes through this proxy or group. Self-hosted DERP servers (any not under tailscale.com) are reached directly for low latency, and through this proxy only if the direct connection fails. Choose one if the control server cannot be reached directly.`
   String get tailscaleDialerProxyDesc {
     return Intl.message(
-      'Tailscale\'s own traffic to its control server, DERP relays and peers goes through this proxy or group. Choose one if the control server cannot be reached directly.',
+      'Tailscale\'s own traffic to its control server, Tailscale\'s DERP relays and peers goes through this proxy or group. Self-hosted DERP servers (any not under tailscale.com) are reached directly for low latency, and through this proxy only if the direct connection fails. Choose one if the control server cannot be reached directly.',
       name: 'tailscaleDialerProxyDesc',
       desc: '',
       args: [],

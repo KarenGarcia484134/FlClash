@@ -2087,7 +2087,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Прокси подключения",
     ),
     "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
-      "Собственный трафик Tailscale к серверу управления, ретрансляторам DERP и узлам идёт через этот прокси или группу. Выберите его, если сервер недоступен напрямую.",
+      "Собственный трафик Tailscale к серверу управления, официальным ретрансляторам DERP и узлам идёт через этот прокси или группу. Собственные серверы DERP (не в домене tailscale.com) подключаются напрямую ради низкой задержки, а через этот прокси — только если прямое подключение не удалось. Выберите прокси, если сервер управления недоступен напрямую.",
     ),
     "tailscaleDialerProxyDropped": m85,
     "tailscaleDirectBlocked": MessageLookupByLibrary.simpleMessage(

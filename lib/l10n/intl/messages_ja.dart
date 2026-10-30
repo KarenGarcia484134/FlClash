@@ -1700,7 +1700,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleDialerProxy": MessageLookupByLibrary.simpleMessage("接続プロキシ"),
     "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
-      "コントロールサーバー、DERP リレー、ピアへの Tailscale 自身の通信はこのプロキシまたはグループを経由します。直接接続できない場合に選択してください。",
+      "コントロールサーバー、Tailscale 公式の DERP リレー、ピアへの Tailscale 自身の通信はこのプロキシまたはグループを経由します。セルフホストの DERP サーバー（tailscale.com 以外）は低遅延のため直接接続し、直接接続に失敗した場合のみこのプロキシを使います。コントロールサーバーに直接接続できない場合は選択してください。",
     ),
     "tailscaleDialerProxyDropped": m85,
     "tailscaleDirectBlocked": MessageLookupByLibrary.simpleMessage(
