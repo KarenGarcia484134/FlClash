@@ -1124,5 +1124,24 @@
   "retryTimedOutGroups": "Retry all",
   "retryingTimedOutGroups": "Retrying…",
   "allGroupsRecovered": "All groups have recovered",
-  "groupRecovered": "Recovered"
+  "groupRecovered": "Recovered",
+  "viewNodeInfo": "View node info",
+  "nodeInfoTitle": "Node info",
+  "currentSelection": "Current selection",
+  "belongsToGroups": "In groups",
+  "groupMembers": "Members ({count})",
+  "nodeConfig": "Node config",
+  "nodeConfigMissing": "This profile has no config for this node. It may come from a proxy provider, so only what the Core reports is shown.",
+  "copyAsYaml": "Copy as YAML",
+  "copyAsJson": "Copy as JSON",
+  "nodeConfigCopyTip": "The copied config includes passwords and keys in plain text.",
+  "revealSecret": "Show",
+  "hideSecret": "Hide",
+  "@groupMembers": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

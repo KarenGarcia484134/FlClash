@@ -1090,5 +1090,17 @@
   "retryTimedOutGroups": "すべて再試行",
   "retryingTimedOutGroups": "再試行中…",
   "allGroupsRecovered": "すべてのグループが回復しました",
-  "groupRecovered": "回復"
+  "groupRecovered": "回復",
+  "viewNodeInfo": "ノード情報を表示",
+  "nodeInfoTitle": "ノード情報",
+  "currentSelection": "現在の選択",
+  "belongsToGroups": "所属グループ",
+  "groupMembers": "メンバー（{count}）",
+  "nodeConfig": "ノード設定",
+  "nodeConfigMissing": "このプロファイルにはこのノードの定義がありません。プロキシプロバイダー由来の可能性があるため、コアが提供する情報のみを表示します。",
+  "copyAsYaml": "YAML としてコピー",
+  "copyAsJson": "JSON としてコピー",
+  "nodeConfigCopyTip": "コピーした設定にはパスワードや鍵が平文で含まれます。",
+  "revealSecret": "表示",
+  "hideSecret": "非表示"
 }

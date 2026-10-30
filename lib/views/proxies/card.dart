@@ -175,7 +175,12 @@ class ProxyCard extends ConsumerWidget {
             ),
           ),
         );
-        final menuItems = proxyNodeMenuItems(context, ref, proxy);
+        final menuItems = proxyNodeMenuItems(
+          context,
+          ref,
+          proxy,
+          testUrl: testUrl,
+        );
         return menuItems.isEmpty
             ? card
             : ContextMenuRegion(menuItems: menuItems, child: card);

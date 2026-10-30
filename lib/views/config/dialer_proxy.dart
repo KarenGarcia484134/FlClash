@@ -6,6 +6,7 @@ import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/views/config/custom_routings.dart';
 import 'package:fl_clash/views/config/tailscale.dart';
+import 'package:fl_clash/views/proxies/node_info.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
@@ -97,12 +98,19 @@ Future<void> pickDialerProxy(
 List<CommonPopupMenuItem> proxyNodeMenuItems(
   BuildContext context,
   WidgetRef ref,
-  Proxy proxy,
-) {
+  Proxy proxy, {
+  String? testUrl,
+}) {
+  final info = CommonPopupMenuItem(
+    label: context.appLocalizations.viewNodeInfo,
+    glyph: AppGlyphs.info,
+    onPressed: () => showNodeInfo(context, proxy, testUrl: testUrl),
+  );
   if (isGroupTypeName(proxy.type)) {
-    return const [];
+    return [info];
   }
   return [
+    info,
     CommonPopupMenuItem(
       label: context.appLocalizations.setDialerProxy,
       glyph: AppGlyphs.link,

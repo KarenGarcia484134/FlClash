@@ -1100,5 +1100,17 @@
   "retryTimedOutGroups": "Tout réessayer",
   "retryingTimedOutGroups": "Nouvel essai…",
   "allGroupsRecovered": "Tous les groupes sont rétablis",
-  "groupRecovered": "Rétabli"
+  "groupRecovered": "Rétabli",
+  "viewNodeInfo": "Voir les infos du nœud",
+  "nodeInfoTitle": "Infos du nœud",
+  "currentSelection": "Sélection actuelle",
+  "belongsToGroups": "Dans les groupes",
+  "groupMembers": "Membres ({count})",
+  "nodeConfig": "Configuration du nœud",
+  "nodeConfigMissing": "Ce profil ne définit pas ce nœud. Il vient peut-être d’un fournisseur de proxys ; seules les informations du noyau sont affichées.",
+  "copyAsYaml": "Copier en YAML",
+  "copyAsJson": "Copier en JSON",
+  "nodeConfigCopyTip": "La configuration copiée contient les mots de passe et les clés en clair.",
+  "revealSecret": "Afficher",
+  "hideSecret": "Masquer"
 }
