@@ -9176,6 +9176,96 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `View node info`
+  String get viewNodeInfo {
+    return Intl.message(
+      'View node info',
+      name: 'viewNodeInfo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Node info`
+  String get nodeInfoTitle {
+    return Intl.message('Node info', name: 'nodeInfoTitle', desc: '', args: []);
+  }
+
+  /// `Current selection`
+  String get currentSelection {
+    return Intl.message(
+      'Current selection',
+      name: 'currentSelection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `In groups`
+  String get belongsToGroups {
+    return Intl.message(
+      'In groups',
+      name: 'belongsToGroups',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Members ({count})`
+  String groupMembers(int count) {
+    return Intl.message(
+      'Members ($count)',
+      name: 'groupMembers',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Node config`
+  String get nodeConfig {
+    return Intl.message('Node config', name: 'nodeConfig', desc: '', args: []);
+  }
+
+  /// `This profile has no config for this node. It may come from a proxy provider, so only what the Core reports is shown.`
+  String get nodeConfigMissing {
+    return Intl.message(
+      'This profile has no config for this node. It may come from a proxy provider, so only what the Core reports is shown.',
+      name: 'nodeConfigMissing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Copy as YAML`
+  String get copyAsYaml {
+    return Intl.message('Copy as YAML', name: 'copyAsYaml', desc: '', args: []);
+  }
+
+  /// `Copy as JSON`
+  String get copyAsJson {
+    return Intl.message('Copy as JSON', name: 'copyAsJson', desc: '', args: []);
+  }
+
+  /// `The copied config includes passwords and keys in plain text.`
+  String get nodeConfigCopyTip {
+    return Intl.message(
+      'The copied config includes passwords and keys in plain text.',
+      name: 'nodeConfigCopyTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show`
+  String get revealSecret {
+    return Intl.message('Show', name: 'revealSecret', desc: '', args: []);
+  }
+
+  /// `Hide`
+  String get hideSecret {
+    return Intl.message('Hide', name: 'hideSecret', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

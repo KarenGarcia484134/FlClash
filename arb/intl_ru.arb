@@ -1090,5 +1090,17 @@
   "retryTimedOutGroups": "Повторить все",
   "retryingTimedOutGroups": "Повторная проверка…",
   "allGroupsRecovered": "Все группы восстановились",
-  "groupRecovered": "Восстановлено"
+  "groupRecovered": "Восстановлено",
+  "viewNodeInfo": "Сведения об узле",
+  "nodeInfoTitle": "Сведения об узле",
+  "currentSelection": "Текущий выбор",
+  "belongsToGroups": "В группах",
+  "groupMembers": "Участники ({count})",
+  "nodeConfig": "Конфигурация узла",
+  "nodeConfigMissing": "В профиле нет описания этого узла. Возможно, он получен от провайдера прокси, поэтому показано только то, что сообщает ядро.",
+  "copyAsYaml": "Копировать как YAML",
+  "copyAsJson": "Копировать как JSON",
+  "nodeConfigCopyTip": "Скопированная конфигурация содержит пароли и ключи в открытом виде.",
+  "revealSecret": "Показать",
+  "hideSecret": "Скрыть"
 }

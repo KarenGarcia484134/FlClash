@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.24",
+      "tag": "v0.9.24",
+      "date": "2026-10-30",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "2ac2c1e",
+              "scope": "proxies",
+              "text": "代理节点长按菜单新增「查看节点信息」：显示节点名称、协议类型、服务器、端口、传输方式、TLS/Reality/Flow/SNI、UDP 等配置及当前延迟和所属策略组；UUID、密码、私钥、short-id 等敏感字段默认隐藏，可点击显示或复制；支持将完整节点配置复制为 YAML 或 JSON；长按策略组时显示类型、成员及当前选择，来自代理集合等缺少配置的节点会给出提示"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.23",
       "tag": "v0.9.23",
       "date": "2026-10-23",

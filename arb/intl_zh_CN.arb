@@ -1090,5 +1090,17 @@
   "retryTimedOutGroups": "全部重试",
   "retryingTimedOutGroups": "正在重试…",
   "allGroupsRecovered": "所有策略组均已恢复",
-  "groupRecovered": "已恢复"
+  "groupRecovered": "已恢复",
+  "viewNodeInfo": "查看节点信息",
+  "nodeInfoTitle": "节点信息",
+  "currentSelection": "当前选择",
+  "belongsToGroups": "所属策略组",
+  "groupMembers": "成员（{count}）",
+  "nodeConfig": "节点配置",
+  "nodeConfigMissing": "当前配置中没有该节点的定义，可能来自代理集合，仅显示内核提供的信息。",
+  "copyAsYaml": "复制为 YAML",
+  "copyAsJson": "复制为 JSON",
+  "nodeConfigCopyTip": "复制的配置包含明文密码和密钥，请注意保管。",
+  "revealSecret": "显示",
+  "hideSecret": "隐藏"
 }

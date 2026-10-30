@@ -1100,5 +1100,17 @@
   "retryTimedOutGroups": "모두 재시도",
   "retryingTimedOutGroups": "재시도 중…",
   "allGroupsRecovered": "모든 그룹이 복구되었습니다",
-  "groupRecovered": "복구됨"
+  "groupRecovered": "복구됨",
+  "viewNodeInfo": "노드 정보 보기",
+  "nodeInfoTitle": "노드 정보",
+  "currentSelection": "현재 선택",
+  "belongsToGroups": "소속 그룹",
+  "groupMembers": "멤버 ({count})",
+  "nodeConfig": "노드 설정",
+  "nodeConfigMissing": "이 프로필에는 이 노드의 정의가 없습니다. 프록시 제공자에서 온 것일 수 있어 코어가 제공하는 정보만 표시합니다.",
+  "copyAsYaml": "YAML로 복사",
+  "copyAsJson": "JSON으로 복사",
+  "nodeConfigCopyTip": "복사한 설정에는 비밀번호와 키가 평문으로 포함됩니다.",
+  "revealSecret": "표시",
+  "hideSecret": "숨기기"
 }

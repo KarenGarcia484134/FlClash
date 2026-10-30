@@ -1100,5 +1100,17 @@
   "retryTimedOutGroups": "Reintentar todo",
   "retryingTimedOutGroups": "Reintentando…",
   "allGroupsRecovered": "Todos los grupos se han recuperado",
-  "groupRecovered": "Recuperado"
+  "groupRecovered": "Recuperado",
+  "viewNodeInfo": "Ver información del nodo",
+  "nodeInfoTitle": "Información del nodo",
+  "currentSelection": "Selección actual",
+  "belongsToGroups": "En grupos",
+  "groupMembers": "Miembros ({count})",
+  "nodeConfig": "Configuración del nodo",
+  "nodeConfigMissing": "Este perfil no define este nodo. Puede venir de un proveedor de proxies, así que solo se muestra lo que informa el núcleo.",
+  "copyAsYaml": "Copiar como YAML",
+  "copyAsJson": "Copiar como JSON",
+  "nodeConfigCopyTip": "La configuración copiada incluye contraseñas y claves en texto plano.",
+  "revealSecret": "Mostrar",
+  "hideSecret": "Ocultar"
 }
