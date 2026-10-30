@@ -45,6 +45,10 @@ abstract class TailscaleStatus with _$TailscaleStatus {
     String? loginUrl,
     String? proxyName,
     @Default([]) List<String> health,
+
+    /// What the running node's own traffic really goes through, as the Core
+    /// reports it: empty for directly, null while unknown.
+    String? dialerProxy,
   }) = _TailscaleStatus;
 }
 
@@ -214,6 +218,7 @@ abstract class TailscaleNetStatus with _$TailscaleNetStatus {
     TailscalePeer? self,
     @Default([]) List<TailscalePeer> peers,
     String? error,
+    String? dialerProxy,
   }) = _TailscaleNetStatus;
 
   factory TailscaleNetStatus.fromJson(Map<String, Object?> json) =>
@@ -321,6 +326,7 @@ TailscaleStatus applyTailscaleNetStatus(
       phase: TailscalePhase.connecting,
       proxyName: proxyName,
       health: net.health,
+      dialerProxy: net.dialerProxy ?? '',
     );
   }
   return switch (net.backendState) {
@@ -328,6 +334,7 @@ TailscaleStatus applyTailscaleNetStatus(
       phase: TailscalePhase.running,
       proxyName: proxyName,
       health: net.health,
+      dialerProxy: net.dialerProxy ?? '',
     ),
     'NeedsLogin' || 'NeedsMachineAuth' => TailscaleStatus(
       phase: TailscalePhase.needsLogin,
@@ -336,13 +343,19 @@ TailscaleStatus applyTailscaleNetStatus(
           : current.loginUrl,
       proxyName: proxyName,
       health: net.health,
+      dialerProxy: net.dialerProxy ?? '',
     ),
     'NoState' || 'Starting' => current.copyWith(
       phase: TailscalePhase.connecting,
       proxyName: proxyName,
       health: net.health,
+      dialerProxy: net.dialerProxy ?? '',
     ),
-    _ => current.copyWith(proxyName: proxyName, health: net.health),
+    _ => current.copyWith(
+      proxyName: proxyName,
+      health: net.health,
+      dialerProxy: net.dialerProxy ?? '',
+    ),
   };
 }
 
@@ -413,4 +426,27 @@ TailscaleIssue classifyTailscaleHealth(List<String> messages) {
     return TailscaleIssue.authKey;
   }
   return TailscaleIssue.none;
+}
+
+enum TailscaleRouteHint { none, direct, dropped }
+
+/// Why the node may not reach its control server: [configured] is the
+/// connection proxy picked on the page and [effective] what the running node
+/// really uses (empty for directly, null while unknown). A pick the current
+/// profile does not have is dropped, so the node dials directly, which a
+/// censored network resets; that is worth saying even before it fails.
+TailscaleRouteHint tailscaleRouteHint({
+  required String configured,
+  required String? effective,
+  required List<String> health,
+}) {
+  if (effective == null || effective.isNotEmpty) {
+    return TailscaleRouteHint.none;
+  }
+  if (configured.trim().isNotEmpty) {
+    return TailscaleRouteHint.dropped;
+  }
+  return classifyTailscaleHealth(health) == TailscaleIssue.network
+      ? TailscaleRouteHint.direct
+      : TailscaleRouteHint.none;
 }

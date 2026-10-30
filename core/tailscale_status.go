@@ -54,6 +54,9 @@ type TailscaleStatusResult struct {
 	Self           *TailscalePeer  `json:"self"`
 	Peers          []TailscalePeer `json:"peers"`
 	Error          string          `json:"error,omitempty"`
+	// DialerProxy is what the running node's own traffic really goes
+	// through; empty means directly.
+	DialerProxy string `json:"dialerProxy,omitempty"`
 }
 
 var errTailscaleNodeMissing = errors.New("tailscale node not found")

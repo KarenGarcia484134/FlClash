@@ -1102,5 +1102,8 @@
   "copyAsJson": "JSON としてコピー",
   "nodeConfigCopyTip": "コピーした設定にはパスワードや鍵が平文で含まれます。",
   "revealSecret": "表示",
-  "hideSecret": "非表示"
+  "hideSecret": "非表示",
+  "tailscaleReconnect": "再接続",
+  "tailscaleDialerProxyDropped": "接続プロキシ「{name}」は現在のプロファイルにないため、ノードは直接接続しています。プロファイルにあるものを選んでください。",
+  "tailscaleDirectBlocked": "ノードはコントロールサーバーに直接接続しており、接続がリセットされました。上で接続プロキシを選び、「再接続」をタップしてください。"
 }

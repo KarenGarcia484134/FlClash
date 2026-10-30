@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/features/form/form.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/ui/ui.dart';
 import 'package:fl_clash/models/models.dart';
@@ -89,6 +90,39 @@ Future<String?> showTailscaleDialerSheet(
       },
     ),
   );
+}
+
+/// The red lines under the status: why the node cannot reach its control
+/// server, and whether that is the connection proxy's doing.
+List<String> tailscaleStatusHints(
+  AppLocalizations appLocalizations,
+  TailscaleStatus status,
+  TailscaleProps props,
+) {
+  if (status.phase == TailscalePhase.running) {
+    return const [];
+  }
+  final route = switch (tailscaleRouteHint(
+    configured: props.dialerProxy,
+    effective: status.dialerProxy,
+    health: status.health,
+  )) {
+    TailscaleRouteHint.dropped => appLocalizations.tailscaleDialerProxyDropped(
+      props.dialerProxy.trim(),
+    ),
+    TailscaleRouteHint.direct => appLocalizations.tailscaleDirectBlocked,
+    TailscaleRouteHint.none => null,
+  };
+  final issue = switch (classifyTailscaleHealth(status.health)) {
+    TailscaleIssue.network when route == null =>
+      appLocalizations.tailscaleNetworkIssue,
+    TailscaleIssue.authKey
+        when props.authKey.trim().isNotEmpty &&
+            status.phase == TailscalePhase.needsLogin =>
+      appLocalizations.tailscaleAuthKeyNotAccepted,
+    _ => null,
+  };
+  return [?route, ?issue];
 }
 
 class TailscaleView extends ConsumerStatefulWidget {
@@ -253,24 +287,20 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
               ),
             ),
           ),
-        if (status.phase == TailscalePhase.needsLogin)
-          if (switch (classifyTailscaleHealth(status.health)) {
-                TailscaleIssue.network =>
-                  appLocalizations.tailscaleNetworkIssue,
-                TailscaleIssue.authKey when props.authKey.trim().isNotEmpty =>
-                  appLocalizations.tailscaleAuthKeyNotAccepted,
-                _ => null,
-              }
-              case final hint?)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: Text(
-                hint,
-                style: context.listCaptionStyle.copyWith(
-                  color: context.colorScheme.error,
-                ),
+        for (final hint in tailscaleStatusHints(
+          appLocalizations,
+          status,
+          props,
+        ))
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: Text(
+              hint,
+              style: context.listCaptionStyle.copyWith(
+                color: context.colorScheme.error,
               ),
             ),
+          ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
@@ -292,12 +322,16 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
         Wrap(
           spacing: 12,
           children: [
+            // The one connect action on the page. It stays usable while the
+            // node is connecting or failed, where it retries the login.
             FilledButton.tonal(
-              onPressed:
-                  props.enable && status.phase != TailscalePhase.connecting
-                  ? _handleConnect
-                  : null,
-              child: Text(appLocalizations.tailscaleConnect),
+              key: const ValueKey('tailscale-connect'),
+              onPressed: props.enable ? _handleConnect : null,
+              child: Text(
+                status.phase == TailscalePhase.idle
+                    ? appLocalizations.tailscaleConnect
+                    : appLocalizations.tailscaleReconnect,
+              ),
             ),
             TextButton(
               onPressed: _handleReset,

@@ -86,6 +86,7 @@ _TailscaleNetStatus _$TailscaleNetStatusFromJson(Map<String, dynamic> json) =>
               .toList() ??
           const [],
       error: json['error'] as String?,
+      dialerProxy: json['dialerProxy'] as String?,
     );
 
 Map<String, dynamic> _$TailscaleNetStatusToJson(_TailscaleNetStatus instance) =>
@@ -98,6 +99,7 @@ Map<String, dynamic> _$TailscaleNetStatusToJson(_TailscaleNetStatus instance) =>
       'self': instance.self,
       'peers': instance.peers,
       'error': instance.error,
+      'dialerProxy': instance.dialerProxy,
     };
 
 _TailscalePingResult _$TailscalePingResultFromJson(Map<String, dynamic> json) =>

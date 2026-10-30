@@ -1102,5 +1102,8 @@
   "copyAsJson": "复制为 JSON",
   "nodeConfigCopyTip": "复制的配置包含明文密码和密钥，请注意保管。",
   "revealSecret": "显示",
-  "hideSecret": "隐藏"
+  "hideSecret": "隐藏",
+  "tailscaleReconnect": "重新连接",
+  "tailscaleDialerProxyDropped": "所选连接代理「{name}」不在当前配置中，节点正在直连。请重新选择一个当前配置中有的代理或代理组。",
+  "tailscaleDirectBlocked": "节点当前直连控制服务器，连接被重置（屏蔽 Tailscale 的网络中很常见）。请在上方选择一个连接代理，然后点「重新连接」。"
 }

@@ -202,21 +202,24 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m84(label) => "${label}只能是一项";
 
-  static String m85(relay) => "中继 ${relay}";
+  static String m85(name) =>
+      "所选连接代理「${name}」不在当前配置中，节点正在直连。请重新选择一个当前配置中有的代理或代理组。";
 
-  static String m86(value) => "峰值 ${value}";
+  static String m86(relay) => "中继 ${relay}";
 
-  static String m87(value) => "累计 ${value}";
+  static String m87(value) => "峰值 ${value}";
 
-  static String m88(error) => "下载更新失败：${error}\n可以改为在发布页面中手动下载。";
+  static String m88(value) => "累计 ${value}";
 
-  static String m89(error) => "无法启动安装程序：${error}";
+  static String m89(error) => "下载更新失败：${error}\n可以改为在发布页面中手动下载。";
 
-  static String m90(label) => "${label}必须为URL";
+  static String m90(error) => "无法启动安装程序：${error}";
 
-  static String m91(count) => "${count} 年前";
+  static String m91(label) => "${label}必须为URL";
 
   static String m92(count) => "${count} 年前";
+
+  static String m93(count) => "${count} 年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1529,6 +1532,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
       "Tailscale 自身连接控制服务器、DERP 中继和其他设备的流量会经过这里选择的代理或代理组。直连无法访问控制服务器时请选择一个。",
     ),
+    "tailscaleDialerProxyDropped": m85,
+    "tailscaleDirectBlocked": MessageLookupByLibrary.simpleMessage(
+      "节点当前直连控制服务器，连接被重置（屏蔽 Tailscale 的网络中很常见）。请在上方选择一个连接代理，然后点「重新连接」。",
+    ),
     "tailscaleDnsSuffixes": MessageLookupByLibrary.simpleMessage(
       "Tailnet 域名后缀",
     ),
@@ -1554,7 +1561,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleOpenLogin": MessageLookupByLibrary.simpleMessage("打开登录页面"),
     "tailscalePathDirect": MessageLookupByLibrary.simpleMessage("直连"),
     "tailscalePathPeerRelay": MessageLookupByLibrary.simpleMessage("对等中继"),
-    "tailscalePathRelay": m85,
+    "tailscalePathRelay": m86,
     "tailscalePeers": MessageLookupByLibrary.simpleMessage("设备"),
     "tailscalePing": MessageLookupByLibrary.simpleMessage("测试延迟"),
     "tailscalePingAll": MessageLookupByLibrary.simpleMessage("全部测试"),
@@ -1562,6 +1569,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "点按或长按设备可测试其延迟，离线设备不测试。",
     ),
     "tailscalePingFailed": MessageLookupByLibrary.simpleMessage("无响应"),
+    "tailscaleReconnect": MessageLookupByLibrary.simpleMessage("重新连接"),
     "tailscaleRefresh": MessageLookupByLibrary.simpleMessage("刷新"),
     "tailscaleReset": MessageLookupByLibrary.simpleMessage("退出登录并重置"),
     "tailscaleResetTip": MessageLookupByLibrary.simpleMessage(
@@ -1608,8 +1616,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalUpload": MessageLookupByLibrary.simpleMessage("上传总量"),
     "tproxyPort": MessageLookupByLibrary.simpleMessage("Tproxy端口"),
     "traffic": MessageLookupByLibrary.simpleMessage("流量"),
-    "trafficPeak": m86,
-    "trafficTotal": m87,
+    "trafficPeak": m87,
+    "trafficTotal": m88,
     "trafficUsage": MessageLookupByLibrary.simpleMessage("流量统计"),
     "transport": MessageLookupByLibrary.simpleMessage("传输协议"),
     "tun": MessageLookupByLibrary.simpleMessage("虚拟网卡"),
@@ -1648,14 +1656,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateDmgOpened": MessageLookupByLibrary.simpleMessage(
       "安装镜像已打开，请将 FlClash 拖入「应用程序」以完成更新。",
     ),
-    "updateDownloadFailed": m88,
-    "updateInstallFailed": m89,
+    "updateDownloadFailed": m89,
+    "updateInstallFailed": m90,
     "updateNow": MessageLookupByLibrary.simpleMessage("立即更新"),
     "upload": MessageLookupByLibrary.simpleMessage("上传"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("上行带宽"),
     "upstreamProject": MessageLookupByLibrary.simpleMessage("上游项目"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m90,
+    "urlTip": m91,
     "useHosts": MessageLookupByLibrary.simpleMessage("使用Hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("使用系统Hosts"),
     "usedShort": MessageLookupByLibrary.simpleMessage("已用"),
@@ -1680,8 +1688,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "写入系统会同时设置系统时钟，Android 上不生效。",
     ),
-    "yearsAgo": m91,
-    "yearsAgoShort": m92,
+    "yearsAgo": m92,
+    "yearsAgoShort": m93,
     "yes": MessageLookupByLibrary.simpleMessage("是"),
     "zhCN": MessageLookupByLibrary.simpleMessage("中文简体"),
   };

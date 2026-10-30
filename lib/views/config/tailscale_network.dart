@@ -403,11 +403,6 @@ class TailscaleNetworkSectionState
               style: context.listCaptionStyle,
             ),
           ),
-          if (widget.proxyName != null)
-            FilledButton.tonal(
-              onPressed: connect,
-              child: Text(appLocalizations.tailscaleConnect),
-            ),
         ],
       );
     }
@@ -444,12 +439,15 @@ class TailscaleNetworkSectionState
         generateSection(
           title: '${appLocalizations.tailscalePeers} (${status.peers.length})',
           actions: [
-            IconButtonData(
-              glyph: AppGlyphs.bolt,
-              tooltip: appLocalizations.tailscalePingAll,
-              isLoading: _pinging.isNotEmpty,
-              onPressed: testable ? () => _ping(status.peers) : null,
-            ),
+            // Testing latency needs a device to test, so with none the
+            // section shows no action that could pass for a connect button.
+            if (status.peers.any((peer) => peer.online))
+              IconButtonData(
+                glyph: AppGlyphs.bolt,
+                tooltip: appLocalizations.tailscalePingAll,
+                isLoading: _pinging.isNotEmpty,
+                onPressed: testable ? () => _ping(status.peers) : null,
+              ),
           ],
           items: [
             if (peers.isEmpty)

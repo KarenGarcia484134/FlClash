@@ -9266,6 +9266,36 @@ class AppLocalizations {
   String get hideSecret {
     return Intl.message('Hide', name: 'hideSecret', desc: '', args: []);
   }
+
+  /// `Reconnect`
+  String get tailscaleReconnect {
+    return Intl.message(
+      'Reconnect',
+      name: 'tailscaleReconnect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The connection proxy "{name}" is not in the current profile, so the node is dialing directly. Pick one the profile has.`
+  String tailscaleDialerProxyDropped(String name) {
+    return Intl.message(
+      'The connection proxy "$name" is not in the current profile, so the node is dialing directly. Pick one the profile has.',
+      name: 'tailscaleDialerProxyDropped',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `The node reaches the control server directly and the connection was reset, which is common on networks that block Tailscale. Pick a connection proxy above, then tap Reconnect.`
+  String get tailscaleDirectBlocked {
+    return Intl.message(
+      'The node reaches the control server directly and the connection was reset, which is common on networks that block Tailscale. Pick a connection proxy above, then tap Reconnect.',
+      name: 'tailscaleDirectBlocked',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
