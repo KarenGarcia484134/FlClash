@@ -2,9 +2,10 @@
 
 `core/Clash.Meta` points at the fork
 [KarenGarcia484134/Clash.Meta](https://github.com/KarenGarcia484134/Clash.Meta),
-branch `FlClash-patched`: upstream `chen08209/Clash.Meta` branch `FlClash`
-plus the commits below. Every patch only adds files, so a rebase onto a newer
-upstream does not conflict.
+branch `FlClash-patched-1.19.33`: upstream `chen08209/Clash.Meta` branch `FlClash`
+plus the commits below (cherry-picked onto `c5062921`, mihomo v1.19.33; the
+older `FlClash-patched` branch holds them on the previous base). Every patch
+only adds files, so moving them onto a newer upstream does not conflict.
 
 | Commit | Files | Purpose |
 | --- | --- | --- |
@@ -19,9 +20,11 @@ upstream does not conflict.
 cd core/Clash.Meta
 git remote add upstream https://github.com/chen08209/Clash.Meta.git
 git fetch upstream FlClash
-git rebase upstream/FlClash
+git switch -c FlClash-patched-<mihomo version> upstream/FlClash
+git cherry-pick <old base>..origin/FlClash-patched-<old version>
 go test -tags with_gvisor ./adapter/outbound/ -run TestTailscaleStatus
-git push --force-with-lease origin HEAD:FlClash-patched
+git push origin HEAD
+# then point .gitmodules `branch` and coreRepositoryUrl at the new branch
 cd ../.. && git add core/Clash.Meta && git commit -m "chore: sync mihomo"
 ```
 

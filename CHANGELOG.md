@@ -24,6 +24,32 @@
 
 - **proxies** 代理节点长按菜单新增「查看节点信息」：显示节点名称、协议类型、服务器、端口、传输方式、TLS/Reality/Flow/SNI、UDP 等配置及当前延迟和所属策略组；UUID、密码、私钥、short-id 等敏感字段默认隐藏，可点击显示或复制；支持将完整节点配置复制为 YAML 或 JSON；长按策略组时显示类型、成员及当前选择，来自代理集合等缺少配置的节点会给出提示 (2ac2c1e)
 
+## v0.9.2 (2026-10-24)
+
+**Features**
+
+- **access** Access control state shown in a bar at the bottom (e8aac17)
+- **config** Optional general overrides; settings apply sooner (5d6552d)
+- **dashboard** IP quality cached for 3 days; simpler Android dashboard (8176cce)
+- Update the core to mihomo v1.19.33 (0817c3b)
+- **tray** Colored tray status icons; monochrome option on macOS (bbfafde)
+- **desktop** Sidebar blur; Windows fixes; keeps system proxies FlClash didn't set (6928521)
+- **profiles** Profile QR codes, phone-to-TV links, more proxy fields (eaaf3e3)
+- **proxies** Add proxies to local proxies; adjustable delay test timeout (0f9f89c)
+- **theme** Higher-contrast dark mode and a refreshed app icon (a4fc067)
+- **ui** iOS-style docked search and menus; bar buttons lift on hover (0d98a9d)
+- **ui** iOS-style switches, stretchy sheets, menus and long-press reordering (ae902ed)
+- **ui** Pages scroll under the Android navigation bar (4837fb3)
+- **core** Clear the DNS cache by hand or on network change (09e7e56)
+
+**Bug Fixes**
+
+- **android** Opening the app no longer reloads a running VPN (99b3381)
+
+**Performance**
+
+- **editor** Smoother editor for large files and in sheets (7035edd)
+
 ## v0.9.23 (2026-10-23)
 
 **Features**

@@ -321,8 +321,18 @@ void main() {
           await upgrade('off', from: 2, windows: false),
           FindProcessMode.off,
         );
+        // A stored 3 is this fork's, which already turned it on once.
         expect(
           await upgrade('off', from: 3, windows: true),
+          FindProcessMode.off,
+        );
+        // A stored 4 is upstream's, which never did.
+        expect(
+          await upgrade('off', from: 4, windows: true),
+          FindProcessMode.always,
+        );
+        expect(
+          await upgrade('off', from: 5, windows: true),
           FindProcessMode.off,
         );
       });
@@ -335,6 +345,59 @@ void main() {
         );
         final config = await Migration(store: store, windows: true).run();
         expect(config.patchClashConfig.findProcessMode, FindProcessMode.always);
+      });
+
+      test('moves presets picked before to the current system colors, '
+          'once', () async {
+        Future<ThemeProps> upgrade(int from) async {
+          final configMap = _createConfigMap();
+          (configMap['themeProps']! as Map<String, Object?>)
+            ..['primaryColor'] = 0xFFFF9500
+            ..['primaryColors'] = [
+              0xFF007AFF,
+              0xFFAF52DE,
+              0xFFCB30E0,
+              0xFFFF9500,
+              0xFF123456,
+            ];
+          final store = _FakeMigrationStore(
+            configMap: configMap,
+            version: Migration.currentVersion,
+            upgradeVersion: from,
+          );
+          return (await Migration(store: store).run()).themeProps;
+        }
+
+        final moved = await upgrade(2);
+        expect(moved.primaryColor, 0xFFFF8D28);
+        expect(moved.primaryColors, [
+          0xFF007AFF,
+          0xFFCB30E0,
+          0xFFFF8D28,
+          0xFF123456,
+        ]);
+        // This fork's 3 never moved them, and the move is idempotent.
+        expect((await upgrade(3)).primaryColor, 0xFFFF8D28);
+        expect((await upgrade(4)).primaryColor, 0xFFFF8D28);
+        expect((await upgrade(5)).primaryColor, 0xFFFF9500);
+      });
+
+      test('turns off the sidebar blur releases stored unseen, once', () async {
+        Future<bool> upgrade(int from) async {
+          final configMap = _createConfigMap();
+          (configMap['themeProps']! as Map<String, Object?>)['sidebarBlur'] =
+              true;
+          final store = _FakeMigrationStore(
+            configMap: configMap,
+            version: Migration.currentVersion,
+            upgradeVersion: from,
+          );
+          return (await Migration(store: store).run()).themeProps.sidebarBlur;
+        }
+
+        expect(await upgrade(3), isFalse);
+        expect(await upgrade(4), isTrue);
+        expect(await upgrade(5), isTrue);
       });
 
       test('a new install only records it', () async {

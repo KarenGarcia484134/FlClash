@@ -117,9 +117,8 @@ Future<void> _install(
           throw ProcessException('open', [file.path], '${result.stderr}');
         }
         unawaited(
-          dialogs.showMessage(
+          dialogs.showAlert(
             message: TextSpan(text: appLocalizations.updateDmgOpened),
-            cancelable: false,
           ),
         );
     }
