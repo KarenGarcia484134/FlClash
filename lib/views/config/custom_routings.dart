@@ -634,7 +634,7 @@ class _CustomRoutingEditViewState extends State<CustomRoutingEditView> {
               16,
               context.contentTopPadding,
               16,
-              16 + BottomInsetScope.of(context),
+              16 + context.bottomInset,
             ),
             children: [
               TextFormField(

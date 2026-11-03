@@ -474,7 +474,7 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
             16,
             context.contentTopPadding,
             16,
-            16 + BottomInsetScope.of(context),
+            16 + context.bottomInset,
           ),
           children: [
             generateSection(

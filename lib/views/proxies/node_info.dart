@@ -89,7 +89,7 @@ class _NodeInfoViewState extends ConsumerState<NodeInfoView> {
           child: ListView(
             padding: const EdgeInsets.symmetric(
               horizontal: 16,
-            ).copyWith(bottom: 20 + BottomInsetScope.of(context)),
+            ).copyWith(bottom: 20 + context.bottomInset),
             children: [
               generateSection(
                 title: appLocalizations.basicInfo,
