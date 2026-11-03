@@ -2,6 +2,44 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.28",
+      "tag": "v0.9.28",
+      "date": "2026-11-03",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "6fcba42",
+              "scope": "upstream",
+              "text": "同步上游 FlClash v0.9.2，内核升级到 mihomo v1.19.33（Tailscale 等内核补丁已移植到新内核分支 FlClash-patched-1.19.33）"
+            },
+            {
+              "id": "0d98a9d",
+              "scope": "ui",
+              "text": "上游新功能：iOS 风格开关、搜索栏和菜单，深色模式对比度提升，页面可延伸到 Android 导航栏下方；访问控制状态显示在底部；配置二维码与「手机投到电视」链接；节点菜单可「添加到本地代理」，延迟测试超时可调；IP 质量结果保留三天；可手动清除 DNS 缓存，切换网络时自动清除；打开应用不再重新加载正在运行的 VPN"
+            },
+            {
+              "id": "7ddb6b1",
+              "scope": "database",
+              "text": "数据库升级到 v22：自动补齐自定义分流表和 IP 质量表，从 0.9.27 及更早版本升级都不会丢失自定义分流"
+            }
+          ]
+        },
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "5d6552d",
+              "scope": "config",
+              "text": "注意：通用覆写改为可选，不再强制写入 tcp-concurrent、unified-delay、ipv6: false 和 geodata-loader，需要的话请在订阅或「通用覆写」中自行开启"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.27",
       "tag": "v0.9.27",
       "date": "2026-10-30",
@@ -68,103 +106,6 @@
               "id": "2ac2c1e",
               "scope": "proxies",
               "text": "代理节点长按菜单新增「查看节点信息」：显示节点名称、协议类型、服务器、端口、传输方式、TLS/Reality/Flow/SNI、UDP 等配置及当前延迟和所属策略组；UUID、密码、私钥、short-id 等敏感字段默认隐藏，可点击显示或复制；支持将完整节点配置复制为 YAML 或 JSON；长按策略组时显示类型、成员及当前选择，来自代理集合等缺少配置的节点会给出提示"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "version": "0.9.2",
-      "tag": "v0.9.2",
-      "date": "2026-10-24",
-      "prerelease": false,
-      "groups": [
-        {
-          "type": "feat",
-          "entries": [
-            {
-              "id": "e8aac17",
-              "scope": "access",
-              "text": "Access control state shown in a bar at the bottom"
-            },
-            {
-              "id": "5d6552d",
-              "scope": "config",
-              "text": "Optional general overrides; settings apply sooner"
-            },
-            {
-              "id": "8176cce",
-              "scope": "dashboard",
-              "text": "IP quality cached for 3 days; simpler Android dashboard"
-            },
-            {
-              "id": "0817c3b",
-              "text": "Update the core to mihomo v1.19.33"
-            },
-            {
-              "id": "bbfafde",
-              "scope": "tray",
-              "text": "Colored tray status icons; monochrome option on macOS"
-            },
-            {
-              "id": "6928521",
-              "scope": "desktop",
-              "text": "Sidebar blur; Windows fixes; keeps system proxies FlClash didn't set"
-            },
-            {
-              "id": "eaaf3e3",
-              "scope": "profiles",
-              "text": "Profile QR codes, phone-to-TV links, more proxy fields"
-            },
-            {
-              "id": "0f9f89c",
-              "scope": "proxies",
-              "text": "Add proxies to local proxies; adjustable delay test timeout"
-            },
-            {
-              "id": "a4fc067",
-              "scope": "theme",
-              "text": "Higher-contrast dark mode and a refreshed app icon"
-            },
-            {
-              "id": "0d98a9d",
-              "scope": "ui",
-              "text": "iOS-style docked search and menus; bar buttons lift on hover"
-            },
-            {
-              "id": "ae902ed",
-              "scope": "ui",
-              "text": "iOS-style switches, stretchy sheets, menus and long-press reordering"
-            },
-            {
-              "id": "4837fb3",
-              "scope": "ui",
-              "text": "Pages scroll under the Android navigation bar"
-            },
-            {
-              "id": "09e7e56",
-              "scope": "core",
-              "text": "Clear the DNS cache by hand or on network change"
-            }
-          ]
-        },
-        {
-          "type": "fix",
-          "entries": [
-            {
-              "id": "99b3381",
-              "scope": "android",
-              "text": "Opening the app no longer reloads a running VPN"
-            }
-          ]
-        },
-        {
-          "type": "perf",
-          "entries": [
-            {
-              "id": "7035edd",
-              "scope": "editor",
-              "text": "Smoother editor for large files and in sheets"
             }
           ]
         }
@@ -637,6 +578,103 @@
             {
               "id": "a2d185a",
               "text": "正式版不再显示 PRE 角标"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.9.2",
+      "tag": "v0.9.2",
+      "date": "2026-10-24",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "e8aac17",
+              "scope": "access",
+              "text": "Access control state shown in a bar at the bottom"
+            },
+            {
+              "id": "5d6552d",
+              "scope": "config",
+              "text": "Optional general overrides; settings apply sooner"
+            },
+            {
+              "id": "8176cce",
+              "scope": "dashboard",
+              "text": "IP quality cached for 3 days; simpler Android dashboard"
+            },
+            {
+              "id": "0817c3b",
+              "text": "Update the core to mihomo v1.19.33"
+            },
+            {
+              "id": "bbfafde",
+              "scope": "tray",
+              "text": "Colored tray status icons; monochrome option on macOS"
+            },
+            {
+              "id": "6928521",
+              "scope": "desktop",
+              "text": "Sidebar blur; Windows fixes; keeps system proxies FlClash didn't set"
+            },
+            {
+              "id": "eaaf3e3",
+              "scope": "profiles",
+              "text": "Profile QR codes, phone-to-TV links, more proxy fields"
+            },
+            {
+              "id": "0f9f89c",
+              "scope": "proxies",
+              "text": "Add proxies to local proxies; adjustable delay test timeout"
+            },
+            {
+              "id": "a4fc067",
+              "scope": "theme",
+              "text": "Higher-contrast dark mode and a refreshed app icon"
+            },
+            {
+              "id": "0d98a9d",
+              "scope": "ui",
+              "text": "iOS-style docked search and menus; bar buttons lift on hover"
+            },
+            {
+              "id": "ae902ed",
+              "scope": "ui",
+              "text": "iOS-style switches, stretchy sheets, menus and long-press reordering"
+            },
+            {
+              "id": "4837fb3",
+              "scope": "ui",
+              "text": "Pages scroll under the Android navigation bar"
+            },
+            {
+              "id": "09e7e56",
+              "scope": "core",
+              "text": "Clear the DNS cache by hand or on network change"
+            }
+          ]
+        },
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "99b3381",
+              "scope": "android",
+              "text": "Opening the app no longer reloads a running VPN"
+            }
+          ]
+        },
+        {
+          "type": "perf",
+          "entries": [
+            {
+              "id": "7035edd",
+              "scope": "editor",
+              "text": "Smoother editor for large files and in sheets"
             }
           ]
         }
