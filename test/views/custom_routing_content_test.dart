@@ -129,16 +129,26 @@ void main() {
 
     expect(find.byType(CustomRoutingContent), findsOneWidget);
     expect(find.text('alpha'), findsOneWidget);
-    final chips = find.byType(CommonCard);
+    // The mode list runs top to bottom: custom routing first, and the badge
+    // stays on the profile's mode.
     expect(
       tester
           .getTopLeft(find.text(currentAppLocalizations.customRouting).first)
-          .dx,
+          .dy,
       lessThan(
-        tester.getTopLeft(find.text(currentAppLocalizations.standard)).dx,
+        tester.getTopLeft(find.text(currentAppLocalizations.standard)).dy,
       ),
     );
-    expect(chips, findsWidgets);
+    expect(
+      find.ancestor(
+        of: find.byType(SelectionBadge),
+        matching: find.widgetWithText(
+          DecorationListItem,
+          currentAppLocalizations.script,
+        ),
+      ),
+      findsOneWidget,
+    );
     expect(
       container.read(profilesProvider).getProfile(_profileId)?.extendType,
       ExtendType.script,

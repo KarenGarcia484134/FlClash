@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.9.28 (2026-11-03)
+
+**Features**
+
+- **upstream** 同步上游 FlClash v0.9.2，内核升级到 mihomo v1.19.33（Tailscale 等内核补丁已移植到新内核分支 FlClash-patched-1.19.33） (6fcba42)
+- **ui** 上游新功能：iOS 风格开关、搜索栏和菜单，深色模式对比度提升，页面可延伸到 Android 导航栏下方；访问控制状态显示在底部；配置二维码与「手机投到电视」链接；节点菜单可「添加到本地代理」，延迟测试超时可调；IP 质量结果保留三天；可手动清除 DNS 缓存，切换网络时自动清除；打开应用不再重新加载正在运行的 VPN (0d98a9d)
+- **database** 数据库升级到 v22：自动补齐自定义分流表和 IP 质量表，从 0.9.27 及更早版本升级都不会丢失自定义分流 (7ddb6b1)
+
+**Bug Fixes**
+
+- **config** 注意：通用覆写改为可选，不再强制写入 tcp-concurrent、unified-delay、ipv6: false 和 geodata-loader，需要的话请在订阅或「通用覆写」中自行开启 (5d6552d)
+
 ## v0.9.27 (2026-10-30)
 
 **Bug Fixes**
@@ -169,6 +181,32 @@
 - **core** Tailscale 登录事件不再被日志级别过滤 (40be226)
 - **android** 安装包同时使用 v1+v2+v3 签名，兼容更多设备 (62d1096)
 - 正式版不再显示 PRE 角标 (a2d185a)
+
+## v0.9.2 (2026-10-24)
+
+**Features**
+
+- **access** Access control state shown in a bar at the bottom (e8aac17)
+- **config** Optional general overrides; settings apply sooner (5d6552d)
+- **dashboard** IP quality cached for 3 days; simpler Android dashboard (8176cce)
+- Update the core to mihomo v1.19.33 (0817c3b)
+- **tray** Colored tray status icons; monochrome option on macOS (bbfafde)
+- **desktop** Sidebar blur; Windows fixes; keeps system proxies FlClash didn't set (6928521)
+- **profiles** Profile QR codes, phone-to-TV links, more proxy fields (eaaf3e3)
+- **proxies** Add proxies to local proxies; adjustable delay test timeout (0f9f89c)
+- **theme** Higher-contrast dark mode and a refreshed app icon (a4fc067)
+- **ui** iOS-style docked search and menus; bar buttons lift on hover (0d98a9d)
+- **ui** iOS-style switches, stretchy sheets, menus and long-press reordering (ae902ed)
+- **ui** Pages scroll under the Android navigation bar (4837fb3)
+- **core** Clear the DNS cache by hand or on network change (09e7e56)
+
+**Bug Fixes**
+
+- **android** Opening the app no longer reloads a running VPN (99b3381)
+
+**Performance**
+
+- **editor** Smoother editor for large files and in sheets (7035edd)
 
 ## v0.9.1 (2026-10-17)
 

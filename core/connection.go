@@ -2,6 +2,7 @@ package core
 
 import (
 	"github.com/metacubex/mihomo/component/resolver"
+	"github.com/metacubex/mihomo/dns"
 	"github.com/metacubex/mihomo/tunnel/statistic"
 )
 
@@ -45,13 +46,22 @@ func handleResetConnections() bool {
 	return true
 }
 
+// A network change clears rather than waits out the TTLs: mihomo serves an
+// expired entry once more before it refreshes it.
+func handleClearDnsCache() {
+	configMu.Lock()
+	defer configMu.Unlock()
+	dns.ClearAll()
+}
+
 // A connection that went out over a network the device has left hangs until
-// TCP gives up on it, and so do the DNS clients' pooled connections.
+// TCP gives up on it, and so do the DNS clients' pooled connections, which
+// clearing the DNS cache resets.
 // Tailscale nodes are told as well, which Android's tsnet would otherwise
 // only notice on its ten-minute poll.
 func handleResetNetwork() {
 	handleCloseConnections()
-	resolver.ResetConnection()
+	handleClearDnsCache()
 	notifyTailscaleNetworkChange()
 }
 

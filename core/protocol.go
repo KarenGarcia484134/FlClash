@@ -41,6 +41,7 @@ const (
 	getConnectionCountMethod       CoreMethod = "getConnectionCount"
 	closeConnectionsMethod         CoreMethod = "closeConnections"
 	resetConnectionsMethod         CoreMethod = "resetConnections"
+	clearDnsCacheMethod            CoreMethod = "clearDnsCache"
 	closeConnectionMethod          CoreMethod = "closeConnection"
 	getExternalProvidersMethod     CoreMethod = "getExternalProviders"
 	getExternalProviderMethod      CoreMethod = "getExternalProvider"
@@ -58,6 +59,7 @@ const (
 	getConfigMethod                CoreMethod = "getConfig"
 	getProfileBaseMethod           CoreMethod = "getProfileBase"
 	getProfileOutboundsMethod      CoreMethod = "getProfileOutbounds"
+	getProxyDefinitionMethod       CoreMethod = "getProxyDefinition"
 	buildProfileMethod             CoreMethod = "buildProfile"
 	dumpRuleSetMethod              CoreMethod = "dumpRuleSet"
 	compileRuleSetMethod           CoreMethod = "compileRuleSet"
@@ -65,6 +67,7 @@ const (
 	watchRouteMethod               CoreMethod = "watchRoute"
 	tailscaleStatusMethod          CoreMethod = "tailscaleStatus"
 	tailscalePingMethod            CoreMethod = "tailscalePing"
+	checkRoutesMethod              CoreMethod = "checkRoutes"
 )
 
 type MessageType string
@@ -191,9 +194,8 @@ type ChangeProxyResult struct {
 }
 
 type RouteState struct {
-	CoreEpoch    uint64            `json:"core-epoch"`
-	PicksVersion uint64            `json:"picks-version"`
-	Picks        map[string]string `json:"picks"`
+	CoreEpoch    uint64 `json:"core-epoch"`
+	RouteVersion uint64 `json:"route-version"`
 }
 
 type TestDelayParams struct {
@@ -228,12 +230,13 @@ type ProbeResult struct {
 	Message     string   `json:"message,omitempty"`
 
 	CoreEpoch    uint64 `json:"core-epoch"`
-	PicksVersion uint64 `json:"picks-version"`
+	RouteVersion uint64 `json:"route-version"`
 
 	// Unexported, so it never reaches Dart: only the in-core checks read
 	// response headers, and ProbeResult is the shape the Dart side decodes.
 	header    http.Header
 	lowerBody string
+	hits      []RouteHit
 }
 
 type Traffic struct {
@@ -265,8 +268,9 @@ type ProxiesData struct {
 }
 
 type nodeView struct {
-	Name string `json:"name"`
-	Type string `json:"type"`
+	Name         string `json:"name"`
+	Type         string `json:"type"`
+	ProviderName string `json:"provider-name,omitempty"`
 }
 
 type GeoUpdateStatus struct {

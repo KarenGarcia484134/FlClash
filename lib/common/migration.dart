@@ -100,11 +100,18 @@ class Migration {
 
   /// One-off setting changes for upgrades, apart from [currentVersion], which
   /// backups carry and an older app refuses when it is newer than its own.
-  static const upgradeVersion = 3;
+  ///
+  /// This fork shipped 3 as [findProcessesOnWindows] while upstream shipped 3
+  /// and 4 as below. 5 reconciles them: a stored 3 is taken to be this fork's,
+  /// which has seen no system color move, and any other has not had
+  /// [findProcessesOnWindows] yet.
+  static const upgradeVersion = 5;
 
   static const Map<int, Config Function(Config config)> _upgrades = {
     1: _resetThemeColors,
     2: _keepGlassLook,
+    3: _followSystemColors,
+    4: _turnOffSidebarBlur,
   };
 
   Future<Config> run() async {
@@ -134,6 +141,13 @@ class Migration {
     }
   }
 
+  Config _reconcileForkUpgrades(Config config, {required int from}) {
+    final colored = _followSystemColors(config);
+    return from == 3
+        ? colored
+        : findProcessesOnWindows(colored, windows: _windows);
+  }
+
   Future<Config> _upgrade(Config config, {required bool installed}) async {
     final from = await _store.getUpgradeVersion();
     if (from >= upgradeVersion) {
@@ -142,8 +156,8 @@ class Migration {
     var upgraded = config;
     if (installed) {
       for (var version = from + 1; version <= upgradeVersion; version++) {
-        upgraded = version == 3
-            ? findProcessesOnWindows(upgraded, windows: _windows)
+        upgraded = version == upgradeVersion
+            ? _reconcileForkUpgrades(upgraded, from: from)
             : _upgrades[version]!(upgraded);
       }
     } else {
@@ -244,6 +258,33 @@ Config _keepGlassLook(Config config) =>
     : config;
 
 const _dashboardKeys = ['dashboardWidgets', 'seededDashboardWidgets'];
+
+const _formerSystemColors = {
+  0xFFAF52DE: 0xFFCB30E0,
+  0xFFFF3B30: 0xFFFF383C,
+  0xFFFF9500: 0xFFFF8D28,
+};
+
+// Every preset but blue moved to iOS 27's system color; one picked before moves.
+Config _followSystemColors(Config config) {
+  final theme = config.themeProps;
+  return config.copyWith(
+    themeProps: theme.copyWith(
+      primaryColor:
+          _formerSystemColors[theme.primaryColor] ?? theme.primaryColor,
+      primaryColors: [
+        ...{
+          for (final color in theme.primaryColors)
+            _formerSystemColors[color] ?? color,
+        },
+      ],
+    ),
+  );
+}
+
+// Releases stored sidebar blur on while its switch stayed hidden.
+Config _turnOffSidebarBlur(Config config) =>
+    config.copyWith(themeProps: config.themeProps.copyWith(sidebarBlur: false));
 
 bool _isV0(Map<String, Object?>? configMap) =>
     configMap?['proxiesStyle'] != null;

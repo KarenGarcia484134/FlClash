@@ -44,9 +44,6 @@ external-controller-pipe: ""
 external-ui: ""
 interface-name: ""
 external-ui-url: ""
-tcp-concurrent: true
-unified-delay: true
-ipv6: false
 log-level: "error"
 port: 0
 socks-port: 0
@@ -69,7 +66,6 @@ tun:
   stack: "mips"
   auto-route: true
   auto-detect-interface: true
-geodata-loader: "memconservative"
 geo-auto-update: false
 geo-update-interval: 24
 profile:

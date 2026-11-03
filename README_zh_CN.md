@@ -102,7 +102,7 @@ dart setup.dart android   # 或 windows / linux / macos
 
 ## 内核补丁
 
-`core/Clash.Meta` 子模块指向 [KarenGarcia484134/Clash.Meta](https://github.com/KarenGarcia484134/Clash.Meta) 的 `FlClash-patched` 分支，即上游 `FlClash` 分支加上少量补丁。补丁只**新增**文件（读取 Tailscale 节点状态、在重载配置时保留同一个节点），不修改上游文件，详见 [`core/PATCHES.md`](core/PATCHES.md)。
+`core/Clash.Meta` 子模块指向 [KarenGarcia484134/Clash.Meta](https://github.com/KarenGarcia484134/Clash.Meta) 的 `FlClash-patched-1.19.33` 分支，即上游 `FlClash` 分支加上少量补丁。补丁只**新增**文件（读取 Tailscale 节点状态、在重载配置时保留同一个节点），不修改上游文件，详见 [`core/PATCHES.md`](core/PATCHES.md)。
 
 ## 同步上游
 
@@ -114,9 +114,9 @@ git fetch upstream --tags
 git merge v<上游版本>   # 优先合并最新的发布标签而不是 main
 ```
 
-当前已同步到上游 **v0.9.1**（本仓库以 0.9.12 发布）。
+当前已同步到上游 **v0.9.2**（mihomo v1.19.33）。
 
-内核子模块：按 [`core/PATCHES.md`](core/PATCHES.md) 中的步骤，把 `FlClash-patched` 变基到上游最新的 `FlClash` 分支并推送，再提交子模块的新指针。
+内核子模块：按 [`core/PATCHES.md`](core/PATCHES.md) 中的步骤，把补丁移到上游最新的 `FlClash` 分支并推送，再提交子模块的新指针。
 
 ## 许可证
 

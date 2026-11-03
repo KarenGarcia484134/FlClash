@@ -102,7 +102,7 @@ dart setup.dart android   # or windows / linux / macos
 
 ## Patched core
 
-The `core/Clash.Meta` submodule points at the `FlClash-patched` branch of [KarenGarcia484134/Clash.Meta](https://github.com/KarenGarcia484134/Clash.Meta): upstream's `FlClash` branch plus a few patches. The patches only **add** files (reading Tailscale node status, keeping one node across config reloads) and change no upstream file. See [`core/PATCHES.md`](core/PATCHES.md).
+The `core/Clash.Meta` submodule points at the `FlClash-patched-1.19.33` branch of [KarenGarcia484134/Clash.Meta](https://github.com/KarenGarcia484134/Clash.Meta): upstream's `FlClash` branch plus a few patches. The patches only **add** files (reading Tailscale node status, keeping one node across config reloads) and change no upstream file. See [`core/PATCHES.md`](core/PATCHES.md).
 
 ## Syncing with upstream
 
@@ -114,9 +114,9 @@ git fetch upstream --tags
 git merge v<upstream release>   # prefer the latest release tag over main
 ```
 
-The fork is currently synced to upstream **v0.9.1** (released here as 0.9.12).
+The fork is currently synced to upstream **v0.9.2** (mihomo v1.19.33).
 
-Core submodule: follow [`core/PATCHES.md`](core/PATCHES.md) to rebase `FlClash-patched` onto upstream's latest `FlClash` branch, push it, then commit the new submodule pointer.
+Core submodule: follow [`core/PATCHES.md`](core/PATCHES.md) to move the patches onto upstream's latest `FlClash` branch, push it, then commit the new submodule pointer.
 
 ## License
 

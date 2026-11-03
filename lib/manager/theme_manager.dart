@@ -43,19 +43,11 @@ ThemeData watchAppTheme(WidgetRef ref, Brightness brightness) {
   final locale = ref.watch(appSettingProvider.select((state) => state.locale));
   final themeSetting = ref.watch(
     themeSettingProvider.select(
-      (state) => (
-        fontFamily: state.fontFamily,
-        pureBlack: state.pureBlack,
-        uiStyle: state.uiStyle,
-      ),
+      (state) => (fontFamily: state.fontFamily, uiStyle: state.uiStyle),
     ),
   );
   final colorScheme = ref.watch(genColorSchemeProvider(brightness));
   final classic = themeSetting.uiStyle == UiStyle.classic;
-  final plainDark =
-      !classic && brightness == Brightness.dark && themeSetting.pureBlack
-      ? ref.watch(genColorSchemeProvider(brightness, pureBlack: false))
-      : null;
   final locales = [
     ?getLocaleForString(locale),
     ...WidgetsBinding.instance.platformDispatcher.locales,
@@ -64,7 +56,6 @@ ThemeData watchAppTheme(WidgetRef ref, Brightness brightness) {
     platform: defaultTargetPlatform,
     themeSetting: themeSetting,
     colorScheme: colorScheme,
-    plainDark: plainDark,
     locales: locales.join(','),
   );
   if (_appThemes[brightness] case (
@@ -75,13 +66,7 @@ ThemeData watchAppTheme(WidgetRef ref, Brightness brightness) {
   }
   final theme = classic
       ? _classicTheme(colorScheme, themeSetting.fontFamily, locales)
-      : _modernTheme(
-          brightness,
-          colorScheme,
-          plainDark,
-          themeSetting.fontFamily,
-          locales,
-        );
+      : _modernTheme(brightness, colorScheme, themeSetting.fontFamily, locales);
   _appThemes[brightness] = (inputs: inputs, theme: theme);
   return theme;
 }
@@ -113,7 +98,6 @@ ThemeData _classicTheme(
 ThemeData _modernTheme(
   Brightness brightness,
   ColorScheme colorScheme,
-  ColorScheme? plainDark,
   String? fontFamily,
   List<Locale> locales,
 ) {
@@ -130,11 +114,7 @@ ThemeData _modernTheme(
     ),
     extensions: [
       if (brightness == Brightness.dark)
-        ElevatedColorScheme(
-          // Plain dark is pure black a level up, with the seed's tint that a
-          // lift from black would lose.
-          plainDark ?? colorScheme.elevated,
-        ),
+        ElevatedColorScheme(colorScheme.elevated),
     ],
   ).withAppShapes.withAppSurfaces.withAppTypography;
 }
@@ -161,7 +141,9 @@ class ThemeManager extends ConsumerWidget {
             systemNavigationBarIconBrightness: iconBrightness,
             systemNavigationBarColor: Colors.transparent,
             systemNavigationBarDividerColor: Colors.transparent,
-            systemNavigationBarContrastEnforced: false,
+            // Pages scroll under the navigation bar. Android scrims only a
+            // three-button bar for it; the gesture handle stays clear.
+            systemNavigationBarContrastEnforced: true,
           ),
           sized: false,
           child: child,
