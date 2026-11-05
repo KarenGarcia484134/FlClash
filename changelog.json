@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.29",
+      "tag": "v0.9.29",
+      "date": "2026-11-05",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "a0bab81",
+              "scope": "tailscale",
+              "text": "自建 DERP 回退代理后可自动切回直连：直连自建 DERP（如成都）一时失败而改走代理后，每 30 秒重试直连，恢复后自动断开代理连接并改为直连，不再一直卡在代理上；直连只占用一半拨号时间，留出时间回退代理"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.28",
       "tag": "v0.9.28",
       "date": "2026-11-03",
@@ -11,11 +29,6 @@
           "type": "feat",
           "entries": [
             {
-              "id": "6fcba42",
-              "scope": "upstream",
-              "text": "同步上游 FlClash v0.9.2，内核升级到 mihomo v1.19.33（Tailscale 等内核补丁已移植到新内核分支 FlClash-patched-1.19.33）"
-            },
-            {
               "id": "0d98a9d",
               "scope": "ui",
               "text": "上游新功能：iOS 风格开关、搜索栏和菜单，深色模式对比度提升，页面可延伸到 Android 导航栏下方；访问控制状态显示在底部；配置二维码与「手机投到电视」链接；节点菜单可「添加到本地代理」，延迟测试超时可调；IP 质量结果保留三天；可手动清除 DNS 缓存，切换网络时自动清除；打开应用不再重新加载正在运行的 VPN"
@@ -24,6 +37,65 @@
               "id": "7ddb6b1",
               "scope": "database",
               "text": "数据库升级到 v22：自动补齐自定义分流表和 IP 质量表，从 0.9.27 及更早版本升级都不会丢失自定义分流"
+            },
+            {
+              "id": "e8aac17",
+              "scope": "access",
+              "text": "访问控制状态显示在底部栏"
+            },
+            {
+              "id": "5d6552d",
+              "scope": "config",
+              "text": "通用覆写改为可选，设置生效更快"
+            },
+            {
+              "id": "8176cce",
+              "scope": "dashboard",
+              "text": "IP 质量结果缓存三天；安卓仪表盘更简洁"
+            },
+            {
+              "id": "0817c3b",
+              "text": "内核升级到 mihomo v1.19.33"
+            },
+            {
+              "id": "bbfafde",
+              "scope": "tray",
+              "text": "托盘状态图标改为彩色；macOS 可选单色"
+            },
+            {
+              "id": "6928521",
+              "scope": "desktop",
+              "text": "侧边栏模糊效果；Windows 修复；保留非 FlClash 设置的系统代理"
+            },
+            {
+              "id": "eaaf3e3",
+              "scope": "profiles",
+              "text": "配置二维码、手机投到电视链接，更多节点字段"
+            },
+            {
+              "id": "0f9f89c",
+              "scope": "proxies",
+              "text": "可将节点添加到本地代理；延迟测试超时可调"
+            },
+            {
+              "id": "a4fc067",
+              "scope": "theme",
+              "text": "深色模式对比度提升，应用图标更新"
+            },
+            {
+              "id": "ae902ed",
+              "scope": "ui",
+              "text": "iOS 风格开关、可拉伸面板、菜单和长按排序"
+            },
+            {
+              "id": "4837fb3",
+              "scope": "ui",
+              "text": "页面可延伸到 Android 导航栏下方"
+            },
+            {
+              "id": "09e7e56",
+              "scope": "core",
+              "text": "可手动清除 DNS 缓存，切换网络时自动清除"
             }
           ]
         },
@@ -34,6 +106,25 @@
               "id": "5d6552d",
               "scope": "config",
               "text": "注意：通用覆写改为可选，不再强制写入 tcp-concurrent、unified-delay、ipv6: false 和 geodata-loader，需要的话请在订阅或「通用覆写」中自行开启"
+            },
+            {
+              "id": "7ddb6b1",
+              "text": "二开页面和测试跟进上游的底部间距和可选通用覆写"
+            },
+            {
+              "id": "99b3381",
+              "scope": "android",
+              "text": "安卓：打开应用不再重新加载正在运行的 VPN"
+            }
+          ]
+        },
+        {
+          "type": "perf",
+          "entries": [
+            {
+              "id": "7035edd",
+              "scope": "editor",
+              "text": "大文件和面板中的编辑器更流畅"
             }
           ]
         }
