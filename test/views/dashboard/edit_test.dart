@@ -7,13 +7,14 @@ import 'package:fl_clash/views/dashboard/edit.dart';
 import 'package:fl_clash/views/dashboard/widgets/widgets.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../helpers/test_app.dart';
 import '../../helpers/test_profiles.dart';
+import 'package:prism_ui/prism_ui.dart';
 
 void main() {
   late ProviderContainer container;
@@ -132,8 +133,7 @@ void main() {
     await pumpEditor(tester);
 
     final removeBadges = find.byWidgetPredicate(
-      (widget) =>
-          widget is Tooltip && (widget.message?.startsWith('Remove ') ?? false),
+      (widget) => widget is Tooltip && widget.message.startsWith('Remove '),
     );
     expect(removeBadges, findsNWidgets(2));
     expect(find.byTooltip('Remove Network speed'), findsOneWidget);
@@ -247,7 +247,9 @@ void main() {
     ]);
     await pumpEditor(tester, size: const Size(412, 700));
     final position = positionOf(tester);
-    position.jumpTo(position.maxScrollExtent - 330);
+    // The fork's own cards (custom routing, restart core) lengthen the
+    // list to add from, so the editor starts further up than upstream's.
+    position.jumpTo(position.maxScrollExtent - 430);
     await tester.pump();
     final before = position.pixels;
     final speed = find.byType(NetworkSpeedCard);

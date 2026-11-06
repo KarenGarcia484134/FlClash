@@ -10,7 +10,7 @@ import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/views/font_family.dart';
 import 'package:fl_clash/views/theme_preview.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ThemeView extends StatelessWidget {
@@ -28,8 +28,6 @@ class ThemeView extends StatelessWidget {
         ),
         children: [
           const ThemeLivePreview(),
-          const SizedBox(height: 16),
-          const UiStyleItem(),
           const SizedBox(height: 16),
           const _ThemeModeItem(),
           const SizedBox(height: 16),
@@ -52,58 +50,6 @@ class ThemeView extends StatelessWidget {
           const _TextScaleFactorItem(),
         ],
       ),
-    );
-  }
-}
-
-class UiStyleItem extends ConsumerWidget {
-  const UiStyleItem({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final appLocalizations = context.appLocalizations;
-    final uiStyle = ref.watch(
-      themeSettingProvider.select((state) => state.uiStyle),
-    );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        InfoHeader(
-          info: Info(label: appLocalizations.uiStyle, glyph: AppGlyphs.layers),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            spacing: 8,
-            children: [
-              SegmentedButton<UiStyle>(
-                showSelectedIcon: false,
-                segments: [
-                  ButtonSegment(
-                    value: UiStyle.classic,
-                    label: Text(appLocalizations.uiStyleClassic),
-                  ),
-                  ButtonSegment(
-                    value: UiStyle.modern,
-                    label: Text(appLocalizations.uiStyleModern),
-                  ),
-                ],
-                selected: {uiStyle},
-                onSelectionChanged: (value) => ref
-                    .read(themeSettingProvider.notifier)
-                    .update((state) => state.copyWith(uiStyle: value.first)),
-              ),
-              Text(
-                appLocalizations.uiStyleDesc,
-                style: AppTextStyle.footnote
-                    .of(context)
-                    .copyWith(color: context.colorScheme.onSurfaceVariant),
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }
@@ -172,9 +118,13 @@ class _PrimaryColorItem extends ConsumerWidget {
     if (res != true || !context.mounted) {
       return;
     }
-    ref
-        .read(themeSettingProvider.notifier)
-        .update((state) => state.withDefaultColors);
+    ref.read(themeSettingProvider.notifier).update((state) {
+      return state.copyWith(
+        primaryColors: defaultPrimaryColors,
+        primaryColor: defaultPrimaryColor,
+        colorStyle: ColorStyle.vivid,
+      );
+    });
   }
 
   Future<void> _handleDelete(
@@ -194,16 +144,17 @@ class _PrimaryColorItem extends ConsumerWidget {
       return;
     }
     ref.read(themeSettingProvider.notifier).update((state) {
-      final primaryColors = List<int>.from(state.activePrimaryColors)
-        ..remove(color);
-      var primaryColor = state.activePrimaryColor;
+      final primaryColors = List<int>.from(state.primaryColors)..remove(color);
+      var primaryColor = state.primaryColor;
       if (primaryColor == color) {
-        final fallback = state.activeDefaultPrimaryColor;
-        primaryColor = primaryColors.contains(fallback) ? fallback : null;
+        primaryColor = primaryColors.contains(defaultPrimaryColor)
+            ? defaultPrimaryColor
+            : null;
       }
-      return state
-          .withActivePrimaryColors(primaryColors)
-          .withActivePrimaryColor(primaryColor);
+      return state.copyWith(
+        primaryColors: primaryColors,
+        primaryColor: primaryColor,
+      );
     });
   }
 
@@ -227,20 +178,21 @@ class _PrimaryColorItem extends ConsumerWidget {
   }
 
   void _handleAdd(BuildContext context, WidgetRef ref) {
-    final primaryColor = ref.read(themeSettingProvider).activePrimaryColor;
+    final primaryColor = ref.read(themeSettingProvider).primaryColor;
     _showColorSheet(
       context,
       primaryColor != null
           ? Color(primaryColor)
           : ref.read(dynamicColorProvider).accentColor,
-      (color) => _update(ref, (state) {
-        final colors = state.activePrimaryColors;
-        return state
-            .withActivePrimaryColors(
-              colors.contains(color) ? colors : [...colors, color],
-            )
-            .withActivePrimaryColor(color);
-      }),
+      (color) => _update(
+        ref,
+        (state) => state.copyWith(
+          primaryColors: state.primaryColors.contains(color)
+              ? state.primaryColors
+              : [...state.primaryColors, color],
+          primaryColor: color,
+        ),
+      ),
     );
   }
 
@@ -249,23 +201,22 @@ class _PrimaryColorItem extends ConsumerWidget {
       context,
       Color(color),
       (edited) => _update(ref, (state) {
-        final index = state.activePrimaryColors.indexOf(color);
+        final index = state.primaryColors.indexOf(color);
         if (edited == color || index == -1) {
           return state;
         }
-        final primaryColors = List<int>.from(state.activePrimaryColors);
+        final primaryColors = List<int>.from(state.primaryColors);
         if (primaryColors.contains(edited)) {
           primaryColors.removeAt(index);
         } else {
           primaryColors[index] = edited;
         }
-        return state
-            .withActivePrimaryColors(primaryColors)
-            .withActivePrimaryColor(
-              state.activePrimaryColor == color
-                  ? edited
-                  : state.activePrimaryColor,
-            );
+        return state.copyWith(
+          primaryColors: primaryColors,
+          primaryColor: state.primaryColor == color
+              ? edited
+              : state.primaryColor,
+        );
       }),
     );
   }
@@ -280,12 +231,16 @@ class _PrimaryColorItem extends ConsumerWidget {
     final themeColors = ref.watch(
       themeSettingProvider.select(
         (state) => ThemeColorsSelectorState(
-          primaryColor: state.activePrimaryColor,
-          primaryColors: state.activePrimaryColors,
+          primaryColor: state.primaryColor,
+          primaryColors: state.primaryColors,
           colorStyle: state.colorStyle,
-          isClassic: state.isClassic,
-          schemeVariant: state.schemeVariant,
-          isDefault: state.hasDefaultColors,
+          isDefault:
+              state.primaryColor == defaultPrimaryColor &&
+              intListEquality.equals(
+                state.primaryColors,
+                defaultPrimaryColors,
+              ) &&
+              state.colorStyle == ColorStyle.vivid,
         ),
       ),
     );
@@ -313,35 +268,23 @@ class _PrimaryColorItem extends ConsumerWidget {
                 selected: themeColors.primaryColor,
                 onSelect: (color) => _update(
                   ref,
-                  (state) => state.withActivePrimaryColor(color),
+                  (state) => state.copyWith(primaryColor: color),
                 ),
                 onEdit: (color) => _handleEdit(context, ref, color),
                 onDelete: (color) => _handleDelete(context, ref, color),
                 onAdd: () => _handleAdd(context, ref),
               ),
               generateGroup([
-                if (themeColors.isClassic)
-                  ListItem<DynamicSchemeVariant>.options(
-                    title: Text(appLocalizations.colorSchemes),
-                    options: DynamicSchemeVariant.values,
-                    value: themeColors.schemeVariant,
-                    textBuilder: (variant) => variant.label,
-                    onChanged: (variant) => _update(
-                      ref,
-                      (state) => state.copyWith(schemeVariant: variant),
-                    ),
-                  )
-                else
-                  ListItem<ColorStyle>.options(
-                    title: Text(appLocalizations.colorStyle),
-                    options: ColorStyle.values,
-                    value: themeColors.colorStyle,
-                    textBuilder: (style) => style.label,
-                    onChanged: (style) => _update(
-                      ref,
-                      (state) => state.copyWith(colorStyle: style),
-                    ),
+                ListItem<ColorStyle>.options(
+                  title: Text(appLocalizations.colorStyle),
+                  options: ColorStyle.values,
+                  value: themeColors.colorStyle,
+                  textBuilder: (style) => style.label,
+                  onChanged: (style) => _update(
+                    ref,
+                    (state) => state.copyWith(colorStyle: style),
                   ),
+                ),
               ]),
             ],
           ),
@@ -416,12 +359,12 @@ class _ColorSwatches extends ConsumerWidget {
                     menuItems: color == null
                         ? null
                         : [
-                            CommonPopupMenuItem(
+                            PopupMenuItem(
                               glyph: AppGlyphs.edit,
                               label: appLocalizations.edit,
                               onPressed: () => onEdit(color),
                             ),
-                            CommonPopupMenuItem(
+                            PopupMenuItem(
                               danger: true,
                               glyph: AppGlyphs.delete,
                               label: appLocalizations.delete,
@@ -439,7 +382,7 @@ class _ColorSwatches extends ConsumerWidget {
   }
 }
 
-class _ColorSwatch extends StatefulWidget {
+class _ColorSwatch extends StatelessWidget {
   const _ColorSwatch({
     required this.color,
     required this.systemColor,
@@ -462,88 +405,73 @@ class _ColorSwatch extends StatefulWidget {
   final bool isSelected;
   final String label;
   final VoidCallback onPressed;
-  final List<CommonPopupMenuItem>? menuItems;
-
-  @override
-  State<_ColorSwatch> createState() => _ColorSwatchState();
-}
-
-class _ColorSwatchState extends State<_ColorSwatch> {
-  bool _focused = false;
+  final List<PopupMenuItem>? menuItems;
 
   @override
   Widget build(BuildContext context) {
-    final color = widget.color;
-    final fill = color ?? widget.systemColor;
-    final selected = widget.isSelected;
+    final fill = color ?? systemColor;
+    final selected = isSelected;
     final check = ThemeData.estimateBrightnessForColor(fill) == Brightness.dark
         ? Colors.white
         : Colors.black;
-    final swatch = Semantics(
-      button: true,
-      selected: selected,
-      label: widget.label,
-      child: SizedBox.square(
-        dimension: _ColorSwatch.size,
-        child: Material(
-          type: MaterialType.transparency,
-          shape: AppShape.circle,
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            customBorder: AppShape.circle,
-            onTap: widget.onPressed,
-            onFocusChange: (value) => setState(() => _focused = value),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                AnimatedOpacity(
-                  opacity: selected || _focused ? 1 : 0,
-                  duration: _ColorSwatch._duration,
-                  child: DecoratedBox(
-                    decoration: ShapeDecoration(
-                      shape: AppShape.circle.copyWith(
-                        side: BorderSide(
-                          color: selected ? fill : context.colorScheme.primary,
-                          width: _ColorSwatch._ring,
-                        ),
-                      ),
-                    ),
-                    child: const SizedBox.expand(),
-                  ),
-                ),
-                SizedBox.square(
-                  dimension: _ColorSwatch.dot,
-                  child: DecoratedBox(
-                    decoration: ShapeDecoration(
-                      color: fill,
-                      shape: AppShape.circle,
+    final swatch = SizedBox.square(
+      dimension: size,
+      child: PressSurface(
+        fill: Colors.transparent,
+        shape: AppShape.circle,
+        ringStandsOff: selected,
+        selected: selected,
+        childFills: true,
+        onPressed: onPressed,
+        child: Semantics(
+          label: label,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              AnimatedOpacity(
+                opacity: selected ? 1 : 0,
+                duration: _duration,
+                child: DecoratedBox(
+                  decoration: ShapeDecoration(
+                    shape: AppShape.circle.copyWith(
+                      side: BorderSide(color: fill, width: _ring),
                     ),
                   ),
+                  child: const SizedBox.expand(),
                 ),
-                if (color == null)
-                  const Positioned(
-                    right: 0,
-                    bottom: 0,
-                    child: _EyedropperBadge(size: _ColorSwatch._badge),
-                  ),
-                AnimatedScale(
-                  scale: selected ? 1 : 0,
-                  duration: _ColorSwatch._duration,
-                  curve: Curves.easeOutBack,
-                  child: GlyphIcon(
-                    AppGlyphs.check,
-                    size: 18,
-                    fill: 1,
-                    color: check,
+              ),
+              SizedBox.square(
+                dimension: dot,
+                child: DecoratedBox(
+                  decoration: ShapeDecoration(
+                    color: fill,
+                    shape: AppShape.circle,
                   ),
                 ),
-              ],
-            ),
+              ),
+              if (color == null)
+                const Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: _EyedropperBadge(size: _badge),
+                ),
+              AnimatedScale(
+                scale: selected ? 1 : 0,
+                duration: _duration,
+                curve: Curves.easeOutBack,
+                child: GlyphIcon(
+                  AppGlyphs.check,
+                  size: 18,
+                  fill: 1,
+                  color: check,
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
-    final menuItems = widget.menuItems;
+    final menuItems = this.menuItems;
     if (menuItems == null) {
       return swatch;
     }
@@ -596,31 +524,25 @@ class _AddColorButton extends StatelessWidget {
     final colorScheme = context.colorScheme;
     return Tooltip(
       message: context.appLocalizations.add,
-      child: Semantics(
-        button: true,
-        child: SizedBox.square(
-          dimension: _ColorSwatch.size,
-          child: Material(
-            type: MaterialType.transparency,
-            shape: AppShape.circle,
-            clipBehavior: Clip.antiAlias,
-            child: InkWell(
-              customBorder: AppShape.circle,
-              onTap: onPressed,
-              child: Center(
-                child: Container(
-                  width: _ColorSwatch.dot,
-                  height: _ColorSwatch.dot,
-                  decoration: ShapeDecoration(
-                    color: context.raisedSurfaceLevel.colorOf(colorScheme),
-                    shape: AppShape.circle,
-                  ),
-                  child: GlyphIcon(
-                    AppGlyphs.add,
-                    size: 20,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                ),
+      child: SizedBox.square(
+        dimension: _ColorSwatch.size,
+        child: PressSurface(
+          fill: Colors.transparent,
+          shape: AppShape.circle,
+          childFills: true,
+          onPressed: onPressed,
+          child: Center(
+            child: Container(
+              width: _ColorSwatch.dot,
+              height: _ColorSwatch.dot,
+              decoration: ShapeDecoration(
+                color: context.raisedSurfaceLevel.colorOf(colorScheme),
+                shape: AppShape.circle,
+              ),
+              child: GlyphIcon(
+                AppGlyphs.add,
+                size: 20,
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
           ),
@@ -635,7 +557,7 @@ final _floatingBarProvider = appSettingProvider.select(
 );
 
 final _liquidGlassProvider = themeSettingProvider.select(
-  (state) => state.effectiveLiquidGlass != LiquidGlassMode.none,
+  (state) => state.liquidGlass != LiquidGlassMode.none,
 );
 
 class _PureBlackItem extends ConsumerWidget {
@@ -785,9 +707,6 @@ class _LiquidGlassItem extends ConsumerWidget {
     final mode = ref.watch(
       themeSettingProvider.select((state) => state.liquidGlass),
     );
-    if (ref.watch(themeSettingProvider.select((state) => state.isClassic))) {
-      return const SizedBox.shrink();
-    }
     final colorScheme = context.colorScheme;
     // Floating either way, as a docked bar stays a fill, over the list page,
     // whose rows run on under the bar where glass shows them.
@@ -845,23 +764,17 @@ class _SidebarBlurItem extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              generateGroup([
-                ConfigToggleItem(
-                  title: (l) => l.backgroundBlur,
-                  selector: themeSettingProvider.select(
-                    (state) => state.sidebarBlur,
-                  ),
-                  onChanged: (ref, value) => ref
-                      .read(themeSettingProvider.notifier)
-                      .update((state) => state.copyWith(sidebarBlur: value)),
-                ),
-              ]),
-              ListFooter(text: appLocalizations.sidebarBlurDesc),
-            ],
-          ),
+          child: generateGroup([
+            ConfigToggleItem(
+              title: (l) => l.backgroundBlur,
+              selector: themeSettingProvider.select(
+                (state) => state.sidebarBlur,
+              ),
+              onChanged: (ref, value) => ref
+                  .read(themeSettingProvider.notifier)
+                  .update((state) => state.copyWith(sidebarBlur: value)),
+            ),
+          ]),
         ),
       ],
     );
@@ -911,11 +824,13 @@ class _FontFamilyItem extends ConsumerWidget {
       ),
     );
     final cardColor = context.raisedSurfaceLevel.colorOf(colorScheme);
-    Widget card(VoidCallback onTap) => Material(
-      color: cardColor,
+    Widget card(VoidCallback onTap) => PressSurface(
+      fill: cardColor,
       shape: AppShape.lg,
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(customBorder: AppShape.lg, onTap: onTap, child: preview),
+      childFills: true,
+      clipsChild: true,
+      onPressed: onTap,
+      child: preview,
     );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -928,7 +843,6 @@ class _FontFamilyItem extends ConsumerWidget {
           child: context.isMobileView
               ? OpenContainer<void>(
                   closedShape: AppShape.lg,
-                  closedColor: cardColor,
                   closedBuilder: (_, open) => card(open),
                   openBuilder: (_, _) => const FontFamilyView(),
                 )
@@ -1090,21 +1004,17 @@ class _TextScaleFactorItemState extends ConsumerState<_TextScaleFactorItem> {
                             ),
                           ),
                           Expanded(
-                            child: SliderTheme(
-                              data: SliderDefaultsM3(context),
-                              child: Slider(
-                                padding: EdgeInsets.zero,
-                                min: minTextScale,
-                                max: maxTextScale,
-                                divisions: divisions,
-                                value: scale,
-                                label: percent,
-                                onChanged: textScale.enable
-                                    ? (value) => setState(() => _draft = value)
-                                    : null,
-                                onChangeEnd: (value) => _update(
-                                  (state) => state.copyWith(scale: value),
-                                ),
+                            child: Slider(
+                              min: minTextScale,
+                              max: maxTextScale,
+                              divisions: divisions,
+                              value: scale,
+                              label: percent,
+                              onChanged: textScale.enable
+                                  ? (value) => setState(() => _draft = value)
+                                  : null,
+                              onChangeEnd: (value) => _update(
+                                (state) => state.copyWith(scale: value),
                               ),
                             ),
                           ),
@@ -1190,7 +1100,7 @@ class _CustomColorSheetState extends State<_CustomColorSheet> {
     final appLocalizations = context.appLocalizations;
     // Clears Android's edge back-swipe zone; exclusion rects stop at 200 dp.
     final gestureInsets = MediaQuery.systemGestureInsetsOf(context);
-    return CommonScaffold(
+    return Scaffold(
       title: appLocalizations.customColor,
       confirmationAction: IconButtonData(
         glyph: AppGlyphs.check,

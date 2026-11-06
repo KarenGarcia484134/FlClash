@@ -1,159 +1,114 @@
+import 'dart:convert';
+import 'dart:ffi' show Abi;
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:crypto/crypto.dart';
+import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/plugins/app.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
+import 'package:flutter/services.dart' show PlatformException;
+import 'package:path/path.dart';
 
-import 'constant.dart';
+const releaseChecksumsName = 'SHA256SUMS';
 
-enum UpdatePlatform { android, windows, macos, linux, other }
+sealed class UpdateDownload {
+  const UpdateDownload(this.tag);
 
-enum UpdateInstallKind { apk, installer, dmg }
-
-class UpdateAsset {
-  const UpdateAsset({
-    required this.name,
-    required this.url,
-    required this.kind,
-    this.size,
-  });
-
-  final String name;
-  final String url;
-  final UpdateInstallKind kind;
-  final int? size;
+  final String tag;
 }
 
-const checksumsAssetName = 'SHA256SUMS';
+final class UpdateDownloading extends UpdateDownload {
+  const UpdateDownloading(super.tag, {this.received = 0, this.total = 0});
 
-String? releaseVersionOf(String? tag) {
-  final match = RegExp(r'^v?(\d+\.\d+\.\d+)$').firstMatch(tag?.trim() ?? '');
-  return match?.group(1);
+  final int received;
+
+  /// Zero until the server reports a length.
+  final int total;
 }
 
-String releaseDownloadUrl(String tag, String name) =>
-    'https://github.com/$repository/releases/download/$tag/$name';
+final class UpdateReady extends UpdateDownload {
+  const UpdateReady(super.tag, this.path);
 
-/// The candidate file names for this device, best first.
-List<(String, UpdateInstallKind)> updateAssetCandidates({
-  required String version,
-  required UpdatePlatform platform,
-  List<String> androidAbis = const [],
-  bool macArm64 = false,
-}) {
-  final prefix = 'FlClash-$version';
-  switch (platform) {
-    case UpdatePlatform.android:
-      return [
-        for (final abi in androidAbis)
-          if (const ['arm64-v8a', 'armeabi-v7a', 'x86_64'].contains(abi))
-            ('$prefix-android-$abi.apk', UpdateInstallKind.apk),
-        ('$prefix-android-universal.apk', UpdateInstallKind.apk),
-        ('$prefix-android.apk', UpdateInstallKind.apk),
-      ];
-    case UpdatePlatform.windows:
-      return [('$prefix-windows-amd64-setup.exe', UpdateInstallKind.installer)];
-    case UpdatePlatform.macos:
-      return [
-        if (macArm64) ('$prefix-macos-arm64.dmg', UpdateInstallKind.dmg),
-        ('$prefix-macos-amd64.dmg', UpdateInstallKind.dmg),
-      ];
-    case UpdatePlatform.linux:
-    case UpdatePlatform.other:
-      return const [];
-  }
+  final String path;
 }
 
-/// Picks what to download from [release], or null to open the page instead.
-///
-/// The redirect fallback of the update check carries no asset list; the
-/// names the release workflow gives its files stand in for it then.
-UpdateSelection? selectUpdateAsset(
-  Map<String, dynamic> release, {
-  required UpdatePlatform platform,
-  List<String> androidAbis = const [],
-  bool macArm64 = false,
-}) {
-  final tag = release['tag_name'];
-  final version = tag is String ? releaseVersionOf(tag) : null;
-  if (version == null) {
-    return null;
-  }
-  final candidates = updateAssetCandidates(
-    version: version,
-    platform: platform,
-    androidAbis: androidAbis,
-    macArm64: macArm64,
-  );
-  if (candidates.isEmpty) {
-    return null;
-  }
-  final rawAssets = release['assets'];
-  if (rawAssets is! List) {
-    final (name, kind) = candidates.first;
-    return UpdateSelection(
-      asset: UpdateAsset(
-        name: name,
-        url: releaseDownloadUrl(tag as String, name),
-        kind: kind,
-      ),
-      checksumsUrl: releaseDownloadUrl(tag, checksumsAssetName),
-      checksumRequired: false,
-    );
-  }
-  final assets = <String, Map>{
-    for (final asset in rawAssets.whereType<Map>())
-      if (asset['name'] is String) asset['name'] as String: asset,
+@visibleForTesting
+String? Function() resolveSelfUpdateSuffix = () => selfUpdateAssetSuffix(
+  Abi.current(),
+  windowsInstalled: system.isWindows && isInstalledWindowsBuild,
+);
+
+String? get selfUpdateSuffix => resolveSelfUpdateSuffix();
+
+// The names follow the release matrix in .github/workflows/build.yaml.
+String? selfUpdateAssetSuffix(Abi abi, {required bool windowsInstalled}) {
+  return switch (abi) {
+    Abi.androidArm64 => 'android-arm64-v8a.apk',
+    Abi.androidArm => 'android-armeabi-v7a.apk',
+    Abi.androidX64 => 'android-x86_64.apk',
+    Abi.windowsX64 when windowsInstalled => 'windows-amd64-setup.exe',
+    Abi.windowsArm64 when windowsInstalled => 'windows-arm64-setup.exe',
+    // The fork ships a dmg per architecture; installing opens it in Finder.
+    Abi.macosArm64 => 'macos-arm64.dmg',
+    Abi.macosX64 => 'macos-amd64.dmg',
+    _ => null,
   };
-  for (final (name, kind) in candidates) {
-    final asset = assets[name];
-    final url = asset?['browser_download_url'];
-    if (url is! String) {
-      continue;
+}
+
+String releaseAssetName(String tag, String suffix) {
+  final version = tag.startsWith('v') ? tag.substring(1) : tag;
+  return '$appName-$version-$suffix';
+}
+
+Uri releaseAssetUri(String tag, String name) {
+  return Uri.https('github.com', '/$repository/releases/download/$tag/$name');
+}
+
+final _checksumLine = RegExp(r'^([0-9a-fA-F]{64}) [ *](?:\./)?(.+)$');
+
+String? releaseChecksum(String sums, String name) {
+  for (final line in const LineSplitter().convert(sums)) {
+    final match = _checksumLine.firstMatch(line.trim());
+    if (match != null && match[2] == name) {
+      return match[1]!.toLowerCase();
     }
-    final sums = assets[checksumsAssetName]?['browser_download_url'];
-    return UpdateSelection(
-      asset: UpdateAsset(
-        name: name,
-        url: url,
-        kind: kind,
-        size: asset!['size'] is int ? asset['size'] as int : null,
-      ),
-      checksumsUrl: sums is String ? sums : null,
-      checksumRequired: sums is String,
-    );
   }
   return null;
 }
 
-class UpdateSelection {
-  const UpdateSelection({
-    required this.asset,
-    required this.checksumsUrl,
-    required this.checksumRequired,
+Future<String> fileSha256(String path) {
+  return Isolate.run(() async {
+    final digest = await sha256.bind(File(path).openRead()).first;
+    return digest.toString();
   });
-
-  final UpdateAsset asset;
-  final String? checksumsUrl;
-
-  /// The release listed SHA256SUMS, so failing to read it is an error.
-  final bool checksumRequired;
 }
 
-/// Reads `sha256sum` output: `<hex>  <name>` or `<hex> *<name>` per line.
-Map<String, String> parseChecksums(String text) {
-  final sums = <String, String>{};
-  for (final line in text.split('\n')) {
-    final match = RegExp(
-      r'^([0-9a-fA-F]{64})\s+\*?(.+?)\s*$',
-    ).firstMatch(line.trim());
-    if (match != null) {
-      final name = match.group(2)!.split('/').last;
-      sums[name] = match.group(1)!.toLowerCase();
-    }
+// The installer that relaunched the app may still hold its file open.
+Future<void> clearUpdateDownloads() async {
+  try {
+    await app?.clearDownloads();
+    await safeDeletePath(await appPath.updateDirPath);
+  } on PlatformException catch (error) {
+    commonPrint.log(
+      'Clearing system downloads failed: ${compactError(error)}',
+      logLevel: LogLevel.warning,
+    );
+  } on FileSystemException catch (error) {
+    commonPrint.log(
+      'Clearing update downloads failed: ${compactError(error)}',
+      logLevel: LogLevel.warning,
+    );
   }
-  return sums;
 }
 
-Future<String> sha256OfFile(File file) async {
-  final digest = await sha256.bind(file.openRead()).first;
-  return digest.toString();
+// Inno Setup writes unins000.exe beside the app; the portable zip has none.
+bool get isInstalledWindowsBuild {
+  return File(join(appPath.executableDirPath, 'unins000.exe')).existsSync();
+}
+
+// inno_setup.iss waits for `updatefrom` to exit, then relaunches the app.
+String windowsUpdateArguments(int pid) {
+  return '/SILENT /SUPPRESSMSGBOXES /NORESTART /SP- /updatefrom=$pid';
 }

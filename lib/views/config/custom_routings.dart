@@ -11,7 +11,7 @@ import 'package:fl_clash/views/config/choice_sheet.dart';
 import 'package:fl_clash/views/config/outbound_delay.dart';
 import 'package:fl_clash/views/config/tailscale.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// The proxies and groups a profile defines before its script runs, so a
@@ -134,15 +134,15 @@ class _OutboundPickerSheetState extends ConsumerState<OutboundPickerSheet> {
       header: Wrap(
         spacing: 8,
         children: [
-          FilterChip(
-            label: Text(appLocalizations.sortByDelay),
+          Chip(
+            label: appLocalizations.sortByDelay,
             selected: _sortByDelay,
-            onSelected: (value) => setState(() => _sortByDelay = value),
+            onPressed: () => setState(() => _sortByDelay = !_sortByDelay),
           ),
-          FilterChip(
-            label: Text(appLocalizations.hideTimeoutNodes),
+          Chip(
+            label: appLocalizations.hideTimeoutNodes,
             selected: _hideTimeout,
-            onSelected: (value) => setState(() => _hideTimeout = value),
+            onPressed: () => setState(() => _hideTimeout = !_hideTimeout),
           ),
         ],
       ),
@@ -245,21 +245,21 @@ class _CustomRoutingsViewState extends ConsumerState<CustomRoutingsView> {
       index: index,
       child: ContextMenuRegion(
         menuItems: [
-          CommonPopupMenuItem(
+          PopupMenuItem(
             glyph: AppGlyphs.edit,
             label: appLocalizations.edit,
             onPressed: () {
               _handleEdit(routing);
             },
           ),
-          CommonPopupMenuItem(
+          PopupMenuItem(
             glyph: AppGlyphs.copy,
             label: appLocalizations.copy,
             onPressed: () {
               ref.read(customRoutingsProvider.notifier).duplicate(routing);
             },
           ),
-          CommonPopupMenuItem(
+          PopupMenuItem(
             danger: true,
             glyph: AppGlyphs.delete,
             label: appLocalizations.delete,
@@ -277,8 +277,6 @@ class _CustomRoutingsViewState extends ConsumerState<CustomRoutingsView> {
                 : Tooltip(
                     message: appLocalizations.customRoutingUseInProfile,
                     child: Checkbox(
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      visualDensity: VisualDensity.compact,
                       value: applied,
                       onChanged: (_) => ref
                           .read(
@@ -309,7 +307,7 @@ class _CustomRoutingsViewState extends ConsumerState<CustomRoutingsView> {
     final appLocalizations = context.appLocalizations;
     final routingsState = ref.watch(customRoutingsProvider);
     final routings = routingsState.value ?? [];
-    return CommonScaffold(
+    return Scaffold(
       title: appLocalizations.customRouting,
       canSort: routings.length > 1,
       actions: [
@@ -326,11 +324,10 @@ class _CustomRoutingsViewState extends ConsumerState<CustomRoutingsView> {
           label: appLocalizations.nullTip(appLocalizations.customRouting),
           illustration: NullStatusIllustration.rules,
         ),
-        child: ReorderableListView.builder(
+        child: PrismReorderableListView(
           padding: const EdgeInsets.all(
             16,
           ).copyWith(top: context.contentTopPadding),
-          buildDefaultDragHandles: false,
           itemCount: routings.length,
           itemBuilder: (_, index) => _buildItem(routings, index),
           proxyDecorator: (_, index, animation) {
@@ -550,7 +547,7 @@ class _CustomRoutingEditViewState extends State<CustomRoutingEditView> {
 
   Widget _buildCondition(_ConditionDraft draft) {
     final appLocalizations = context.appLocalizations;
-    return CommonCard(
+    return Card(
       onPressed: null,
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -561,7 +558,7 @@ class _CustomRoutingEditViewState extends State<CustomRoutingEditView> {
             Row(
               children: [
                 ElasticButton(
-                  child: FilledButton.tonal(
+                  child: FilledButton(
                     onPressed: () {
                       _handlePickAction(draft);
                     },
@@ -602,7 +599,7 @@ class _CustomRoutingEditViewState extends State<CustomRoutingEditView> {
               autovalidateMode: AutovalidateMode.onUserInteraction,
               decoration: InputDecoration(
                 border: AppShape.input,
-                labelText: appLocalizations.value,
+                helperText: appLocalizations.value,
                 hintText: appLocalizations.routingValuesHint,
               ),
             ),
@@ -615,7 +612,7 @@ class _CustomRoutingEditViewState extends State<CustomRoutingEditView> {
   @override
   Widget build(BuildContext context) {
     final appLocalizations = context.appLocalizations;
-    return CommonScaffold(
+    return Scaffold(
       title: widget.routing == null
           ? appLocalizations.addCustomRouting
           : appLocalizations.editCustomRouting,
@@ -645,7 +642,7 @@ class _CustomRoutingEditViewState extends State<CustomRoutingEditView> {
                     : appLocalizations.emptyTip(appLocalizations.name),
                 decoration: InputDecoration(
                   border: AppShape.input,
-                  labelText: appLocalizations.name,
+                  helperText: appLocalizations.name,
                 ),
               ),
               const SizedBox(height: 16),
@@ -656,21 +653,15 @@ class _CustomRoutingEditViewState extends State<CustomRoutingEditView> {
                 info: Info(label: appLocalizations.routingLogic),
               ),
               const SizedBox(height: 8),
-              SegmentedButton<CustomRoutingLogic>(
+              SegmentedControl<CustomRoutingLogic>(
                 segments: [
-                  ButtonSegment(
-                    value: CustomRoutingLogic.or,
-                    label: Text(appLocalizations.routingLogicOr),
-                  ),
-                  ButtonSegment(
-                    value: CustomRoutingLogic.and,
-                    label: Text(appLocalizations.routingLogicAnd),
-                  ),
+                  (CustomRoutingLogic.or, appLocalizations.routingLogicOr),
+                  (CustomRoutingLogic.and, appLocalizations.routingLogicAnd),
                 ],
-                selected: {_logic},
-                onSelectionChanged: (value) {
+                value: _logic,
+                onChanged: (value) {
                   setState(() {
-                    _logic = value.first;
+                    _logic = value;
                   });
                 },
               ),
@@ -785,9 +776,6 @@ class CustomRoutingContent extends ConsumerWidget {
                       dimension: 24,
                       child: ExcludeFocus(
                         child: Checkbox(
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                          visualDensity: VisualDensity.compact,
                           value: selected.contains(routing.id),
                           onChanged: (_) {
                             ref

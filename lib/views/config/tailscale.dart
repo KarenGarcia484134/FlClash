@@ -12,7 +12,7 @@ import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/services.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' show join;
 
@@ -57,7 +57,7 @@ final tailscaleDialerCandidatesProvider = FutureProvider.autoDispose
             ? await setup.script?.content
             : null;
         if (script?.isNotEmpty == true) {
-          final raw = await ref.read(coreHandlerProvider).getConfig(profileId);
+          final raw = await ref.read(coreHandlerProvider).readConfig(profileId);
           config = await handleEvaluate(script!, raw);
         } else {
           final clash = await ref.watch(clashConfigProvider(profileId).future);
@@ -289,9 +289,9 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
   Future<void> _handleCopy(String url) async {
     await Clipboard.setData(ClipboardData(text: url));
     if (mounted) {
-      context.showNotifier(
+      dialogs.showBanner(
         context.appLocalizations.copySuccess,
-        level: MessageLevel.success,
+        level: BannerLevel.success,
       );
     }
   }
@@ -443,7 +443,7 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
           children: [
             // The one connect action on the page. It stays usable while the
             // node is connecting or failed, where it retries the login.
-            FilledButton.tonal(
+            FilledButton(
               key: const ValueKey('tailscale-connect'),
               onPressed: props.enable ? _handleConnect : null,
               child: Text(
@@ -466,7 +466,7 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
   Widget build(BuildContext context) {
     final appLocalizations = context.appLocalizations;
     final props = ref.watch(tailscaleSettingProvider);
-    return CommonScaffold(
+    return Scaffold(
       title: 'Tailscale',
       body: Builder(
         builder: (context) => ListView(

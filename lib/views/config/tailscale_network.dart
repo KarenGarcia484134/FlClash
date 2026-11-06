@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/features/form/form.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/ui/ui.dart';
@@ -10,7 +9,7 @@ import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 
 const _refreshInterval = Duration(seconds: 10);
 
@@ -218,9 +217,9 @@ class TailscaleNetworkSectionState
   Future<void> _copy(String text) async {
     await Clipboard.setData(ClipboardData(text: text));
     if (mounted) {
-      context.showNotifier(
+      dialogs.showBanner(
         context.appLocalizations.copySuccess,
-        level: MessageLevel.success,
+        level: BannerLevel.success,
       );
     }
   }
@@ -247,19 +246,15 @@ class TailscaleNetworkSectionState
           .toggle(routing.id);
     }
     if (mounted) {
-      context.showNotifier(
+      dialogs.showBanner(
         '${appLocalizations.tailscaleRoutingAdded}: ${peer.displayName}',
-        level: MessageLevel.success,
+        level: BannerLevel.success,
       );
     }
   }
 
   Widget _ipChip(String ip) {
-    return ActionChip(
-      label: Text(ip, style: AppTextStyle.footnote.of(context).toJetBrainsMono),
-      avatar: const GlyphIcon(AppGlyphs.copy, size: 14),
-      onPressed: () => _copy(ip),
-    );
+    return Chip(label: ip, onPressed: () => _copy(ip));
   }
 
   String? _pathLabel(TailscalePingResult? ping) {
@@ -290,7 +285,7 @@ class TailscaleNetworkSectionState
     if (_pinging.contains(peer.id)) {
       return const Padding(
         padding: EdgeInsets.all(12),
-        child: CommonCircleLoading(size: 16),
+        child: ActivityIndicator(size: 16),
       );
     }
     final ping = _pings[peer.id];
@@ -390,7 +385,7 @@ class TailscaleNetworkSectionState
       tooltip: appLocalizations.tailscaleRefresh,
       onPressed: widget.proxyName == null || _loading ? null : refresh,
       icon: _loading
-          ? const CommonCircleLoading(size: 18)
+          ? const ActivityIndicator(size: 18)
           : const GlyphIcon(AppGlyphs.refresh),
     );
     final header = Row(

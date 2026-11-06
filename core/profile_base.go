@@ -23,9 +23,9 @@ import (
 // nodes (Tailscale) survive next to the profile's list.
 var profileBaseSections = []string{"proxies", "proxy-groups", "sub-rules"}
 
-func handleGetProfileBase(path string) (*ProfileBase, error) {
+func handleGetProfileBase(params PathParams) (*ProfileBase, error) {
 	defer scheduleLoadMemoryRelease()
-	buf, err := os.ReadFile(path)
+	buf, err := os.ReadFile(params.Path)
 	if err != nil {
 		return nil, err
 	}
@@ -93,9 +93,9 @@ func outlineOf(raw *config.RawConfig) ProfileOutline {
 	return outline
 }
 
-func handleGetProfileOutbounds(path string) (*ProfileOutbounds, error) {
+func handleGetProfileOutbounds(params PathParams) (*ProfileOutbounds, error) {
 	defer scheduleLoadMemoryRelease()
-	buf, err := os.ReadFile(path)
+	buf, err := os.ReadFile(params.Path)
 	if err != nil {
 		return nil, err
 	}

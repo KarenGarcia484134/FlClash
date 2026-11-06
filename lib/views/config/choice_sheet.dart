@@ -1,6 +1,6 @@
 import 'package:fl_clash/features/features.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 
 /// A single choice from a short list, in the app's selection sheet.
 Future<T?> showChoiceSheet<T>(

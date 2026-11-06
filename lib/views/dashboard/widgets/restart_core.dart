@@ -5,7 +5,7 @@ import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/ui/ui.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 
 import 'card.dart';
 
@@ -20,16 +20,16 @@ Future<void> confirmRestartCore(BuildContext context, WidgetRef ref) async {
   }
   try {
     final ok = await ref.read(coreActionProvider.notifier).restartCore();
-    dialogs.showNotifier(
+    dialogs.showBanner(
       ok
           ? appLocalizations.restartCoreDone
           : appLocalizations.restartCoreFailed,
-      level: ok ? MessageLevel.success : MessageLevel.error,
+      level: ok ? BannerLevel.success : BannerLevel.error,
     );
   } catch (error) {
-    dialogs.showNotifier(
+    dialogs.showBanner(
       '${appLocalizations.restartCoreFailed}: $error',
-      level: MessageLevel.error,
+      level: BannerLevel.error,
     );
   }
 }
@@ -51,7 +51,7 @@ class RestartCoreCard extends ConsumerWidget {
         glyph: AppGlyphs.refresh,
         title: appLocalizations.restartCore,
         status: restarting
-            ? const CommonCircleLoading(size: 14)
+            ? const ActivityIndicator(size: 14)
             : const SizedBox.shrink(),
       );
     }
@@ -69,7 +69,7 @@ class RestartCoreCard extends ConsumerWidget {
           Row(
             spacing: 8,
             children: [
-              if (restarting) const CommonCircleLoading(size: 14),
+              if (restarting) const ActivityIndicator(size: 14),
               Flexible(
                 child: Text(
                   restarting

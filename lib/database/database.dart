@@ -19,6 +19,7 @@ part 'generated/database.g.dart';
 part 'groups.dart';
 part 'icons.dart';
 part 'ip_qualities.dart';
+part 'mitm_modules.dart';
 part 'profiles.dart';
 part 'rules.dart';
 part 'scripts.dart';
@@ -38,6 +39,7 @@ part 'scripts.dart';
     CustomRoutings,
     ProfileCustomRoutings,
     IpQualities,
+    MitmModules,
   ],
   daos: [
     ProfilesDao,
@@ -51,13 +53,14 @@ part 'scripts.dart';
     ProxyDialersDao,
     CustomRoutingsDao,
     IpQualitiesDao,
+    MitmModulesDao,
   ],
 )
 class Database extends _$Database {
   Database([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 22;
+  int get schemaVersion => 24;
 
   static LazyDatabase _openConnection() {
     return LazyDatabase(() async {
@@ -125,6 +128,23 @@ class Database extends _$Database {
           await _createTableIfMissing(m, customRoutings);
           await _createTableIfMissing(m, profileCustomRoutings);
           await _createTableIfMissing(m, ipQualities);
+        }
+        // Upstream's v22 created the MITM modules table and v23 rebuilt it;
+        // this fork's v22 had no such table, so a fork v22 database
+        // creates it here instead of rebuilding a table that is not there.
+        if (from < 23) {
+          if (!await _createTableIfMissing(m, mitmModules)) {
+            await m.alterTable(TableMigration(mitmModules));
+          }
+        }
+        // v24 joins the fork (custom routings, IP qualities at v22) and
+        // upstream (MITM modules at v22/v23): any database from either side
+        // gains whatever tables it is missing, keeping the rows it has.
+        if (from < 24) {
+          await _createTableIfMissing(m, customRoutings);
+          await _createTableIfMissing(m, profileCustomRoutings);
+          await _createTableIfMissing(m, ipQualities);
+          await _createTableIfMissing(m, mitmModules);
         }
       }),
       beforeOpen: (_) => customStatement('PRAGMA foreign_keys = ON'),
@@ -422,6 +442,7 @@ class Database extends _$Database {
     List<ClashProvider> clashProviders = const [],
     List<CustomProxy> customProxies = const [],
     List<ProxyDialer> proxyDialers = const [],
+    List<MitmModule> mitmModules = const [],
     bool isOverride = false,
   }) async {
     if (profiles.isEmpty &&
@@ -431,7 +452,8 @@ class Database extends _$Database {
         proxyGroups.isEmpty &&
         clashProviders.isEmpty &&
         customProxies.isEmpty &&
-        proxyDialers.isEmpty) {
+        proxyDialers.isEmpty &&
+        mitmModules.isEmpty) {
       return;
     }
     await transaction(() async {
@@ -447,6 +469,7 @@ class Database extends _$Database {
           clashProvidersDao.setAllWithBatch(b, clashProviders);
           // Rewriting profiles or custom proxies cascades into these.
           proxyDialersDao.setAllWithBatch(b, proxyDialers);
+          mitmModulesDao.setAllWithBatch(b, mitmModules);
           return;
         }
         profilesDao.putAllWithBatch(
@@ -459,6 +482,7 @@ class Database extends _$Database {
         customProxiesDao.putAllWithBatch(b, customProxies);
         clashProvidersDao.putAllWithBatch(b, clashProviders);
         proxyDialersDao.putAllWithBatch(b, proxyDialers);
+        mitmModulesDao.putAllWithBatch(b, mitmModules);
       });
       await _purgeOrphans();
     });

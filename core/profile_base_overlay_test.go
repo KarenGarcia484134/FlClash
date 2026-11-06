@@ -15,7 +15,7 @@ import (
 // listeners on a profile group and sub-rule, and Tailscale DNS.
 
 func TestProfileOutlineMatchesWhatTheHostInjectsAgainst(t *testing.T) {
-	base, err := handleGetProfileBase("testdata/large_profile.yaml")
+	base, err := handleGetProfileBase(PathParams{Path: "testdata/large_profile.yaml"})
 	if err != nil {
 		t.Fatalf("handleGetProfileBase = %v", err)
 	}

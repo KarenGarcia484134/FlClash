@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/common/mitm_module.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:flutter/foundation.dart';
@@ -302,6 +303,15 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
       }
     }
   }
+  final mitm = mergeMitmModules(realPatchConfig.mitm.hostname, [
+    for (final module in data.mitmModules)
+      parseMitmModule(
+        module.content,
+        values: module.arguments,
+        resources: module.resources,
+      ),
+  ]);
+  rawConfig['mitm'] = realPatchConfig.mitm.coreJson(mitm.mitm);
   if (rawConfig['profile'] == null) {
     rawConfig['profile'] = {};
   }
@@ -442,7 +452,8 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
       ...rules,
     ];
   }
-  rules = [...tailscaleRules, ...rules];
+  // Tailnet addresses never go through a MITM module.
+  rules = [...tailscaleRules, ...mitm.rules, ...rules];
   rawConfig['rules'] = rules;
   var counts = configCountsOf(rawConfig);
   if (data.outlineOnly) {

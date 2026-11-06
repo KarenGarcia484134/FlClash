@@ -1,227 +1,111 @@
 import 'dart:convert';
+import 'dart:ffi' show Abi;
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
-import 'package:dio/dio.dart';
 import 'package:fl_clash/common/app_update.dart';
-import 'package:fl_clash/features/update/app_updater.dart';
-import 'package:fl_clash/l10n/l10n.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-const _base = 'https://github.com/KarenGarcia484134/FlClash/releases/download';
-
-Map<String, dynamic> _release({bool withSums = true}) => {
-  'tag_name': 'v0.9.21',
-  'assets': [
-    for (final name in [
-      'FlClash-0.9.21-android-arm64-v8a.apk',
-      'FlClash-0.9.21-android-armeabi-v7a.apk',
-      'FlClash-0.9.21-android-x86_64.apk',
-      'FlClash-0.9.21-windows-amd64-setup.exe',
-      'FlClash-0.9.21-windows-amd64.zip',
-      'FlClash-0.9.21-macos-arm64.dmg',
-      'FlClash-0.9.21-macos-amd64.dmg',
-      'FlClash-0.9.21-linux-amd64.AppImage',
-      if (withSums) checksumsAssetName,
-    ])
-      {
-        'name': name,
-        'size': 10,
-        'browser_download_url': '$_base/v0.9.21/$name',
-      },
-  ],
-};
-
 void main() {
-  group('selectUpdateAsset', () {
-    test('Android takes the first supported ABI it publishes', () {
-      final selection = selectUpdateAsset(
-        _release(),
-        platform: UpdatePlatform.android,
-        androidAbis: ['x86', 'armeabi-v7a', 'armeabi'],
-      )!;
-      expect(selection.asset.name, 'FlClash-0.9.21-android-armeabi-v7a.apk');
-      expect(selection.asset.kind, UpdateInstallKind.apk);
-      expect(selection.checksumRequired, isTrue);
-      expect(selection.checksumsUrl, '$_base/v0.9.21/SHA256SUMS');
+  group('selfUpdateAssetSuffix', () {
+    test('names the APK built for the running ABI', () {
+      expect(
+        selfUpdateAssetSuffix(Abi.androidArm64, windowsInstalled: false),
+        'android-arm64-v8a.apk',
+      );
+      expect(
+        selfUpdateAssetSuffix(Abi.androidArm, windowsInstalled: false),
+        'android-armeabi-v7a.apk',
+      );
+      expect(
+        selfUpdateAssetSuffix(Abi.androidX64, windowsInstalled: false),
+        'android-x86_64.apk',
+      );
     });
 
-    test('Android with no published ABI falls back to the page', () {
+    test('names the Windows installer only for an installed build', () {
       expect(
-        selectUpdateAsset(
-          _release(),
-          platform: UpdatePlatform.android,
-          androidAbis: ['mips'],
-        ),
+        selfUpdateAssetSuffix(Abi.windowsX64, windowsInstalled: true),
+        'windows-amd64-setup.exe',
+      );
+      expect(
+        selfUpdateAssetSuffix(Abi.windowsArm64, windowsInstalled: true),
+        'windows-arm64-setup.exe',
+      );
+      expect(
+        selfUpdateAssetSuffix(Abi.windowsX64, windowsInstalled: false),
         isNull,
       );
     });
 
-    test('Windows takes the installer, never the zip', () {
-      final selection = selectUpdateAsset(
-        _release(),
-        platform: UpdatePlatform.windows,
-      )!;
-      expect(selection.asset.name, 'FlClash-0.9.21-windows-amd64-setup.exe');
-      expect(selection.asset.kind, UpdateInstallKind.installer);
-      final release = _release();
-      (release['assets'] as List).removeWhere(
-        (asset) => (asset as Map)['name'].toString().endsWith('.exe'),
+    test('picks the dmg for the architecture of the Mac', () {
+      expect(
+        selfUpdateAssetSuffix(Abi.macosArm64, windowsInstalled: false),
+        'macos-arm64.dmg',
       );
       expect(
-        selectUpdateAsset(release, platform: UpdatePlatform.windows),
-        isNull,
+        selfUpdateAssetSuffix(Abi.macosX64, windowsInstalled: false),
+        'macos-amd64.dmg',
       );
     });
 
-    test('macOS matches the chip', () {
-      String name(bool arm) => selectUpdateAsset(
-        _release(),
-        platform: UpdatePlatform.macos,
-        macArm64: arm,
-      )!.asset.name;
-      expect(name(true), 'FlClash-0.9.21-macos-arm64.dmg');
-      expect(name(false), 'FlClash-0.9.21-macos-amd64.dmg');
-    });
-
-    test('Linux opens the page', () {
-      expect(
-        selectUpdateAsset(_release(), platform: UpdatePlatform.linux),
-        isNull,
-      );
-    });
-
-    test('a release without assets builds the URLs from the names', () {
-      final selection = selectUpdateAsset(
-        {'tag_name': 'v0.9.21'},
-        platform: UpdatePlatform.android,
-        androidAbis: ['arm64-v8a'],
-      )!;
-      expect(
-        selection.asset.url,
-        '$_base/v0.9.21/FlClash-0.9.21-android-arm64-v8a.apk',
-      );
-      expect(selection.checksumRequired, isFalse);
-    });
-
-    test('a release without SHA256SUMS needs no checksum', () {
-      final selection = selectUpdateAsset(
-        _release(withSums: false),
-        platform: UpdatePlatform.windows,
-      )!;
-      expect(selection.checksumsUrl, isNull);
+    test('leaves Linux to the release page', () {
+      for (final abi in [Abi.linuxX64, Abi.linuxArm64]) {
+        expect(selfUpdateAssetSuffix(abi, windowsInstalled: true), isNull);
+      }
     });
   });
 
-  test('parseChecksums reads sha256sum output', () {
-    final hash = 'a' * 64;
+  test('releaseAssetName drops the tag prefix', () {
     expect(
-      parseChecksums('$hash  ./FlClash.apk\n${'B' * 64} *other.dmg\njunk\n'),
-      {'FlClash.apk': hash, 'other.dmg': 'b' * 64},
+      releaseAssetName('v0.9.3', 'android-arm64-v8a.apk'),
+      'FlClash-0.9.3-android-arm64-v8a.apk',
     );
   });
 
-  group('downloadAndVerifyUpdate', () {
-    late Directory directory;
-    final bytes = utf8.encode('apk bytes');
-    final hash = sha256.convert(bytes).toString();
+  group('releaseChecksum', () {
+    const digest =
+        'ff6a953c0f5c12e6bdc97b49428b565b64c4a62d85e50081823ba297407529b1';
 
-    setUpAll(() => AppLocalizations.load(const Locale('en')));
-    setUp(() => directory = Directory.systemTemp.createTempSync('update'));
-    tearDown(() => directory.deleteSync(recursive: true));
+    test('reads the entry sha256sum wrote for a file', () {
+      final sums =
+          '$digest  ./FlClash-0.9.2-android-arm64-v8a.apk\n'
+          '${'0' * 64}  ./FlClash-0.9.2-windows-amd64-setup.exe\n';
 
-    UpdateSelection selection({bool required = true}) => UpdateSelection(
-      asset: const UpdateAsset(
-        name: 'FlClash.apk',
-        url: 'https://example/FlClash.apk',
-        kind: UpdateInstallKind.apk,
-      ),
-      checksumsUrl: 'https://example/SHA256SUMS',
-      checksumRequired: required,
+      expect(
+        releaseChecksum(sums, 'FlClash-0.9.2-android-arm64-v8a.apk'),
+        digest,
+      );
+    });
+
+    test('accepts the binary marker, upper case and CRLF', () {
+      final sums = '${digest.toUpperCase()} *FlClash.apk\r\n';
+
+      expect(releaseChecksum(sums, 'FlClash.apk'), digest);
+    });
+
+    test('answers null for a file the listing does not name', () {
+      expect(releaseChecksum('$digest  ./other.apk\n', 'FlClash.apk'), isNull);
+      expect(releaseChecksum('not a listing', 'FlClash.apk'), isNull);
+    });
+  });
+
+  test('fileSha256 hashes the file on disk', () async {
+    final directory = await Directory.systemTemp.createTemp('app_update');
+    addTearDown(() => directory.delete(recursive: true));
+    final file = File('${directory.path}/package');
+    await file.writeAsString('package');
+
+    expect(
+      await fileSha256(file.path),
+      sha256.convert(utf8.encode('package')).toString(),
     );
+  });
 
-    Future<void> fakeDownload(
-      String url,
-      String path,
-      CancelToken token,
-      void Function(int, int)? progress,
-    ) async {
-      File(path).writeAsBytesSync(bytes);
-      progress?.call(bytes.length, bytes.length);
-    }
+  test('windowsUpdateArguments installs silently on behalf of a pid', () {
+    final arguments = windowsUpdateArguments(4242).split(' ');
 
-    test('keeps a file that matches its checksum', () async {
-      final file = File('${directory.path}/FlClash.apk');
-      await downloadAndVerifyUpdate(
-        selection(),
-        file,
-        cancelToken: CancelToken(),
-        fetchChecksums: (_) async => '$hash  FlClash.apk',
-        download: fakeDownload,
-      );
-      expect(file.existsSync(), isTrue);
-    });
-
-    test('deletes a file that fails its checksum', () async {
-      final file = File('${directory.path}/FlClash.apk');
-      await expectLater(
-        downloadAndVerifyUpdate(
-          selection(),
-          file,
-          cancelToken: CancelToken(),
-          fetchChecksums: (_) async => '${'0' * 64}  FlClash.apk',
-          download: fakeDownload,
-        ),
-        throwsA(isA<UpdateFailure>()),
-      );
-      expect(file.existsSync(), isFalse);
-    });
-
-    test(
-      'a listed but unreadable SHA256SUMS fails before downloading',
-      () async {
-        var downloaded = false;
-        await expectLater(
-          downloadAndVerifyUpdate(
-            selection(),
-            File('${directory.path}/FlClash.apk'),
-            cancelToken: CancelToken(),
-            fetchChecksums: (_) async => throw const SocketException('down'),
-            download: (url, path, token, progress) async => downloaded = true,
-          ),
-          throwsA(isA<UpdateFailure>()),
-        );
-        expect(downloaded, isFalse);
-      },
-    );
-
-    test('an optional SHA256SUMS that is missing is skipped', () async {
-      final file = File('${directory.path}/FlClash.apk');
-      await downloadAndVerifyUpdate(
-        selection(required: false),
-        file,
-        cancelToken: CancelToken(),
-        fetchChecksums: (_) async => throw const SocketException('404'),
-        download: fakeDownload,
-      );
-      expect(file.existsSync(), isTrue);
-    });
-
-    test('a download error becomes a failure with the page fallback', () async {
-      await expectLater(
-        downloadAndVerifyUpdate(
-          selection(required: false),
-          File('${directory.path}/FlClash.apk'),
-          cancelToken: CancelToken(),
-          fetchChecksums: (_) async => null,
-          download: (url, path, token, progress) async => throw DioException(
-            requestOptions: RequestOptions(path: url),
-            type: DioExceptionType.connectionTimeout,
-          ),
-        ),
-        throwsA(isA<UpdateFailure>()),
-      );
-    });
+    expect(arguments, containsAll(['/SILENT', '/SUPPRESSMSGBOXES']));
+    expect(arguments, contains('/updatefrom=4242'));
   });
 }

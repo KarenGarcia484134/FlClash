@@ -1,5 +1,4 @@
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/features/features.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/ui/ui.dart';
@@ -12,7 +11,7 @@ import 'package:fl_clash/views/config/tailscale.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 
 bool get _linux => system.isLinux;
 
@@ -58,9 +57,9 @@ ListenerContext _currentContext(WidgetRef ref) {
 Future<void> _copy(BuildContext context, String text) async {
   await Clipboard.setData(ClipboardData(text: text));
   if (context.mounted) {
-    context.showNotifier(
+    dialogs.showBanner(
       context.appLocalizations.copySuccess,
-      level: MessageLevel.success,
+      level: BannerLevel.success,
     );
   }
 }
@@ -104,7 +103,7 @@ class ListenersView extends ConsumerWidget {
     final issues = listenerIssues(props.items, _currentContext(ref));
     final running = ref.watch(isStartProvider);
     final notifier = ref.read(listenersSettingProvider.notifier);
-    return CommonScaffold(
+    return Scaffold(
       title: l.listeners,
       actions: [
         IconButton(
@@ -139,24 +138,27 @@ class ListenersView extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           if (props.items.isEmpty)
-            NullStatus(label: l.nullTip(l.listeners))
+            NullStatus(
+              label: l.nullTip(l.listeners),
+              illustration: NullStatusIllustration.data,
+            )
           else
             for (final (index, item) in props.items.indexed)
               ContextMenuRegion(
                 key: ValueKey(item.id),
                 menuItems: [
                   for (final address in listenerAddresses(item))
-                    CommonPopupMenuItem(
+                    PopupMenuItem(
                       glyph: AppGlyphs.copy,
                       label: address,
                       onPressed: () => _copy(context, address),
                     ),
-                  CommonPopupMenuItem(
+                  PopupMenuItem(
                     glyph: AppGlyphs.edit,
                     label: l.edit,
                     onPressed: () => _edit(context, ref, item),
                   ),
-                  CommonPopupMenuItem(
+                  PopupMenuItem(
                     danger: true,
                     glyph: AppGlyphs.delete,
                     label: l.delete,
@@ -432,7 +434,7 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
         : ref.watch(clashConfigProvider(profileId)).value?.subRules ??
               const <String>[];
     final lan = isLanListenAddress(_listen.text.trim());
-    return CommonScaffold(
+    return Scaffold(
       title: widget.item == null ? l.addListener : l.editListener,
       actions: [
         IconButton(
@@ -460,18 +462,16 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
                     : l.emptyTip(l.name),
                 decoration: InputDecoration(
                   border: AppShape.input,
-                  labelText: l.name,
+                  helperText: l.name,
                 ),
               ),
               const SizedBox(height: 16),
-              SegmentedButton<ListenerType>(
+              SegmentedControl<ListenerType>(
                 segments: [
-                  for (final type in availableListenerTypes)
-                    ButtonSegment(value: type, label: Text(type.name)),
+                  for (final type in availableListenerTypes) (type, type.name),
                 ],
-                selected: {_type},
-                onSelectionChanged: (value) =>
-                    setState(() => _type = value.first),
+                value: _type,
+                onChanged: (value) => setState(() => _type = value),
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -483,7 +483,7 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
                     : l.listenerListenInvalid,
                 decoration: InputDecoration(
                   border: AppShape.input,
-                  labelText: l.listenerListen,
+                  helperText: l.listenerListen,
                 ),
               ),
               const SizedBox(height: 8),
@@ -494,10 +494,10 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
                     (listenerLoopback, l.listenerLocalOnly),
                     (listenerAnyAddress, l.listenerLan),
                   ])
-                    ChoiceChip(
-                      label: Text(label),
+                    Chip(
+                      label: label,
                       selected: _listen.text.trim() == value,
-                      onSelected: (_) => setState(() => _listen.text = value),
+                      onPressed: () => setState(() => _listen.text = value),
                     ),
                 ],
               ),
@@ -529,7 +529,7 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
                 },
                 decoration: InputDecoration(
                   border: AppShape.input,
-                  labelText: l.port,
+                  helperText: l.port,
                 ),
               ),
               const SizedBox(height: 16),
@@ -619,7 +619,7 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
                                 : l.listenerUserInvalid,
                             decoration: InputDecoration(
                               border: AppShape.input,
-                              labelText: l.username,
+                              helperText: l.username,
                             ),
                           ),
                         ),
@@ -629,7 +629,7 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
                             obscureText: true,
                             decoration: InputDecoration(
                               border: AppShape.input,
-                              labelText: l.password,
+                              helperText: l.password,
                             ),
                           ),
                         ),
