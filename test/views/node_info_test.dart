@@ -5,7 +5,7 @@ import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/proxies/node_info.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 
 import '../helpers/test_app.dart';
 import '../helpers/test_profiles.dart';
@@ -50,8 +50,8 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: TestApp(
-          child: Scaffold(
-            body: NodeInfoView(proxy: proxy, loadConfig: () async => config),
+          child: SizedBox.expand(
+            child: NodeInfoView(proxy: proxy, loadConfig: () async => config),
           ),
         ),
       ),

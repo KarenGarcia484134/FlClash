@@ -64,3 +64,12 @@ class TestProfileCustomRoutingIds extends ProfileCustomRoutingIds {
     );
   }
 }
+
+class TestMitmModules extends MitmModules {
+  final List<MitmModule> initial;
+
+  TestMitmModules([this.initial = const []]);
+
+  @override
+  Stream<List<MitmModule>> build() => Stream.value(initial);
+}

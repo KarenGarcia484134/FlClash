@@ -1,11 +1,10 @@
 import 'package:fl_clash/common/constant.dart';
-import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/providers/providers.dart';
-import 'package:fl_clash/ui/color.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_color_utilities/hct/hct.dart';
+import 'package:prism_ui/hct/hct.dart';
+import 'package:prism_ui/prism_ui.dart';
 
 void main() {
   test(
@@ -25,7 +24,6 @@ void main() {
     const darkSeed = Color(0xFF0000FF);
     final container = ProviderContainer();
     addTearDown(container.dispose);
-    _useModernStyle(container);
     container
         .read(dynamicColorProvider.notifier)
         .seed(
@@ -84,7 +82,6 @@ void main() {
     const accent = Color(0xFFFF0000);
     final container = ProviderContainer();
     addTearDown(container.dispose);
-    _useModernStyle(container);
     container
         .read(dynamicColorProvider.notifier)
         .seed(lightSeed: null, darkSeed: null, accentColor: accent);
@@ -98,31 +95,4 @@ void main() {
       ),
     );
   });
-
-  test('genColorScheme seeds the classic style from its scheme variant', () {
-    const accent = Color(0xFFFF0000);
-    final container = ProviderContainer();
-    addTearDown(container.dispose);
-    container
-        .read(dynamicColorProvider.notifier)
-        .seed(lightSeed: null, darkSeed: null, accentColor: accent);
-    container
-        .read(themeSettingProvider.notifier)
-        .update(
-          (state) =>
-              state.copyWith(schemeVariant: DynamicSchemeVariant.vibrant),
-        );
-
-    expect(
-      container.read(genColorSchemeProvider(Brightness.light)),
-      ColorScheme.fromSeed(
-        seedColor: accent,
-        dynamicSchemeVariant: DynamicSchemeVariant.vibrant,
-      ),
-    );
-  });
 }
-
-void _useModernStyle(ProviderContainer container) => container
-    .read(themeSettingProvider.notifier)
-    .update((state) => state.copyWith(uiStyle: UiStyle.modern));

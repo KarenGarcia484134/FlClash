@@ -3,7 +3,7 @@ import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/ui/ui.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 
 import '../helpers/test_app.dart';
 
@@ -25,8 +25,8 @@ void main() {
           viewSizeProvider.overrideWithBuild((_, _) => const Size(1400, 900)),
         ],
         child: Builder(
-          builder: (context) => Scaffold(
-            body: TextButton(
+          builder: (context) => SizedBox.expand(
+            child: TextButton(
               onPressed: () async {
                 result = await showSheet<String>(
                   context: context,
@@ -84,8 +84,8 @@ void main() {
           viewSizeProvider.overrideWithBuild((_, _) => const Size(1400, 900)),
         ],
         child: Builder(
-          builder: (context) => Scaffold(
-            body: TextButton(
+          builder: (context) => SizedBox.expand(
+            child: TextButton(
               onPressed: () async {
                 await showSheet<void>(
                   context: context,

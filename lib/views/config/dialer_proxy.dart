@@ -9,7 +9,7 @@ import 'package:fl_clash/views/config/tailscale.dart';
 import 'package:fl_clash/views/proxies/node_info.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 
 bool isGroupTypeName(String type) =>
     GroupType.values.any((item) => item.name == type);
@@ -58,9 +58,9 @@ Future<void> pickDialerProxy(
     return;
   }
   if (!graph.proxies.contains(node)) {
-    dialogs.showNotifier(
+    dialogs.showBanner(
       appLocalizations.dialerProxyProviderTip,
-      level: MessageLevel.warning,
+      level: BannerLevel.warning,
     );
     return;
   }
@@ -95,13 +95,13 @@ Future<void> pickDialerProxy(
 
 /// Long-press menu entries of a node on the proxies page. Append new entries
 /// here.
-List<CommonPopupMenuItem> proxyNodeMenuItems(
+List<PopupMenuItem> proxyNodeMenuItems(
   BuildContext context,
   WidgetRef ref,
   Proxy proxy, {
   String? testUrl,
 }) {
-  final info = CommonPopupMenuItem(
+  final info = PopupMenuItem(
     label: context.appLocalizations.viewNodeInfo,
     glyph: AppGlyphs.info,
     onPressed: () => showNodeInfo(context, proxy, testUrl: testUrl),
@@ -111,7 +111,7 @@ List<CommonPopupMenuItem> proxyNodeMenuItems(
   }
   return [
     info,
-    CommonPopupMenuItem(
+    PopupMenuItem(
       label: context.appLocalizations.setDialerProxy,
       glyph: AppGlyphs.link,
       onPressed: () => pickDialerProxy(context, ref, proxy.name),
@@ -164,7 +164,7 @@ class DialerProxyView extends ConsumerWidget {
       for (final entry in graph.existing.entries)
         if (!settings.containsKey(entry.key)) entry.key: entry.value,
     };
-    return CommonScaffold(
+    return Scaffold(
       title: appLocalizations.dialerProxy,
       actions: [
         if (profileId != null && settings.isNotEmpty)
@@ -177,7 +177,10 @@ class DialerProxyView extends ConsumerWidget {
           ),
       ],
       body: settings.isEmpty && fromProfile.isEmpty
-          ? NullStatus(label: appLocalizations.dialerProxyEmpty)
+          ? NullStatus(
+              label: appLocalizations.dialerProxyEmpty,
+              illustration: NullStatusIllustration.proxies,
+            )
           : ListView(
               padding: const EdgeInsets.symmetric(
                 horizontal: 16,
@@ -225,7 +228,7 @@ class _DialerProxyItem extends ConsumerWidget {
     final issue = this.issue;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: CommonCard(
+      child: Card(
         onPressed: issue == DialerProxyIssue.missingNode
             ? null
             : () => pickDialerProxy(context, ref, node),

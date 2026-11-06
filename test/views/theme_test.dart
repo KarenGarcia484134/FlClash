@@ -13,7 +13,7 @@ import 'package:fl_clash/views/font_family.dart';
 import 'package:fl_clash/views/theme.dart';
 import 'package:fl_clash/views/theme_preview.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -52,55 +52,6 @@ void main() {
 
   ThemeProps readTheme() => container.read(themeSettingProvider);
 
-  void useModernStyle() => container
-      .read(themeSettingProvider.notifier)
-      .update((state) => state.copyWith(uiStyle: UiStyle.modern));
-
-  group('interface style', () {
-    testWidgets('defaults to classic and switches live both ways', (
-      tester,
-    ) async {
-      await pumpThemeView(tester);
-      expect(readTheme().uiStyle, UiStyle.classic);
-      expect(find.text('Interface style'), findsOneWidget);
-
-      await tester.tap(find.text('New'));
-      await tester.pumpAndSettle();
-      expect(readTheme().uiStyle, UiStyle.modern);
-
-      await tester.tap(find.text('Classic'));
-      await tester.pumpAndSettle();
-      expect(readTheme().uiStyle, UiStyle.classic);
-    });
-
-    testWidgets('classic offers scheme variants and hides liquid glass', (
-      tester,
-    ) async {
-      await pumpThemeView(tester);
-      expect(find.text('Color schemes'), findsOneWidget);
-      expect(find.text('Color style'), findsNothing);
-      expect(find.byType(PreviewChoiceGroup<LiquidGlassMode>), findsNothing);
-
-      await tester.tap(find.text('New'));
-      await tester.pumpAndSettle();
-      expect(find.text('Color schemes'), findsNothing);
-      expect(find.text('Color style'), findsOneWidget);
-      expect(find.byType(PreviewChoiceGroup<LiquidGlassMode>), findsOneWidget);
-    });
-
-    testWidgets('classic colors are kept apart from the modern palette', (
-      tester,
-    ) async {
-      await pumpThemeView(tester);
-      final before = readTheme();
-      container
-          .read(themeSettingProvider.notifier)
-          .update((state) => state.withActivePrimaryColor(0xFF795548));
-      expect(readTheme().classicPrimaryColor, 0xFF795548);
-      expect(readTheme().primaryColor, before.primaryColor);
-    });
-  });
-
   group('theme mode', () {
     testWidgets('defaults to following the system', (tester) async {
       await pumpThemeView(tester);
@@ -126,8 +77,6 @@ void main() {
   });
 
   group('primary color', () {
-    setUp(useModernStyle);
-
     Finder swatch(int color) => find.byWidgetPredicate(
       (widget) =>
           widget is Semantics && widget.properties.label == Color(color).hex,
@@ -136,7 +85,7 @@ void main() {
     testWidgets('starts on blue among the system colors', (tester) async {
       container
           .read(themeSettingProvider.notifier)
-          .update((_) => defaultThemeProps.copyWith(uiStyle: UiStyle.modern));
+          .update((_) => defaultThemeProps);
       await pumpThemeView(tester);
 
       expect(readTheme().primaryColor, 0xFF007AFF);
@@ -317,8 +266,6 @@ void main() {
   });
 
   group('liquid glass', () {
-    setUp(useModernStyle);
-
     testWidgets('is off until a tier is chosen, and switches back', (
       tester,
     ) async {
@@ -422,7 +369,9 @@ void main() {
 
     final fontsIllustration = find.descendant(
       of: find.byType(FontFamilyView),
-      matching: find.byKey(const ValueKey(NullStatusIllustration.fonts)),
+      matching: find.byKey(
+        const ValueKey<Illustration>(NullStatusIllustration.fonts),
+      ),
     );
 
     String? previewFamilyOf(WidgetTester tester, String text) =>
@@ -489,6 +438,49 @@ void main() {
 
       await pumpSettled(tester);
       expect(previewFamilyOf(tester, 'Arrival Sans'), 'Arrival Sans');
+    });
+
+    testWidgets('gives no name its font while the list scrolls', (
+      tester,
+    ) async {
+      systemFontFamiliesReader = () async => [
+        for (var i = 0; i < 80; i++) 'Scrolled Font $i',
+      ];
+      await pumpThemeView(tester);
+      await openFonts(tester);
+
+      final names = find.descendant(
+        of: find.byType(FontFamilyView),
+        matching: find.textContaining('Scrolled Font', skipOffstage: false),
+        skipOffstage: false,
+      );
+      Set<String> withFamilyOf(bool Function(String?, String) test) => {
+        for (final element in names.evaluate())
+          if (test(
+            DefaultTextStyle.of(element).style.fontFamily,
+            (element.widget as Text).data!,
+          ))
+            (element.widget as Text).data!,
+      };
+      Set<String> withTheirFonts() =>
+          withFamilyOf((family, name) => family == name);
+      Set<String> listed() => withFamilyOf((_, _) => true);
+      final before = withTheirFonts();
+      expect(before, listed());
+
+      final gesture = await tester.startGesture(
+        tester.getCenter(inPage('Scrolled Font 2')),
+      );
+      for (var i = 0; i < 10; i++) {
+        await gesture.moveBy(const Offset(0, -60));
+        await tester.pump(const Duration(milliseconds: 16));
+        expect(withTheirFonts().difference(before), isEmpty);
+      }
+      expect(listed().difference(before), isNotEmpty);
+
+      await gesture.up();
+      await pumpSettled(tester);
+      expect(withTheirFonts(), listed());
     });
 
     testWidgets('shows the loading illustration while the fonts take long', (

@@ -6,7 +6,7 @@ import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 
 /// Reads the current profile's config, null when the Core cannot give it.
 typedef NodeConfigLoader = Future<Map<String, dynamic>?> Function();
@@ -18,7 +18,7 @@ Future<void> showNodeInfo(
 }) {
   return showSheet<void>(
     context: context,
-    builder: (sheetContext) => CommonScaffold(
+    builder: (sheetContext) => Scaffold(
       title: sheetContext.appLocalizations.nodeInfoTitle,
       body: NodeInfoView(proxy: proxy, testUrl: testUrl),
     ),
@@ -50,13 +50,13 @@ class _NodeInfoViewState extends ConsumerState<NodeInfoView> {
     if (profileId == null) {
       return null;
     }
-    return ref.read(coreHandlerProvider).getConfig(profileId);
+    return ref.read(coreHandlerProvider).readConfig(profileId);
   }
 
   Future<void> _copy(String text) async {
     await Clipboard.setData(ClipboardData(text: text));
     if (mounted) {
-      context.showNotifier(context.appLocalizations.copySuccess);
+      dialogs.showBanner(context.appLocalizations.copySuccess);
     }
   }
 

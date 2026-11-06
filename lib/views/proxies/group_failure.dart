@@ -4,7 +4,7 @@ import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 
 /// A group counts as timed out when the last delay test of the node it
 /// currently routes through, against the group's test URL, failed.
@@ -102,7 +102,7 @@ Future<void> showFailedGroupsSheet(
 }) {
   return showSheet<void>(
     context: context,
-    builder: (sheetContext) => CommonScaffold(
+    builder: (sheetContext) => Scaffold(
       title: sheetContext.appLocalizations.timedOutGroups,
       body: _FailedGroupsList(
         groups: groups,
@@ -170,13 +170,13 @@ class _FailedGroupsListState extends ConsumerState<_FailedGroupsList> {
           if (shown.isNotEmpty)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              child: FilledButton.tonalIcon(
+              child: FilledButton.icon(
                 key: const ValueKey('retry-failed-groups'),
                 onPressed: anyTesting || failed.isEmpty
                     ? null
                     : () => _retry(failedNames),
                 icon: anyTesting
-                    ? const CommonCircleLoading(size: 16)
+                    ? const ActivityIndicator(size: 16)
                     : const GlyphIcon(AppGlyphs.bolt, fill: 1),
                 label: Text(
                   anyTesting
@@ -222,7 +222,7 @@ class _FailedGroupsListState extends ConsumerState<_FailedGroupsList> {
                       ? null
                       : () => _retry([group.name]),
                   icon: testing.contains(group.name)
-                      ? const CommonCircleLoading(size: 16)
+                      ? const ActivityIndicator(size: 16)
                       : const GlyphIcon(AppGlyphs.bolt),
                 ),
                 onTap: () => widget.onSelected(group.name),

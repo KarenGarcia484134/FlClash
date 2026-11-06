@@ -68,6 +68,27 @@ tun:
   auto-detect-interface: true
 geo-auto-update: false
 geo-update-interval: 24
+mitm:
+  enable: false
+  skip-server-cert-verify: false
+  auto-quic-block: true
+  h2: false
+  hostname: []
+  url-rewrite: []
+  header-rewrite: []
+  body-rewrite: []
+  map-local: []
+  script: []
+  decrypt-tls: false
+  ca-fingerprint: ""
+  limits:
+    max-body-size: 4194304
+    body-buffer: 33554432
+    certificate-cache: 1024
+    script-concurrency: 4
+    script-memory: 268435456
+    capture-entries: 2000
+    capture-bytes: 67108864
 profile:
   store-selected: false
 geox-url:

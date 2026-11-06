@@ -75,6 +75,13 @@ Future<SetupState> setupState(Ref ref, int? profileId) async {
       ? const <String, String>{}
       : ref.watch(profileDialerProxiesProvider(profileId));
   final listeners = ref.watch(listenersSettingProvider);
+  final mitmModules =
+      mitmFeature &&
+          ref.watch(
+            patchClashConfigProvider.select((state) => state.mitm.enable),
+          )
+      ? ref.watch(mitmModulesProvider.future)
+      : null;
   List<ProxyGroup> proxyGroups = [];
   List<Rule> rules = [];
   List<Rule> addedRules = [];
@@ -110,6 +117,9 @@ Future<SetupState> setupState(Ref ref, int? profileId) async {
     }
   }
   return SetupState(
+    mitmModules: mitmModules == null
+        ? const []
+        : await mitmModuleSources(await mitmModules),
     clashProviders: clashProviders,
     profileProviders: profileProviders,
     appProxies: appProxies,
@@ -134,6 +144,31 @@ Future<SetupState> setupState(Ref ref, int? profileId) async {
   );
 }
 
+/// A module whose content is not on disk yet adds nothing until it downloads.
+Future<List<MitmModuleSource>> mitmModuleSources(
+  Iterable<MitmModule> modules,
+) async {
+  final directory = await appPath.mitmModulesDirPath;
+  final sources = <MitmModuleSource>[];
+  for (final module in modules) {
+    if (!module.enabled) {
+      continue;
+    }
+    final file = File(join(directory, module.fileName));
+    if (!await file.exists()) {
+      continue;
+    }
+    sources.add(
+      MitmModuleSource(
+        content: await file.readAsString(),
+        arguments: module.arguments,
+        resources: module.resources,
+      ),
+    );
+  }
+  return sources;
+}
+
 /// Subscription profiles double as proxy providers for custom profiles.
 @riverpod
 Map<String, int> profileProviders(Ref ref) {
@@ -155,7 +190,7 @@ Future<DialerGraph> dialerGraph(Ref ref, int profileId) async {
   if (type == ProfileType.custom) {
     return const DialerGraph();
   }
-  final configMap = await ref.read(coreHandlerProvider).getConfig(profileId);
+  final configMap = await ref.read(coreHandlerProvider).readConfig(profileId);
   return DialerGraph.fromConfig(configMap);
 }
 

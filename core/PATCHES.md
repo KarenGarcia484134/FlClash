@@ -2,9 +2,10 @@
 
 `core/Clash.Meta` points at the fork
 [KarenGarcia484134/Clash.Meta](https://github.com/KarenGarcia484134/Clash.Meta),
-branch `FlClash-patched-1.19.33`: upstream `chen08209/Clash.Meta` branch `FlClash`
-plus the commits below (cherry-picked onto `c5062921`, mihomo v1.19.33; the
-older `FlClash-patched` branch holds them on the previous base). Every patch
+branch `FlClash-patched-v0.9.3`: upstream `chen08209/Clash.Meta` branch `FlClash`
+plus the commits below (cherry-picked onto `024245dc`, upstream FlClash v0.9.3,
+mihomo v1.19.33; `FlClash-patched-1.19.33` and the older `FlClash-patched`
+branch hold them on the previous bases and stay as they are for old tags). Every patch
 only adds files, so moving them onto a newer upstream does not conflict.
 
 | Commit | Files | Purpose |

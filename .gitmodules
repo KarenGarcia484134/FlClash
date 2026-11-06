@@ -1,4 +1,8 @@
 [submodule "core/Clash.Meta"]
 	path = core/Clash.Meta
 	url = https://github.com/KarenGarcia484134/Clash.Meta.git
-	branch = FlClash-patched-1.19.33
+	branch = FlClash-patched-v0.9.3
+[submodule "plugins/prism_ui"]
+	path = plugins/prism_ui
+	url = https://github.com/chen08209/prism_ui.git
+	branch = main

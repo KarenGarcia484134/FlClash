@@ -277,573 +277,6 @@ as T,
 }
 
 /// @nodoc
-mixin _$CommonMessage {
-
- String get id; String get text; MessageLevel get level; Duration get duration; MessageActionState? get actionState;
-/// Create a copy of CommonMessage
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$CommonMessageCopyWith<CommonMessage> get copyWith => _$CommonMessageCopyWithImpl<CommonMessage>(this as CommonMessage, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  final _this = this as CommonMessage;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommonMessage&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.text, _this.text) || other.text == _this.text)&&(identical(other.level, _this.level) || other.level == _this.level)&&(identical(other.duration, _this.duration) || other.duration == _this.duration)&&(identical(other.actionState, _this.actionState) || other.actionState == _this.actionState));
-}
-
-
-@override
-int get hashCode {
-  final _this = this as CommonMessage;
-  return Object.hash(runtimeType,_this.id,_this.text,_this.level,_this.duration,_this.actionState);
-}
-
-@override
-String toString() {
-  final _this = this as CommonMessage;
-  return 'CommonMessage(id: ${_this.id}, text: ${_this.text}, level: ${_this.level}, duration: ${_this.duration}, actionState: ${_this.actionState})';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $CommonMessageCopyWith<$Res>  {
-  factory $CommonMessageCopyWith(CommonMessage value, $Res Function(CommonMessage) _then) = _$CommonMessageCopyWithImpl;
-@useResult
-$Res call({
- String id, String text, MessageLevel level, Duration duration, MessageActionState? actionState
-});
-
-
-$MessageActionStateCopyWith<$Res>? get actionState;
-
-}
-/// @nodoc
-class _$CommonMessageCopyWithImpl<$Res>
-    implements $CommonMessageCopyWith<$Res> {
-  _$CommonMessageCopyWithImpl(this._self, this._then);
-
-  final CommonMessage _self;
-  final $Res Function(CommonMessage) _then;
-
-/// Create a copy of CommonMessage
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? text = null,Object? level = null,Object? duration = null,Object? actionState = freezed,}) {
-  return _then(CommonMessage(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
-as String,level: null == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
-as MessageLevel,duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
-as Duration,actionState: freezed == actionState ? _self.actionState : actionState // ignore: cast_nullable_to_non_nullable
-as MessageActionState?,
-  ));
-}
-/// Create a copy of CommonMessage
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$MessageActionStateCopyWith<$Res>? get actionState {
-    if (_self.actionState == null) {
-    return null;
-  }
-
-  return $MessageActionStateCopyWith<$Res>(_self.actionState!, (value) {
-    return _then(_self.copyWith(actionState: value));
-  });
-}
-}
-
-
-/// Adds pattern-matching-related methods to [CommonMessage].
-extension CommonMessagePatterns on CommonMessage {
-/// A variant of `map` that fallback to returning `orElse`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _CommonMessage value)?  $default,{required TResult orElse(),}){
-final _that = this;
-switch (_that) {
-case _CommonMessage() when $default != null:
-return $default(_that);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// Callbacks receives the raw object, upcasted.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case final Subclass2 value:
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _CommonMessage value)  $default,){
-final _that = this;
-switch (_that) {
-case _CommonMessage():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `map` that fallback to returning `null`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _CommonMessage value)?  $default,){
-final _that = this;
-switch (_that) {
-case _CommonMessage() when $default != null:
-return $default(_that);case _:
-  return null;
-
-}
-}
-/// A variant of `when` that fallback to an `orElse` callback.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String text,  MessageLevel level,  Duration duration,  MessageActionState? actionState)?  $default,{required TResult orElse(),}) {final _that = this;
-switch (_that) {
-case _CommonMessage() when $default != null:
-return $default(_that.id,_that.text,_that.level,_that.duration,_that.actionState);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// As opposed to `map`, this offers destructuring.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case Subclass2(:final field2):
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String text,  MessageLevel level,  Duration duration,  MessageActionState? actionState)  $default,) {final _that = this;
-switch (_that) {
-case _CommonMessage():
-return $default(_that.id,_that.text,_that.level,_that.duration,_that.actionState);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `when` that fallback to returning `null`
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String text,  MessageLevel level,  Duration duration,  MessageActionState? actionState)?  $default,) {final _that = this;
-switch (_that) {
-case _CommonMessage() when $default != null:
-return $default(_that.id,_that.text,_that.level,_that.duration,_that.actionState);case _:
-  return null;
-
-}
-}
-
-}
-
-/// @nodoc
-
-
-class _CommonMessage implements CommonMessage {
-  const _CommonMessage({required this.id, required this.text, this.level = MessageLevel.info, this.duration = const Duration(seconds: 3), this.actionState});
-  
-
-@override final  String id;
-@override final  String text;
-@override@JsonKey() final  MessageLevel level;
-@override@JsonKey() final  Duration duration;
-@override final  MessageActionState? actionState;
-
-/// Create a copy of CommonMessage
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$CommonMessageCopyWith<_CommonMessage> get copyWith => __$CommonMessageCopyWithImpl<_CommonMessage>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommonMessage&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.level, level) || other.level == level)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.actionState, actionState) || other.actionState == actionState));
-}
-
-
-@override
-int get hashCode {
-    return Object.hash(runtimeType,id,text,level,duration,actionState);
-}
-
-@override
-String toString() {
-    return 'CommonMessage(id: $id, text: $text, level: $level, duration: $duration, actionState: $actionState)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$CommonMessageCopyWith<$Res> implements $CommonMessageCopyWith<$Res> {
-  factory _$CommonMessageCopyWith(_CommonMessage value, $Res Function(_CommonMessage) _then) = __$CommonMessageCopyWithImpl;
-@override @useResult
-$Res call({
- String id, String text, MessageLevel level, Duration duration, MessageActionState? actionState
-});
-
-
-@override $MessageActionStateCopyWith<$Res>? get actionState;
-
-}
-/// @nodoc
-class __$CommonMessageCopyWithImpl<$Res>
-    implements _$CommonMessageCopyWith<$Res> {
-  __$CommonMessageCopyWithImpl(this._self, this._then);
-
-  final _CommonMessage _self;
-  final $Res Function(_CommonMessage) _then;
-
-/// Create a copy of CommonMessage
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? text = null,Object? level = null,Object? duration = null,Object? actionState = freezed,}) {
-  return _then(_CommonMessage(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
-as String,level: null == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
-as MessageLevel,duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
-as Duration,actionState: freezed == actionState ? _self.actionState : actionState // ignore: cast_nullable_to_non_nullable
-as MessageActionState?,
-  ));
-}
-
-/// Create a copy of CommonMessage
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$MessageActionStateCopyWith<$Res>? get actionState {
-    if (_self.actionState == null) {
-    return null;
-  }
-
-  return $MessageActionStateCopyWith<$Res>(_self.actionState!, (value) {
-    return _then(_self.copyWith(actionState: value));
-  });
-}
-}
-
-/// @nodoc
-mixin _$MessageActionState {
-
- String get actionText; VoidCallback get action;
-/// Create a copy of MessageActionState
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$MessageActionStateCopyWith<MessageActionState> get copyWith => _$MessageActionStateCopyWithImpl<MessageActionState>(this as MessageActionState, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  final _this = this as MessageActionState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MessageActionState&&(identical(other.actionText, _this.actionText) || other.actionText == _this.actionText)&&(identical(other.action, _this.action) || other.action == _this.action));
-}
-
-
-@override
-int get hashCode {
-  final _this = this as MessageActionState;
-  return Object.hash(runtimeType,_this.actionText,_this.action);
-}
-
-@override
-String toString() {
-  final _this = this as MessageActionState;
-  return 'MessageActionState(actionText: ${_this.actionText}, action: ${_this.action})';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $MessageActionStateCopyWith<$Res>  {
-  factory $MessageActionStateCopyWith(MessageActionState value, $Res Function(MessageActionState) _then) = _$MessageActionStateCopyWithImpl;
-@useResult
-$Res call({
- String actionText, VoidCallback action
-});
-
-
-
-
-}
-/// @nodoc
-class _$MessageActionStateCopyWithImpl<$Res>
-    implements $MessageActionStateCopyWith<$Res> {
-  _$MessageActionStateCopyWithImpl(this._self, this._then);
-
-  final MessageActionState _self;
-  final $Res Function(MessageActionState) _then;
-
-/// Create a copy of MessageActionState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? actionText = null,Object? action = null,}) {
-  return _then(MessageActionState(
-actionText: null == actionText ? _self.actionText : actionText // ignore: cast_nullable_to_non_nullable
-as String,action: null == action ? _self.action : action // ignore: cast_nullable_to_non_nullable
-as VoidCallback,
-  ));
-}
-
-}
-
-
-/// Adds pattern-matching-related methods to [MessageActionState].
-extension MessageActionStatePatterns on MessageActionState {
-/// A variant of `map` that fallback to returning `orElse`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _MessageActionState value)?  $default,{required TResult orElse(),}){
-final _that = this;
-switch (_that) {
-case _MessageActionState() when $default != null:
-return $default(_that);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// Callbacks receives the raw object, upcasted.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case final Subclass2 value:
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _MessageActionState value)  $default,){
-final _that = this;
-switch (_that) {
-case _MessageActionState():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `map` that fallback to returning `null`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _MessageActionState value)?  $default,){
-final _that = this;
-switch (_that) {
-case _MessageActionState() when $default != null:
-return $default(_that);case _:
-  return null;
-
-}
-}
-/// A variant of `when` that fallback to an `orElse` callback.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String actionText,  VoidCallback action)?  $default,{required TResult orElse(),}) {final _that = this;
-switch (_that) {
-case _MessageActionState() when $default != null:
-return $default(_that.actionText,_that.action);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// As opposed to `map`, this offers destructuring.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case Subclass2(:final field2):
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String actionText,  VoidCallback action)  $default,) {final _that = this;
-switch (_that) {
-case _MessageActionState():
-return $default(_that.actionText,_that.action);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `when` that fallback to returning `null`
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String actionText,  VoidCallback action)?  $default,) {final _that = this;
-switch (_that) {
-case _MessageActionState() when $default != null:
-return $default(_that.actionText,_that.action);case _:
-  return null;
-
-}
-}
-
-}
-
-/// @nodoc
-
-
-class _MessageActionState implements MessageActionState {
-  const _MessageActionState({required this.actionText, required this.action});
-  
-
-@override final  String actionText;
-@override final  VoidCallback action;
-
-/// Create a copy of MessageActionState
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$MessageActionStateCopyWith<_MessageActionState> get copyWith => __$MessageActionStateCopyWithImpl<_MessageActionState>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MessageActionState&&(identical(other.actionText, actionText) || other.actionText == actionText)&&(identical(other.action, action) || other.action == action));
-}
-
-
-@override
-int get hashCode {
-    return Object.hash(runtimeType,actionText,action);
-}
-
-@override
-String toString() {
-    return 'MessageActionState(actionText: $actionText, action: $action)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$MessageActionStateCopyWith<$Res> implements $MessageActionStateCopyWith<$Res> {
-  factory _$MessageActionStateCopyWith(_MessageActionState value, $Res Function(_MessageActionState) _then) = __$MessageActionStateCopyWithImpl;
-@override @useResult
-$Res call({
- String actionText, VoidCallback action
-});
-
-
-
-
-}
-/// @nodoc
-class __$MessageActionStateCopyWithImpl<$Res>
-    implements _$MessageActionStateCopyWith<$Res> {
-  __$MessageActionStateCopyWithImpl(this._self, this._then);
-
-  final _MessageActionState _self;
-  final $Res Function(_MessageActionState) _then;
-
-/// Create a copy of MessageActionState
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? actionText = null,Object? action = null,}) {
-  return _then(_MessageActionState(
-actionText: null == actionText ? _self.actionText : actionText // ignore: cast_nullable_to_non_nullable
-as String,action: null == action ? _self.action : action // ignore: cast_nullable_to_non_nullable
-as VoidCallback,
-  ));
-}
-
-
-}
-
-/// @nodoc
 mixin _$ProfilesState {
 
  List<Profile> get profiles; int? get currentProfileId;
@@ -3924,7 +3357,7 @@ as int,
 /// @nodoc
 mixin _$ThemeColorsSelectorState {
 
- int? get primaryColor; List<int> get primaryColors; ColorStyle get colorStyle; bool get isClassic; DynamicSchemeVariant get schemeVariant; bool get isDefault;
+ int? get primaryColor; List<int> get primaryColors; ColorStyle get colorStyle; bool get isDefault;
 /// Create a copy of ThemeColorsSelectorState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -3936,20 +3369,20 @@ $ThemeColorsSelectorStateCopyWith<ThemeColorsSelectorState> get copyWith => _$Th
 @override
 bool operator ==(Object other) {
   final _this = this as ThemeColorsSelectorState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ThemeColorsSelectorState&&(identical(other.primaryColor, _this.primaryColor) || other.primaryColor == _this.primaryColor)&&const DeepCollectionEquality().equals(other.primaryColors, _this.primaryColors)&&(identical(other.colorStyle, _this.colorStyle) || other.colorStyle == _this.colorStyle)&&(identical(other.isClassic, _this.isClassic) || other.isClassic == _this.isClassic)&&(identical(other.schemeVariant, _this.schemeVariant) || other.schemeVariant == _this.schemeVariant)&&(identical(other.isDefault, _this.isDefault) || other.isDefault == _this.isDefault));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ThemeColorsSelectorState&&(identical(other.primaryColor, _this.primaryColor) || other.primaryColor == _this.primaryColor)&&const DeepCollectionEquality().equals(other.primaryColors, _this.primaryColors)&&(identical(other.colorStyle, _this.colorStyle) || other.colorStyle == _this.colorStyle)&&(identical(other.isDefault, _this.isDefault) || other.isDefault == _this.isDefault));
 }
 
 
 @override
 int get hashCode {
   final _this = this as ThemeColorsSelectorState;
-  return Object.hash(runtimeType,_this.primaryColor,const DeepCollectionEquality().hash(_this.primaryColors),_this.colorStyle,_this.isClassic,_this.schemeVariant,_this.isDefault);
+  return Object.hash(runtimeType,_this.primaryColor,const DeepCollectionEquality().hash(_this.primaryColors),_this.colorStyle,_this.isDefault);
 }
 
 @override
 String toString() {
   final _this = this as ThemeColorsSelectorState;
-  return 'ThemeColorsSelectorState(primaryColor: ${_this.primaryColor}, primaryColors: ${_this.primaryColors}, colorStyle: ${_this.colorStyle}, isClassic: ${_this.isClassic}, schemeVariant: ${_this.schemeVariant}, isDefault: ${_this.isDefault})';
+  return 'ThemeColorsSelectorState(primaryColor: ${_this.primaryColor}, primaryColors: ${_this.primaryColors}, colorStyle: ${_this.colorStyle}, isDefault: ${_this.isDefault})';
 }
 
 
@@ -3960,7 +3393,7 @@ abstract mixin class $ThemeColorsSelectorStateCopyWith<$Res>  {
   factory $ThemeColorsSelectorStateCopyWith(ThemeColorsSelectorState value, $Res Function(ThemeColorsSelectorState) _then) = _$ThemeColorsSelectorStateCopyWithImpl;
 @useResult
 $Res call({
- int? primaryColor, List<int> primaryColors, ColorStyle colorStyle, bool isClassic, DynamicSchemeVariant schemeVariant, bool isDefault
+ int? primaryColor, List<int> primaryColors, ColorStyle colorStyle, bool isDefault
 });
 
 
@@ -3977,14 +3410,12 @@ class _$ThemeColorsSelectorStateCopyWithImpl<$Res>
 
 /// Create a copy of ThemeColorsSelectorState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? primaryColor = freezed,Object? primaryColors = null,Object? colorStyle = null,Object? isClassic = null,Object? schemeVariant = null,Object? isDefault = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? primaryColor = freezed,Object? primaryColors = null,Object? colorStyle = null,Object? isDefault = null,}) {
   return _then(ThemeColorsSelectorState(
 primaryColor: freezed == primaryColor ? _self.primaryColor : primaryColor // ignore: cast_nullable_to_non_nullable
 as int?,primaryColors: null == primaryColors ? _self.primaryColors : primaryColors // ignore: cast_nullable_to_non_nullable
 as List<int>,colorStyle: null == colorStyle ? _self.colorStyle : colorStyle // ignore: cast_nullable_to_non_nullable
-as ColorStyle,isClassic: null == isClassic ? _self.isClassic : isClassic // ignore: cast_nullable_to_non_nullable
-as bool,schemeVariant: null == schemeVariant ? _self.schemeVariant : schemeVariant // ignore: cast_nullable_to_non_nullable
-as DynamicSchemeVariant,isDefault: null == isDefault ? _self.isDefault : isDefault // ignore: cast_nullable_to_non_nullable
+as ColorStyle,isDefault: null == isDefault ? _self.isDefault : isDefault // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -4070,10 +3501,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? primaryColor,  List<int> primaryColors,  ColorStyle colorStyle,  bool isClassic,  DynamicSchemeVariant schemeVariant,  bool isDefault)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? primaryColor,  List<int> primaryColors,  ColorStyle colorStyle,  bool isDefault)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ThemeColorsSelectorState() when $default != null:
-return $default(_that.primaryColor,_that.primaryColors,_that.colorStyle,_that.isClassic,_that.schemeVariant,_that.isDefault);case _:
+return $default(_that.primaryColor,_that.primaryColors,_that.colorStyle,_that.isDefault);case _:
   return orElse();
 
 }
@@ -4091,10 +3522,10 @@ return $default(_that.primaryColor,_that.primaryColors,_that.colorStyle,_that.is
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? primaryColor,  List<int> primaryColors,  ColorStyle colorStyle,  bool isClassic,  DynamicSchemeVariant schemeVariant,  bool isDefault)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? primaryColor,  List<int> primaryColors,  ColorStyle colorStyle,  bool isDefault)  $default,) {final _that = this;
 switch (_that) {
 case _ThemeColorsSelectorState():
-return $default(_that.primaryColor,_that.primaryColors,_that.colorStyle,_that.isClassic,_that.schemeVariant,_that.isDefault);case _:
+return $default(_that.primaryColor,_that.primaryColors,_that.colorStyle,_that.isDefault);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -4111,10 +3542,10 @@ return $default(_that.primaryColor,_that.primaryColors,_that.colorStyle,_that.is
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? primaryColor,  List<int> primaryColors,  ColorStyle colorStyle,  bool isClassic,  DynamicSchemeVariant schemeVariant,  bool isDefault)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? primaryColor,  List<int> primaryColors,  ColorStyle colorStyle,  bool isDefault)?  $default,) {final _that = this;
 switch (_that) {
 case _ThemeColorsSelectorState() when $default != null:
-return $default(_that.primaryColor,_that.primaryColors,_that.colorStyle,_that.isClassic,_that.schemeVariant,_that.isDefault);case _:
+return $default(_that.primaryColor,_that.primaryColors,_that.colorStyle,_that.isDefault);case _:
   return null;
 
 }
@@ -4126,7 +3557,7 @@ return $default(_that.primaryColor,_that.primaryColors,_that.colorStyle,_that.is
 
 
 class _ThemeColorsSelectorState implements ThemeColorsSelectorState {
-  const _ThemeColorsSelectorState({required this.primaryColor, required  List<int> primaryColors, required this.colorStyle, required this.isClassic, required this.schemeVariant, required this.isDefault}): _primaryColors = primaryColors;
+  const _ThemeColorsSelectorState({required this.primaryColor, required  List<int> primaryColors, required this.colorStyle, required this.isDefault}): _primaryColors = primaryColors;
   
 
 @override final  int? primaryColor;
@@ -4138,8 +3569,6 @@ class _ThemeColorsSelectorState implements ThemeColorsSelectorState {
 }
 
 @override final  ColorStyle colorStyle;
-@override final  bool isClassic;
-@override final  DynamicSchemeVariant schemeVariant;
 @override final  bool isDefault;
 
 /// Create a copy of ThemeColorsSelectorState
@@ -4152,18 +3581,18 @@ _$ThemeColorsSelectorStateCopyWith<_ThemeColorsSelectorState> get copyWith => __
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ThemeColorsSelectorState&&(identical(other.primaryColor, primaryColor) || other.primaryColor == primaryColor)&&const DeepCollectionEquality().equals(other.primaryColors, _primaryColors)&&(identical(other.colorStyle, colorStyle) || other.colorStyle == colorStyle)&&(identical(other.isClassic, isClassic) || other.isClassic == isClassic)&&(identical(other.schemeVariant, schemeVariant) || other.schemeVariant == schemeVariant)&&(identical(other.isDefault, isDefault) || other.isDefault == isDefault));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ThemeColorsSelectorState&&(identical(other.primaryColor, primaryColor) || other.primaryColor == primaryColor)&&const DeepCollectionEquality().equals(other.primaryColors, _primaryColors)&&(identical(other.colorStyle, colorStyle) || other.colorStyle == colorStyle)&&(identical(other.isDefault, isDefault) || other.isDefault == isDefault));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,primaryColor,const DeepCollectionEquality().hash(_primaryColors),colorStyle,isClassic,schemeVariant,isDefault);
+    return Object.hash(runtimeType,primaryColor,const DeepCollectionEquality().hash(_primaryColors),colorStyle,isDefault);
 }
 
 @override
 String toString() {
-    return 'ThemeColorsSelectorState(primaryColor: $primaryColor, primaryColors: $primaryColors, colorStyle: $colorStyle, isClassic: $isClassic, schemeVariant: $schemeVariant, isDefault: $isDefault)';
+    return 'ThemeColorsSelectorState(primaryColor: $primaryColor, primaryColors: $primaryColors, colorStyle: $colorStyle, isDefault: $isDefault)';
 }
 
 
@@ -4174,7 +3603,7 @@ abstract mixin class _$ThemeColorsSelectorStateCopyWith<$Res> implements $ThemeC
   factory _$ThemeColorsSelectorStateCopyWith(_ThemeColorsSelectorState value, $Res Function(_ThemeColorsSelectorState) _then) = __$ThemeColorsSelectorStateCopyWithImpl;
 @override @useResult
 $Res call({
- int? primaryColor, List<int> primaryColors, ColorStyle colorStyle, bool isClassic, DynamicSchemeVariant schemeVariant, bool isDefault
+ int? primaryColor, List<int> primaryColors, ColorStyle colorStyle, bool isDefault
 });
 
 
@@ -4191,14 +3620,12 @@ class __$ThemeColorsSelectorStateCopyWithImpl<$Res>
 
 /// Create a copy of ThemeColorsSelectorState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? primaryColor = freezed,Object? primaryColors = null,Object? colorStyle = null,Object? isClassic = null,Object? schemeVariant = null,Object? isDefault = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? primaryColor = freezed,Object? primaryColors = null,Object? colorStyle = null,Object? isDefault = null,}) {
   return _then(_ThemeColorsSelectorState(
 primaryColor: freezed == primaryColor ? _self.primaryColor : primaryColor // ignore: cast_nullable_to_non_nullable
 as int?,primaryColors: null == primaryColors ? _self._primaryColors : primaryColors // ignore: cast_nullable_to_non_nullable
 as List<int>,colorStyle: null == colorStyle ? _self.colorStyle : colorStyle // ignore: cast_nullable_to_non_nullable
-as ColorStyle,isClassic: null == isClassic ? _self.isClassic : isClassic // ignore: cast_nullable_to_non_nullable
-as bool,schemeVariant: null == schemeVariant ? _self.schemeVariant : schemeVariant // ignore: cast_nullable_to_non_nullable
-as DynamicSchemeVariant,isDefault: null == isDefault ? _self.isDefault : isDefault // ignore: cast_nullable_to_non_nullable
+as ColorStyle,isDefault: null == isDefault ? _self.isDefault : isDefault // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -5296,7 +4723,7 @@ as String?,
 /// @nodoc
 mixin _$SharedState {
 
- SetupParams? get setupParams; VpnOptions? get vpnOptions; String get stopTip; String get startTip; String get localNetworkTip; String get currentProfileName; String get stopText; bool get onlyStatisticsProxy; bool get showStopAction;
+@JsonKey(includeIfNull: false) SetupParams? get setupParams; VpnOptions? get vpnOptions; String get stopTip; String get startTip; String get localNetworkTip; String get currentProfileName; String get stopText; bool get onlyStatisticsProxy; bool get showStopAction;
 /// Create a copy of SharedState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -5334,7 +4761,7 @@ abstract mixin class $SharedStateCopyWith<$Res>  {
   factory $SharedStateCopyWith(SharedState value, $Res Function(SharedState) _then) = _$SharedStateCopyWithImpl;
 @useResult
 $Res call({
- SetupParams? setupParams, VpnOptions? vpnOptions, String stopTip, String startTip, String localNetworkTip, String currentProfileName, String stopText, bool onlyStatisticsProxy, bool showStopAction
+@JsonKey(includeIfNull: false) SetupParams? setupParams, VpnOptions? vpnOptions, String stopTip, String startTip, String localNetworkTip, String currentProfileName, String stopText, bool onlyStatisticsProxy, bool showStopAction
 });
 
 
@@ -5471,7 +4898,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( SetupParams? setupParams,  VpnOptions? vpnOptions,  String stopTip,  String startTip,  String localNetworkTip,  String currentProfileName,  String stopText,  bool onlyStatisticsProxy,  bool showStopAction)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(includeIfNull: false)  SetupParams? setupParams,  VpnOptions? vpnOptions,  String stopTip,  String startTip,  String localNetworkTip,  String currentProfileName,  String stopText,  bool onlyStatisticsProxy,  bool showStopAction)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SharedState() when $default != null:
 return $default(_that.setupParams,_that.vpnOptions,_that.stopTip,_that.startTip,_that.localNetworkTip,_that.currentProfileName,_that.stopText,_that.onlyStatisticsProxy,_that.showStopAction);case _:
@@ -5492,7 +4919,7 @@ return $default(_that.setupParams,_that.vpnOptions,_that.stopTip,_that.startTip,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( SetupParams? setupParams,  VpnOptions? vpnOptions,  String stopTip,  String startTip,  String localNetworkTip,  String currentProfileName,  String stopText,  bool onlyStatisticsProxy,  bool showStopAction)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(includeIfNull: false)  SetupParams? setupParams,  VpnOptions? vpnOptions,  String stopTip,  String startTip,  String localNetworkTip,  String currentProfileName,  String stopText,  bool onlyStatisticsProxy,  bool showStopAction)  $default,) {final _that = this;
 switch (_that) {
 case _SharedState():
 return $default(_that.setupParams,_that.vpnOptions,_that.stopTip,_that.startTip,_that.localNetworkTip,_that.currentProfileName,_that.stopText,_that.onlyStatisticsProxy,_that.showStopAction);case _:
@@ -5512,7 +4939,7 @@ return $default(_that.setupParams,_that.vpnOptions,_that.stopTip,_that.startTip,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( SetupParams? setupParams,  VpnOptions? vpnOptions,  String stopTip,  String startTip,  String localNetworkTip,  String currentProfileName,  String stopText,  bool onlyStatisticsProxy,  bool showStopAction)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(includeIfNull: false)  SetupParams? setupParams,  VpnOptions? vpnOptions,  String stopTip,  String startTip,  String localNetworkTip,  String currentProfileName,  String stopText,  bool onlyStatisticsProxy,  bool showStopAction)?  $default,) {final _that = this;
 switch (_that) {
 case _SharedState() when $default != null:
 return $default(_that.setupParams,_that.vpnOptions,_that.stopTip,_that.startTip,_that.localNetworkTip,_that.currentProfileName,_that.stopText,_that.onlyStatisticsProxy,_that.showStopAction);case _:
@@ -5527,10 +4954,10 @@ return $default(_that.setupParams,_that.vpnOptions,_that.stopTip,_that.startTip,
 @JsonSerializable()
 
 class _SharedState implements SharedState {
-  const _SharedState({this.setupParams, this.vpnOptions, required this.stopTip, required this.startTip, required this.localNetworkTip, required this.currentProfileName, required this.stopText, required this.onlyStatisticsProxy, this.showStopAction = true});
+  const _SharedState({@JsonKey(includeIfNull: false) this.setupParams, this.vpnOptions, required this.stopTip, required this.startTip, required this.localNetworkTip, required this.currentProfileName, required this.stopText, required this.onlyStatisticsProxy, this.showStopAction = true});
   factory _SharedState.fromJson(Map<String, dynamic> json) => _$SharedStateFromJson(json);
 
-@override final  SetupParams? setupParams;
+@override@JsonKey(includeIfNull: false) final  SetupParams? setupParams;
 @override final  VpnOptions? vpnOptions;
 @override final  String stopTip;
 @override final  String startTip;
@@ -5575,7 +5002,7 @@ abstract mixin class _$SharedStateCopyWith<$Res> implements $SharedStateCopyWith
   factory _$SharedStateCopyWith(_SharedState value, $Res Function(_SharedState) _then) = __$SharedStateCopyWithImpl;
 @override @useResult
 $Res call({
- SetupParams? setupParams, VpnOptions? vpnOptions, String stopTip, String startTip, String localNetworkTip, String currentProfileName, String stopText, bool onlyStatisticsProxy, bool showStopAction
+@JsonKey(includeIfNull: false) SetupParams? setupParams, VpnOptions? vpnOptions, String stopTip, String startTip, String localNetworkTip, String currentProfileName, String stopText, bool onlyStatisticsProxy, bool showStopAction
 });
 
 
@@ -5947,7 +5374,7 @@ mixin _$MakeRealProfileState {
  bool get keepEmptyDnsOverrides; bool get appendSystemDns; List<ProxyGroup> get proxyGroups; List<Rule> get rules; List<Rule> get addedRules; List<CustomRouting> get customRoutings; TailscaleProps get tailscale; Map<String, String> get dialerProxies; ListenersProps get listeners; String get defaultUA; List<String> get authentication; Map<String, dynamic> get injectedProxyProviders; Map<String, dynamic> get injectedRuleProviders; String? get matchTarget; bool get safeMode;/// [rawConfig] carries only the outline of the proxies, groups and
 /// sub-rules the Core keeps; the result then holds new proxies and
 /// patches of the outline's instead of whole sections.
- bool get outlineOnly;
+ bool get outlineOnly; List<MitmModuleSource> get mitmModules;
 /// Create a copy of MakeRealProfileState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -5959,20 +5386,20 @@ $MakeRealProfileStateCopyWith<MakeRealProfileState> get copyWith => _$MakeRealPr
 @override
 bool operator ==(Object other) {
   final _this = this as MakeRealProfileState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MakeRealProfileState&&(identical(other.profilesPath, _this.profilesPath) || other.profilesPath == _this.profilesPath)&&(identical(other.profileId, _this.profileId) || other.profileId == _this.profileId)&&const DeepCollectionEquality().equals(other.rawConfig, _this.rawConfig)&&(identical(other.realPatchConfig, _this.realPatchConfig) || other.realPatchConfig == _this.realPatchConfig)&&(identical(other.overrides, _this.overrides) || other.overrides == _this.overrides)&&(identical(other.bypassPrivateRoute, _this.bypassPrivateRoute) || other.bypassPrivateRoute == _this.bypassPrivateRoute)&&(identical(other.keepEmptyDnsOverrides, _this.keepEmptyDnsOverrides) || other.keepEmptyDnsOverrides == _this.keepEmptyDnsOverrides)&&(identical(other.appendSystemDns, _this.appendSystemDns) || other.appendSystemDns == _this.appendSystemDns)&&const DeepCollectionEquality().equals(other.proxyGroups, _this.proxyGroups)&&const DeepCollectionEquality().equals(other.rules, _this.rules)&&const DeepCollectionEquality().equals(other.addedRules, _this.addedRules)&&const DeepCollectionEquality().equals(other.customRoutings, _this.customRoutings)&&(identical(other.tailscale, _this.tailscale) || other.tailscale == _this.tailscale)&&const DeepCollectionEquality().equals(other.dialerProxies, _this.dialerProxies)&&(identical(other.listeners, _this.listeners) || other.listeners == _this.listeners)&&(identical(other.defaultUA, _this.defaultUA) || other.defaultUA == _this.defaultUA)&&const DeepCollectionEquality().equals(other.authentication, _this.authentication)&&const DeepCollectionEquality().equals(other.injectedProxyProviders, _this.injectedProxyProviders)&&const DeepCollectionEquality().equals(other.injectedRuleProviders, _this.injectedRuleProviders)&&(identical(other.matchTarget, _this.matchTarget) || other.matchTarget == _this.matchTarget)&&(identical(other.safeMode, _this.safeMode) || other.safeMode == _this.safeMode)&&(identical(other.outlineOnly, _this.outlineOnly) || other.outlineOnly == _this.outlineOnly));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MakeRealProfileState&&(identical(other.profilesPath, _this.profilesPath) || other.profilesPath == _this.profilesPath)&&(identical(other.profileId, _this.profileId) || other.profileId == _this.profileId)&&const DeepCollectionEquality().equals(other.rawConfig, _this.rawConfig)&&(identical(other.realPatchConfig, _this.realPatchConfig) || other.realPatchConfig == _this.realPatchConfig)&&(identical(other.overrides, _this.overrides) || other.overrides == _this.overrides)&&(identical(other.bypassPrivateRoute, _this.bypassPrivateRoute) || other.bypassPrivateRoute == _this.bypassPrivateRoute)&&(identical(other.keepEmptyDnsOverrides, _this.keepEmptyDnsOverrides) || other.keepEmptyDnsOverrides == _this.keepEmptyDnsOverrides)&&(identical(other.appendSystemDns, _this.appendSystemDns) || other.appendSystemDns == _this.appendSystemDns)&&const DeepCollectionEquality().equals(other.proxyGroups, _this.proxyGroups)&&const DeepCollectionEquality().equals(other.rules, _this.rules)&&const DeepCollectionEquality().equals(other.addedRules, _this.addedRules)&&const DeepCollectionEquality().equals(other.customRoutings, _this.customRoutings)&&(identical(other.tailscale, _this.tailscale) || other.tailscale == _this.tailscale)&&const DeepCollectionEquality().equals(other.dialerProxies, _this.dialerProxies)&&(identical(other.listeners, _this.listeners) || other.listeners == _this.listeners)&&(identical(other.defaultUA, _this.defaultUA) || other.defaultUA == _this.defaultUA)&&const DeepCollectionEquality().equals(other.authentication, _this.authentication)&&const DeepCollectionEquality().equals(other.injectedProxyProviders, _this.injectedProxyProviders)&&const DeepCollectionEquality().equals(other.injectedRuleProviders, _this.injectedRuleProviders)&&(identical(other.matchTarget, _this.matchTarget) || other.matchTarget == _this.matchTarget)&&(identical(other.safeMode, _this.safeMode) || other.safeMode == _this.safeMode)&&(identical(other.outlineOnly, _this.outlineOnly) || other.outlineOnly == _this.outlineOnly)&&const DeepCollectionEquality().equals(other.mitmModules, _this.mitmModules));
 }
 
 
 @override
 int get hashCode {
   final _this = this as MakeRealProfileState;
-  return Object.hashAll([runtimeType,_this.profilesPath,_this.profileId,const DeepCollectionEquality().hash(_this.rawConfig),_this.realPatchConfig,_this.overrides,_this.bypassPrivateRoute,_this.keepEmptyDnsOverrides,_this.appendSystemDns,const DeepCollectionEquality().hash(_this.proxyGroups),const DeepCollectionEquality().hash(_this.rules),const DeepCollectionEquality().hash(_this.addedRules),const DeepCollectionEquality().hash(_this.customRoutings),_this.tailscale,const DeepCollectionEquality().hash(_this.dialerProxies),_this.listeners,_this.defaultUA,const DeepCollectionEquality().hash(_this.authentication),const DeepCollectionEquality().hash(_this.injectedProxyProviders),const DeepCollectionEquality().hash(_this.injectedRuleProviders),_this.matchTarget,_this.safeMode,_this.outlineOnly]);
+  return Object.hashAll([runtimeType,_this.profilesPath,_this.profileId,const DeepCollectionEquality().hash(_this.rawConfig),_this.realPatchConfig,_this.overrides,_this.bypassPrivateRoute,_this.keepEmptyDnsOverrides,_this.appendSystemDns,const DeepCollectionEquality().hash(_this.proxyGroups),const DeepCollectionEquality().hash(_this.rules),const DeepCollectionEquality().hash(_this.addedRules),const DeepCollectionEquality().hash(_this.customRoutings),_this.tailscale,const DeepCollectionEquality().hash(_this.dialerProxies),_this.listeners,_this.defaultUA,const DeepCollectionEquality().hash(_this.authentication),const DeepCollectionEquality().hash(_this.injectedProxyProviders),const DeepCollectionEquality().hash(_this.injectedRuleProviders),_this.matchTarget,_this.safeMode,_this.outlineOnly,const DeepCollectionEquality().hash(_this.mitmModules)]);
 }
 
 @override
 String toString() {
   final _this = this as MakeRealProfileState;
-  return 'MakeRealProfileState(profilesPath: ${_this.profilesPath}, profileId: ${_this.profileId}, rawConfig: ${_this.rawConfig}, realPatchConfig: ${_this.realPatchConfig}, overrides: ${_this.overrides}, bypassPrivateRoute: ${_this.bypassPrivateRoute}, keepEmptyDnsOverrides: ${_this.keepEmptyDnsOverrides}, appendSystemDns: ${_this.appendSystemDns}, proxyGroups: ${_this.proxyGroups}, rules: ${_this.rules}, addedRules: ${_this.addedRules}, customRoutings: ${_this.customRoutings}, tailscale: ${_this.tailscale}, dialerProxies: ${_this.dialerProxies}, listeners: ${_this.listeners}, defaultUA: ${_this.defaultUA}, authentication: ${_this.authentication}, injectedProxyProviders: ${_this.injectedProxyProviders}, injectedRuleProviders: ${_this.injectedRuleProviders}, matchTarget: ${_this.matchTarget}, safeMode: ${_this.safeMode}, outlineOnly: ${_this.outlineOnly})';
+  return 'MakeRealProfileState(profilesPath: ${_this.profilesPath}, profileId: ${_this.profileId}, rawConfig: ${_this.rawConfig}, realPatchConfig: ${_this.realPatchConfig}, overrides: ${_this.overrides}, bypassPrivateRoute: ${_this.bypassPrivateRoute}, keepEmptyDnsOverrides: ${_this.keepEmptyDnsOverrides}, appendSystemDns: ${_this.appendSystemDns}, proxyGroups: ${_this.proxyGroups}, rules: ${_this.rules}, addedRules: ${_this.addedRules}, customRoutings: ${_this.customRoutings}, tailscale: ${_this.tailscale}, dialerProxies: ${_this.dialerProxies}, listeners: ${_this.listeners}, defaultUA: ${_this.defaultUA}, authentication: ${_this.authentication}, injectedProxyProviders: ${_this.injectedProxyProviders}, injectedRuleProviders: ${_this.injectedRuleProviders}, matchTarget: ${_this.matchTarget}, safeMode: ${_this.safeMode}, outlineOnly: ${_this.outlineOnly}, mitmModules: ${_this.mitmModules})';
 }
 
 
@@ -5983,7 +5410,7 @@ abstract mixin class $MakeRealProfileStateCopyWith<$Res>  {
   factory $MakeRealProfileStateCopyWith(MakeRealProfileState value, $Res Function(MakeRealProfileState) _then) = _$MakeRealProfileStateCopyWithImpl;
 @useResult
 $Res call({
- String profilesPath, int profileId, Map<String, dynamic> rawConfig, PatchClashConfig realPatchConfig, ProfileOverrides overrides, bool bypassPrivateRoute, bool keepEmptyDnsOverrides, bool appendSystemDns, List<ProxyGroup> proxyGroups, List<Rule> rules, List<Rule> addedRules, List<CustomRouting> customRoutings, TailscaleProps tailscale, Map<String, String> dialerProxies, ListenersProps listeners, String defaultUA, List<String> authentication, Map<String, dynamic> injectedProxyProviders, Map<String, dynamic> injectedRuleProviders, String? matchTarget, bool safeMode, bool outlineOnly
+ String profilesPath, int profileId, Map<String, dynamic> rawConfig, PatchClashConfig realPatchConfig, ProfileOverrides overrides, bool bypassPrivateRoute, bool keepEmptyDnsOverrides, bool appendSystemDns, List<ProxyGroup> proxyGroups, List<Rule> rules, List<Rule> addedRules, List<CustomRouting> customRoutings, TailscaleProps tailscale, Map<String, String> dialerProxies, ListenersProps listeners, String defaultUA, List<String> authentication, Map<String, dynamic> injectedProxyProviders, Map<String, dynamic> injectedRuleProviders, String? matchTarget, bool safeMode, bool outlineOnly, List<MitmModuleSource> mitmModules
 });
 
 
@@ -6000,7 +5427,7 @@ class _$MakeRealProfileStateCopyWithImpl<$Res>
 
 /// Create a copy of MakeRealProfileState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? profilesPath = null,Object? profileId = null,Object? rawConfig = null,Object? realPatchConfig = null,Object? overrides = null,Object? bypassPrivateRoute = null,Object? keepEmptyDnsOverrides = null,Object? appendSystemDns = null,Object? proxyGroups = null,Object? rules = null,Object? addedRules = null,Object? customRoutings = null,Object? tailscale = null,Object? dialerProxies = null,Object? listeners = null,Object? defaultUA = null,Object? authentication = null,Object? injectedProxyProviders = null,Object? injectedRuleProviders = null,Object? matchTarget = freezed,Object? safeMode = null,Object? outlineOnly = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? profilesPath = null,Object? profileId = null,Object? rawConfig = null,Object? realPatchConfig = null,Object? overrides = null,Object? bypassPrivateRoute = null,Object? keepEmptyDnsOverrides = null,Object? appendSystemDns = null,Object? proxyGroups = null,Object? rules = null,Object? addedRules = null,Object? customRoutings = null,Object? tailscale = null,Object? dialerProxies = null,Object? listeners = null,Object? defaultUA = null,Object? authentication = null,Object? injectedProxyProviders = null,Object? injectedRuleProviders = null,Object? matchTarget = freezed,Object? safeMode = null,Object? outlineOnly = null,Object? mitmModules = null,}) {
   return _then(MakeRealProfileState(
 profilesPath: null == profilesPath ? _self.profilesPath : profilesPath // ignore: cast_nullable_to_non_nullable
 as String,profileId: null == profileId ? _self.profileId : profileId // ignore: cast_nullable_to_non_nullable
@@ -6024,7 +5451,8 @@ as Map<String, dynamic>,injectedRuleProviders: null == injectedRuleProviders ? _
 as Map<String, dynamic>,matchTarget: freezed == matchTarget ? _self.matchTarget : matchTarget // ignore: cast_nullable_to_non_nullable
 as String?,safeMode: null == safeMode ? _self.safeMode : safeMode // ignore: cast_nullable_to_non_nullable
 as bool,outlineOnly: null == outlineOnly ? _self.outlineOnly : outlineOnly // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,mitmModules: null == mitmModules ? _self.mitmModules : mitmModules // ignore: cast_nullable_to_non_nullable
+as List<MitmModuleSource>,
   ));
 }
 /// Create a copy of MakeRealProfileState
@@ -6145,10 +5573,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String profilesPath,  int profileId,  Map<String, dynamic> rawConfig,  PatchClashConfig realPatchConfig,  ProfileOverrides overrides,  bool bypassPrivateRoute,  bool keepEmptyDnsOverrides,  bool appendSystemDns,  List<ProxyGroup> proxyGroups,  List<Rule> rules,  List<Rule> addedRules,  List<CustomRouting> customRoutings,  TailscaleProps tailscale,  Map<String, String> dialerProxies,  ListenersProps listeners,  String defaultUA,  List<String> authentication,  Map<String, dynamic> injectedProxyProviders,  Map<String, dynamic> injectedRuleProviders,  String? matchTarget,  bool safeMode,  bool outlineOnly)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String profilesPath,  int profileId,  Map<String, dynamic> rawConfig,  PatchClashConfig realPatchConfig,  ProfileOverrides overrides,  bool bypassPrivateRoute,  bool keepEmptyDnsOverrides,  bool appendSystemDns,  List<ProxyGroup> proxyGroups,  List<Rule> rules,  List<Rule> addedRules,  List<CustomRouting> customRoutings,  TailscaleProps tailscale,  Map<String, String> dialerProxies,  ListenersProps listeners,  String defaultUA,  List<String> authentication,  Map<String, dynamic> injectedProxyProviders,  Map<String, dynamic> injectedRuleProviders,  String? matchTarget,  bool safeMode,  bool outlineOnly,  List<MitmModuleSource> mitmModules)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MakeRealProfileState() when $default != null:
-return $default(_that.profilesPath,_that.profileId,_that.rawConfig,_that.realPatchConfig,_that.overrides,_that.bypassPrivateRoute,_that.keepEmptyDnsOverrides,_that.appendSystemDns,_that.proxyGroups,_that.rules,_that.addedRules,_that.customRoutings,_that.tailscale,_that.dialerProxies,_that.listeners,_that.defaultUA,_that.authentication,_that.injectedProxyProviders,_that.injectedRuleProviders,_that.matchTarget,_that.safeMode,_that.outlineOnly);case _:
+return $default(_that.profilesPath,_that.profileId,_that.rawConfig,_that.realPatchConfig,_that.overrides,_that.bypassPrivateRoute,_that.keepEmptyDnsOverrides,_that.appendSystemDns,_that.proxyGroups,_that.rules,_that.addedRules,_that.customRoutings,_that.tailscale,_that.dialerProxies,_that.listeners,_that.defaultUA,_that.authentication,_that.injectedProxyProviders,_that.injectedRuleProviders,_that.matchTarget,_that.safeMode,_that.outlineOnly,_that.mitmModules);case _:
   return orElse();
 
 }
@@ -6166,10 +5594,10 @@ return $default(_that.profilesPath,_that.profileId,_that.rawConfig,_that.realPat
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String profilesPath,  int profileId,  Map<String, dynamic> rawConfig,  PatchClashConfig realPatchConfig,  ProfileOverrides overrides,  bool bypassPrivateRoute,  bool keepEmptyDnsOverrides,  bool appendSystemDns,  List<ProxyGroup> proxyGroups,  List<Rule> rules,  List<Rule> addedRules,  List<CustomRouting> customRoutings,  TailscaleProps tailscale,  Map<String, String> dialerProxies,  ListenersProps listeners,  String defaultUA,  List<String> authentication,  Map<String, dynamic> injectedProxyProviders,  Map<String, dynamic> injectedRuleProviders,  String? matchTarget,  bool safeMode,  bool outlineOnly)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String profilesPath,  int profileId,  Map<String, dynamic> rawConfig,  PatchClashConfig realPatchConfig,  ProfileOverrides overrides,  bool bypassPrivateRoute,  bool keepEmptyDnsOverrides,  bool appendSystemDns,  List<ProxyGroup> proxyGroups,  List<Rule> rules,  List<Rule> addedRules,  List<CustomRouting> customRoutings,  TailscaleProps tailscale,  Map<String, String> dialerProxies,  ListenersProps listeners,  String defaultUA,  List<String> authentication,  Map<String, dynamic> injectedProxyProviders,  Map<String, dynamic> injectedRuleProviders,  String? matchTarget,  bool safeMode,  bool outlineOnly,  List<MitmModuleSource> mitmModules)  $default,) {final _that = this;
 switch (_that) {
 case _MakeRealProfileState():
-return $default(_that.profilesPath,_that.profileId,_that.rawConfig,_that.realPatchConfig,_that.overrides,_that.bypassPrivateRoute,_that.keepEmptyDnsOverrides,_that.appendSystemDns,_that.proxyGroups,_that.rules,_that.addedRules,_that.customRoutings,_that.tailscale,_that.dialerProxies,_that.listeners,_that.defaultUA,_that.authentication,_that.injectedProxyProviders,_that.injectedRuleProviders,_that.matchTarget,_that.safeMode,_that.outlineOnly);case _:
+return $default(_that.profilesPath,_that.profileId,_that.rawConfig,_that.realPatchConfig,_that.overrides,_that.bypassPrivateRoute,_that.keepEmptyDnsOverrides,_that.appendSystemDns,_that.proxyGroups,_that.rules,_that.addedRules,_that.customRoutings,_that.tailscale,_that.dialerProxies,_that.listeners,_that.defaultUA,_that.authentication,_that.injectedProxyProviders,_that.injectedRuleProviders,_that.matchTarget,_that.safeMode,_that.outlineOnly,_that.mitmModules);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -6186,10 +5614,10 @@ return $default(_that.profilesPath,_that.profileId,_that.rawConfig,_that.realPat
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String profilesPath,  int profileId,  Map<String, dynamic> rawConfig,  PatchClashConfig realPatchConfig,  ProfileOverrides overrides,  bool bypassPrivateRoute,  bool keepEmptyDnsOverrides,  bool appendSystemDns,  List<ProxyGroup> proxyGroups,  List<Rule> rules,  List<Rule> addedRules,  List<CustomRouting> customRoutings,  TailscaleProps tailscale,  Map<String, String> dialerProxies,  ListenersProps listeners,  String defaultUA,  List<String> authentication,  Map<String, dynamic> injectedProxyProviders,  Map<String, dynamic> injectedRuleProviders,  String? matchTarget,  bool safeMode,  bool outlineOnly)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String profilesPath,  int profileId,  Map<String, dynamic> rawConfig,  PatchClashConfig realPatchConfig,  ProfileOverrides overrides,  bool bypassPrivateRoute,  bool keepEmptyDnsOverrides,  bool appendSystemDns,  List<ProxyGroup> proxyGroups,  List<Rule> rules,  List<Rule> addedRules,  List<CustomRouting> customRoutings,  TailscaleProps tailscale,  Map<String, String> dialerProxies,  ListenersProps listeners,  String defaultUA,  List<String> authentication,  Map<String, dynamic> injectedProxyProviders,  Map<String, dynamic> injectedRuleProviders,  String? matchTarget,  bool safeMode,  bool outlineOnly,  List<MitmModuleSource> mitmModules)?  $default,) {final _that = this;
 switch (_that) {
 case _MakeRealProfileState() when $default != null:
-return $default(_that.profilesPath,_that.profileId,_that.rawConfig,_that.realPatchConfig,_that.overrides,_that.bypassPrivateRoute,_that.keepEmptyDnsOverrides,_that.appendSystemDns,_that.proxyGroups,_that.rules,_that.addedRules,_that.customRoutings,_that.tailscale,_that.dialerProxies,_that.listeners,_that.defaultUA,_that.authentication,_that.injectedProxyProviders,_that.injectedRuleProviders,_that.matchTarget,_that.safeMode,_that.outlineOnly);case _:
+return $default(_that.profilesPath,_that.profileId,_that.rawConfig,_that.realPatchConfig,_that.overrides,_that.bypassPrivateRoute,_that.keepEmptyDnsOverrides,_that.appendSystemDns,_that.proxyGroups,_that.rules,_that.addedRules,_that.customRoutings,_that.tailscale,_that.dialerProxies,_that.listeners,_that.defaultUA,_that.authentication,_that.injectedProxyProviders,_that.injectedRuleProviders,_that.matchTarget,_that.safeMode,_that.outlineOnly,_that.mitmModules);case _:
   return null;
 
 }
@@ -6201,7 +5629,7 @@ return $default(_that.profilesPath,_that.profileId,_that.rawConfig,_that.realPat
 
 
 class _MakeRealProfileState implements MakeRealProfileState {
-  const _MakeRealProfileState({required this.profilesPath, required this.profileId, required  Map<String, dynamic> rawConfig, required this.realPatchConfig, this.overrides = const ProfileOverrides(), this.bypassPrivateRoute = false, this.keepEmptyDnsOverrides = false, required this.appendSystemDns, required  List<ProxyGroup> proxyGroups, required  List<Rule> rules, required  List<Rule> addedRules,  List<CustomRouting> customRoutings = const [], this.tailscale = const TailscaleProps(),  Map<String, String> dialerProxies = const {}, this.listeners = const ListenersProps(), required this.defaultUA,  List<String> authentication = const [],  Map<String, dynamic> injectedProxyProviders = const {},  Map<String, dynamic> injectedRuleProviders = const {}, this.matchTarget, this.safeMode = false, this.outlineOnly = false}): _rawConfig = rawConfig,_proxyGroups = proxyGroups,_rules = rules,_addedRules = addedRules,_customRoutings = customRoutings,_dialerProxies = dialerProxies,_authentication = authentication,_injectedProxyProviders = injectedProxyProviders,_injectedRuleProviders = injectedRuleProviders;
+  const _MakeRealProfileState({required this.profilesPath, required this.profileId, required  Map<String, dynamic> rawConfig, required this.realPatchConfig, this.overrides = const ProfileOverrides(), this.bypassPrivateRoute = false, this.keepEmptyDnsOverrides = false, required this.appendSystemDns, required  List<ProxyGroup> proxyGroups, required  List<Rule> rules, required  List<Rule> addedRules,  List<CustomRouting> customRoutings = const [], this.tailscale = const TailscaleProps(),  Map<String, String> dialerProxies = const {}, this.listeners = const ListenersProps(), required this.defaultUA,  List<String> authentication = const [],  Map<String, dynamic> injectedProxyProviders = const {},  Map<String, dynamic> injectedRuleProviders = const {}, this.matchTarget, this.safeMode = false, this.outlineOnly = false,  List<MitmModuleSource> mitmModules = const []}): _rawConfig = rawConfig,_proxyGroups = proxyGroups,_rules = rules,_addedRules = addedRules,_customRoutings = customRoutings,_dialerProxies = dialerProxies,_authentication = authentication,_injectedProxyProviders = injectedProxyProviders,_injectedRuleProviders = injectedRuleProviders,_mitmModules = mitmModules;
   
 
 @override final  String profilesPath;
@@ -6284,6 +5712,13 @@ class _MakeRealProfileState implements MakeRealProfileState {
 /// sub-rules the Core keeps; the result then holds new proxies and
 /// patches of the outline's instead of whole sections.
 @override@JsonKey() final  bool outlineOnly;
+ final  List<MitmModuleSource> _mitmModules;
+@override@JsonKey() List<MitmModuleSource> get mitmModules {
+  if (_mitmModules is EqualUnmodifiableListView) return _mitmModules;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_mitmModules);
+}
+
 
 /// Create a copy of MakeRealProfileState
 /// with the given fields replaced by the non-null parameter values.
@@ -6295,18 +5730,18 @@ _$MakeRealProfileStateCopyWith<_MakeRealProfileState> get copyWith => __$MakeRea
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MakeRealProfileState&&(identical(other.profilesPath, profilesPath) || other.profilesPath == profilesPath)&&(identical(other.profileId, profileId) || other.profileId == profileId)&&const DeepCollectionEquality().equals(other.rawConfig, _rawConfig)&&(identical(other.realPatchConfig, realPatchConfig) || other.realPatchConfig == realPatchConfig)&&(identical(other.overrides, overrides) || other.overrides == overrides)&&(identical(other.bypassPrivateRoute, bypassPrivateRoute) || other.bypassPrivateRoute == bypassPrivateRoute)&&(identical(other.keepEmptyDnsOverrides, keepEmptyDnsOverrides) || other.keepEmptyDnsOverrides == keepEmptyDnsOverrides)&&(identical(other.appendSystemDns, appendSystemDns) || other.appendSystemDns == appendSystemDns)&&const DeepCollectionEquality().equals(other.proxyGroups, _proxyGroups)&&const DeepCollectionEquality().equals(other.rules, _rules)&&const DeepCollectionEquality().equals(other.addedRules, _addedRules)&&const DeepCollectionEquality().equals(other.customRoutings, _customRoutings)&&(identical(other.tailscale, tailscale) || other.tailscale == tailscale)&&const DeepCollectionEquality().equals(other.dialerProxies, _dialerProxies)&&(identical(other.listeners, listeners) || other.listeners == listeners)&&(identical(other.defaultUA, defaultUA) || other.defaultUA == defaultUA)&&const DeepCollectionEquality().equals(other.authentication, _authentication)&&const DeepCollectionEquality().equals(other.injectedProxyProviders, _injectedProxyProviders)&&const DeepCollectionEquality().equals(other.injectedRuleProviders, _injectedRuleProviders)&&(identical(other.matchTarget, matchTarget) || other.matchTarget == matchTarget)&&(identical(other.safeMode, safeMode) || other.safeMode == safeMode)&&(identical(other.outlineOnly, outlineOnly) || other.outlineOnly == outlineOnly));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MakeRealProfileState&&(identical(other.profilesPath, profilesPath) || other.profilesPath == profilesPath)&&(identical(other.profileId, profileId) || other.profileId == profileId)&&const DeepCollectionEquality().equals(other.rawConfig, _rawConfig)&&(identical(other.realPatchConfig, realPatchConfig) || other.realPatchConfig == realPatchConfig)&&(identical(other.overrides, overrides) || other.overrides == overrides)&&(identical(other.bypassPrivateRoute, bypassPrivateRoute) || other.bypassPrivateRoute == bypassPrivateRoute)&&(identical(other.keepEmptyDnsOverrides, keepEmptyDnsOverrides) || other.keepEmptyDnsOverrides == keepEmptyDnsOverrides)&&(identical(other.appendSystemDns, appendSystemDns) || other.appendSystemDns == appendSystemDns)&&const DeepCollectionEquality().equals(other.proxyGroups, _proxyGroups)&&const DeepCollectionEquality().equals(other.rules, _rules)&&const DeepCollectionEquality().equals(other.addedRules, _addedRules)&&const DeepCollectionEquality().equals(other.customRoutings, _customRoutings)&&(identical(other.tailscale, tailscale) || other.tailscale == tailscale)&&const DeepCollectionEquality().equals(other.dialerProxies, _dialerProxies)&&(identical(other.listeners, listeners) || other.listeners == listeners)&&(identical(other.defaultUA, defaultUA) || other.defaultUA == defaultUA)&&const DeepCollectionEquality().equals(other.authentication, _authentication)&&const DeepCollectionEquality().equals(other.injectedProxyProviders, _injectedProxyProviders)&&const DeepCollectionEquality().equals(other.injectedRuleProviders, _injectedRuleProviders)&&(identical(other.matchTarget, matchTarget) || other.matchTarget == matchTarget)&&(identical(other.safeMode, safeMode) || other.safeMode == safeMode)&&(identical(other.outlineOnly, outlineOnly) || other.outlineOnly == outlineOnly)&&const DeepCollectionEquality().equals(other.mitmModules, _mitmModules));
 }
 
 
 @override
 int get hashCode {
-    return Object.hashAll([runtimeType,profilesPath,profileId,const DeepCollectionEquality().hash(_rawConfig),realPatchConfig,overrides,bypassPrivateRoute,keepEmptyDnsOverrides,appendSystemDns,const DeepCollectionEquality().hash(_proxyGroups),const DeepCollectionEquality().hash(_rules),const DeepCollectionEquality().hash(_addedRules),const DeepCollectionEquality().hash(_customRoutings),tailscale,const DeepCollectionEquality().hash(_dialerProxies),listeners,defaultUA,const DeepCollectionEquality().hash(_authentication),const DeepCollectionEquality().hash(_injectedProxyProviders),const DeepCollectionEquality().hash(_injectedRuleProviders),matchTarget,safeMode,outlineOnly]);
+    return Object.hashAll([runtimeType,profilesPath,profileId,const DeepCollectionEquality().hash(_rawConfig),realPatchConfig,overrides,bypassPrivateRoute,keepEmptyDnsOverrides,appendSystemDns,const DeepCollectionEquality().hash(_proxyGroups),const DeepCollectionEquality().hash(_rules),const DeepCollectionEquality().hash(_addedRules),const DeepCollectionEquality().hash(_customRoutings),tailscale,const DeepCollectionEquality().hash(_dialerProxies),listeners,defaultUA,const DeepCollectionEquality().hash(_authentication),const DeepCollectionEquality().hash(_injectedProxyProviders),const DeepCollectionEquality().hash(_injectedRuleProviders),matchTarget,safeMode,outlineOnly,const DeepCollectionEquality().hash(_mitmModules)]);
 }
 
 @override
 String toString() {
-    return 'MakeRealProfileState(profilesPath: $profilesPath, profileId: $profileId, rawConfig: $rawConfig, realPatchConfig: $realPatchConfig, overrides: $overrides, bypassPrivateRoute: $bypassPrivateRoute, keepEmptyDnsOverrides: $keepEmptyDnsOverrides, appendSystemDns: $appendSystemDns, proxyGroups: $proxyGroups, rules: $rules, addedRules: $addedRules, customRoutings: $customRoutings, tailscale: $tailscale, dialerProxies: $dialerProxies, listeners: $listeners, defaultUA: $defaultUA, authentication: $authentication, injectedProxyProviders: $injectedProxyProviders, injectedRuleProviders: $injectedRuleProviders, matchTarget: $matchTarget, safeMode: $safeMode, outlineOnly: $outlineOnly)';
+    return 'MakeRealProfileState(profilesPath: $profilesPath, profileId: $profileId, rawConfig: $rawConfig, realPatchConfig: $realPatchConfig, overrides: $overrides, bypassPrivateRoute: $bypassPrivateRoute, keepEmptyDnsOverrides: $keepEmptyDnsOverrides, appendSystemDns: $appendSystemDns, proxyGroups: $proxyGroups, rules: $rules, addedRules: $addedRules, customRoutings: $customRoutings, tailscale: $tailscale, dialerProxies: $dialerProxies, listeners: $listeners, defaultUA: $defaultUA, authentication: $authentication, injectedProxyProviders: $injectedProxyProviders, injectedRuleProviders: $injectedRuleProviders, matchTarget: $matchTarget, safeMode: $safeMode, outlineOnly: $outlineOnly, mitmModules: $mitmModules)';
 }
 
 
@@ -6317,7 +5752,7 @@ abstract mixin class _$MakeRealProfileStateCopyWith<$Res> implements $MakeRealPr
   factory _$MakeRealProfileStateCopyWith(_MakeRealProfileState value, $Res Function(_MakeRealProfileState) _then) = __$MakeRealProfileStateCopyWithImpl;
 @override @useResult
 $Res call({
- String profilesPath, int profileId, Map<String, dynamic> rawConfig, PatchClashConfig realPatchConfig, ProfileOverrides overrides, bool bypassPrivateRoute, bool keepEmptyDnsOverrides, bool appendSystemDns, List<ProxyGroup> proxyGroups, List<Rule> rules, List<Rule> addedRules, List<CustomRouting> customRoutings, TailscaleProps tailscale, Map<String, String> dialerProxies, ListenersProps listeners, String defaultUA, List<String> authentication, Map<String, dynamic> injectedProxyProviders, Map<String, dynamic> injectedRuleProviders, String? matchTarget, bool safeMode, bool outlineOnly
+ String profilesPath, int profileId, Map<String, dynamic> rawConfig, PatchClashConfig realPatchConfig, ProfileOverrides overrides, bool bypassPrivateRoute, bool keepEmptyDnsOverrides, bool appendSystemDns, List<ProxyGroup> proxyGroups, List<Rule> rules, List<Rule> addedRules, List<CustomRouting> customRoutings, TailscaleProps tailscale, Map<String, String> dialerProxies, ListenersProps listeners, String defaultUA, List<String> authentication, Map<String, dynamic> injectedProxyProviders, Map<String, dynamic> injectedRuleProviders, String? matchTarget, bool safeMode, bool outlineOnly, List<MitmModuleSource> mitmModules
 });
 
 
@@ -6334,7 +5769,7 @@ class __$MakeRealProfileStateCopyWithImpl<$Res>
 
 /// Create a copy of MakeRealProfileState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? profilesPath = null,Object? profileId = null,Object? rawConfig = null,Object? realPatchConfig = null,Object? overrides = null,Object? bypassPrivateRoute = null,Object? keepEmptyDnsOverrides = null,Object? appendSystemDns = null,Object? proxyGroups = null,Object? rules = null,Object? addedRules = null,Object? customRoutings = null,Object? tailscale = null,Object? dialerProxies = null,Object? listeners = null,Object? defaultUA = null,Object? authentication = null,Object? injectedProxyProviders = null,Object? injectedRuleProviders = null,Object? matchTarget = freezed,Object? safeMode = null,Object? outlineOnly = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? profilesPath = null,Object? profileId = null,Object? rawConfig = null,Object? realPatchConfig = null,Object? overrides = null,Object? bypassPrivateRoute = null,Object? keepEmptyDnsOverrides = null,Object? appendSystemDns = null,Object? proxyGroups = null,Object? rules = null,Object? addedRules = null,Object? customRoutings = null,Object? tailscale = null,Object? dialerProxies = null,Object? listeners = null,Object? defaultUA = null,Object? authentication = null,Object? injectedProxyProviders = null,Object? injectedRuleProviders = null,Object? matchTarget = freezed,Object? safeMode = null,Object? outlineOnly = null,Object? mitmModules = null,}) {
   return _then(_MakeRealProfileState(
 profilesPath: null == profilesPath ? _self.profilesPath : profilesPath // ignore: cast_nullable_to_non_nullable
 as String,profileId: null == profileId ? _self.profileId : profileId // ignore: cast_nullable_to_non_nullable
@@ -6358,7 +5793,8 @@ as Map<String, dynamic>,injectedRuleProviders: null == injectedRuleProviders ? _
 as Map<String, dynamic>,matchTarget: freezed == matchTarget ? _self.matchTarget : matchTarget // ignore: cast_nullable_to_non_nullable
 as String?,safeMode: null == safeMode ? _self.safeMode : safeMode // ignore: cast_nullable_to_non_nullable
 as bool,outlineOnly: null == outlineOnly ? _self.outlineOnly : outlineOnly // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,mitmModules: null == mitmModules ? _self._mitmModules : mitmModules // ignore: cast_nullable_to_non_nullable
+as List<MitmModuleSource>,
   ));
 }
 
@@ -6402,9 +5838,291 @@ $ListenersPropsCopyWith<$Res> get listeners {
 }
 
 /// @nodoc
+mixin _$MitmModuleSource {
+
+ String get content; Map<String, String> get arguments; Map<String, String> get resources;
+/// Create a copy of MitmModuleSource
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$MitmModuleSourceCopyWith<MitmModuleSource> get copyWith => _$MitmModuleSourceCopyWithImpl<MitmModuleSource>(this as MitmModuleSource, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as MitmModuleSource;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MitmModuleSource&&(identical(other.content, _this.content) || other.content == _this.content)&&const DeepCollectionEquality().equals(other.arguments, _this.arguments)&&const DeepCollectionEquality().equals(other.resources, _this.resources));
+}
+
+
+@override
+int get hashCode {
+  final _this = this as MitmModuleSource;
+  return Object.hash(runtimeType,_this.content,const DeepCollectionEquality().hash(_this.arguments),const DeepCollectionEquality().hash(_this.resources));
+}
+
+@override
+String toString() {
+  final _this = this as MitmModuleSource;
+  return 'MitmModuleSource(content: ${_this.content}, arguments: ${_this.arguments}, resources: ${_this.resources})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $MitmModuleSourceCopyWith<$Res>  {
+  factory $MitmModuleSourceCopyWith(MitmModuleSource value, $Res Function(MitmModuleSource) _then) = _$MitmModuleSourceCopyWithImpl;
+@useResult
+$Res call({
+ String content, Map<String, String> arguments, Map<String, String> resources
+});
+
+
+
+
+}
+/// @nodoc
+class _$MitmModuleSourceCopyWithImpl<$Res>
+    implements $MitmModuleSourceCopyWith<$Res> {
+  _$MitmModuleSourceCopyWithImpl(this._self, this._then);
+
+  final MitmModuleSource _self;
+  final $Res Function(MitmModuleSource) _then;
+
+/// Create a copy of MitmModuleSource
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? content = null,Object? arguments = null,Object? resources = null,}) {
+  return _then(MitmModuleSource(
+content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
+as String,arguments: null == arguments ? _self.arguments : arguments // ignore: cast_nullable_to_non_nullable
+as Map<String, String>,resources: null == resources ? _self.resources : resources // ignore: cast_nullable_to_non_nullable
+as Map<String, String>,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [MitmModuleSource].
+extension MitmModuleSourcePatterns on MitmModuleSource {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _MitmModuleSource value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _MitmModuleSource() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _MitmModuleSource value)  $default,){
+final _that = this;
+switch (_that) {
+case _MitmModuleSource():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _MitmModuleSource value)?  $default,){
+final _that = this;
+switch (_that) {
+case _MitmModuleSource() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String content,  Map<String, String> arguments,  Map<String, String> resources)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _MitmModuleSource() when $default != null:
+return $default(_that.content,_that.arguments,_that.resources);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String content,  Map<String, String> arguments,  Map<String, String> resources)  $default,) {final _that = this;
+switch (_that) {
+case _MitmModuleSource():
+return $default(_that.content,_that.arguments,_that.resources);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String content,  Map<String, String> arguments,  Map<String, String> resources)?  $default,) {final _that = this;
+switch (_that) {
+case _MitmModuleSource() when $default != null:
+return $default(_that.content,_that.arguments,_that.resources);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _MitmModuleSource implements MitmModuleSource {
+  const _MitmModuleSource({required this.content,  Map<String, String> arguments = const {},  Map<String, String> resources = const {}}): _arguments = arguments,_resources = resources;
+  
+
+@override final  String content;
+ final  Map<String, String> _arguments;
+@override@JsonKey() Map<String, String> get arguments {
+  if (_arguments is EqualUnmodifiableMapView) return _arguments;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(_arguments);
+}
+
+ final  Map<String, String> _resources;
+@override@JsonKey() Map<String, String> get resources {
+  if (_resources is EqualUnmodifiableMapView) return _resources;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(_resources);
+}
+
+
+/// Create a copy of MitmModuleSource
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$MitmModuleSourceCopyWith<_MitmModuleSource> get copyWith => __$MitmModuleSourceCopyWithImpl<_MitmModuleSource>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MitmModuleSource&&(identical(other.content, content) || other.content == content)&&const DeepCollectionEquality().equals(other.arguments, _arguments)&&const DeepCollectionEquality().equals(other.resources, _resources));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,content,const DeepCollectionEquality().hash(_arguments),const DeepCollectionEquality().hash(_resources));
+}
+
+@override
+String toString() {
+    return 'MitmModuleSource(content: $content, arguments: $arguments, resources: $resources)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$MitmModuleSourceCopyWith<$Res> implements $MitmModuleSourceCopyWith<$Res> {
+  factory _$MitmModuleSourceCopyWith(_MitmModuleSource value, $Res Function(_MitmModuleSource) _then) = __$MitmModuleSourceCopyWithImpl;
+@override @useResult
+$Res call({
+ String content, Map<String, String> arguments, Map<String, String> resources
+});
+
+
+
+
+}
+/// @nodoc
+class __$MitmModuleSourceCopyWithImpl<$Res>
+    implements _$MitmModuleSourceCopyWith<$Res> {
+  __$MitmModuleSourceCopyWithImpl(this._self, this._then);
+
+  final _MitmModuleSource _self;
+  final $Res Function(_MitmModuleSource) _then;
+
+/// Create a copy of MitmModuleSource
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? content = null,Object? arguments = null,Object? resources = null,}) {
+  return _then(_MitmModuleSource(
+content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
+as String,arguments: null == arguments ? _self._arguments : arguments // ignore: cast_nullable_to_non_nullable
+as Map<String, String>,resources: null == resources ? _self._resources : resources // ignore: cast_nullable_to_non_nullable
+as Map<String, String>,
+  ));
+}
+
+
+}
+
+/// @nodoc
 mixin _$MigrationData {
 
- Map<String, Object?>? get configMap; List<Rule> get rules; List<Script> get scripts; List<Profile> get profiles; List<DisabledRule> get disabledRules; List<ProxyGroup> get proxyGroups; List<ClashProvider> get clashProviders; List<CustomProxy> get customProxies; List<ProxyDialer> get proxyDialers;
+ Map<String, Object?>? get configMap; List<Rule> get rules; List<Script> get scripts; List<Profile> get profiles; List<DisabledRule> get disabledRules; List<ProxyGroup> get proxyGroups; List<ClashProvider> get clashProviders; List<CustomProxy> get customProxies; List<ProxyDialer> get proxyDialers; List<MitmModule> get mitmModules;
 /// Create a copy of MigrationData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -6416,20 +6134,20 @@ $MigrationDataCopyWith<MigrationData> get copyWith => _$MigrationDataCopyWithImp
 @override
 bool operator ==(Object other) {
   final _this = this as MigrationData;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MigrationData&&const DeepCollectionEquality().equals(other.configMap, _this.configMap)&&const DeepCollectionEquality().equals(other.rules, _this.rules)&&const DeepCollectionEquality().equals(other.scripts, _this.scripts)&&const DeepCollectionEquality().equals(other.profiles, _this.profiles)&&const DeepCollectionEquality().equals(other.disabledRules, _this.disabledRules)&&const DeepCollectionEquality().equals(other.proxyGroups, _this.proxyGroups)&&const DeepCollectionEquality().equals(other.clashProviders, _this.clashProviders)&&const DeepCollectionEquality().equals(other.customProxies, _this.customProxies)&&const DeepCollectionEquality().equals(other.proxyDialers, _this.proxyDialers));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MigrationData&&const DeepCollectionEquality().equals(other.configMap, _this.configMap)&&const DeepCollectionEquality().equals(other.rules, _this.rules)&&const DeepCollectionEquality().equals(other.scripts, _this.scripts)&&const DeepCollectionEquality().equals(other.profiles, _this.profiles)&&const DeepCollectionEquality().equals(other.disabledRules, _this.disabledRules)&&const DeepCollectionEquality().equals(other.proxyGroups, _this.proxyGroups)&&const DeepCollectionEquality().equals(other.clashProviders, _this.clashProviders)&&const DeepCollectionEquality().equals(other.customProxies, _this.customProxies)&&const DeepCollectionEquality().equals(other.proxyDialers, _this.proxyDialers)&&const DeepCollectionEquality().equals(other.mitmModules, _this.mitmModules));
 }
 
 
 @override
 int get hashCode {
   final _this = this as MigrationData;
-  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.configMap),const DeepCollectionEquality().hash(_this.rules),const DeepCollectionEquality().hash(_this.scripts),const DeepCollectionEquality().hash(_this.profiles),const DeepCollectionEquality().hash(_this.disabledRules),const DeepCollectionEquality().hash(_this.proxyGroups),const DeepCollectionEquality().hash(_this.clashProviders),const DeepCollectionEquality().hash(_this.customProxies),const DeepCollectionEquality().hash(_this.proxyDialers));
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.configMap),const DeepCollectionEquality().hash(_this.rules),const DeepCollectionEquality().hash(_this.scripts),const DeepCollectionEquality().hash(_this.profiles),const DeepCollectionEquality().hash(_this.disabledRules),const DeepCollectionEquality().hash(_this.proxyGroups),const DeepCollectionEquality().hash(_this.clashProviders),const DeepCollectionEquality().hash(_this.customProxies),const DeepCollectionEquality().hash(_this.proxyDialers),const DeepCollectionEquality().hash(_this.mitmModules));
 }
 
 @override
 String toString() {
   final _this = this as MigrationData;
-  return 'MigrationData(configMap: ${_this.configMap}, rules: ${_this.rules}, scripts: ${_this.scripts}, profiles: ${_this.profiles}, disabledRules: ${_this.disabledRules}, proxyGroups: ${_this.proxyGroups}, clashProviders: ${_this.clashProviders}, customProxies: ${_this.customProxies}, proxyDialers: ${_this.proxyDialers})';
+  return 'MigrationData(configMap: ${_this.configMap}, rules: ${_this.rules}, scripts: ${_this.scripts}, profiles: ${_this.profiles}, disabledRules: ${_this.disabledRules}, proxyGroups: ${_this.proxyGroups}, clashProviders: ${_this.clashProviders}, customProxies: ${_this.customProxies}, proxyDialers: ${_this.proxyDialers}, mitmModules: ${_this.mitmModules})';
 }
 
 
@@ -6440,7 +6158,7 @@ abstract mixin class $MigrationDataCopyWith<$Res>  {
   factory $MigrationDataCopyWith(MigrationData value, $Res Function(MigrationData) _then) = _$MigrationDataCopyWithImpl;
 @useResult
 $Res call({
- Map<String, Object?>? configMap, List<Rule> rules, List<Script> scripts, List<Profile> profiles, List<DisabledRule> disabledRules, List<ProxyGroup> proxyGroups, List<ClashProvider> clashProviders, List<CustomProxy> customProxies, List<ProxyDialer> proxyDialers
+ Map<String, Object?>? configMap, List<Rule> rules, List<Script> scripts, List<Profile> profiles, List<DisabledRule> disabledRules, List<ProxyGroup> proxyGroups, List<ClashProvider> clashProviders, List<CustomProxy> customProxies, List<ProxyDialer> proxyDialers, List<MitmModule> mitmModules
 });
 
 
@@ -6457,7 +6175,7 @@ class _$MigrationDataCopyWithImpl<$Res>
 
 /// Create a copy of MigrationData
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? configMap = freezed,Object? rules = null,Object? scripts = null,Object? profiles = null,Object? disabledRules = null,Object? proxyGroups = null,Object? clashProviders = null,Object? customProxies = null,Object? proxyDialers = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? configMap = freezed,Object? rules = null,Object? scripts = null,Object? profiles = null,Object? disabledRules = null,Object? proxyGroups = null,Object? clashProviders = null,Object? customProxies = null,Object? proxyDialers = null,Object? mitmModules = null,}) {
   return _then(MigrationData(
 configMap: freezed == configMap ? _self.configMap : configMap // ignore: cast_nullable_to_non_nullable
 as Map<String, Object?>?,rules: null == rules ? _self.rules : rules // ignore: cast_nullable_to_non_nullable
@@ -6468,7 +6186,8 @@ as List<DisabledRule>,proxyGroups: null == proxyGroups ? _self.proxyGroups : pro
 as List<ProxyGroup>,clashProviders: null == clashProviders ? _self.clashProviders : clashProviders // ignore: cast_nullable_to_non_nullable
 as List<ClashProvider>,customProxies: null == customProxies ? _self.customProxies : customProxies // ignore: cast_nullable_to_non_nullable
 as List<CustomProxy>,proxyDialers: null == proxyDialers ? _self.proxyDialers : proxyDialers // ignore: cast_nullable_to_non_nullable
-as List<ProxyDialer>,
+as List<ProxyDialer>,mitmModules: null == mitmModules ? _self.mitmModules : mitmModules // ignore: cast_nullable_to_non_nullable
+as List<MitmModule>,
   ));
 }
 
@@ -6553,10 +6272,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Map<String, Object?>? configMap,  List<Rule> rules,  List<Script> scripts,  List<Profile> profiles,  List<DisabledRule> disabledRules,  List<ProxyGroup> proxyGroups,  List<ClashProvider> clashProviders,  List<CustomProxy> customProxies,  List<ProxyDialer> proxyDialers)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Map<String, Object?>? configMap,  List<Rule> rules,  List<Script> scripts,  List<Profile> profiles,  List<DisabledRule> disabledRules,  List<ProxyGroup> proxyGroups,  List<ClashProvider> clashProviders,  List<CustomProxy> customProxies,  List<ProxyDialer> proxyDialers,  List<MitmModule> mitmModules)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MigrationData() when $default != null:
-return $default(_that.configMap,_that.rules,_that.scripts,_that.profiles,_that.disabledRules,_that.proxyGroups,_that.clashProviders,_that.customProxies,_that.proxyDialers);case _:
+return $default(_that.configMap,_that.rules,_that.scripts,_that.profiles,_that.disabledRules,_that.proxyGroups,_that.clashProviders,_that.customProxies,_that.proxyDialers,_that.mitmModules);case _:
   return orElse();
 
 }
@@ -6574,10 +6293,10 @@ return $default(_that.configMap,_that.rules,_that.scripts,_that.profiles,_that.d
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Map<String, Object?>? configMap,  List<Rule> rules,  List<Script> scripts,  List<Profile> profiles,  List<DisabledRule> disabledRules,  List<ProxyGroup> proxyGroups,  List<ClashProvider> clashProviders,  List<CustomProxy> customProxies,  List<ProxyDialer> proxyDialers)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Map<String, Object?>? configMap,  List<Rule> rules,  List<Script> scripts,  List<Profile> profiles,  List<DisabledRule> disabledRules,  List<ProxyGroup> proxyGroups,  List<ClashProvider> clashProviders,  List<CustomProxy> customProxies,  List<ProxyDialer> proxyDialers,  List<MitmModule> mitmModules)  $default,) {final _that = this;
 switch (_that) {
 case _MigrationData():
-return $default(_that.configMap,_that.rules,_that.scripts,_that.profiles,_that.disabledRules,_that.proxyGroups,_that.clashProviders,_that.customProxies,_that.proxyDialers);case _:
+return $default(_that.configMap,_that.rules,_that.scripts,_that.profiles,_that.disabledRules,_that.proxyGroups,_that.clashProviders,_that.customProxies,_that.proxyDialers,_that.mitmModules);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -6594,10 +6313,10 @@ return $default(_that.configMap,_that.rules,_that.scripts,_that.profiles,_that.d
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Map<String, Object?>? configMap,  List<Rule> rules,  List<Script> scripts,  List<Profile> profiles,  List<DisabledRule> disabledRules,  List<ProxyGroup> proxyGroups,  List<ClashProvider> clashProviders,  List<CustomProxy> customProxies,  List<ProxyDialer> proxyDialers)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Map<String, Object?>? configMap,  List<Rule> rules,  List<Script> scripts,  List<Profile> profiles,  List<DisabledRule> disabledRules,  List<ProxyGroup> proxyGroups,  List<ClashProvider> clashProviders,  List<CustomProxy> customProxies,  List<ProxyDialer> proxyDialers,  List<MitmModule> mitmModules)?  $default,) {final _that = this;
 switch (_that) {
 case _MigrationData() when $default != null:
-return $default(_that.configMap,_that.rules,_that.scripts,_that.profiles,_that.disabledRules,_that.proxyGroups,_that.clashProviders,_that.customProxies,_that.proxyDialers);case _:
+return $default(_that.configMap,_that.rules,_that.scripts,_that.profiles,_that.disabledRules,_that.proxyGroups,_that.clashProviders,_that.customProxies,_that.proxyDialers,_that.mitmModules);case _:
   return null;
 
 }
@@ -6609,7 +6328,7 @@ return $default(_that.configMap,_that.rules,_that.scripts,_that.profiles,_that.d
 
 
 class _MigrationData implements MigrationData {
-  const _MigrationData({ Map<String, Object?>? configMap,  List<Rule> rules = const [],  List<Script> scripts = const [],  List<Profile> profiles = const [],  List<DisabledRule> disabledRules = const [],  List<ProxyGroup> proxyGroups = const [],  List<ClashProvider> clashProviders = const [],  List<CustomProxy> customProxies = const [],  List<ProxyDialer> proxyDialers = const []}): _configMap = configMap,_rules = rules,_scripts = scripts,_profiles = profiles,_disabledRules = disabledRules,_proxyGroups = proxyGroups,_clashProviders = clashProviders,_customProxies = customProxies,_proxyDialers = proxyDialers;
+  const _MigrationData({ Map<String, Object?>? configMap,  List<Rule> rules = const [],  List<Script> scripts = const [],  List<Profile> profiles = const [],  List<DisabledRule> disabledRules = const [],  List<ProxyGroup> proxyGroups = const [],  List<ClashProvider> clashProviders = const [],  List<CustomProxy> customProxies = const [],  List<ProxyDialer> proxyDialers = const [],  List<MitmModule> mitmModules = const []}): _configMap = configMap,_rules = rules,_scripts = scripts,_profiles = profiles,_disabledRules = disabledRules,_proxyGroups = proxyGroups,_clashProviders = clashProviders,_customProxies = customProxies,_proxyDialers = proxyDialers,_mitmModules = mitmModules;
   
 
  final  Map<String, Object?>? _configMap;
@@ -6677,6 +6396,13 @@ class _MigrationData implements MigrationData {
   return EqualUnmodifiableListView(_proxyDialers);
 }
 
+ final  List<MitmModule> _mitmModules;
+@override@JsonKey() List<MitmModule> get mitmModules {
+  if (_mitmModules is EqualUnmodifiableListView) return _mitmModules;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_mitmModules);
+}
+
 
 /// Create a copy of MigrationData
 /// with the given fields replaced by the non-null parameter values.
@@ -6688,18 +6414,18 @@ _$MigrationDataCopyWith<_MigrationData> get copyWith => __$MigrationDataCopyWith
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MigrationData&&const DeepCollectionEquality().equals(other.configMap, _configMap)&&const DeepCollectionEquality().equals(other.rules, _rules)&&const DeepCollectionEquality().equals(other.scripts, _scripts)&&const DeepCollectionEquality().equals(other.profiles, _profiles)&&const DeepCollectionEquality().equals(other.disabledRules, _disabledRules)&&const DeepCollectionEquality().equals(other.proxyGroups, _proxyGroups)&&const DeepCollectionEquality().equals(other.clashProviders, _clashProviders)&&const DeepCollectionEquality().equals(other.customProxies, _customProxies)&&const DeepCollectionEquality().equals(other.proxyDialers, _proxyDialers));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MigrationData&&const DeepCollectionEquality().equals(other.configMap, _configMap)&&const DeepCollectionEquality().equals(other.rules, _rules)&&const DeepCollectionEquality().equals(other.scripts, _scripts)&&const DeepCollectionEquality().equals(other.profiles, _profiles)&&const DeepCollectionEquality().equals(other.disabledRules, _disabledRules)&&const DeepCollectionEquality().equals(other.proxyGroups, _proxyGroups)&&const DeepCollectionEquality().equals(other.clashProviders, _clashProviders)&&const DeepCollectionEquality().equals(other.customProxies, _customProxies)&&const DeepCollectionEquality().equals(other.proxyDialers, _proxyDialers)&&const DeepCollectionEquality().equals(other.mitmModules, _mitmModules));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_configMap),const DeepCollectionEquality().hash(_rules),const DeepCollectionEquality().hash(_scripts),const DeepCollectionEquality().hash(_profiles),const DeepCollectionEquality().hash(_disabledRules),const DeepCollectionEquality().hash(_proxyGroups),const DeepCollectionEquality().hash(_clashProviders),const DeepCollectionEquality().hash(_customProxies),const DeepCollectionEquality().hash(_proxyDialers));
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_configMap),const DeepCollectionEquality().hash(_rules),const DeepCollectionEquality().hash(_scripts),const DeepCollectionEquality().hash(_profiles),const DeepCollectionEquality().hash(_disabledRules),const DeepCollectionEquality().hash(_proxyGroups),const DeepCollectionEquality().hash(_clashProviders),const DeepCollectionEquality().hash(_customProxies),const DeepCollectionEquality().hash(_proxyDialers),const DeepCollectionEquality().hash(_mitmModules));
 }
 
 @override
 String toString() {
-    return 'MigrationData(configMap: $configMap, rules: $rules, scripts: $scripts, profiles: $profiles, disabledRules: $disabledRules, proxyGroups: $proxyGroups, clashProviders: $clashProviders, customProxies: $customProxies, proxyDialers: $proxyDialers)';
+    return 'MigrationData(configMap: $configMap, rules: $rules, scripts: $scripts, profiles: $profiles, disabledRules: $disabledRules, proxyGroups: $proxyGroups, clashProviders: $clashProviders, customProxies: $customProxies, proxyDialers: $proxyDialers, mitmModules: $mitmModules)';
 }
 
 
@@ -6710,7 +6436,7 @@ abstract mixin class _$MigrationDataCopyWith<$Res> implements $MigrationDataCopy
   factory _$MigrationDataCopyWith(_MigrationData value, $Res Function(_MigrationData) _then) = __$MigrationDataCopyWithImpl;
 @override @useResult
 $Res call({
- Map<String, Object?>? configMap, List<Rule> rules, List<Script> scripts, List<Profile> profiles, List<DisabledRule> disabledRules, List<ProxyGroup> proxyGroups, List<ClashProvider> clashProviders, List<CustomProxy> customProxies, List<ProxyDialer> proxyDialers
+ Map<String, Object?>? configMap, List<Rule> rules, List<Script> scripts, List<Profile> profiles, List<DisabledRule> disabledRules, List<ProxyGroup> proxyGroups, List<ClashProvider> clashProviders, List<CustomProxy> customProxies, List<ProxyDialer> proxyDialers, List<MitmModule> mitmModules
 });
 
 
@@ -6727,7 +6453,7 @@ class __$MigrationDataCopyWithImpl<$Res>
 
 /// Create a copy of MigrationData
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? configMap = freezed,Object? rules = null,Object? scripts = null,Object? profiles = null,Object? disabledRules = null,Object? proxyGroups = null,Object? clashProviders = null,Object? customProxies = null,Object? proxyDialers = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? configMap = freezed,Object? rules = null,Object? scripts = null,Object? profiles = null,Object? disabledRules = null,Object? proxyGroups = null,Object? clashProviders = null,Object? customProxies = null,Object? proxyDialers = null,Object? mitmModules = null,}) {
   return _then(_MigrationData(
 configMap: freezed == configMap ? _self._configMap : configMap // ignore: cast_nullable_to_non_nullable
 as Map<String, Object?>?,rules: null == rules ? _self._rules : rules // ignore: cast_nullable_to_non_nullable
@@ -6738,7 +6464,8 @@ as List<DisabledRule>,proxyGroups: null == proxyGroups ? _self._proxyGroups : pr
 as List<ProxyGroup>,clashProviders: null == clashProviders ? _self._clashProviders : clashProviders // ignore: cast_nullable_to_non_nullable
 as List<ClashProvider>,customProxies: null == customProxies ? _self._customProxies : customProxies // ignore: cast_nullable_to_non_nullable
 as List<CustomProxy>,proxyDialers: null == proxyDialers ? _self._proxyDialers : proxyDialers // ignore: cast_nullable_to_non_nullable
-as List<ProxyDialer>,
+as List<ProxyDialer>,mitmModules: null == mitmModules ? _self._mitmModules : mitmModules // ignore: cast_nullable_to_non_nullable
+as List<MitmModule>,
   ));
 }
 
@@ -6748,7 +6475,7 @@ as List<ProxyDialer>,
 /// @nodoc
 mixin _$SetupState {
 
- int? get profileId; int? get profileLastUpdateDate; ProfileType get profileType; ExtendType get extendType; List<Rule> get rules; List<ProxyGroup> get proxyGroups; List<Rule> get addedRules; Script? get script; ProfileOverrides get overrides; List<ClashProvider> get clashProviders; Map<String, int> get profileProviders; List<CustomProxy> get appProxies; Map<int, String> get proxyDialers; List<CustomRouting> get customRoutings; TailscaleProps get tailscale; Map<String, String> get dialerProxies; ListenersProps get listeners; String? get matchTarget;
+ int? get profileId; int? get profileLastUpdateDate; ProfileType get profileType; ExtendType get extendType; List<Rule> get rules; List<ProxyGroup> get proxyGroups; List<Rule> get addedRules; Script? get script; ProfileOverrides get overrides; List<ClashProvider> get clashProviders; Map<String, int> get profileProviders; List<CustomProxy> get appProxies; Map<int, String> get proxyDialers; List<CustomRouting> get customRoutings; TailscaleProps get tailscale; Map<String, String> get dialerProxies; ListenersProps get listeners; String? get matchTarget; List<MitmModuleSource> get mitmModules;
 /// Create a copy of SetupState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -6760,20 +6487,20 @@ $SetupStateCopyWith<SetupState> get copyWith => _$SetupStateCopyWithImpl<SetupSt
 @override
 bool operator ==(Object other) {
   final _this = this as SetupState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SetupState&&(identical(other.profileId, _this.profileId) || other.profileId == _this.profileId)&&(identical(other.profileLastUpdateDate, _this.profileLastUpdateDate) || other.profileLastUpdateDate == _this.profileLastUpdateDate)&&(identical(other.profileType, _this.profileType) || other.profileType == _this.profileType)&&(identical(other.extendType, _this.extendType) || other.extendType == _this.extendType)&&const DeepCollectionEquality().equals(other.rules, _this.rules)&&const DeepCollectionEquality().equals(other.proxyGroups, _this.proxyGroups)&&const DeepCollectionEquality().equals(other.addedRules, _this.addedRules)&&(identical(other.script, _this.script) || other.script == _this.script)&&(identical(other.overrides, _this.overrides) || other.overrides == _this.overrides)&&const DeepCollectionEquality().equals(other.clashProviders, _this.clashProviders)&&const DeepCollectionEquality().equals(other.profileProviders, _this.profileProviders)&&const DeepCollectionEquality().equals(other.appProxies, _this.appProxies)&&const DeepCollectionEquality().equals(other.proxyDialers, _this.proxyDialers)&&const DeepCollectionEquality().equals(other.customRoutings, _this.customRoutings)&&(identical(other.tailscale, _this.tailscale) || other.tailscale == _this.tailscale)&&const DeepCollectionEquality().equals(other.dialerProxies, _this.dialerProxies)&&(identical(other.listeners, _this.listeners) || other.listeners == _this.listeners)&&(identical(other.matchTarget, _this.matchTarget) || other.matchTarget == _this.matchTarget));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SetupState&&(identical(other.profileId, _this.profileId) || other.profileId == _this.profileId)&&(identical(other.profileLastUpdateDate, _this.profileLastUpdateDate) || other.profileLastUpdateDate == _this.profileLastUpdateDate)&&(identical(other.profileType, _this.profileType) || other.profileType == _this.profileType)&&(identical(other.extendType, _this.extendType) || other.extendType == _this.extendType)&&const DeepCollectionEquality().equals(other.rules, _this.rules)&&const DeepCollectionEquality().equals(other.proxyGroups, _this.proxyGroups)&&const DeepCollectionEquality().equals(other.addedRules, _this.addedRules)&&(identical(other.script, _this.script) || other.script == _this.script)&&(identical(other.overrides, _this.overrides) || other.overrides == _this.overrides)&&const DeepCollectionEquality().equals(other.clashProviders, _this.clashProviders)&&const DeepCollectionEquality().equals(other.profileProviders, _this.profileProviders)&&const DeepCollectionEquality().equals(other.appProxies, _this.appProxies)&&const DeepCollectionEquality().equals(other.proxyDialers, _this.proxyDialers)&&const DeepCollectionEquality().equals(other.customRoutings, _this.customRoutings)&&(identical(other.tailscale, _this.tailscale) || other.tailscale == _this.tailscale)&&const DeepCollectionEquality().equals(other.dialerProxies, _this.dialerProxies)&&(identical(other.listeners, _this.listeners) || other.listeners == _this.listeners)&&(identical(other.matchTarget, _this.matchTarget) || other.matchTarget == _this.matchTarget)&&const DeepCollectionEquality().equals(other.mitmModules, _this.mitmModules));
 }
 
 
 @override
 int get hashCode {
   final _this = this as SetupState;
-  return Object.hash(runtimeType,_this.profileId,_this.profileLastUpdateDate,_this.profileType,_this.extendType,const DeepCollectionEquality().hash(_this.rules),const DeepCollectionEquality().hash(_this.proxyGroups),const DeepCollectionEquality().hash(_this.addedRules),_this.script,_this.overrides,const DeepCollectionEquality().hash(_this.clashProviders),const DeepCollectionEquality().hash(_this.profileProviders),const DeepCollectionEquality().hash(_this.appProxies),const DeepCollectionEquality().hash(_this.proxyDialers),const DeepCollectionEquality().hash(_this.customRoutings),_this.tailscale,const DeepCollectionEquality().hash(_this.dialerProxies),_this.listeners,_this.matchTarget);
+  return Object.hashAll([runtimeType,_this.profileId,_this.profileLastUpdateDate,_this.profileType,_this.extendType,const DeepCollectionEquality().hash(_this.rules),const DeepCollectionEquality().hash(_this.proxyGroups),const DeepCollectionEquality().hash(_this.addedRules),_this.script,_this.overrides,const DeepCollectionEquality().hash(_this.clashProviders),const DeepCollectionEquality().hash(_this.profileProviders),const DeepCollectionEquality().hash(_this.appProxies),const DeepCollectionEquality().hash(_this.proxyDialers),const DeepCollectionEquality().hash(_this.customRoutings),_this.tailscale,const DeepCollectionEquality().hash(_this.dialerProxies),_this.listeners,_this.matchTarget,const DeepCollectionEquality().hash(_this.mitmModules)]);
 }
 
 @override
 String toString() {
   final _this = this as SetupState;
-  return 'SetupState(profileId: ${_this.profileId}, profileLastUpdateDate: ${_this.profileLastUpdateDate}, profileType: ${_this.profileType}, extendType: ${_this.extendType}, rules: ${_this.rules}, proxyGroups: ${_this.proxyGroups}, addedRules: ${_this.addedRules}, script: ${_this.script}, overrides: ${_this.overrides}, clashProviders: ${_this.clashProviders}, profileProviders: ${_this.profileProviders}, appProxies: ${_this.appProxies}, proxyDialers: ${_this.proxyDialers}, customRoutings: ${_this.customRoutings}, tailscale: ${_this.tailscale}, dialerProxies: ${_this.dialerProxies}, listeners: ${_this.listeners}, matchTarget: ${_this.matchTarget})';
+  return 'SetupState(profileId: ${_this.profileId}, profileLastUpdateDate: ${_this.profileLastUpdateDate}, profileType: ${_this.profileType}, extendType: ${_this.extendType}, rules: ${_this.rules}, proxyGroups: ${_this.proxyGroups}, addedRules: ${_this.addedRules}, script: ${_this.script}, overrides: ${_this.overrides}, clashProviders: ${_this.clashProviders}, profileProviders: ${_this.profileProviders}, appProxies: ${_this.appProxies}, proxyDialers: ${_this.proxyDialers}, customRoutings: ${_this.customRoutings}, tailscale: ${_this.tailscale}, dialerProxies: ${_this.dialerProxies}, listeners: ${_this.listeners}, matchTarget: ${_this.matchTarget}, mitmModules: ${_this.mitmModules})';
 }
 
 
@@ -6784,7 +6511,7 @@ abstract mixin class $SetupStateCopyWith<$Res>  {
   factory $SetupStateCopyWith(SetupState value, $Res Function(SetupState) _then) = _$SetupStateCopyWithImpl;
 @useResult
 $Res call({
- int? profileId, int? profileLastUpdateDate, ProfileType profileType, ExtendType extendType, List<Rule> rules, List<ProxyGroup> proxyGroups, List<Rule> addedRules, Script? script, ProfileOverrides overrides, List<ClashProvider> clashProviders, Map<String, int> profileProviders, List<CustomProxy> appProxies, Map<int, String> proxyDialers, List<CustomRouting> customRoutings, TailscaleProps tailscale, Map<String, String> dialerProxies, ListenersProps listeners, String? matchTarget
+ int? profileId, int? profileLastUpdateDate, ProfileType profileType, ExtendType extendType, List<Rule> rules, List<ProxyGroup> proxyGroups, List<Rule> addedRules, Script? script, ProfileOverrides overrides, List<ClashProvider> clashProviders, Map<String, int> profileProviders, List<CustomProxy> appProxies, Map<int, String> proxyDialers, List<CustomRouting> customRoutings, TailscaleProps tailscale, Map<String, String> dialerProxies, ListenersProps listeners, String? matchTarget, List<MitmModuleSource> mitmModules
 });
 
 
@@ -6801,7 +6528,7 @@ class _$SetupStateCopyWithImpl<$Res>
 
 /// Create a copy of SetupState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? profileId = freezed,Object? profileLastUpdateDate = freezed,Object? profileType = null,Object? extendType = null,Object? rules = null,Object? proxyGroups = null,Object? addedRules = null,Object? script = freezed,Object? overrides = null,Object? clashProviders = null,Object? profileProviders = null,Object? appProxies = null,Object? proxyDialers = null,Object? customRoutings = null,Object? tailscale = null,Object? dialerProxies = null,Object? listeners = null,Object? matchTarget = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? profileId = freezed,Object? profileLastUpdateDate = freezed,Object? profileType = null,Object? extendType = null,Object? rules = null,Object? proxyGroups = null,Object? addedRules = null,Object? script = freezed,Object? overrides = null,Object? clashProviders = null,Object? profileProviders = null,Object? appProxies = null,Object? proxyDialers = null,Object? customRoutings = null,Object? tailscale = null,Object? dialerProxies = null,Object? listeners = null,Object? matchTarget = freezed,Object? mitmModules = null,}) {
   return _then(SetupState(
 profileId: freezed == profileId ? _self.profileId : profileId // ignore: cast_nullable_to_non_nullable
 as int?,profileLastUpdateDate: freezed == profileLastUpdateDate ? _self.profileLastUpdateDate : profileLastUpdateDate // ignore: cast_nullable_to_non_nullable
@@ -6821,7 +6548,8 @@ as List<CustomRouting>,tailscale: null == tailscale ? _self.tailscale : tailscal
 as TailscaleProps,dialerProxies: null == dialerProxies ? _self.dialerProxies : dialerProxies // ignore: cast_nullable_to_non_nullable
 as Map<String, String>,listeners: null == listeners ? _self.listeners : listeners // ignore: cast_nullable_to_non_nullable
 as ListenersProps,matchTarget: freezed == matchTarget ? _self.matchTarget : matchTarget // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,mitmModules: null == mitmModules ? _self.mitmModules : mitmModules // ignore: cast_nullable_to_non_nullable
+as List<MitmModuleSource>,
   ));
 }
 /// Create a copy of SetupState
@@ -6945,10 +6673,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? profileId,  int? profileLastUpdateDate,  ProfileType profileType,  ExtendType extendType,  List<Rule> rules,  List<ProxyGroup> proxyGroups,  List<Rule> addedRules,  Script? script,  ProfileOverrides overrides,  List<ClashProvider> clashProviders,  Map<String, int> profileProviders,  List<CustomProxy> appProxies,  Map<int, String> proxyDialers,  List<CustomRouting> customRoutings,  TailscaleProps tailscale,  Map<String, String> dialerProxies,  ListenersProps listeners,  String? matchTarget)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? profileId,  int? profileLastUpdateDate,  ProfileType profileType,  ExtendType extendType,  List<Rule> rules,  List<ProxyGroup> proxyGroups,  List<Rule> addedRules,  Script? script,  ProfileOverrides overrides,  List<ClashProvider> clashProviders,  Map<String, int> profileProviders,  List<CustomProxy> appProxies,  Map<int, String> proxyDialers,  List<CustomRouting> customRoutings,  TailscaleProps tailscale,  Map<String, String> dialerProxies,  ListenersProps listeners,  String? matchTarget,  List<MitmModuleSource> mitmModules)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SetupState() when $default != null:
-return $default(_that.profileId,_that.profileLastUpdateDate,_that.profileType,_that.extendType,_that.rules,_that.proxyGroups,_that.addedRules,_that.script,_that.overrides,_that.clashProviders,_that.profileProviders,_that.appProxies,_that.proxyDialers,_that.customRoutings,_that.tailscale,_that.dialerProxies,_that.listeners,_that.matchTarget);case _:
+return $default(_that.profileId,_that.profileLastUpdateDate,_that.profileType,_that.extendType,_that.rules,_that.proxyGroups,_that.addedRules,_that.script,_that.overrides,_that.clashProviders,_that.profileProviders,_that.appProxies,_that.proxyDialers,_that.customRoutings,_that.tailscale,_that.dialerProxies,_that.listeners,_that.matchTarget,_that.mitmModules);case _:
   return orElse();
 
 }
@@ -6966,10 +6694,10 @@ return $default(_that.profileId,_that.profileLastUpdateDate,_that.profileType,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? profileId,  int? profileLastUpdateDate,  ProfileType profileType,  ExtendType extendType,  List<Rule> rules,  List<ProxyGroup> proxyGroups,  List<Rule> addedRules,  Script? script,  ProfileOverrides overrides,  List<ClashProvider> clashProviders,  Map<String, int> profileProviders,  List<CustomProxy> appProxies,  Map<int, String> proxyDialers,  List<CustomRouting> customRoutings,  TailscaleProps tailscale,  Map<String, String> dialerProxies,  ListenersProps listeners,  String? matchTarget)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? profileId,  int? profileLastUpdateDate,  ProfileType profileType,  ExtendType extendType,  List<Rule> rules,  List<ProxyGroup> proxyGroups,  List<Rule> addedRules,  Script? script,  ProfileOverrides overrides,  List<ClashProvider> clashProviders,  Map<String, int> profileProviders,  List<CustomProxy> appProxies,  Map<int, String> proxyDialers,  List<CustomRouting> customRoutings,  TailscaleProps tailscale,  Map<String, String> dialerProxies,  ListenersProps listeners,  String? matchTarget,  List<MitmModuleSource> mitmModules)  $default,) {final _that = this;
 switch (_that) {
 case _SetupState():
-return $default(_that.profileId,_that.profileLastUpdateDate,_that.profileType,_that.extendType,_that.rules,_that.proxyGroups,_that.addedRules,_that.script,_that.overrides,_that.clashProviders,_that.profileProviders,_that.appProxies,_that.proxyDialers,_that.customRoutings,_that.tailscale,_that.dialerProxies,_that.listeners,_that.matchTarget);case _:
+return $default(_that.profileId,_that.profileLastUpdateDate,_that.profileType,_that.extendType,_that.rules,_that.proxyGroups,_that.addedRules,_that.script,_that.overrides,_that.clashProviders,_that.profileProviders,_that.appProxies,_that.proxyDialers,_that.customRoutings,_that.tailscale,_that.dialerProxies,_that.listeners,_that.matchTarget,_that.mitmModules);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -6986,10 +6714,10 @@ return $default(_that.profileId,_that.profileLastUpdateDate,_that.profileType,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? profileId,  int? profileLastUpdateDate,  ProfileType profileType,  ExtendType extendType,  List<Rule> rules,  List<ProxyGroup> proxyGroups,  List<Rule> addedRules,  Script? script,  ProfileOverrides overrides,  List<ClashProvider> clashProviders,  Map<String, int> profileProviders,  List<CustomProxy> appProxies,  Map<int, String> proxyDialers,  List<CustomRouting> customRoutings,  TailscaleProps tailscale,  Map<String, String> dialerProxies,  ListenersProps listeners,  String? matchTarget)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? profileId,  int? profileLastUpdateDate,  ProfileType profileType,  ExtendType extendType,  List<Rule> rules,  List<ProxyGroup> proxyGroups,  List<Rule> addedRules,  Script? script,  ProfileOverrides overrides,  List<ClashProvider> clashProviders,  Map<String, int> profileProviders,  List<CustomProxy> appProxies,  Map<int, String> proxyDialers,  List<CustomRouting> customRoutings,  TailscaleProps tailscale,  Map<String, String> dialerProxies,  ListenersProps listeners,  String? matchTarget,  List<MitmModuleSource> mitmModules)?  $default,) {final _that = this;
 switch (_that) {
 case _SetupState() when $default != null:
-return $default(_that.profileId,_that.profileLastUpdateDate,_that.profileType,_that.extendType,_that.rules,_that.proxyGroups,_that.addedRules,_that.script,_that.overrides,_that.clashProviders,_that.profileProviders,_that.appProxies,_that.proxyDialers,_that.customRoutings,_that.tailscale,_that.dialerProxies,_that.listeners,_that.matchTarget);case _:
+return $default(_that.profileId,_that.profileLastUpdateDate,_that.profileType,_that.extendType,_that.rules,_that.proxyGroups,_that.addedRules,_that.script,_that.overrides,_that.clashProviders,_that.profileProviders,_that.appProxies,_that.proxyDialers,_that.customRoutings,_that.tailscale,_that.dialerProxies,_that.listeners,_that.matchTarget,_that.mitmModules);case _:
   return null;
 
 }
@@ -7001,7 +6729,7 @@ return $default(_that.profileId,_that.profileLastUpdateDate,_that.profileType,_t
 
 
 class _SetupState implements SetupState {
-  const _SetupState({required this.profileId, required this.profileLastUpdateDate, required this.profileType, required this.extendType, required  List<Rule> rules, required  List<ProxyGroup> proxyGroups, required  List<Rule> addedRules, required this.script, required this.overrides,  List<ClashProvider> clashProviders = const [],  Map<String, int> profileProviders = const {},  List<CustomProxy> appProxies = const [],  Map<int, String> proxyDialers = const {},  List<CustomRouting> customRoutings = const [], this.tailscale = const TailscaleProps(),  Map<String, String> dialerProxies = const {}, this.listeners = const ListenersProps(), this.matchTarget}): _rules = rules,_proxyGroups = proxyGroups,_addedRules = addedRules,_clashProviders = clashProviders,_profileProviders = profileProviders,_appProxies = appProxies,_proxyDialers = proxyDialers,_customRoutings = customRoutings,_dialerProxies = dialerProxies;
+  const _SetupState({required this.profileId, required this.profileLastUpdateDate, required this.profileType, required this.extendType, required  List<Rule> rules, required  List<ProxyGroup> proxyGroups, required  List<Rule> addedRules, required this.script, required this.overrides,  List<ClashProvider> clashProviders = const [],  Map<String, int> profileProviders = const {},  List<CustomProxy> appProxies = const [],  Map<int, String> proxyDialers = const {},  List<CustomRouting> customRoutings = const [], this.tailscale = const TailscaleProps(),  Map<String, String> dialerProxies = const {}, this.listeners = const ListenersProps(), this.matchTarget,  List<MitmModuleSource> mitmModules = const []}): _rules = rules,_proxyGroups = proxyGroups,_addedRules = addedRules,_clashProviders = clashProviders,_profileProviders = profileProviders,_appProxies = appProxies,_proxyDialers = proxyDialers,_customRoutings = customRoutings,_dialerProxies = dialerProxies,_mitmModules = mitmModules;
   
 
 @override final  int? profileId;
@@ -7076,6 +6804,13 @@ class _SetupState implements SetupState {
 
 @override@JsonKey() final  ListenersProps listeners;
 @override final  String? matchTarget;
+ final  List<MitmModuleSource> _mitmModules;
+@override@JsonKey() List<MitmModuleSource> get mitmModules {
+  if (_mitmModules is EqualUnmodifiableListView) return _mitmModules;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_mitmModules);
+}
+
 
 /// Create a copy of SetupState
 /// with the given fields replaced by the non-null parameter values.
@@ -7087,18 +6822,18 @@ _$SetupStateCopyWith<_SetupState> get copyWith => __$SetupStateCopyWithImpl<_Set
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SetupState&&(identical(other.profileId, profileId) || other.profileId == profileId)&&(identical(other.profileLastUpdateDate, profileLastUpdateDate) || other.profileLastUpdateDate == profileLastUpdateDate)&&(identical(other.profileType, profileType) || other.profileType == profileType)&&(identical(other.extendType, extendType) || other.extendType == extendType)&&const DeepCollectionEquality().equals(other.rules, _rules)&&const DeepCollectionEquality().equals(other.proxyGroups, _proxyGroups)&&const DeepCollectionEquality().equals(other.addedRules, _addedRules)&&(identical(other.script, script) || other.script == script)&&(identical(other.overrides, overrides) || other.overrides == overrides)&&const DeepCollectionEquality().equals(other.clashProviders, _clashProviders)&&const DeepCollectionEquality().equals(other.profileProviders, _profileProviders)&&const DeepCollectionEquality().equals(other.appProxies, _appProxies)&&const DeepCollectionEquality().equals(other.proxyDialers, _proxyDialers)&&const DeepCollectionEquality().equals(other.customRoutings, _customRoutings)&&(identical(other.tailscale, tailscale) || other.tailscale == tailscale)&&const DeepCollectionEquality().equals(other.dialerProxies, _dialerProxies)&&(identical(other.listeners, listeners) || other.listeners == listeners)&&(identical(other.matchTarget, matchTarget) || other.matchTarget == matchTarget));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SetupState&&(identical(other.profileId, profileId) || other.profileId == profileId)&&(identical(other.profileLastUpdateDate, profileLastUpdateDate) || other.profileLastUpdateDate == profileLastUpdateDate)&&(identical(other.profileType, profileType) || other.profileType == profileType)&&(identical(other.extendType, extendType) || other.extendType == extendType)&&const DeepCollectionEquality().equals(other.rules, _rules)&&const DeepCollectionEquality().equals(other.proxyGroups, _proxyGroups)&&const DeepCollectionEquality().equals(other.addedRules, _addedRules)&&(identical(other.script, script) || other.script == script)&&(identical(other.overrides, overrides) || other.overrides == overrides)&&const DeepCollectionEquality().equals(other.clashProviders, _clashProviders)&&const DeepCollectionEquality().equals(other.profileProviders, _profileProviders)&&const DeepCollectionEquality().equals(other.appProxies, _appProxies)&&const DeepCollectionEquality().equals(other.proxyDialers, _proxyDialers)&&const DeepCollectionEquality().equals(other.customRoutings, _customRoutings)&&(identical(other.tailscale, tailscale) || other.tailscale == tailscale)&&const DeepCollectionEquality().equals(other.dialerProxies, _dialerProxies)&&(identical(other.listeners, listeners) || other.listeners == listeners)&&(identical(other.matchTarget, matchTarget) || other.matchTarget == matchTarget)&&const DeepCollectionEquality().equals(other.mitmModules, _mitmModules));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,profileId,profileLastUpdateDate,profileType,extendType,const DeepCollectionEquality().hash(_rules),const DeepCollectionEquality().hash(_proxyGroups),const DeepCollectionEquality().hash(_addedRules),script,overrides,const DeepCollectionEquality().hash(_clashProviders),const DeepCollectionEquality().hash(_profileProviders),const DeepCollectionEquality().hash(_appProxies),const DeepCollectionEquality().hash(_proxyDialers),const DeepCollectionEquality().hash(_customRoutings),tailscale,const DeepCollectionEquality().hash(_dialerProxies),listeners,matchTarget);
+    return Object.hashAll([runtimeType,profileId,profileLastUpdateDate,profileType,extendType,const DeepCollectionEquality().hash(_rules),const DeepCollectionEquality().hash(_proxyGroups),const DeepCollectionEquality().hash(_addedRules),script,overrides,const DeepCollectionEquality().hash(_clashProviders),const DeepCollectionEquality().hash(_profileProviders),const DeepCollectionEquality().hash(_appProxies),const DeepCollectionEquality().hash(_proxyDialers),const DeepCollectionEquality().hash(_customRoutings),tailscale,const DeepCollectionEquality().hash(_dialerProxies),listeners,matchTarget,const DeepCollectionEquality().hash(_mitmModules)]);
 }
 
 @override
 String toString() {
-    return 'SetupState(profileId: $profileId, profileLastUpdateDate: $profileLastUpdateDate, profileType: $profileType, extendType: $extendType, rules: $rules, proxyGroups: $proxyGroups, addedRules: $addedRules, script: $script, overrides: $overrides, clashProviders: $clashProviders, profileProviders: $profileProviders, appProxies: $appProxies, proxyDialers: $proxyDialers, customRoutings: $customRoutings, tailscale: $tailscale, dialerProxies: $dialerProxies, listeners: $listeners, matchTarget: $matchTarget)';
+    return 'SetupState(profileId: $profileId, profileLastUpdateDate: $profileLastUpdateDate, profileType: $profileType, extendType: $extendType, rules: $rules, proxyGroups: $proxyGroups, addedRules: $addedRules, script: $script, overrides: $overrides, clashProviders: $clashProviders, profileProviders: $profileProviders, appProxies: $appProxies, proxyDialers: $proxyDialers, customRoutings: $customRoutings, tailscale: $tailscale, dialerProxies: $dialerProxies, listeners: $listeners, matchTarget: $matchTarget, mitmModules: $mitmModules)';
 }
 
 
@@ -7109,7 +6844,7 @@ abstract mixin class _$SetupStateCopyWith<$Res> implements $SetupStateCopyWith<$
   factory _$SetupStateCopyWith(_SetupState value, $Res Function(_SetupState) _then) = __$SetupStateCopyWithImpl;
 @override @useResult
 $Res call({
- int? profileId, int? profileLastUpdateDate, ProfileType profileType, ExtendType extendType, List<Rule> rules, List<ProxyGroup> proxyGroups, List<Rule> addedRules, Script? script, ProfileOverrides overrides, List<ClashProvider> clashProviders, Map<String, int> profileProviders, List<CustomProxy> appProxies, Map<int, String> proxyDialers, List<CustomRouting> customRoutings, TailscaleProps tailscale, Map<String, String> dialerProxies, ListenersProps listeners, String? matchTarget
+ int? profileId, int? profileLastUpdateDate, ProfileType profileType, ExtendType extendType, List<Rule> rules, List<ProxyGroup> proxyGroups, List<Rule> addedRules, Script? script, ProfileOverrides overrides, List<ClashProvider> clashProviders, Map<String, int> profileProviders, List<CustomProxy> appProxies, Map<int, String> proxyDialers, List<CustomRouting> customRoutings, TailscaleProps tailscale, Map<String, String> dialerProxies, ListenersProps listeners, String? matchTarget, List<MitmModuleSource> mitmModules
 });
 
 
@@ -7126,7 +6861,7 @@ class __$SetupStateCopyWithImpl<$Res>
 
 /// Create a copy of SetupState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? profileId = freezed,Object? profileLastUpdateDate = freezed,Object? profileType = null,Object? extendType = null,Object? rules = null,Object? proxyGroups = null,Object? addedRules = null,Object? script = freezed,Object? overrides = null,Object? clashProviders = null,Object? profileProviders = null,Object? appProxies = null,Object? proxyDialers = null,Object? customRoutings = null,Object? tailscale = null,Object? dialerProxies = null,Object? listeners = null,Object? matchTarget = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? profileId = freezed,Object? profileLastUpdateDate = freezed,Object? profileType = null,Object? extendType = null,Object? rules = null,Object? proxyGroups = null,Object? addedRules = null,Object? script = freezed,Object? overrides = null,Object? clashProviders = null,Object? profileProviders = null,Object? appProxies = null,Object? proxyDialers = null,Object? customRoutings = null,Object? tailscale = null,Object? dialerProxies = null,Object? listeners = null,Object? matchTarget = freezed,Object? mitmModules = null,}) {
   return _then(_SetupState(
 profileId: freezed == profileId ? _self.profileId : profileId // ignore: cast_nullable_to_non_nullable
 as int?,profileLastUpdateDate: freezed == profileLastUpdateDate ? _self.profileLastUpdateDate : profileLastUpdateDate // ignore: cast_nullable_to_non_nullable
@@ -7146,7 +6881,8 @@ as List<CustomRouting>,tailscale: null == tailscale ? _self.tailscale : tailscal
 as TailscaleProps,dialerProxies: null == dialerProxies ? _self._dialerProxies : dialerProxies // ignore: cast_nullable_to_non_nullable
 as Map<String, String>,listeners: null == listeners ? _self.listeners : listeners // ignore: cast_nullable_to_non_nullable
 as ListenersProps,matchTarget: freezed == matchTarget ? _self.matchTarget : matchTarget // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,mitmModules: null == mitmModules ? _self._mitmModules : mitmModules // ignore: cast_nullable_to_non_nullable
+as List<MitmModuleSource>,
   ));
 }
 

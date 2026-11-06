@@ -11,3 +11,4 @@ export 'service_status.dart';
 export 'custom_routing.dart';
 export 'restart_core.dart';
 export 'traffic.dart';
+export 'update_status.dart';

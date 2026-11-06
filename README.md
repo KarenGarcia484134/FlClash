@@ -47,9 +47,7 @@ Based on [chen08209/FlClash](https://github.com/chen08209/FlClash). Thanks to th
 
 ### Interface style
 
-- Settings → Theme → "Interface style": **Classic** (default, the Material look of 0.9.11) or **New** (upstream's 0.9.1 redesign: iOS type scale, layered surfaces, iOS color palette, Liquid Glass); switching applies immediately
-- Each style keeps its own theme colors: Classic keeps the colors and Material color scheme you had before, New uses the iOS palette and color styles; Liquid Glass is only offered in New
-- The redesigned screens of 0.9.1 (dashboard around the current exit, proxy group cards, connection / request tables) are kept in both styles; the switch changes the theme, not the layouts
+- The classic / new interface style switch is gone: upstream 0.9.3 rebuilt the whole UI on prism_ui and removed the Material look, so every page now uses the iOS-style interface (theme colors, color styles and Liquid Glass stay under Settings → Theme)
 
 ### Extend tab layout
 
@@ -102,7 +100,7 @@ dart setup.dart android   # or windows / linux / macos
 
 ## Patched core
 
-The `core/Clash.Meta` submodule points at the `FlClash-patched-1.19.33` branch of [KarenGarcia484134/Clash.Meta](https://github.com/KarenGarcia484134/Clash.Meta): upstream's `FlClash` branch plus a few patches. The patches only **add** files (reading Tailscale node status, keeping one node across config reloads) and change no upstream file. See [`core/PATCHES.md`](core/PATCHES.md).
+The `core/Clash.Meta` submodule points at the `FlClash-patched-v0.9.3` branch of [KarenGarcia484134/Clash.Meta](https://github.com/KarenGarcia484134/Clash.Meta): upstream's `FlClash` branch plus a few patches. The patches only **add** files (reading Tailscale node status, keeping one node across config reloads) and change no upstream file. See [`core/PATCHES.md`](core/PATCHES.md).
 
 ## Syncing with upstream
 
@@ -114,7 +112,7 @@ git fetch upstream --tags
 git merge v<upstream release>   # prefer the latest release tag over main
 ```
 
-The fork is currently synced to upstream **v0.9.2** (mihomo v1.19.33).
+The fork is currently synced to upstream **v0.9.3** (mihomo v1.19.33).
 
 Core submodule: follow [`core/PATCHES.md`](core/PATCHES.md) to move the patches onto upstream's latest `FlClash` branch, push it, then commit the new submodule pointer.
 

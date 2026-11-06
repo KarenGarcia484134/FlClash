@@ -1,6 +1,6 @@
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/ui/color.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
+import 'package:prism_ui/color.dart';
 
 import 'app_localizations.dart';
 
@@ -13,9 +13,8 @@ extension PageLabelL10n on PageLabel {
       PageLabel.profiles => appLocalizations.profiles,
       PageLabel.tools => appLocalizations.tools,
       PageLabel.logs => appLocalizations.logs,
-      PageLabel.requests => appLocalizations.recentRequests,
+      PageLabel.requests => appLocalizations.requests,
       PageLabel.resources => appLocalizations.resources,
-      PageLabel.connections => appLocalizations.liveConnections,
       PageLabel.dns => appLocalizations.dnsQueries,
     };
   }
@@ -86,29 +85,26 @@ extension HotActionL10n on HotAction {
   }
 }
 
+extension MitmListL10n on MitmList {
+  String get label {
+    final appLocalizations = currentAppLocalizations;
+    return switch (this) {
+      MitmList.hostname => appLocalizations.hostname,
+      MitmList.urlRewrite => appLocalizations.urlRewrite,
+      MitmList.headerRewrite => appLocalizations.headerRewrite,
+      MitmList.bodyRewrite => appLocalizations.bodyRewrite,
+      MitmList.mapLocal => appLocalizations.mapLocal,
+      MitmList.script => appLocalizations.script,
+    };
+  }
+}
+
 extension RestoreStrategyL10n on RestoreStrategy {
   String get label {
     final appLocalizations = currentAppLocalizations;
     return switch (this) {
       RestoreStrategy.compatible => appLocalizations.restoreStrategyCompatible,
       RestoreStrategy.override => appLocalizations.restoreStrategyOverride,
-    };
-  }
-}
-
-extension DynamicSchemeVariantL10n on DynamicSchemeVariant {
-  String get label {
-    final appLocalizations = currentAppLocalizations;
-    return switch (this) {
-      DynamicSchemeVariant.tonalSpot => appLocalizations.tonalSpotScheme,
-      DynamicSchemeVariant.fidelity => appLocalizations.fidelityScheme,
-      DynamicSchemeVariant.monochrome => appLocalizations.monochromeScheme,
-      DynamicSchemeVariant.neutral => appLocalizations.neutralScheme,
-      DynamicSchemeVariant.vibrant => appLocalizations.vibrantScheme,
-      DynamicSchemeVariant.expressive => appLocalizations.expressiveScheme,
-      DynamicSchemeVariant.content => appLocalizations.contentScheme,
-      DynamicSchemeVariant.rainbow => appLocalizations.rainbowScheme,
-      DynamicSchemeVariant.fruitSalad => appLocalizations.fruitSaladScheme,
     };
   }
 }
@@ -137,6 +133,36 @@ extension LocaleL10n on Locale {
       'ru' => appLocalizations.ru,
       'zh_CN' => appLocalizations.zhCN,
       final code => code,
+    };
+  }
+}
+
+extension RecordFacetKindL10n on RecordFacetKind {
+  String? get title {
+    final appLocalizations = currentAppLocalizations;
+    return switch (this) {
+      RecordFacetKind.network => appLocalizations.protocol,
+      RecordFacetKind.rule => appLocalizations.rule,
+      RecordFacetKind.level => appLocalizations.logLevel,
+      RecordFacetKind.mitm ||
+      RecordFacetKind.app ||
+      RecordFacetKind.proxy ||
+      RecordFacetKind.type ||
+      RecordFacetKind.initiator ||
+      RecordFacetKind.cache ||
+      RecordFacetKind.rcode => null,
+    };
+  }
+}
+
+extension RecordGroupingL10n on RecordGrouping {
+  String get label {
+    final appLocalizations = currentAppLocalizations;
+    return switch (this) {
+      RecordGrouping.app => appLocalizations.app,
+      RecordGrouping.host => appLocalizations.host,
+      RecordGrouping.rule => appLocalizations.rule,
+      RecordGrouping.exit => appLocalizations.outboundExit,
     };
   }
 }

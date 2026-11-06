@@ -38,6 +38,9 @@ _AppSettingProps _$AppSettingPropsFromJson(
   openLogs: json['openLogs'] as bool? ?? false,
   closeConnections: json['closeConnections'] as bool? ?? true,
   closeConnectionsOnApply: json['closeConnectionsOnApply'] as bool? ?? false,
+  requestFeed:
+      $enumDecodeNullable(_$RequestFeedEnumMap, json['requestFeed']) ??
+      RequestFeed.live,
   delayTestTimeout:
       (json['delayTestTimeout'] as num?)?.toInt() ?? defaultDelayTestTimeout,
   tabAnimation:
@@ -96,6 +99,11 @@ _AppSettingProps _$AppSettingPropsFromJson(
         ),
       ) ??
       const {},
+  recordGroupings:
+      (json['recordGroupings'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(k, e as String),
+      ) ??
+      const {},
 );
 
 Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
@@ -113,6 +121,7 @@ Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
       'openLogs': instance.openLogs,
       'closeConnections': instance.closeConnections,
       'closeConnectionsOnApply': instance.closeConnectionsOnApply,
+      'requestFeed': _$RequestFeedEnumMap[instance.requestFeed]!,
       'delayTestTimeout': instance.delayTestTimeout,
       'tabAnimation': _$TabAnimationEnumMap[instance.tabAnimation]!,
       'floatingNavigationBar': instance.floatingNavigationBar,
@@ -134,7 +143,13 @@ Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
       'serviceOrder': instance.serviceOrder,
       'disabledServices': instance.disabledServices,
       'tableColumnWidths': instance.tableColumnWidths,
+      'recordGroupings': instance.recordGroupings,
     };
+
+const _$RequestFeedEnumMap = {
+  RequestFeed.recent: 'recent',
+  RequestFeed.live: 'live',
+};
 
 const _$TabAnimationEnumMap = {
   TabAnimation.slide: 'slide',
@@ -383,22 +398,6 @@ _ThemeProps _$ThemePropsFromJson(Map<String, dynamic> json) => _ThemeProps(
         _readLiquidGlass(json, 'liquidGlass'),
       ) ??
       LiquidGlassMode.none,
-  uiStyle:
-      $enumDecodeNullable(_$UiStyleEnumMap, json['uiStyle']) ?? UiStyle.classic,
-  classicPrimaryColor:
-      (_readClassicPrimaryColor(json, 'classicPrimaryColor') as num?)?.toInt(),
-  classicPrimaryColors:
-      (_readClassicPrimaryColors(json, 'classicPrimaryColors')
-              as List<dynamic>?)
-          ?.map((e) => (e as num).toInt())
-          .toList() ??
-      classicDefaultPrimaryColors,
-  schemeVariant:
-      $enumDecodeNullable(
-        _$DynamicSchemeVariantEnumMap,
-        json['schemeVariant'],
-      ) ??
-      DynamicSchemeVariant.content,
   textScale: json['textScale'] == null
       ? const TextScale()
       : TextScale.fromJson(json['textScale'] as Map<String, dynamic>),
@@ -414,10 +413,6 @@ Map<String, dynamic> _$ThemePropsToJson(_ThemeProps instance) =>
       'pureBlack': instance.pureBlack,
       'sidebarBlur': instance.sidebarBlur,
       'liquidGlass': _$LiquidGlassModeEnumMap[instance.liquidGlass]!,
-      'uiStyle': _$UiStyleEnumMap[instance.uiStyle]!,
-      'classicPrimaryColor': instance.classicPrimaryColor,
-      'classicPrimaryColors': instance.classicPrimaryColors,
-      'schemeVariant': _$DynamicSchemeVariantEnumMap[instance.schemeVariant]!,
       'textScale': instance.textScale,
       'systemFontFamily': instance.fontFamily,
     };
@@ -439,20 +434,6 @@ const _$LiquidGlassModeEnumMap = {
   LiquidGlassMode.none: 'none',
   LiquidGlassMode.standard: 'standard',
   LiquidGlassMode.ultra: 'ultra',
-};
-
-const _$UiStyleEnumMap = {UiStyle.classic: 'classic', UiStyle.modern: 'modern'};
-
-const _$DynamicSchemeVariantEnumMap = {
-  DynamicSchemeVariant.tonalSpot: 'tonalSpot',
-  DynamicSchemeVariant.fidelity: 'fidelity',
-  DynamicSchemeVariant.monochrome: 'monochrome',
-  DynamicSchemeVariant.neutral: 'neutral',
-  DynamicSchemeVariant.vibrant: 'vibrant',
-  DynamicSchemeVariant.expressive: 'expressive',
-  DynamicSchemeVariant.content: 'content',
-  DynamicSchemeVariant.rainbow: 'rainbow',
-  DynamicSchemeVariant.fruitSalad: 'fruitSalad',
 };
 
 _Config _$ConfigFromJson(Map<String, dynamic> json) => _Config(

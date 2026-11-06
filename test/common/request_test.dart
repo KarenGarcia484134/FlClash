@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:fl_clash/common/constant.dart';
+import 'package:fl_clash/common/exception.dart';
 import 'package:fl_clash/common/request.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -38,10 +40,10 @@ class _HostAdapter implements HttpClientAdapter {
   void close({bool force = false}) {}
 }
 
-class _RecordingAdapter implements HttpClientAdapter {
-  _RecordingAdapter(this.uris);
+class _PathAdapter implements HttpClientAdapter {
+  _PathAdapter(this.byPath);
 
-  final List<Uri> uris;
+  final Map<String, ResponseBody Function()> byPath;
 
   @override
   Future<ResponseBody> fetch(
@@ -49,14 +51,7 @@ class _RecordingAdapter implements HttpClientAdapter {
     Stream<Uint8List>? requestStream,
     Future<void>? cancelFuture,
   ) async {
-    uris.add(options.uri);
-    return ResponseBody.fromString(
-      '{"tag_name":"v0.9.16"}',
-      200,
-      headers: {
-        Headers.contentTypeHeader: [Headers.jsonContentType],
-      },
-    );
+    return byPath[options.uri.path]!();
   }
 
   @override
@@ -222,6 +217,64 @@ void main() {
     });
   });
 
+  group('downloadVerifiedRelease', () {
+    const name = 'FlClash-1.2.3-android-arm64-v8a.apk';
+    final package = utf8.encode('package');
+    final digest = sha256.convert(package).toString();
+    late Directory directory;
+
+    setUp(() async {
+      directory = await Directory.systemTemp.createTemp('release');
+    });
+
+    tearDown(() => directory.delete(recursive: true));
+
+    Request requestServing(String sums, List<int> asset) {
+      return Request()
+        ..releaseDio.httpClientAdapter = _PathAdapter({
+          '/$repository/releases/download/v1.2.3/SHA256SUMS': () =>
+              ResponseBody.fromString(sums, 200),
+          '/$repository/releases/download/v1.2.3/$name': () =>
+              ResponseBody.fromBytes(asset, 200),
+        });
+    }
+
+    Future<String> download(Request request) {
+      return request.downloadVerifiedRelease(
+        tag: 'v1.2.3',
+        name: name,
+        directory: directory.path,
+      );
+    }
+
+    test('keeps a file matching the published digest', () async {
+      final request = requestServing('$digest  ./$name\n', package);
+
+      final path = await download(request);
+
+      expect(await File(path).readAsBytes(), package);
+    });
+
+    test('refuses a file that does not match', () async {
+      final request = requestServing('$digest  ./$name\n', utf8.encode('x'));
+
+      await expectLater(
+        download(request),
+        throwsA(isA<ReleaseNotVerifiedException>()),
+      );
+    });
+
+    test('refuses an asset the listing does not name', () async {
+      final request = requestServing('$digest  ./other.apk\n', package);
+
+      await expectLater(
+        download(request),
+        throwsA(isA<ReleaseNotVerifiedException>()),
+      );
+      expect(directory.listSync(), isEmpty);
+    });
+  });
+
   group('downloadTarget', () {
     test('sends a URL without credentials unchanged', () {
       final target = downloadTarget('https://example.com/a.yaml?x=1');
@@ -294,4 +347,29 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     await outcome;
   });
+}
+
+class _RecordingAdapter implements HttpClientAdapter {
+  _RecordingAdapter(this.uris);
+
+  final List<Uri> uris;
+
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<Uint8List>? requestStream,
+    Future<void>? cancelFuture,
+  ) async {
+    uris.add(options.uri);
+    return ResponseBody.fromString(
+      '{"tag_name":"v0.9.16"}',
+      200,
+      headers: {
+        Headers.contentTypeHeader: [Headers.jsonContentType],
+      },
+    );
+  }
+
+  @override
+  void close({bool force = false}) {}
 }
