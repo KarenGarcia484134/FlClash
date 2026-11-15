@@ -1747,7 +1747,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleDialerProxy": MessageLookupByLibrary.simpleMessage("连接代理"),
     "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
-      "Tailscale 自身连接控制服务器和官方 DERP 中继的流量会经过这里选择的代理或代理组。自建 DERP 服务器（域名不在 tailscale.com 下的）和设备间的点对点 UDP 会直连以降低延迟，直连失败时才改走这里的代理。直连无法访问控制服务器时请选择一个。",
+      "Tailscale 自身连接控制服务器的流量会经过这里选择的代理或代理组。DERP 中继（包括官方的）和设备间的点对点 UDP 会直连以降低延迟，直连失败或被阻断时才改走这里的代理。直连无法访问控制服务器时请选择一个。",
     ),
     "tailscaleDialerProxyDropped": m102,
     "tailscaleDialerProxyPending": MessageLookupByLibrary.simpleMessage(

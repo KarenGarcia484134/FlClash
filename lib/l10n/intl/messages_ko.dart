@@ -1942,7 +1942,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Connection proxy",
     ),
     "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
-      "제어 서버와 Tailscale 공식 DERP 릴레이로 가는 Tailscale 자체 트래픽은 이 프록시 또는 그룹을 거칩니다. 자체 호스팅 DERP 서버(tailscale.com 이외)와 기기 간 P2P UDP는 지연을 줄이기 위해 직접 연결하며, 실패할 때만 이 프록시를 사용합니다. 제어 서버에 직접 연결할 수 없으면 하나를 선택하세요.",
+      "제어 서버로 가는 Tailscale 자체 트래픽은 이 프록시 또는 그룹을 거칩니다. DERP 릴레이(Tailscale 공식 포함)와 기기 간 P2P UDP는 지연을 줄이기 위해 직접 연결하며, 직접 연결이 실패하거나 차단될 때만 이 프록시를 사용합니다. 제어 서버에 직접 연결할 수 없으면 하나를 선택하세요.",
     ),
     "tailscaleDialerProxyDropped": m102,
     "tailscaleDialerProxyPending": MessageLookupByLibrary.simpleMessage(

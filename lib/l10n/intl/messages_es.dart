@@ -2440,7 +2440,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Connection proxy",
     ),
     "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
-      "El tráfico propio de Tailscale hacia su servidor de control y los relés DERP oficiales pasa por este proxy o grupo. Los servidores DERP propios (fuera de tailscale.com) y el UDP directo entre dispositivos se conectan directamente para reducir la latencia, y usan este proxy solo si falla la conexión directa. Elige uno si no se puede llegar directamente al servidor de control.",
+      "El tráfico propio de Tailscale hacia su servidor de control pasa por este proxy o grupo. Los relés DERP, incluidos los oficiales, y el UDP directo entre dispositivos se conectan directamente para reducir la latencia, y usan este proxy solo si la conexión directa falla o está bloqueada. Elige uno si no se puede llegar directamente al servidor de control.",
     ),
     "tailscaleDialerProxyDropped": m102,
     "tailscaleDialerProxyPending": MessageLookupByLibrary.simpleMessage(

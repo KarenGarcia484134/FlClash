@@ -1937,7 +1937,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleDialerProxy": MessageLookupByLibrary.simpleMessage("接続プロキシ"),
     "tailscaleDialerProxyDesc": MessageLookupByLibrary.simpleMessage(
-      "コントロールサーバーと Tailscale 公式の DERP リレーへの Tailscale 自身の通信はこのプロキシまたはグループを経由します。セルフホストの DERP サーバー（tailscale.com 以外）とピア間の UDP は低遅延のため直接接続し、失敗した場合のみこのプロキシを使います。コントロールサーバーに直接接続できない場合は選択してください。",
+      "コントロールサーバーへの Tailscale 自身の通信はこのプロキシまたはグループを経由します。DERP リレー（Tailscale 公式のものを含む）とピア間の UDP は低遅延のため直接接続し、直接接続が失敗またはブロックされた場合のみこのプロキシを使います。コントロールサーバーに直接接続できない場合は選択してください。",
     ),
     "tailscaleDialerProxyDropped": m102,
     "tailscaleDialerProxyPending": MessageLookupByLibrary.simpleMessage(
