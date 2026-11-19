@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.9.32 (2026-11-19)
+
+**Bug Fixes**
+
+- **ci,update** Fix release workflow CA certificate bundling, self-update platform matching, and changelog merging (4d935ed)
+- **config,proxies** Fix inbound listener validation, dialer-proxy cycle checks, node secret redaction, and UI stability issues (d876766)
+- **tailscale** Fix Tailscale concurrency races, DERP fallback cleanup, active polling lifecycle, and state reset handling (5097ebd)
+- **backup,routing** Preserve custom routing rules and profile selections across backup and restore, and harden rule validation (6107a4f)
+- **tailscale** Dial every Tailscale DERP relay directly first and fall back to the connection proxy only when direct fails or is blocked (db8dec1)
+
 ## v0.9.31 (2026-11-06)
 
 **Features**
@@ -222,74 +232,6 @@ Internal improvements only.
 - **core** Tailscale 登录事件不再被日志级别过滤 (40be226)
 - **android** 安装包同时使用 v1+v2+v3 签名，兼容更多设备 (62d1096)
 - 正式版不再显示 PRE 角标 (a2d185a)
-
-## v0.9.3 (2026-11-04)
-
-**Features**
-
-- **connections** Merged requests and connections; quick edit lists (52b975f)
-- **ui** iOS 27 transitions, press and text selection; smoother pages (bb47f2c)
-- **update** Download and install updates in the app (b8f84b3)
-- **core** One delay test timeout; VPN crash and startup fixes (2a5a42c)
-
-**Bug Fixes**
-
-- **core** Auto-select leaves an unusable first node at once (7d5db7e)
-- **access** Keep selections a filter hides (63aaf6d)
-
-## v0.9.2 (2026-10-24)
-
-**Features**
-
-- **access** Access control state shown in a bar at the bottom (e8aac17)
-- **config** Optional general overrides; settings apply sooner (5d6552d)
-- **dashboard** IP quality cached for 3 days; simpler Android dashboard (8176cce)
-- Update the core to mihomo v1.19.33 (0817c3b)
-- **tray** Colored tray status icons; monochrome option on macOS (bbfafde)
-- **desktop** Sidebar blur; Windows fixes; keeps system proxies FlClash didn't set (6928521)
-- **profiles** Profile QR codes, phone-to-TV links, more proxy fields (eaaf3e3)
-- **proxies** Add proxies to local proxies; adjustable delay test timeout (0f9f89c)
-- **theme** Higher-contrast dark mode and a refreshed app icon (a4fc067)
-- **ui** iOS-style docked search and menus; bar buttons lift on hover (0d98a9d)
-- **ui** iOS-style switches, stretchy sheets, menus and long-press reordering (ae902ed)
-- **ui** Pages scroll under the Android navigation bar (4837fb3)
-- **core** Clear the DNS cache by hand or on network change (09e7e56)
-
-**Bug Fixes**
-
-- **android** Opening the app no longer reloads a running VPN (99b3381)
-
-**Performance**
-
-- **editor** Smoother editor for large files and in sheets (7035edd)
-
-## v0.9.1 (2026-10-17)
-
-**Breaking Changes**
-
-- **network** Desktop TUN keys follow the profile unless picked; changed values carry over (cb08088)
-
-**Features**
-
-- **l10n** French, Spanish and Korean translations (f43755c)
-- **android** No more Firebase analytics or crash reporting (bc72bba)
-- **network** Per-key desktop TUN settings; system proxy and tray fixes (cb08088)
-- **theme** Redesigned theme colors and color styles (5eafd7a)
-- **dashboard** A redesigned dashboard around the current exit (9bd258f)
-- **profiles** Profile-detail resources and include-all in custom groups (0bac500)
-- **proxies** Proxy groups as cards, group tabs as chips (2ea52fd)
-- **views** Sortable tables for connections, requests and DNS (da6fb0a)
-- **ui** Optional two-tier Liquid Glass and slide-to-pick menus (7c9627f)
-- **ui** iOS-style surfaces, alerts and sheets; clearer TV focus (9bd2286)
-
-**Bug Fixes**
-
-- **ui** Fix pasting and Chinese input in text fields (5607f70)
-- **core** Large profiles no longer crash; downloads trust core CAs (5984c16)
-
-**Performance**
-
-- **android** Smoother Android UI while the proxy is busy (2201c19)
 
 ## v0.9.0 (2026-10-14)
 
