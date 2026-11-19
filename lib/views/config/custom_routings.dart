@@ -232,14 +232,15 @@ class _CustomRoutingsViewState extends ConsumerState<CustomRoutingsView> {
     ref.read(customRoutingsProvider.notifier).del(routing.id);
   }
 
-  Widget _buildItem(List<CustomRouting> routings, int index) {
+  Widget _buildItem(
+    List<CustomRouting> routings,
+    int index, {
+    required int? profileId,
+    required Set<int> selectedIds,
+  }) {
     final routing = routings[index];
     final appLocalizations = context.appLocalizations;
-    final profileId = ref.watch(currentProfileIdProvider);
-    final applied =
-        profileId != null &&
-        (ref.watch(profileCustomRoutingIdsProvider(profileId)).value ?? [])
-            .contains(routing.id);
+    final applied = profileId != null && selectedIds.contains(routing.id);
     return SortableItem(
       key: ValueKey(routing.id),
       index: index,
@@ -307,6 +308,12 @@ class _CustomRoutingsViewState extends ConsumerState<CustomRoutingsView> {
     final appLocalizations = context.appLocalizations;
     final routingsState = ref.watch(customRoutingsProvider);
     final routings = routingsState.value ?? [];
+    final profileId = ref.watch(currentProfileIdProvider);
+    final selectedIds = profileId == null
+        ? const <int>{}
+        : (ref.watch(profileCustomRoutingIdsProvider(profileId)).value ??
+                  const <int>[])
+              .toSet();
     return Scaffold(
       title: appLocalizations.customRouting,
       canSort: routings.length > 1,
@@ -324,20 +331,35 @@ class _CustomRoutingsViewState extends ConsumerState<CustomRoutingsView> {
           label: appLocalizations.nullTip(appLocalizations.customRouting),
           illustration: NullStatusIllustration.rules,
         ),
-        child: PrismReorderableListView(
-          padding: const EdgeInsets.all(
-            16,
-          ).copyWith(top: context.contentTopPadding),
-          itemCount: routings.length,
-          itemBuilder: (_, index) => _buildItem(routings, index),
-          proxyDecorator: (_, index, animation) {
-            return commonProxyDecorator(
-              _buildItem(routings, index),
+        child: Builder(
+          builder: (context) => PrismReorderableListView(
+            padding: EdgeInsets.fromLTRB(
+              16,
+              context.contentTopPadding,
+              16,
+              16 + context.bottomInset,
+            ),
+            itemCount: routings.length,
+            itemBuilder: (_, index) => _buildItem(
+              routings,
               index,
-              animation,
-            );
-          },
-          onReorderItem: ref.read(customRoutingsProvider.notifier).order,
+              profileId: profileId,
+              selectedIds: selectedIds,
+            ),
+            proxyDecorator: (_, index, animation) {
+              return commonProxyDecorator(
+                _buildItem(
+                  routings,
+                  index,
+                  profileId: profileId,
+                  selectedIds: selectedIds,
+                ),
+                index,
+                animation,
+              );
+            },
+            onReorderItem: ref.read(customRoutingsProvider.notifier).order,
+          ),
         ),
       ),
     );
@@ -505,7 +527,7 @@ class _CustomRoutingEditViewState extends State<CustomRoutingEditView> {
       labelOf: (item) => item.value,
       value: draft.ruleAction,
     );
-    if (res == null) {
+    if (res == null || !mounted) {
       return;
     }
     setState(() {
@@ -515,7 +537,7 @@ class _CustomRoutingEditViewState extends State<CustomRoutingEditView> {
 
   Future<void> _handlePickTarget() async {
     final res = await showRoutingTargetSheet(context, selected: _target);
-    if (res == null) {
+    if (res == null || !mounted) {
       return;
     }
     setState(() {
@@ -530,9 +552,10 @@ class _CustomRoutingEditViewState extends State<CustomRoutingEditView> {
   }
 
   void _handleRemoveCondition(_ConditionDraft draft) {
-    setState(() {
-      _conditions.remove(draft);
-    });
+    if (!_conditions.remove(draft)) {
+      return;
+    }
+    setState(() {});
     WidgetsBinding.instance.addPostFrameCallback((_) {
       draft.controller.dispose();
     });
@@ -548,6 +571,7 @@ class _CustomRoutingEditViewState extends State<CustomRoutingEditView> {
   Widget _buildCondition(_ConditionDraft draft) {
     final appLocalizations = context.appLocalizations;
     return Card(
+      key: ObjectKey(draft),
       onPressed: null,
       child: Padding(
         padding: const EdgeInsets.all(12),

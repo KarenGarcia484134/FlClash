@@ -209,6 +209,11 @@ Future<MigrationData> readBackupArchive({
       database.customProxiesDao.query().get(),
       database.proxyDialers.readable((row) => row.toProxyDialer()).get(),
       database.mitmModulesDao.query().get(),
+      database.customRoutingsDao.query().get(),
+      database
+          .select(database.profileCustomRoutings)
+          .map((item) => item.toProfileCustomRouting())
+          .get(),
     ]);
     return MigrationData(
       configMap: configMap,
@@ -221,6 +226,8 @@ Future<MigrationData> readBackupArchive({
       customProxies: results[6].cast<CustomProxy>(),
       proxyDialers: results[7].cast<ProxyDialer>(),
       mitmModules: results[8].cast<MitmModule>(),
+      customRoutings: results[9].cast<CustomRouting>(),
+      profileCustomRoutings: results[10].cast<ProfileCustomRouting>(),
     );
   } finally {
     await database.close();

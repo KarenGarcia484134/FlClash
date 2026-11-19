@@ -442,6 +442,8 @@ class Database extends _$Database {
     List<ClashProvider> clashProviders = const [],
     List<CustomProxy> customProxies = const [],
     List<ProxyDialer> proxyDialers = const [],
+    List<CustomRouting> customRoutings = const [],
+    List<ProfileCustomRouting> profileCustomRoutings = const [],
     List<MitmModule> mitmModules = const [],
     bool isOverride = false,
   }) async {
@@ -453,6 +455,8 @@ class Database extends _$Database {
         clashProviders.isEmpty &&
         customProxies.isEmpty &&
         proxyDialers.isEmpty &&
+        customRoutings.isEmpty &&
+        profileCustomRoutings.isEmpty &&
         mitmModules.isEmpty) {
       return;
     }
@@ -469,6 +473,11 @@ class Database extends _$Database {
           clashProvidersDao.setAllWithBatch(b, clashProviders);
           // Rewriting profiles or custom proxies cascades into these.
           proxyDialersDao.setAllWithBatch(b, proxyDialers);
+          customRoutingsDao.setAllWithBatch(
+            b,
+            customRoutings,
+            profileCustomRoutings,
+          );
           mitmModulesDao.setAllWithBatch(b, mitmModules);
           return;
         }
@@ -482,6 +491,11 @@ class Database extends _$Database {
         customProxiesDao.putAllWithBatch(b, customProxies);
         clashProvidersDao.putAllWithBatch(b, clashProviders);
         proxyDialersDao.putAllWithBatch(b, proxyDialers);
+        customRoutingsDao.putAllWithBatch(
+          b,
+          customRoutings,
+          profileCustomRoutings,
+        );
         mitmModulesDao.putAllWithBatch(b, mitmModules);
       });
       await _purgeOrphans();
@@ -497,6 +511,8 @@ class Database extends _$Database {
     final ruleIds = selectOnly(rules)..addColumns([rules.id]);
     final customProxyIds = selectOnly(customProxies)
       ..addColumns([customProxies.id]);
+    final customRoutingIds = selectOnly(customRoutings)
+      ..addColumns([customRoutings.id]);
     await rules.remove(
       (t) => t.profileId.isNotNull() & t.profileId.isNotInQuery(profileIds),
     );
@@ -509,6 +525,11 @@ class Database extends _$Database {
       (t) =>
           t.profileId.isNotInQuery(profileIds) |
           t.proxyId.isNotInQuery(customProxyIds),
+    );
+    await profileCustomRoutings.remove(
+      (t) =>
+          t.profileId.isNotInQuery(profileIds) |
+          t.routingId.isNotInQuery(customRoutingIds),
     );
   }
 }

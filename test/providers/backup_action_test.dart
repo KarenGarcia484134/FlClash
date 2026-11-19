@@ -362,6 +362,33 @@ void main() {
             'runs, not only in the batch body',
       );
     });
+
+    test('a backup restores custom routings and profile links', () async {
+      await testDatabase.profiles.put(
+        const Profile(id: 7, autoUpdateDuration: Duration.zero).toCompanion(),
+      );
+      const routing = CustomRouting(
+        id: 11,
+        label: 'Work',
+        target: 'DIRECT',
+        order: 'a',
+      );
+      const link = ProfileCustomRouting(profileId: 7, routingId: 11);
+      final container = buildContainer();
+
+      await actionOf(container).applyRestore(
+        const MigrationData(
+          customRoutings: [routing],
+          profileCustomRoutings: [link],
+        ),
+        RestoreOption.onlyProfiles,
+      );
+
+      expect(await testDatabase.customRoutingsDao.query().get(), [routing]);
+      expect(await testDatabase.customRoutingsDao.querySelectedIds(7).get(), [
+        11,
+      ]);
+    });
   });
 
   group('applyRestore writes the settings providers', () {

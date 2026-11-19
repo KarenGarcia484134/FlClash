@@ -102,6 +102,46 @@ class CustomRoutingsDao extends DatabaseAccessor<Database>
       (t) => t.profileId.equals(profileId) & t.routingId.equals(routingId),
     );
   }
+
+  void putAllWithBatch(
+    Batch batch,
+    Iterable<CustomRouting> routings,
+    Iterable<ProfileCustomRouting> links,
+  ) {
+    batch.insertAllOnConflictUpdate(
+      customRoutings,
+      routings.map((item) => item.toCompanion()),
+    );
+    batch.insertAllOnConflictUpdate(
+      profileCustomRoutings,
+      links.map((item) => item.toCompanion()),
+    );
+  }
+
+  void setAllWithBatch(
+    Batch batch,
+    Iterable<CustomRouting> routings,
+    Iterable<ProfileCustomRouting> links,
+  ) {
+    batch.deleteAll(profileCustomRoutings);
+    batch.deleteAll(customRoutings);
+    putAllWithBatch(batch, routings, links);
+  }
+}
+
+extension RawProfileCustomRoutingExt on RawProfileCustomRouting {
+  ProfileCustomRouting toProfileCustomRouting() {
+    return ProfileCustomRouting(profileId: profileId, routingId: routingId);
+  }
+}
+
+extension ProfileCustomRoutingsCompanionExt on ProfileCustomRouting {
+  ProfileCustomRoutingsCompanion toCompanion() {
+    return ProfileCustomRoutingsCompanion.insert(
+      profileId: profileId,
+      routingId: routingId,
+    );
+  }
 }
 
 extension RawCustomRoutingExt on RawCustomRouting {

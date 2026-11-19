@@ -252,6 +252,8 @@ abstract class MigrationData with _$MigrationData {
     @Default([]) List<ClashProvider> clashProviders,
     @Default([]) List<CustomProxy> customProxies,
     @Default([]) List<ProxyDialer> proxyDialers,
+    @Default([]) List<CustomRouting> customRoutings,
+    @Default([]) List<ProfileCustomRouting> profileCustomRoutings,
     @Default([]) List<MitmModule> mitmModules,
   }) = _MigrationData;
 }

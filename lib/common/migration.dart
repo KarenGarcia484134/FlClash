@@ -62,6 +62,8 @@ class _AppMigrationStore implements MigrationStore {
       data.disabledRules,
       data.proxyGroups,
       clashProviders: data.clashProviders,
+      customRoutings: data.customRoutings,
+      profileCustomRoutings: data.profileCustomRoutings,
     );
   }
 
@@ -117,8 +119,13 @@ class Migration {
   Future<Config> run() async {
     final configMap = await _store.getConfigMap();
     final config = await _migrate(configMap);
-    final upgraded = await _upgrade(config, installed: configMap != null);
-    await _recordDashboard(configMap, upgraded);
+    final (config: upgraded, :saved) = await _upgrade(
+      config,
+      installed: configMap != null,
+    );
+    if (!saved) {
+      await _recordDashboard(configMap, upgraded);
+    }
     return upgraded;
   }
 
@@ -132,7 +139,7 @@ class Migration {
     if (stored is! Map) {
       return;
     }
-    final current = jsonDecode(jsonEncode(config.appSettingProps)) as Map;
+    final current = config.appSettingProps.toJson();
     for (final key in _dashboardKeys) {
       if (jsonEncode(stored[key]) != jsonEncode(current[key])) {
         await _store.saveConfig(config);
@@ -148,10 +155,13 @@ class Migration {
         : findProcessesOnWindows(colored, windows: _windows);
   }
 
-  Future<Config> _upgrade(Config config, {required bool installed}) async {
+  Future<({Config config, bool saved})> _upgrade(
+    Config config, {
+    required bool installed,
+  }) async {
     final from = await _store.getUpgradeVersion();
     if (from >= upgradeVersion) {
-      return config;
+      return (config: config, saved: false);
     }
     var upgraded = config;
     if (installed) {
@@ -163,11 +173,12 @@ class Migration {
     } else {
       upgraded = findProcessesOnWindows(upgraded, windows: _windows);
     }
-    if (upgraded != config && !await _store.saveConfig(upgraded)) {
-      return config;
+    final changed = upgraded != config;
+    if (changed && !await _store.saveConfig(upgraded)) {
+      return (config: config, saved: false);
     }
     await _store.setUpgradeVersion(upgradeVersion);
-    return upgraded;
+    return (config: upgraded, saved: changed);
   }
 
   Future<Config> _migrate(Map<String, Object?>? configMap) async {

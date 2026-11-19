@@ -588,4 +588,271 @@ as String?,
 
 }
 
+/// @nodoc
+mixin _$ProfileCustomRouting {
+
+ int get profileId; int get routingId;
+/// Create a copy of ProfileCustomRouting
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ProfileCustomRoutingCopyWith<ProfileCustomRouting> get copyWith => _$ProfileCustomRoutingCopyWithImpl<ProfileCustomRouting>(this as ProfileCustomRouting, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as ProfileCustomRouting;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileCustomRouting&&(identical(other.profileId, _this.profileId) || other.profileId == _this.profileId)&&(identical(other.routingId, _this.routingId) || other.routingId == _this.routingId));
+}
+
+
+@override
+int get hashCode {
+  final _this = this as ProfileCustomRouting;
+  return Object.hash(runtimeType,_this.profileId,_this.routingId);
+}
+
+@override
+String toString() {
+  final _this = this as ProfileCustomRouting;
+  return 'ProfileCustomRouting(profileId: ${_this.profileId}, routingId: ${_this.routingId})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ProfileCustomRoutingCopyWith<$Res>  {
+  factory $ProfileCustomRoutingCopyWith(ProfileCustomRouting value, $Res Function(ProfileCustomRouting) _then) = _$ProfileCustomRoutingCopyWithImpl;
+@useResult
+$Res call({
+ int profileId, int routingId
+});
+
+
+
+
+}
+/// @nodoc
+class _$ProfileCustomRoutingCopyWithImpl<$Res>
+    implements $ProfileCustomRoutingCopyWith<$Res> {
+  _$ProfileCustomRoutingCopyWithImpl(this._self, this._then);
+
+  final ProfileCustomRouting _self;
+  final $Res Function(ProfileCustomRouting) _then;
+
+/// Create a copy of ProfileCustomRouting
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? profileId = null,Object? routingId = null,}) {
+  return _then(ProfileCustomRouting(
+profileId: null == profileId ? _self.profileId : profileId // ignore: cast_nullable_to_non_nullable
+as int,routingId: null == routingId ? _self.routingId : routingId // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ProfileCustomRouting].
+extension ProfileCustomRoutingPatterns on ProfileCustomRouting {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ProfileCustomRouting value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ProfileCustomRouting() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ProfileCustomRouting value)  $default,){
+final _that = this;
+switch (_that) {
+case _ProfileCustomRouting():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ProfileCustomRouting value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ProfileCustomRouting() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int profileId,  int routingId)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ProfileCustomRouting() when $default != null:
+return $default(_that.profileId,_that.routingId);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int profileId,  int routingId)  $default,) {final _that = this;
+switch (_that) {
+case _ProfileCustomRouting():
+return $default(_that.profileId,_that.routingId);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int profileId,  int routingId)?  $default,) {final _that = this;
+switch (_that) {
+case _ProfileCustomRouting() when $default != null:
+return $default(_that.profileId,_that.routingId);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ProfileCustomRouting implements ProfileCustomRouting {
+  const _ProfileCustomRouting({required this.profileId, required this.routingId});
+  
+
+@override final  int profileId;
+@override final  int routingId;
+
+/// Create a copy of ProfileCustomRouting
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ProfileCustomRoutingCopyWith<_ProfileCustomRouting> get copyWith => __$ProfileCustomRoutingCopyWithImpl<_ProfileCustomRouting>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileCustomRouting&&(identical(other.profileId, profileId) || other.profileId == profileId)&&(identical(other.routingId, routingId) || other.routingId == routingId));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,profileId,routingId);
+}
+
+@override
+String toString() {
+    return 'ProfileCustomRouting(profileId: $profileId, routingId: $routingId)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ProfileCustomRoutingCopyWith<$Res> implements $ProfileCustomRoutingCopyWith<$Res> {
+  factory _$ProfileCustomRoutingCopyWith(_ProfileCustomRouting value, $Res Function(_ProfileCustomRouting) _then) = __$ProfileCustomRoutingCopyWithImpl;
+@override @useResult
+$Res call({
+ int profileId, int routingId
+});
+
+
+
+
+}
+/// @nodoc
+class __$ProfileCustomRoutingCopyWithImpl<$Res>
+    implements _$ProfileCustomRoutingCopyWith<$Res> {
+  __$ProfileCustomRoutingCopyWithImpl(this._self, this._then);
+
+  final _ProfileCustomRouting _self;
+  final $Res Function(_ProfileCustomRouting) _then;
+
+/// Create a copy of ProfileCustomRouting
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? profileId = null,Object? routingId = null,}) {
+  return _then(_ProfileCustomRouting(
+profileId: null == profileId ? _self.profileId : profileId // ignore: cast_nullable_to_non_nullable
+as int,routingId: null == routingId ? _self.routingId : routingId // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+
+}
+
 // dart format on

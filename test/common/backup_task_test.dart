@@ -597,6 +597,36 @@ void main() {
       );
     });
 
+    test(
+      'restoring reads custom routings and profile links from backup database',
+      () async {
+        await seedDatabase();
+        const routing = CustomRouting(
+          id: 9,
+          label: 'Corp',
+          target: 'DIRECT',
+          order: 'a',
+          conditions: [
+            CustomRoutingCondition(values: ['corp.example']),
+          ],
+        );
+        final database = db.Database(NativeDatabase(File(databasePath)));
+        await database.customRoutingsDao.put(routing);
+        await database.customRoutingsDao.putSelected(1, routing.id);
+        await database.close();
+        writeFile(join(home.path, 'profiles', '1.yaml'), 'proxies: []');
+        writeFile(join(home.path, 'scripts', '2.js'), 'body');
+
+        final archivePath = await backup();
+        final data = await restore(archivePath);
+
+        expect(data.customRoutings, [routing]);
+        expect(data.profileCustomRoutings, [
+          const ProfileCustomRouting(profileId: 1, routingId: 9),
+        ]);
+      },
+    );
+
     test('local modules and their attachments are kept, '
         'and nothing else under mitm', () async {
       final database = db.Database(NativeDatabase(File(databasePath)));

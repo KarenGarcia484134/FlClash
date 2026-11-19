@@ -163,6 +163,12 @@ void main() {
           profileDisabledRuleIdsProvider.overrideWith2(
             (_) => _TestDisabledRuleIds(),
           ),
+          customRoutingsProvider.overrideWith(
+            () => TestCustomRoutings(const []),
+          ),
+          profileCustomRoutingIdsProvider.overrideWith2(
+            (_) => TestProfileCustomRoutingIds(),
+          ),
           scriptsProvider.overrideWith(() => TestScripts(const [])),
           clashConfigProvider(profile.id).overrideWithValue(
             const AsyncData(
@@ -278,6 +284,69 @@ void main() {
 
       expect(applyNowButton(), findsNothing);
       expect(setupAction.applyCalls, 0);
+    });
+
+    testWidgets('offers applying after toggling custom routing selection', (
+      tester,
+    ) async {
+      setViewport(tester);
+      final profile = Profile.normal();
+      final setupAction = _RecordingSetupAction();
+      const routing = CustomRouting(
+        id: 10,
+        label: 'Bypass LAN',
+        target: 'DIRECT',
+        conditions: [
+          CustomRoutingCondition(values: ['example.com']),
+        ],
+      );
+      final container = ProviderContainer(
+        overrides: [
+          profilesProvider.overrideWith(() => TestProfiles([profile])),
+          currentProfileIdProvider.overrideWithBuild((_, _) => profile.id),
+          profileRulesProvider.overrideWith2((_) => _TestProfileRules([])),
+          profileDisabledRuleIdsProvider.overrideWith2(
+            (_) => _TestDisabledRuleIds(),
+          ),
+          customRoutingsProvider.overrideWith(
+            () => TestCustomRoutings(const [routing]),
+          ),
+          profileCustomRoutingIdsProvider.overrideWith2(
+            (_) => TestProfileCustomRoutingIds(),
+          ),
+          scriptsProvider.overrideWith(() => TestScripts(const [])),
+          clashConfigProvider(profile.id).overrideWithValue(
+            const AsyncData(
+              ClashConfig(
+                proxies: [Proxy(name: 'DIRECT', type: 'Direct')],
+              ),
+            ),
+          ),
+          setupActionProvider.overrideWith(() => setupAction),
+        ],
+      );
+      addTearDown(container.dispose);
+      globalState.container = container;
+      container
+          .read(viewSizeProvider.notifier)
+          .update((_) => const Size(1400, 1000));
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: TestApp(child: ExtendView(profileId: profile.id)),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(applyNowButton(), findsNothing);
+
+      await tester.tap(find.text('Bypass LAN'));
+      await tester.pumpAndSettle();
+
+      expect(applyNowButton(), findsOneWidget);
+      await tester.tap(applyNowButton());
+      await tester.pumpAndSettle();
+      expect(setupAction.applyCalls, 1);
     });
   });
 

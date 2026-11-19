@@ -1164,14 +1164,20 @@ class CustomRoutings extends _$CustomRoutings
     );
   }
 
-  Future<void> append(CustomRouting routing) {
-    final placed = routing.copyWith(
-      order: indexing.generateKeyBetween(value.lastOrNull?.order, null),
-    );
-    return optimisticAsync([
-      ...value,
-      placed,
-    ], _reapplyAfter(ref, () => database.customRoutingsDao.put(placed)));
+  Future<void> append(CustomRouting routing) async {
+    final link = ref.keepAlive();
+    try {
+      final current = state.value ?? await future;
+      final placed = routing.copyWith(
+        order: indexing.generateKeyBetween(current.lastOrNull?.order, null),
+      );
+      await optimisticAsync([
+        ...current,
+        placed,
+      ], _reapplyAfter(ref, () => database.customRoutingsDao.put(placed)));
+    } finally {
+      link.close();
+    }
   }
 
   void duplicate(CustomRouting routing) {

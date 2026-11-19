@@ -85,6 +85,43 @@ void main() {
       ]).toRule(),
       isNull,
     );
+    expect(
+      _routing([
+        const CustomRoutingCondition(values: ['a.com']),
+      ], target: 'US, Los Angeles').toRule(),
+      isNull,
+    );
+    expect(
+      _routing(logic: CustomRoutingLogic.and, [
+        const CustomRoutingCondition(
+          ruleAction: RuleAction.RULE_SET,
+          values: ['missing'],
+        ),
+        const CustomRoutingCondition(
+          ruleAction: RuleAction.DST_PORT,
+          values: ['443'],
+        ),
+      ]).toRule(ruleProviders: {'other'}),
+      isNull,
+    );
+    expect(
+      _routing([
+        const CustomRoutingCondition(
+          ruleAction: RuleAction.PROCESS_PATH,
+          values: ['foo(', 'bar'],
+        ),
+      ]).toRule(),
+      isNull,
+    );
+    expect(
+      _routing([
+        const CustomRoutingCondition(
+          ruleAction: RuleAction.PROCESS_PATH,
+          values: [r'C:\Program Files (x86)\app.exe', 'other.exe'],
+        ),
+      ]).toRule(),
+      r'OR,((PROCESS-PATH,C:\Program Files (x86)\app.exe),(PROCESS-PATH,other.exe)),Proxy',
+    );
   });
 
   test('config resolution skips disabled entries and unknown targets', () {

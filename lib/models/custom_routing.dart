@@ -37,6 +37,14 @@ abstract class CustomRouting with _$CustomRouting {
   factory CustomRouting.create() => CustomRouting(id: snowflake.id);
 }
 
+@freezed
+abstract class ProfileCustomRouting with _$ProfileCustomRouting {
+  const factory ProfileCustomRouting({
+    required int profileId,
+    required int routingId,
+  }) = _ProfileCustomRouting;
+}
+
 /// Logical rules split their operands on commas, so a value carrying one
 /// cannot be expressed at all.
 const customRoutingValueSeparator = ',';
@@ -66,6 +74,24 @@ extension CustomRoutingConditionExt on CustomRoutingCondition {
   ];
 }
 
+bool _hasLineBreak(String value) =>
+    value.contains('\n') || value.contains('\r');
+
+bool _hasUnbalancedParens(String value) {
+  var depth = 0;
+  for (final code in value.codeUnits) {
+    if (code == 0x28) {
+      depth++;
+    } else if (code == 0x29) {
+      depth--;
+      if (depth < 0) {
+        return true;
+      }
+    }
+  }
+  return depth != 0;
+}
+
 extension CustomRoutingExt on CustomRouting {
   CustomRouting duplicated() =>
       copyWith(id: snowflake.id, label: '$label copy', order: null);
@@ -74,7 +100,8 @@ extension CustomRoutingExt on CustomRouting {
 
   bool get hasInvalidValue => conditions.any(
     (condition) => condition.cleanValues.any(
-      (value) => value.contains(customRoutingValueSeparator),
+      (value) =>
+          value.contains(customRoutingValueSeparator) || _hasLineBreak(value),
     ),
   );
 
@@ -84,15 +111,27 @@ extension CustomRoutingExt on CustomRouting {
   /// provider the profile does not define.
   String? toRule({Set<String>? ruleProviders}) {
     final target = this.target?.trim();
-    if (target == null || target.isEmpty || hasInvalidValue) {
+    if (target == null ||
+        target.isEmpty ||
+        target.contains(customRoutingValueSeparator) ||
+        _hasLineBreak(target) ||
+        hasInvalidValue) {
       return null;
     }
-    final groups = [
-      for (final condition in conditions)
-        if (condition.atoms(ruleProviders: ruleProviders) case final atoms
-            when atoms.isNotEmpty)
-          atoms,
-    ];
+    final groups = <List<String>>[];
+    for (final condition in conditions) {
+      if (condition.cleanValues.isEmpty) {
+        continue;
+      }
+      final atoms = condition.atoms(ruleProviders: ruleProviders);
+      if (atoms.isEmpty) {
+        if (logic == CustomRoutingLogic.and) {
+          return null;
+        }
+        continue;
+      }
+      groups.add(atoms);
+    }
     if (groups.isEmpty) {
       return null;
     }
@@ -100,6 +139,9 @@ extension CustomRoutingExt on CustomRouting {
     if (flat.length == 1) {
       final atom = flat.single.split(',');
       return [...atom.take(2), target, ...atom.skip(2)].join(',');
+    }
+    if (flat.any(_hasUnbalancedParens)) {
+      return null;
     }
     if (logic == CustomRoutingLogic.or || groups.length == 1) {
       return 'OR,(${flat.map((item) => '($item)').join(',')}),$target';

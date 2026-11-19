@@ -1070,6 +1070,79 @@ void main() {
     expect(restoredGroups.single.order, isNot(equals(null)));
   });
 
+  test(
+    'database restore preserves custom routings and prunes orphan links',
+    () async {
+      const profile = Profile(id: 1, autoUpdateDuration: Duration.zero);
+      const staleProfile = Profile(id: 2, autoUpdateDuration: Duration.zero);
+      const staleRouting = CustomRouting(id: 70, label: 'Stale', order: 'a');
+      const keptRouting = CustomRouting(
+        id: 71,
+        label: 'Kept',
+        target: 'DIRECT',
+        order: 'b',
+      );
+
+      await database.restore(
+        [profile, staleProfile],
+        const [],
+        const [],
+        const [],
+        const [],
+        customRoutings: const [staleRouting, keptRouting],
+        profileCustomRoutings: const [
+          ProfileCustomRouting(profileId: 2, routingId: 70),
+        ],
+        isOverride: true,
+      );
+
+      await database.restore(
+        [profile],
+        const [],
+        const [],
+        const [],
+        const [],
+        customRoutings: const [keptRouting],
+        profileCustomRoutings: const [
+          ProfileCustomRouting(profileId: 1, routingId: 71),
+          ProfileCustomRouting(profileId: 99, routingId: 71),
+          ProfileCustomRouting(profileId: 1, routingId: 999),
+        ],
+        isOverride: true,
+      );
+
+      expect(await database.customRoutingsDao.query().get(), [keptRouting]);
+      expect(await database.customRoutingsDao.querySelectedIds(1).get(), [71]);
+
+      const extraRouting = CustomRouting(
+        id: 72,
+        label: 'Extra',
+        target: 'DIRECT',
+        order: 'c',
+      );
+      await database.restore(
+        const [],
+        const [],
+        const [],
+        const [],
+        const [],
+        customRoutings: const [extraRouting],
+        profileCustomRoutings: const [
+          ProfileCustomRouting(profileId: 1, routingId: 72),
+        ],
+      );
+
+      expect(await database.customRoutingsDao.query().get(), [
+        keptRouting,
+        extraRouting,
+      ]);
+      expect(await database.customRoutingsDao.querySelectedIds(1).get(), [
+        71,
+        72,
+      ]);
+    },
+  );
+
   test('icon records evict down to their capacity', () async {
     final dao = database.iconRecordsDao;
     for (var index = 0; index <= dao.maxCapacity; index++) {

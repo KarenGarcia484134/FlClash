@@ -73,10 +73,13 @@ class _ExtendViewState extends ConsumerState<ExtendView> {
     final disabledRuleIds = ref
         .watch(profileDisabledRuleIdsProvider(profileId))
         .value;
-    if (rules == null || disabledRuleIds == null) {
+    final customRoutingIds = ref
+        .watch(profileCustomRoutingIdsProvider(profileId))
+        .value;
+    if (rules == null || disabledRuleIds == null || customRoutingIds == null) {
       return null;
     }
-    return [profile, rules, disabledRuleIds];
+    return [profile, rules, disabledRuleIds, customRoutingIds];
   }
 
   Future<void> _handleApplyNow(List<Object?> inputs) async {
