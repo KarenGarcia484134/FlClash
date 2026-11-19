@@ -41,7 +41,7 @@ bool _isAddableToLocal(Proxy proxy, {required bool isCustomProfile}) {
       GroupTypeExtension.getGroupType(proxy.type) == null;
 }
 
-class ProxyCard extends ConsumerWidget {
+class ProxyCard extends StatelessWidget {
   final String groupName;
   final Proxy proxy;
   final GroupType groupType;
@@ -130,7 +130,7 @@ class ProxyCard extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final measure = globalState.measure;
     final isLoose = type == ProxyCardType.loose;
     final delayText = _DelayText(
@@ -165,14 +165,16 @@ class ProxyCard extends ConsumerWidget {
               children: [
                 Flexible(
                   flex: 1,
-                  child: TooltipText(
-                    text: Text(
-                      [
-                        proxy.type,
-                        ?dialerProxySubtitle(ref, context, proxy.name),
-                      ].join(' · '),
-                      maxLines: 1,
-                      style: typeStyle,
+                  child: Consumer(
+                    builder: (context, ref, _) => TooltipText(
+                      text: Text(
+                        [
+                          proxy.type,
+                          ?dialerProxySubtitle(ref, context, proxy.name),
+                        ].join(' · '),
+                        maxLines: 1,
+                        style: typeStyle,
+                      ),
                     ),
                   ),
                 ),

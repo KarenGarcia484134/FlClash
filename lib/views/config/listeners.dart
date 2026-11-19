@@ -1,4 +1,5 @@
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/features/features.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/ui/ui.dart';
@@ -36,21 +37,78 @@ String listenerIssueText(BuildContext context, ListenerIssue issue) {
   };
 }
 
-ListenerContext _currentContext(WidgetRef ref) {
-  final profileId = ref.watch(currentProfileIdProvider);
-  final config = profileId == null
-      ? null
-      : ref.watch(clashConfigProvider(profileId)).value;
-  final patch = ref.watch(patchClashConfigProvider);
+ListenerContext _buildListenerContext({
+  required PatchClashConfig patch,
+  required ClashConfig? clashConfig,
+  required String? tailscaleProxy,
+  List<ProxyGroup> customGroups = const [],
+  List<CustomProxy> customProxies = const [],
+  bool isCustom = false,
+}) {
+  final referenced = isCustom
+      ? {for (final group in customGroups) ...?group.proxies}
+      : const <String>{};
   return ListenerContext(
     appPorts: appInboundPorts(patch),
     outbounds: {
-      ...?config?.proxies.map((e) => e.name),
-      ...?config?.proxyGroups.map((e) => e.name),
-      ?currentTailscaleProxyName(ref),
+      if (isCustom) ...[
+        for (final group in customGroups) group.name,
+        for (final proxy in customProxies)
+          if (referenced.contains(proxy.name)) proxy.name,
+      ] else ...[
+        ...?clashConfig?.proxies.map((e) => e.name),
+        ...?clashConfig?.proxyGroups.map((e) => e.name),
+      ],
+      ?tailscaleProxy,
     },
-    subRules: {...?config?.subRules},
+    subRules: isCustom ? const {} : {...?clashConfig?.subRules},
     linux: _linux,
+  );
+}
+
+ListenerContext _currentContext(WidgetRef ref) {
+  final profileId = ref.watch(currentProfileIdProvider);
+  final isCustom =
+      profileId != null &&
+      ref.watch(
+        profileProvider(
+          profileId,
+        ).select((state) => state?.type == ProfileType.custom),
+      );
+  return _buildListenerContext(
+    patch: ref.watch(patchClashConfigProvider),
+    clashConfig: profileId == null || isCustom
+        ? null
+        : ref.watch(clashConfigProvider(profileId)).value,
+    tailscaleProxy: currentTailscaleProxyName(ref),
+    customGroups: isCustom
+        ? ref.watch(proxyGroupsProvider(profileId)).value ?? const []
+        : const [],
+    customProxies: isCustom
+        ? ref.watch(customProxiesProvider).value ?? const []
+        : const [],
+    isCustom: isCustom,
+  );
+}
+
+ListenerContext _readCurrentContext(WidgetRef ref) {
+  final profileId = ref.read(currentProfileIdProvider);
+  final isCustom =
+      profileId != null &&
+      ref.read(profileProvider(profileId))?.type == ProfileType.custom;
+  return _buildListenerContext(
+    patch: ref.read(patchClashConfigProvider),
+    clashConfig: profileId == null || isCustom
+        ? null
+        : ref.read(clashConfigProvider(profileId)).value,
+    tailscaleProxy: readCurrentTailscaleProxyName(ref),
+    customGroups: isCustom
+        ? ref.read(proxyGroupsProvider(profileId)).value ?? const []
+        : const [],
+    customProxies: isCustom
+        ? ref.read(customProxiesProvider).value ?? const []
+        : const [],
+    isCustom: isCustom,
   );
 }
 
@@ -72,12 +130,13 @@ class ListenersView extends ConsumerWidget {
     WidgetRef ref, [
     InboundListenerProps? item,
   ]) async {
+    final notifier = ref.read(listenersSettingProvider.notifier);
     final res = await BaseNavigator.push<InboundListenerProps>(
       context,
       ListenerEditView(item: item),
     );
-    if (res != null) {
-      ref.read(listenersSettingProvider.notifier).put(res);
+    if (res != null && context.mounted) {
+      notifier.put(res);
     }
   }
 
@@ -87,12 +146,13 @@ class ListenersView extends ConsumerWidget {
     InboundListenerProps item,
   ) async {
     final l = context.appLocalizations;
+    final notifier = ref.read(listenersSettingProvider.notifier);
     final res = await dialogs.showMessage(
       title: l.tip,
       message: TextSpan(text: l.deleteTip(item.name)),
     );
-    if (res == true) {
-      ref.read(listenersSettingProvider.notifier).remove(item.id);
+    if (res == true && context.mounted) {
+      notifier.remove(item.id);
     }
   }
 
@@ -112,76 +172,82 @@ class ListenersView extends ConsumerWidget {
           icon: const GlyphIcon(AppGlyphs.addCircle),
         ),
       ],
-      body: ListView(
-        padding: const EdgeInsets.all(
-          16,
-        ).copyWith(top: context.contentTopPadding),
-        children: [
-          generateSection(
-            items: [
-              FormRow(
-                title: l.listenersEnable,
-                onPressed: () => notifier.update(
-                  (state) => state.copyWith(enable: !state.enable),
-                ),
-                trailing: Switch(
-                  value: props.enable,
-                  onChanged: (value) =>
-                      notifier.update((state) => state.copyWith(enable: value)),
-                ),
-              ),
-            ],
+      body: Builder(
+        builder: (context) => ListView(
+          padding: EdgeInsets.fromLTRB(
+            16,
+            context.contentTopPadding,
+            16,
+            16 + context.bottomInset,
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Text(l.listenersDesc, style: context.listCaptionStyle),
-          ),
-          const SizedBox(height: 8),
-          if (props.items.isEmpty)
-            NullStatus(
-              label: l.nullTip(l.listeners),
-              illustration: NullStatusIllustration.data,
-            )
-          else
-            for (final (index, item) in props.items.indexed)
-              ContextMenuRegion(
-                key: ValueKey(item.id),
-                menuItems: [
-                  for (final address in listenerAddresses(item))
-                    PopupMenuItem(
-                      glyph: AppGlyphs.copy,
-                      label: address,
-                      onPressed: () => _copy(context, address),
+          children: [
+            generateSection(
+              items: [
+                FormRow(
+                  title: l.listenersEnable,
+                  onPressed: () => notifier.update(
+                    (state) => state.copyWith(enable: !state.enable),
+                  ),
+                  trailing: Switch(
+                    value: props.enable,
+                    onChanged: (value) => notifier.update(
+                      (state) => state.copyWith(enable: value),
                     ),
-                  PopupMenuItem(
-                    glyph: AppGlyphs.edit,
-                    label: l.edit,
-                    onPressed: () => _edit(context, ref, item),
-                  ),
-                  PopupMenuItem(
-                    danger: true,
-                    glyph: AppGlyphs.delete,
-                    label: l.delete,
-                    onPressed: () => _delete(context, ref, item),
-                  ),
-                ],
-                child: ItemPositionProvider(
-                  position: ItemPosition.get(index, props.items.length),
-                  child: _ListenerItem(
-                    item: item,
-                    issue: issues[item.id],
-                    active:
-                        running &&
-                        props.enable &&
-                        item.enabled &&
-                        !issues.containsKey(item.id),
-                    onPressed: () => _edit(context, ref, item),
-                    onChanged: (value) =>
-                        notifier.put(item.copyWith(enabled: value)),
                   ),
                 ),
-              ),
-        ],
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(l.listenersDesc, style: context.listCaptionStyle),
+            ),
+            const SizedBox(height: 8),
+            if (props.items.isEmpty)
+              NullStatus(
+                label: l.nullTip(l.listeners),
+                illustration: NullStatusIllustration.data,
+              )
+            else
+              for (final (index, item) in props.items.indexed)
+                ContextMenuRegion(
+                  key: ValueKey(item.id),
+                  menuItems: [
+                    for (final address in listenerAddresses(item))
+                      PopupMenuItem(
+                        glyph: AppGlyphs.copy,
+                        label: address,
+                        onPressed: () => _copy(context, address),
+                      ),
+                    PopupMenuItem(
+                      glyph: AppGlyphs.edit,
+                      label: l.edit,
+                      onPressed: () => _edit(context, ref, item),
+                    ),
+                    PopupMenuItem(
+                      danger: true,
+                      glyph: AppGlyphs.delete,
+                      label: l.delete,
+                      onPressed: () => _delete(context, ref, item),
+                    ),
+                  ],
+                  child: ItemPositionProvider(
+                    position: ItemPosition.get(index, props.items.length),
+                    child: _ListenerItem(
+                      item: item,
+                      issue: issues[item.id],
+                      active:
+                          running &&
+                          props.enable &&
+                          item.enabled &&
+                          !issues.containsKey(item.id),
+                      onPressed: () => _edit(context, ref, item),
+                      onChanged: (value) =>
+                          notifier.put(item.copyWith(enabled: value)),
+                    ),
+                  ),
+                ),
+          ],
+        ),
       ),
     );
   }
@@ -322,6 +388,11 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
 
   InboundListenerProps _newListener() {
     final items = ref.read(listenersSettingProvider).items;
+    final takenNames = {for (final item in items) item.name.trim()};
+    var index = 1;
+    while (takenNames.contains('listener-$index')) {
+      index++;
+    }
     final taken = {
       ...items.map((e) => e.port),
       ...appInboundPorts(ref.read(patchClashConfigProvider)),
@@ -332,7 +403,7 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
     }
     return InboundListenerProps(
       id: '${snowflake.id}',
-      name: 'listener-${items.length + 1}',
+      name: 'listener-$index',
       port: port,
     );
   }
@@ -361,6 +432,35 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
         : const [],
   );
 
+  ListenerIssue? _nameConflict(String name) {
+    final trimmed = name.trim();
+    if (trimmed.isEmpty) {
+      return null;
+    }
+    final duplicate = ref
+        .read(listenersSettingProvider)
+        .items
+        .any((item) => item.id != _initial.id && item.name.trim() == trimmed);
+    return duplicate ? ListenerIssue.duplicateName : null;
+  }
+
+  ListenerIssue? _portConflict(int port) {
+    if (!isValidListenerPort(port)) {
+      return null;
+    }
+    final duplicate = ref
+        .read(listenersSettingProvider)
+        .items
+        .any((item) => item.id != _initial.id && item.port == port);
+    if (duplicate) {
+      return ListenerIssue.duplicatePort;
+    }
+    if (appInboundPorts(ref.read(patchClashConfigProvider)).contains(port)) {
+      return ListenerIssue.appPort;
+    }
+    return null;
+  }
+
   ListenerIssue? _conflict(InboundListenerProps draft) {
     final others = [
       for (final item in ref.read(listenersSettingProvider).items)
@@ -369,7 +469,7 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
     final issues = listenerIssues([
       ...others,
       draft.copyWith(enabled: true),
-    ], _currentContext(ref));
+    ], _readCurrentContext(ref));
     return switch (issues[draft.id]) {
       final issue?
           when issue == ListenerIssue.duplicateName ||
@@ -406,7 +506,7 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
         basicLabel: (item) => item.isEmpty ? l.listenerFollowRules : item,
       ),
     );
-    if (res != null) {
+    if (res != null && mounted) {
       setState(() => _proxy = res);
     }
   }
@@ -420,7 +520,7 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
       labelOf: (item) => item.isEmpty ? l.listenerFollowRules : item,
       value: _rule,
     );
-    if (res != null) {
+    if (res != null && mounted) {
       setState(() => _rule = res);
     }
   }
@@ -457,9 +557,17 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
               TextFormField(
                 controller: _name,
                 inputFormatters: TextInputLimits.limit(TextInputLimits.name),
-                validator: (value) => value?.trim().isNotEmpty == true
-                    ? null
-                    : l.emptyTip(l.name),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  final name = value?.trim() ?? '';
+                  if (name.isEmpty) {
+                    return l.emptyTip(l.name);
+                  }
+                  final issue = _nameConflict(name);
+                  return issue == null
+                      ? null
+                      : listenerIssueText(context, issue);
+                },
                 decoration: InputDecoration(
                   border: AppShape.input,
                   helperText: l.name,
@@ -522,7 +630,7 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
                   if (!isValidListenerPort(port)) {
                     return l.listenerPortInvalid;
                   }
-                  final issue = _conflict(_draft.copyWith(port: port));
+                  final issue = _portConflict(port);
                   return issue == null
                       ? null
                       : listenerIssueText(context, issue);
@@ -606,6 +714,7 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
                   Text(l.listenerUsersEmpty, style: context.listCaptionStyle),
                 for (final user in _users)
                   Padding(
+                    key: ObjectKey(user),
                     padding: const EdgeInsets.only(top: 8),
                     child: Row(
                       spacing: 8,
@@ -634,12 +743,14 @@ class _ListenerEditViewState extends ConsumerState<ListenerEditView> {
                           ),
                         ),
                         EntryButton.remove(
-                          onPressed: () => setState(() {
-                            _users.remove(user);
-                            WidgetsBinding.instance.addPostFrameCallback(
-                              (_) => user.dispose(),
-                            );
-                          }),
+                          onPressed: () {
+                            if (_users.remove(user)) {
+                              setState(() {});
+                              WidgetsBinding.instance.addPostFrameCallback(
+                                (_) => user.dispose(),
+                              );
+                            }
+                          },
                         ),
                       ],
                     ),

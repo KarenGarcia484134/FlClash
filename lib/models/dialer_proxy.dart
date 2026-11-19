@@ -48,13 +48,22 @@ class DialerGraph {
     return DialerGraph(proxies: proxies, groups: groups, existing: existing);
   }
 
-  DialerGraph withProxy(String? name) => name == null || proxies.contains(name)
-      ? this
-      : DialerGraph(
-          proxies: {...proxies, name},
-          groups: groups,
-          existing: existing,
-        );
+  DialerGraph withProxy(String? name, {String? dialerProxy}) {
+    if (name == null) {
+      return this;
+    }
+    final via = dialerProxy?.trim() ?? '';
+    final nextProxies = proxies.contains(name) ? proxies : {...proxies, name};
+    final nextExisting = via.isEmpty ? existing : {...existing, name: via};
+    if (identical(nextProxies, proxies) && identical(nextExisting, existing)) {
+      return this;
+    }
+    return DialerGraph(
+      proxies: nextProxies,
+      groups: groups,
+      existing: nextExisting,
+    );
+  }
 
   bool hasTarget(String name) =>
       proxies.contains(name) || groups.containsKey(name);
@@ -137,6 +146,19 @@ Map<String, DialerProxyIssue> injectDialerProxies(
   final skipped = <String, DialerProxyIssue>{};
   final applied = <String, String>{};
   for (final MapEntry(key: node, value: target) in settings.entries) {
+    if (target != dialerProxyDirect) {
+      continue;
+    }
+    if (!graph.proxies.contains(node)) {
+      skipped[node] = DialerProxyIssue.missingNode;
+      continue;
+    }
+    applied[node] = target;
+  }
+  for (final MapEntry(key: node, value: target) in settings.entries) {
+    if (target == dialerProxyDirect) {
+      continue;
+    }
     final issue = dialerProxyIssue(graph, {...applied, node: target}, node);
     if (issue != null) {
       skipped[node] = issue;

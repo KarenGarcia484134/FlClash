@@ -30,6 +30,9 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
   // The same instance on every build, so the bar changing with the current
   // group or its delay test leaves the page alone.
   late final _tabView = ProxiesTabView(key: _proxiesTabKey);
+  late ProxiesListView _listView = ProxiesListView(
+    focusGroupName: widget.focusGroupName,
+  );
   bool _isTab = false;
 
   void _updateStyle(
@@ -154,6 +157,14 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
   }
 
   @override
+  void didUpdateWidget(ProxiesView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.focusGroupName != widget.focusGroupName) {
+      _listView = ProxiesListView(focusGroupName: widget.focusGroupName);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final style = ref.watch(proxiesStyleSettingProvider);
     final isLoading = ref.watch(loadingProvider(LoadingTag.proxies));
@@ -179,9 +190,7 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
       searchState: AppBarSearchState(onSearch: _onSearch),
       body: switch (style.type) {
         ProxiesType.tab => _tabView,
-        ProxiesType.list => ProxiesListView(
-          focusGroupName: widget.focusGroupName,
-        ),
+        ProxiesType.list => _listView,
       },
     );
   }

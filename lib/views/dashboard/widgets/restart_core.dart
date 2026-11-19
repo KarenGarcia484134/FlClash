@@ -12,6 +12,7 @@ import 'card.dart';
 /// Restarts the core after a confirmation, reporting the outcome.
 Future<void> confirmRestartCore(BuildContext context, WidgetRef ref) async {
   final appLocalizations = context.appLocalizations;
+  final coreAction = ref.read(coreActionProvider.notifier);
   final res = await dialogs.showMessage(
     message: TextSpan(text: appLocalizations.restartCoreTip),
   );
@@ -19,7 +20,7 @@ Future<void> confirmRestartCore(BuildContext context, WidgetRef ref) async {
     return;
   }
   try {
-    final ok = await ref.read(coreActionProvider.notifier).restartCore();
+    final ok = await coreAction.restartCore();
     dialogs.showBanner(
       ok
           ? appLocalizations.restartCoreDone

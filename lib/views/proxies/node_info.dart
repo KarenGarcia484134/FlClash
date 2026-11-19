@@ -41,16 +41,40 @@ class NodeInfoView extends ConsumerStatefulWidget {
   ConsumerState<NodeInfoView> createState() => _NodeInfoViewState();
 }
 
-class _NodeInfoViewState extends ConsumerState<NodeInfoView> {
-  late final Future<Map<String, dynamic>?> _config =
-      (widget.loadConfig ?? _loadCurrentConfig)().catchError((_) => null);
+typedef _ResolvedNode = ({
+  Map<String, Object?> node,
+  List<NodeField> fields,
+  String yaml,
+  String json,
+});
 
-  Future<Map<String, dynamic>?> _loadCurrentConfig() async {
-    final profileId = ref.read(currentProfileIdProvider);
-    if (profileId == null) {
+class _NodeInfoViewState extends ConsumerState<NodeInfoView> {
+  late final Future<_ResolvedNode?> _resolved = _loadResolvedNode().catchError(
+    (_) => null,
+  );
+
+  Future<_ResolvedNode?> _loadResolvedNode() async {
+    final Map<String, Object?>? node;
+    if (widget.loadConfig case final loadConfig?) {
+      final config = await loadConfig();
+      node = findNodeConfig(config, widget.proxy.name);
+    } else if (ref.read(groupsProvider).getGroup(widget.proxy.name) != null) {
+      return null;
+    } else {
+      final raw = await ref
+          .read(coreHandlerProvider)
+          .getProxyDefinition(widget.proxy.name);
+      node = raw == null ? null : Map<String, Object?>.from(raw);
+    }
+    if (node == null) {
       return null;
     }
-    return ref.read(coreHandlerProvider).readConfig(profileId);
+    return (
+      node: node,
+      fields: nodeFields(node),
+      yaml: nodeConfigYaml(node),
+      json: nodeConfigJson(node),
+    );
   }
 
   Future<void> _copy(String text) async {
@@ -79,12 +103,10 @@ class _NodeInfoViewState extends ConsumerState<NodeInfoView> {
       final value => '$value ms',
     };
     return FutureBuilder(
-      future: _config,
+      future: _resolved,
       builder: (context, snapshot) {
         final loading = snapshot.connectionState != ConnectionState.done;
-        final node = group == null
-            ? findNodeConfig(snapshot.data, proxy.name)
-            : null;
+        final resolved = group == null ? snapshot.data : null;
         return AppBarClearance(
           child: ListView(
             padding: const EdgeInsets.symmetric(
@@ -140,7 +162,7 @@ class _NodeInfoViewState extends ConsumerState<NodeInfoView> {
                   padding: const EdgeInsets.all(24),
                   child: Center(child: Text(appLocalizations.loading)),
                 )
-              else if (node == null)
+              else if (resolved == null)
                 Padding(
                   key: const ValueKey('node-config-missing'),
                   padding: const EdgeInsets.all(16),
@@ -153,7 +175,7 @@ class _NodeInfoViewState extends ConsumerState<NodeInfoView> {
                 generateSection(
                   title: appLocalizations.nodeConfig,
                   items: [
-                    for (final field in nodeFields(node))
+                    for (final field in resolved.fields)
                       field.secret
                           ? _SecretRow(
                               key: ValueKey('node-field-${field.path}'),
@@ -172,12 +194,12 @@ class _NodeInfoViewState extends ConsumerState<NodeInfoView> {
                     DetailRow(
                       key: const ValueKey('node-copy-yaml'),
                       title: appLocalizations.copyAsYaml,
-                      copyText: nodeConfigYaml(node),
+                      copyText: resolved.yaml,
                     ),
                     DetailRow(
                       key: const ValueKey('node-copy-json'),
                       title: appLocalizations.copyAsJson,
-                      copyText: nodeConfigJson(node),
+                      copyText: resolved.json,
                     ),
                   ],
                   footer: appLocalizations.nodeConfigCopyTip,

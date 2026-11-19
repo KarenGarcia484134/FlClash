@@ -185,11 +185,6 @@ class _DesktopDashboard extends StatelessWidget {
             Expanded(child: RestartCoreCard(dense: true)),
           ],
         );
-        final shortSummaries = row([
-          (half, const ConnectionStatsCard()),
-          (half - 1, const ProxyGroupsSummaryCard()),
-          (1, shortcutTiles(Axis.vertical)),
-        ]);
         final summaries = row([
           (half, const ConnectionStatsCard()),
           (half, const ProxyGroupsSummaryCard()),
@@ -311,9 +306,22 @@ class _DesktopDashboard extends StatelessWidget {
                       ),
                     )
                   else if (fills)
-                    Expanded(child: shortSummaries)
+                    Expanded(
+                      child: row([
+                        (half, const ConnectionStatsCard()),
+                        (half - 1, const ProxyGroupsSummaryCard()),
+                        (1, shortcutTiles(Axis.vertical)),
+                      ]),
+                    )
                   else
-                    sized(summaryHeight, shortSummaries),
+                    sized(
+                      summaryHeight,
+                      row([
+                        (half, const ConnectionStatsCard()),
+                        (half - 1, const ProxyGroupsSummaryCard()),
+                        (1, shortcutTiles(Axis.vertical)),
+                      ]),
+                    ),
                 ],
               ),
             ),

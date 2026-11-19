@@ -157,7 +157,7 @@ class ListenerContext {
   final bool linux;
 }
 
-const _builtinOutbounds = {'DIRECT', 'REJECT', 'REJECT-DROP', 'PASS'};
+const _builtinOutbounds = {'DIRECT', 'REJECT', 'REJECT-DROP', 'PASS', 'GLOBAL'};
 
 /// Why each enabled listener is left out of the config, in list order; a
 /// listener is checked against those before it.
@@ -272,11 +272,12 @@ Map<String, ListenerIssue> injectListeners(
 
 /// Where a client points at the listener, such as socks5://127.0.0.1:7891.
 List<String> listenerAddresses(InboundListenerProps item) {
-  final host = item.listen == listenerAnyAddress
-      ? listenerLoopback
-      : item.listen.contains(':')
-      ? '[${item.listen}]'
-      : item.listen;
+  final host = switch (item.listen) {
+    listenerAnyAddress => listenerLoopback,
+    '::' => '[::1]',
+    final value when value.contains(':') => '[$value]',
+    final value => value,
+  };
   final address = '$host:${item.port}';
   return switch (item.type) {
     ListenerType.mixed => ['http://$address', 'socks5://$address'],

@@ -85,7 +85,7 @@ class OutboundDelayBadge extends ConsumerWidget {
         color: colorScheme.onSurfaceVariant,
       ),
       null => Text(
-        delay! > 0
+        delay! >= 0
             ? '$delay ms'
             : delayFailureText(delay, context.appLocalizations),
         maxLines: 1,

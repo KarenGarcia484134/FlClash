@@ -97,6 +97,7 @@ class SetupAction extends _$SetupAction {
     if (!running) {
       _startTime = null;
       debouncer.cancel(FunctionTag.applyProfile);
+      debouncer.cancel(FunctionTag.reapplyProfile);
       _pendingForceApply = false;
       _updateRunTime();
       return;
@@ -380,7 +381,12 @@ class SetupAction extends _$SetupAction {
     debouncer.call(
       FunctionTag.reapplyProfile,
       _reapplyForChange,
-      duration: const Duration(milliseconds: 800),
+      duration: Duration(
+        microseconds: _lastPushDuration.inMicroseconds.clamp(
+          const Duration(milliseconds: 800).inMicroseconds,
+          maxApplyDebounce.inMicroseconds,
+        ),
+      ),
     );
   }
 
@@ -405,9 +411,6 @@ class SetupAction extends _$SetupAction {
         level: BannerLevel.error,
       );
       return;
-    }
-    if (ref.read(appSettingProvider).closeConnectionsOnApply) {
-      await ref.read(coreActionProvider.notifier).closeConnections();
     }
     dialogs.showBanner(appLocalizations.appliedTip, level: BannerLevel.success);
   }
@@ -873,6 +876,17 @@ class SetupAction extends _$SetupAction {
           await preferences.saveAppliedConfigMd5(yamlMd5);
         }
         await onUpdated?.call();
+        if (ref.read(isStartProvider) &&
+            ref.read(appSettingProvider).closeConnectionsOnApply) {
+          try {
+            await ref.read(coreActionProvider.notifier).closeConnections();
+          } catch (error) {
+            commonPrint.log(
+              'closeConnectionsOnApply error: ${compactError(error)}',
+              logLevel: LogLevel.warning,
+            );
+          }
+        }
       },
       silence: true,
       tag: !silence ? LoadingTag.proxies : null,

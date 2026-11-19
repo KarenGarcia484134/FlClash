@@ -18,11 +18,11 @@ import 'package:flutter/widgets.dart';
 
 import 'rules.dart';
 
-class AdvancedConfigView extends ConsumerWidget {
+class AdvancedConfigView extends StatelessWidget {
   const AdvancedConfigView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final appLocalizations = context.appLocalizations;
     final items = [
       ListItem.open(
@@ -58,17 +58,19 @@ class AdvancedConfigView extends ConsumerWidget {
         leading: const GlyphIcon(AppGlyphs.devices),
         widget: const ListenersView(),
       ),
-      ListItem.open(
-        title: Text(appLocalizations.dialerProxy),
-        subtitle: switch (dialerProxySkippedCount(ref)) {
-          0 => null,
-          final count => Text(
-            appLocalizations.dialerProxySkippedTip(count),
-            style: TextStyle(color: context.colorScheme.error),
-          ),
-        },
-        leading: const GlyphIcon(AppGlyphs.link),
-        widget: const DialerProxyView(),
+      Consumer(
+        builder: (context, ref, _) => ListItem.open(
+          title: Text(appLocalizations.dialerProxy),
+          subtitle: switch (dialerProxySkippedCount(ref)) {
+            0 => null,
+            final count => Text(
+              appLocalizations.dialerProxySkippedTip(count),
+              style: TextStyle(color: context.colorScheme.error),
+            ),
+          },
+          leading: const GlyphIcon(AppGlyphs.link),
+          widget: const DialerProxyView(),
+        ),
       ),
       ListItem.open(
         title: Text(appLocalizations.script),

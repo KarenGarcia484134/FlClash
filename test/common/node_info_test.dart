@@ -60,6 +60,10 @@ void main() {
       'psk',
       'pre-shared-key',
       'auth-str',
+      'auth-key',
+      'key',
+      'passphrase',
+      'authorization',
       'obfs-password',
     ]) {
       expect(isSecretNodeKey(key), isTrue, reason: key);

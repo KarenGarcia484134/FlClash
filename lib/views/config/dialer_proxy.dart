@@ -17,7 +17,10 @@ bool isGroupTypeName(String type) =>
 DialerGraph _currentGraph(WidgetRef ref, int profileId) {
   final graph =
       ref.watch(dialerGraphProvider(profileId)).value ?? const DialerGraph();
-  return graph.withProxy(currentTailscaleProxyName(ref));
+  final via = ref.watch(
+    tailscaleSettingProvider.select((state) => state.dialerProxy),
+  );
+  return graph.withProxy(currentTailscaleProxyName(ref), dialerProxy: via);
 }
 
 String dialerProxyIssueText(BuildContext context, DialerProxyIssue issue) {
@@ -29,15 +32,21 @@ String dialerProxyIssueText(BuildContext context, DialerProxyIssue issue) {
   };
 }
 
-/// "经 X" for a node carrying a dialer-proxy, the user's or the profile's.
+/// Returns the "via X" subtitle for a node carrying a user or profile dialer.
 String? dialerProxySubtitle(WidgetRef ref, BuildContext context, String node) {
   final profileId = ref.watch(currentProfileIdProvider);
   if (profileId == null) {
     return null;
   }
   final via =
-      ref.watch(profileDialerProxiesProvider(profileId))[node] ??
-      ref.watch(dialerGraphProvider(profileId)).value?.existing[node];
+      ref.watch(
+        profileDialerProxiesProvider(profileId).select((state) => state[node]),
+      ) ??
+      ref.watch(
+        dialerGraphProvider(
+          profileId,
+        ).select((state) => state.value?.existing[node]),
+      );
   return via == null || via == dialerProxyDirect
       ? null
       : context.appLocalizations.dialerProxyVia(via);
@@ -65,7 +74,10 @@ Future<void> pickDialerProxy(
     return;
   }
   final settings = ref.read(profileDialerProxiesProvider(profileId));
-  final full = graph.withProxy(currentTailscaleProxyName(ref));
+  final full = graph.withProxy(
+    readCurrentTailscaleProxyName(ref),
+    dialerProxy: ref.read(tailscaleSettingProvider).dialerProxy,
+  );
   final others = effectiveDialers(full, settings)
     ..remove(node)
     ..removeWhere((_, via) => via == dialerProxyDirect);
@@ -82,7 +94,7 @@ Future<void> pickDialerProxy(
           !dialerProxyCreatesCycle(full, others, node, name),
     ),
   );
-  if (res == null) {
+  if (res == null || !context.mounted) {
     return;
   }
   final notifier = ref.read(dialerProxySettingProvider.notifier);
@@ -144,7 +156,7 @@ class DialerProxyView extends ConsumerWidget {
       title: appLocalizations.tip,
       message: TextSpan(text: appLocalizations.dialerProxyClearAllTip),
     );
-    if (res != true) {
+    if (res != true || !context.mounted) {
       return;
     }
     ref.read(dialerProxySettingProvider.notifier).clear(id);
@@ -181,27 +193,36 @@ class DialerProxyView extends ConsumerWidget {
               label: appLocalizations.dialerProxyEmpty,
               illustration: NullStatusIllustration.proxies,
             )
-          : ListView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-              ).copyWith(top: context.contentTopPadding, bottom: 16),
-              children: [
-                for (final MapEntry(key: node, value: target)
-                    in settings.entries)
-                  _DialerProxyItem(
-                    node: node,
-                    target: target,
-                    issue: dialerProxyIssue(graph, settings, node),
-                    onDelete: () {
-                      ref
-                          .read(dialerProxySettingProvider.notifier)
-                          .set(profileId!, node, null);
-                    },
-                  ),
-                for (final MapEntry(key: node, value: target)
-                    in fromProfile.entries)
-                  _DialerProxyItem(node: node, target: target, external: true),
-              ],
+          : Builder(
+              builder: (context) => ListView(
+                padding: EdgeInsets.fromLTRB(
+                  16,
+                  context.contentTopPadding,
+                  16,
+                  16 + context.bottomInset,
+                ),
+                children: [
+                  for (final MapEntry(key: node, value: target)
+                      in settings.entries)
+                    _DialerProxyItem(
+                      node: node,
+                      target: target,
+                      issue: dialerProxyIssue(graph, settings, node),
+                      onDelete: () {
+                        ref
+                            .read(dialerProxySettingProvider.notifier)
+                            .set(profileId!, node, null);
+                      },
+                    ),
+                  for (final MapEntry(key: node, value: target)
+                      in fromProfile.entries)
+                    _DialerProxyItem(
+                      node: node,
+                      target: target,
+                      external: true,
+                    ),
+                ],
+              ),
             ),
     );
   }

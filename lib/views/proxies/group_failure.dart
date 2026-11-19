@@ -158,7 +158,7 @@ class _FailedGroupsListState extends ConsumerState<_FailedGroupsList> {
     final appLocalizations = context.appLocalizations;
     return AppBarClearance(
       child: ListView(
-        padding: const EdgeInsets.only(bottom: 16),
+        padding: EdgeInsets.only(bottom: 16 + context.bottomInset),
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
@@ -208,10 +208,7 @@ class _FailedGroupsListState extends ConsumerState<_FailedGroupsList> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    if (failedNames.contains(group.name))
-                      GroupFailureTag(group: group)
-                    else
-                      _RecoveredTag(groupName: group.name),
+                    _GroupStatusTag(group: group),
                   ],
                 ),
                 subtitle: _FailedGroupNode(group: group),
@@ -231,6 +228,22 @@ class _FailedGroupsListState extends ConsumerState<_FailedGroupsList> {
         ],
       ),
     );
+  }
+}
+
+class _GroupStatusTag extends ConsumerWidget {
+  const _GroupStatusTag({required this.group});
+
+  final Group group;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final delay = watchGroupDelay(ref, group);
+    return switch (delay) {
+      null => const SizedBox.shrink(),
+      final value when value < 0 => GroupFailureTag(group: group),
+      _ => _RecoveredTag(groupName: group.name),
+    };
   }
 }
 
@@ -269,15 +282,17 @@ class _FailedGroupNode extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appLocalizations = context.appLocalizations;
-    final delay = watchGroupDelay(ref, group) ?? delayTimedOutValue;
+    final delay = watchGroupDelay(ref, group);
     final node = ref
         .watch(selectedProxyNameProvider(group.name))
         .takeFirstValid([]);
+    final delayText = switch (delay) {
+      null => '-',
+      final value when value < 0 => delayFailureText(value, appLocalizations),
+      final value => '$value ms',
+    };
     return Text(
-      appLocalizations.groupFailureDetail(
-        node.isEmpty ? '-' : node,
-        delay < 0 ? delayFailureText(delay, appLocalizations) : '$delay ms',
-      ),
+      appLocalizations.groupFailureDetail(node.isEmpty ? '-' : node, delayText),
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
     );

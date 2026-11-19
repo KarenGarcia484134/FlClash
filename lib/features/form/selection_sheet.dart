@@ -99,8 +99,6 @@ class _SelectionSheetState<T> extends ConsumerState<SelectionSheet<T>>
   void _handleSelected(T item) {
     // While searching, the bar holds a back layer on the route: a picker that
     // pops with its pick would only end the search and lose the pick.
-    // While searching, the bar holds a back layer on the route: a picker that
-    // pops with its pick would only end the search and lose the pick.
     final scaffold = _scaffoldKey.currentState;
     if (scaffold == null) {
       widget.onSelected(item);

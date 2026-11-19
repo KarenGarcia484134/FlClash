@@ -12,6 +12,10 @@ const _secretKeys = {
   'pre-shared-key',
   'auth',
   'auth-str',
+  'auth-key',
+  'key',
+  'passphrase',
+  'authorization',
   'token',
   'obfs-password',
   'secret',
@@ -85,6 +89,9 @@ List<NodeField> nodeFields(Map<String, Object?> node) {
         walk(path.isEmpty ? '${entry.key}' : '$path.${entry.key}', entry.value);
       }
     } else if (value is List) {
+      if (value.isEmpty) {
+        return;
+      }
       if (value.every((item) => item is! Map && item is! List)) {
         fields.add(NodeField(path, value.join(', ')));
       } else {

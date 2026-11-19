@@ -68,9 +68,12 @@ class DetachableBackLayerScopeState extends State<DetachableBackLayerScope> {
     final route = _route;
     final hadEntry = _entry != null;
     _detach();
-    action();
-    if (hadEntry && mounted && _entry == null && route?.isCurrent == true) {
-      _attach(route!);
+    try {
+      action();
+    } finally {
+      if (hadEntry && mounted && _entry == null && route?.isActive == true) {
+        _attach(route!);
+      }
     }
   }
 

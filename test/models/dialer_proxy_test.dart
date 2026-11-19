@@ -67,6 +67,13 @@ void main() {
       expect(injectDialerProxies(_config(), {'B': 'C'}), {
         'B': DialerProxyIssue.cycle,
       });
+      final clearedFirst = _config();
+      expect(
+        injectDialerProxies(clearedFirst, {'B': 'C', 'C': dialerProxyDirect}),
+        isEmpty,
+      );
+      expect(_proxy(clearedFirst, 'B')['dialer-proxy'], 'C');
+      expect(_proxy(clearedFirst, 'C').containsKey('dialer-proxy'), isFalse);
     });
 
     test('works with an injected Tailscale node and custom routings', () {

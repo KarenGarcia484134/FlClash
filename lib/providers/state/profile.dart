@@ -190,8 +190,10 @@ Future<DialerGraph> dialerGraph(Ref ref, int profileId) async {
   if (type == ProfileType.custom) {
     return const DialerGraph();
   }
-  final configMap = await ref.read(coreHandlerProvider).readConfig(profileId);
-  return DialerGraph.fromConfig(configMap);
+  final (:base, path: _) = await ref
+      .read(coreHandlerProvider)
+      .getProfileBase(profileId);
+  return DialerGraph.fromConfig(base.outline);
 }
 
 /// Settings outside the patch config and the database that end up in the
