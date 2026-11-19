@@ -49,7 +49,6 @@ String? selfUpdateAssetSuffix(Abi abi, {required bool windowsInstalled}) {
     Abi.androidArm => 'android-armeabi-v7a.apk',
     Abi.androidX64 => 'android-x86_64.apk',
     Abi.windowsX64 when windowsInstalled => 'windows-amd64-setup.exe',
-    Abi.windowsArm64 when windowsInstalled => 'windows-arm64-setup.exe',
     // The fork ships a dmg per architecture; installing opens it in Finder.
     Abi.macosArm64 => 'macos-arm64.dmg',
     Abi.macosX64 => 'macos-amd64.dmg',

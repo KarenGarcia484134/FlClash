@@ -181,6 +181,47 @@ void main() {
     );
   });
 
+  test('rebuilding does not duplicate an entry moved to another group', () {
+    final first = build();
+    final version = first.changelog.versions.single;
+    final fixEntry = version.groups
+        .firstWhere((group) => group.type == ChangelogType.fix)
+        .entries
+        .single;
+    final recorded = Changelog(
+      versions: <ChangelogVersion>[
+        ChangelogVersion(
+          version: version.version,
+          tag: version.tag,
+          date: version.date,
+          groups: <ChangelogGroup>[
+            ChangelogGroup(
+              type: ChangelogType.feat,
+              entries: <ChangelogEntry>[
+                ChangelogEntry(id: fixEntry.id, text: 'Moved into features'),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+
+    final kept = preserveRecorded(first, recorded).versions.single;
+
+    expect(
+      kept.groups.where((group) => group.type == ChangelogType.fix),
+      isEmpty,
+    );
+    expect(
+      kept.groups
+          .firstWhere((group) => group.type == ChangelogType.feat)
+          .entries
+          .first
+          .id,
+      fixEntry.id,
+    );
+  });
+
   test('a release tag on another branch is not reachable from this one', () {
     git(['checkout', '--quiet', '-b', 'feature', 'v1.0.0']);
     commit('feat(d): work started before the release');

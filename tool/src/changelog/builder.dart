@@ -224,16 +224,23 @@ ChangelogVersion _preserveVersion(
       .where((group) => group.type == type)
       .expand((group) => group.entries);
 
+  final recordedByType = <ChangelogType, List<ChangelogEntry>>{
+    for (final type in ChangelogType.values)
+      type: entriesOf(
+        recorded,
+        type,
+      ).where((entry) => range.contains(entry.id)).toList(),
+  };
+  final known = <String>{
+    for (final entries in recordedByType.values)
+      for (final entry in entries) entry.id,
+  };
   final groups = <ChangelogGroup>[];
   for (final type in ChangelogType.values) {
-    final entries = entriesOf(
-      recorded,
-      type,
-    ).where((entry) => range.contains(entry.id)).toList();
-    final known = entries.map((entry) => entry.id).toSet();
-    entries.addAll(
-      entriesOf(derived, type).where((entry) => !known.contains(entry.id)),
-    );
+    final entries = <ChangelogEntry>[
+      ...?recordedByType[type],
+      ...entriesOf(derived, type).where((entry) => !known.contains(entry.id)),
+    ];
     if (entries.isNotEmpty) {
       groups.add(ChangelogGroup(type: type, entries: entries));
     }

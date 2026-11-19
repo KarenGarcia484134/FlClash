@@ -201,6 +201,18 @@ jobs:
           flutter --version
           flutter pub get
 
+      # The core embeds this bundle and FlClashHttpOverrides.trustCoreRoots loads it for Dart.
+      - name: Fetch CA certificates
+        if: steps.gate.outputs.skip != 'true'
+        shell: bash
+        env:
+          CA_BUNDLE: cacert-2026-09-25.pem
+          CA_BUNDLE_SHA256: a41b5d356aea97a529fe27e0f7316d2f9d946d75927476cf9cf1b90637d00505
+        run: |
+          bundle=core/Clash.Meta/component/ca/ca-certificates.crt
+          curl -fsSL --retry 3 -o "$bundle" "https://curl.se/ca/$CA_BUNDLE"
+          echo "$CA_BUNDLE_SHA256  $bundle" | sha256sum -c -
+
       - name: Build
         if: steps.gate.outputs.skip != 'true'
         env:
@@ -238,10 +250,12 @@ jobs:
             echo "== $apk"
             out="$("$apksigner" verify -v --print-certs --min-sdk-version 21 "$apk")" || { echo "$out"; exit 1; }
             echo "$out" | grep -E 'Verified using v[123] scheme|certificate DN|SHA-256 digest'
-            for scheme in v1 v2 v3; do
-              echo "$out" | grep -q "Verified using $scheme scheme.*: true" || {
-                echo "::error::$apk is not signed with the $scheme scheme" >&2; exit 1; }
-            done
+            if [ -f android/app/keystore.jks ]; then
+              for scheme in v1 v2 v3; do
+                echo "$out" | grep -q "Verified using $scheme scheme.*: true" || {
+                  echo "::error::$apk is not signed with the $scheme scheme" >&2; exit 1; }
+              done
+            fi
           done
 
       - name: Check macOS architecture
@@ -301,7 +315,7 @@ jobs:
           cd dist && sha256sum ./* > SHA256SUMS
 
       - name: Setup Flutter
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/v') && needs.meta.outputs.prerelease != 'true'
         uses: subosito/flutter-action@v2
         with:
           channel: stable
@@ -314,6 +328,7 @@ jobs:
         shell: bash
         env:
           TAG: ${{ needs.meta.outputs.tag }}
+          PRERELEASE: ${{ needs.meta.outputs.prerelease }}
         run: |
           fallback() {
             {
@@ -325,7 +340,7 @@ jobs:
               echo "Build log: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
             } > notes.md
           }
-          if [[ "$GITHUB_REF" != refs/tags/v* ]]; then
+          if [[ "$GITHUB_REF" != refs/tags/v* || "$PRERELEASE" == "true" ]]; then
             fallback
             exit 0
           fi

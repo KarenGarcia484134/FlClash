@@ -30,7 +30,7 @@ void main() {
       );
       expect(
         selfUpdateAssetSuffix(Abi.windowsArm64, windowsInstalled: true),
-        'windows-arm64-setup.exe',
+        isNull,
       );
       expect(
         selfUpdateAssetSuffix(Abi.windowsX64, windowsInstalled: false),
