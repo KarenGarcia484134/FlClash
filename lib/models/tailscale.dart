@@ -69,7 +69,7 @@ TailscaleStatus? parseTailscaleLog(String payload, TailscaleStatus current) {
   final name = match.group(1);
   final message = match.group(2)!;
   if (_loginUrlPattern.firstMatch(message) case final url?) {
-    return TailscaleStatus(
+    return current.copyWith(
       phase: TailscalePhase.needsLogin,
       loginUrl: url.group(1),
       proxyName: name,
@@ -118,6 +118,12 @@ String _cleanSuffix(String value) {
   var text = value.trim().toLowerCase();
   while (text.startsWith('.') || text.startsWith('+')) {
     text = text.substring(1);
+  }
+  while (text.endsWith('.')) {
+    text = text.substring(0, text.length - 1);
+  }
+  if (text.contains(',') || RegExp(r'\s').hasMatch(text)) {
+    return '';
   }
   return text;
 }
@@ -351,6 +357,13 @@ TailscaleStatus applyTailscaleNetStatus(
       loginUrl: net.authUrl?.isNotEmpty == true
           ? net.authUrl
           : current.loginUrl,
+      proxyName: proxyName,
+      health: net.health,
+      dialerProxy: net.dialerProxy ?? '',
+      exitNodeError: net.exitNodeError,
+    ),
+    'Stopped' => TailscaleStatus(
+      phase: TailscalePhase.idle,
       proxyName: proxyName,
       health: net.health,
       dialerProxy: net.dialerProxy ?? '',

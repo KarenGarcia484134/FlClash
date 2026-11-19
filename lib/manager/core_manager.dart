@@ -107,6 +107,8 @@ class _CoreContainerState extends ConsumerState<CoreManager>
     ref.listenManual(coreStatusProvider, (prev, next) {
       if (next == CoreStatus.connected && prev != CoreStatus.connected) {
         _syncLogStream();
+      } else if (next != CoreStatus.connected && prev == CoreStatus.connected) {
+        ref.read(tailscaleStateProvider.notifier).reset();
       }
     }, fireImmediately: true);
   }
@@ -141,7 +143,9 @@ class _CoreContainerState extends ConsumerState<CoreManager>
 
   @override
   void onLog(Log log) {
-    ref.read(tailscaleStateProvider.notifier).onLog(log.payload);
+    if (ref.read(tailscaleSettingProvider).enable) {
+      ref.read(tailscaleStateProvider.notifier).onLog(log.payload);
+    }
     if (!ref.read(appSettingProvider).openLogs) {
       super.onLog(log);
       return;

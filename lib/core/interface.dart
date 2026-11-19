@@ -402,19 +402,17 @@ abstract class CoreHandlerInterface {
     String name,
     List<String> targets,
   ) async {
-    try {
-      final data = await _call(
-        CoreMethod.tailscalePing,
-        arguments: {'name': name, 'targets': targets},
-        timeout: const Duration(seconds: 20),
-      );
-      return [
-        for (final item in (data as List?) ?? const [])
-          if (item is Map) TailscalePingResult.fromJson(_json(item)),
-      ];
-    } catch (_) {
-      return const [];
-    }
+    final batches = (targets.length + 7) ~/ 8;
+    final seconds = batches * 5 + 10;
+    final data = await _call(
+      CoreMethod.tailscalePing,
+      arguments: {'name': name, 'targets': targets},
+      timeout: Duration(seconds: seconds > 20 ? seconds : 20),
+    );
+    return [
+      for (final item in (data as List?) ?? const [])
+        if (item is Map) TailscalePingResult.fromJson(_json(item)),
+    ];
   }
 
   Future<MitmCertificate?> getMitmCertificate() {

@@ -36,13 +36,17 @@ func tailscalePing(ctx context.Context, name, target string) TailscalePingResult
 		return result
 	}
 	res, err := node.Ping(ctx, ip, tailcfg.PingDisco)
-	if (err != nil || res.Err != "") && ctx.Err() == nil {
-		if tsmp, tsmpErr := node.Ping(ctx, ip, tailcfg.PingTSMP); tsmpErr == nil && tsmp.Err == "" {
+	if (err != nil || res == nil || res.Err != "") && ctx.Err() == nil {
+		if tsmp, tsmpErr := node.Ping(ctx, ip, tailcfg.PingTSMP); tsmpErr == nil && tsmp != nil && tsmp.Err == "" {
 			res, err = tsmp, nil
 		}
 	}
 	if err != nil {
 		result.Error = err.Error()
+		return result
+	}
+	if res == nil {
+		result.Error = "empty ping result"
 		return result
 	}
 	return convertTailscalePing(target, res)
@@ -91,8 +95,7 @@ func tailscaleStatus(ctx context.Context, params TailscaleStatusParams) (Tailsca
 		if err := node.Reconnect(ctx); err != nil {
 			return TailscaleStatusResult{Started: true, DialerProxy: node.DialerProxy()}, err
 		}
-	}
-	if params.Rebind {
+	} else if params.Rebind {
 		node.NetworkChanged()
 	}
 	if params.Wait && node.Started() {
@@ -217,8 +220,8 @@ func reconcileTailscaleNodes(current map[string]C.Proxy) (map[string]C.Proxy, bo
 		if members[proxy] {
 			continue
 		}
-		_ = proxy.Adapter().Close()
 		oldNode.Adopt()
+		_ = proxy.Adapter().Close()
 		if next == nil {
 			next = maps.Clone(current)
 		}

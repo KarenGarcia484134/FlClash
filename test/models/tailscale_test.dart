@@ -345,6 +345,35 @@ void main() {
       )!;
       expect(next.phase, TailscalePhase.connecting);
     });
+
+    test('Stopped returns phase to idle and login URL preserves health', () {
+      const running = TailscaleStatus(
+        phase: TailscalePhase.running,
+        proxyName: 'Tailscale',
+        health: ['warn'],
+      );
+      final stopped = applyTailscaleNetStatus(
+        running,
+        const TailscaleNetStatus(started: true, backendState: 'Stopped'),
+        'Tailscale',
+      );
+      expect(stopped.phase, TailscalePhase.idle);
+      expect(stopped.loginUrl, isNull);
+
+      final logged = parseTailscaleLog(
+        '[Tailscale](Tailscale) To authenticate, go to: https://login.tailscale.com/a/123',
+        running,
+      );
+      expect(logged?.phase, TailscalePhase.needsLogin);
+      expect(logged?.health, ['warn']);
+    });
+
+    test('realDnsSuffixes strips trailing dots and rejects commas', () {
+      const props = TailscaleProps(
+        dnsSuffixes: [' .Sub.Example.Com. ', 'bad,host', 'good.org.'],
+      );
+      expect(props.realDnsSuffixes, ['ts.net', 'sub.example.com', 'good.org']);
+    });
   });
 
   group('ping', () {

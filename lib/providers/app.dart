@@ -63,6 +63,9 @@ class TailscaleState extends _$TailscaleState with AutoDisposeNotifierMixin {
     String proxyName, {
     bool settling = false,
   }) {
+    if (!ref.mounted) {
+      return;
+    }
     update(
       (state) =>
           applyTailscaleNetStatus(state, net, proxyName, settling: settling),
@@ -70,6 +73,9 @@ class TailscaleState extends _$TailscaleState with AutoDisposeNotifierMixin {
   }
 
   void onConnecting(String proxyName) {
+    if (!ref.mounted) {
+      return;
+    }
     update(
       (state) => state.copyWith(
         phase: TailscalePhase.connecting,
@@ -78,7 +84,19 @@ class TailscaleState extends _$TailscaleState with AutoDisposeNotifierMixin {
     );
   }
 
+  void clearConnecting() {
+    if (!ref.mounted) {
+      return;
+    }
+    if (state.phase == TailscalePhase.connecting) {
+      value = state.copyWith(phase: TailscalePhase.idle);
+    }
+  }
+
   void reset() {
+    if (!ref.mounted) {
+      return;
+    }
     value = const TailscaleStatus();
   }
 }

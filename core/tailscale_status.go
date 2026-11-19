@@ -78,13 +78,17 @@ func handleTailscalePing(params TailscalePingParams) []TailscalePingResult {
 	sem := make(chan struct{}, tailscalePingParallel)
 	done := make(chan struct{})
 	for i, target := range params.Targets {
-		go func() {
-			sem <- struct{}{}
-			defer func() { <-sem; done <- struct{}{} }()
+		results[i] = TailscalePingResult{Target: target, LatencyMs: -1, Error: "ping aborted"}
+		sem <- struct{}{}
+		safeGo("tailscalePing", func() {
+			defer func() {
+				<-sem
+				done <- struct{}{}
+			}()
 			ctx, cancel := context.WithTimeout(context.Background(), tailscalePingTimeout)
 			defer cancel()
 			results[i] = tailscalePing(ctx, params.Name, target)
-		}()
+		})
 	}
 	for range params.Targets {
 		<-done

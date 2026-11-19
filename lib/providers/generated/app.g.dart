@@ -238,7 +238,7 @@ final class TailscaleStateProvider
   }
 }
 
-String _$tailscaleStateHash() => r'28c1027d20c23b845b0085a0156a8c52dd5003ea';
+String _$tailscaleStateHash() => r'99452ac085e38f8f9e4b326b4d03f1a984ca0a14';
 
 /// What the Core last logged about the injected Tailscale node.
 

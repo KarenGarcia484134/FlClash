@@ -436,7 +436,9 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
         .map((item) => item.definition)
         .toList();
   }
-  final tailscaleRules = injectTailscale(rawConfig, data.tailscale);
+  final tailscaleRules = data.safeMode
+      ? const <String>[]
+      : injectTailscale(rawConfig, data.tailscale);
   injectDialerProxies(rawConfig, data.dialerProxies);
   if (!data.safeMode) {
     injectListeners(

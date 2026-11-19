@@ -25,9 +25,52 @@ String? currentTailscaleProxyName(WidgetRef ref) {
     return null;
   }
   final profileId = ref.watch(currentProfileIdProvider);
-  final config = profileId == null
-      ? null
-      : ref.watch(clashConfigProvider(profileId)).value;
+  if (profileId == null) {
+    return tailscaleProxyName(const {});
+  }
+  final isCustom = ref.watch(
+    profileProvider(
+      profileId,
+    ).select((state) => state?.type == ProfileType.custom),
+  );
+  if (isCustom) {
+    final groups = ref.watch(proxyGroupsProvider(profileId)).value ?? const [];
+    final proxies = ref.watch(customProxiesProvider).value ?? const [];
+    final referenced = {for (final group in groups) ...?group.proxies};
+    return tailscaleProxyName({
+      for (final group in groups) group.name,
+      for (final proxy in proxies)
+        if (referenced.contains(proxy.name)) proxy.name,
+    });
+  }
+  final config = ref.watch(clashConfigProvider(profileId)).value;
+  return tailscaleProxyName({
+    ...?config?.proxies.map((item) => item.name),
+    ...?config?.proxyGroups.map((item) => item.name),
+  });
+}
+
+String? readCurrentTailscaleProxyName(WidgetRef ref) {
+  if (!ref.read(tailscaleSettingProvider).enable) {
+    return null;
+  }
+  final profileId = ref.read(currentProfileIdProvider);
+  if (profileId == null) {
+    return tailscaleProxyName(const {});
+  }
+  final isCustom =
+      ref.read(profileProvider(profileId))?.type == ProfileType.custom;
+  if (isCustom) {
+    final groups = ref.read(proxyGroupsProvider(profileId)).value ?? const [];
+    final proxies = ref.read(customProxiesProvider).value ?? const [];
+    final referenced = {for (final group in groups) ...?group.proxies};
+    return tailscaleProxyName({
+      for (final group in groups) group.name,
+      for (final proxy in proxies)
+        if (referenced.contains(proxy.name)) proxy.name,
+    });
+  }
+  final config = ref.read(clashConfigProvider(profileId)).value;
   return tailscaleProxyName({
     ...?config?.proxies.map((item) => item.name),
     ...?config?.proxyGroups.map((item) => item.name),
@@ -39,26 +82,46 @@ String? currentTailscaleProxyName(WidgetRef ref) {
 /// a script's result, or the profile file.
 final tailscaleDialerCandidatesProvider = FutureProvider.autoDispose
     .family<TailscaleDialerCandidates, int>((ref, profileId) async {
-      final setup = await ref.watch(setupStateProvider(profileId).future);
+      final profileMeta = ref.watch(
+        profileProvider(profileId).select(
+          (state) => (
+            type: state?.type ?? ProfileType.file,
+            extendType: state?.extendType ?? ExtendType.standard,
+            scriptId: state?.scriptId,
+            updatedAt: state?.lastUpdateDate?.millisecondsSinceEpoch,
+          ),
+        ),
+      );
       Map<String, dynamic> config;
-      if (setup.profileType == ProfileType.custom) {
+      if (profileMeta.type == ProfileType.custom) {
+        final appProxies = await ref.watch(customProxiesProvider.future);
+        final proxyDialers = await ref.watch(
+          proxyDialersProvider(profileId).future,
+        );
+        final proxyGroups = await ref.watch(
+          proxyGroupsProvider(profileId).future,
+        );
         config = {
           'proxies': appProxiesPayload(
-            setup.appProxies,
-            dialers: setup.proxyDialers,
-            groups: setup.proxyGroups,
+            appProxies,
+            dialers: proxyDialers,
+            groups: proxyGroups,
           ),
-          'proxy-groups': [
-            for (final group in setup.proxyGroups) group.definition,
-          ],
+          'proxy-groups': [for (final group in proxyGroups) group.definition],
         };
       } else {
-        final script = setup.extendType == ExtendType.script
-            ? await setup.script?.content
+        final scriptId = profileMeta.extendType == ExtendType.script
+            ? profileMeta.scriptId
             : null;
-        if (script?.isNotEmpty == true) {
+        final script = scriptId == null
+            ? null
+            : (await ref.watch(
+                scriptsProvider.future,
+              )).where((item) => item.id == scriptId).firstOrNull;
+        final scriptContent = await script?.content;
+        if (scriptContent?.isNotEmpty == true) {
           final raw = await ref.read(coreHandlerProvider).readConfig(profileId);
-          config = await handleEvaluate(script!, raw);
+          config = await handleEvaluate(scriptContent!, raw);
         } else {
           final clash = await ref.watch(clashConfigProvider(profileId).future);
           config = {
@@ -266,22 +329,28 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
 
   Future<void> _handleReset() async {
     final appLocalizations = context.appLocalizations;
+    final coreHandler = ref.read(coreHandlerProvider);
+    final tailscaleNotifier = ref.read(tailscaleStateProvider.notifier);
+    final name = readCurrentTailscaleProxyName(ref);
     final res = await dialogs.showMessage(
       title: appLocalizations.tip,
       message: TextSpan(text: appLocalizations.tailscaleResetTip),
     );
-    if (res != true) {
+    if (res != true || !mounted) {
       return;
     }
     await globalState.safeRun(() async {
-      if (currentTailscaleProxyName(ref) case final name?) {
-        await ref.read(coreHandlerProvider).tailscaleStatus(name, reset: true);
+      if (name != null) {
+        final status = await coreHandler.tailscaleStatus(name, reset: true);
+        if (status.error case final error? when error.isNotEmpty) {
+          throw MessageException(error);
+        }
       }
       final home = await appPath.homeDirPath;
       await Directory(
         join(home, tailscaleStateDir),
       ).safeDelete(recursive: true);
-      ref.read(tailscaleStateProvider.notifier).reset();
+      tailscaleNotifier.reset();
       await _setupAction.applyProfile(force: true);
     });
   }
@@ -402,14 +471,16 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
           appLocalizations,
           status,
           props,
-          available: switch (ref.watch(currentProfileIdProvider)) {
-            final int id =>
-              ref
-                  .watch(tailscaleDialerCandidatesProvider(id))
-                  .value
-                  ?.contains(props.dialerProxy.trim()),
-            null => null,
-          },
+          available: props.dialerProxy.trim().isEmpty
+              ? null
+              : switch (ref.watch(currentProfileIdProvider)) {
+                  final int id =>
+                    ref
+                        .watch(tailscaleDialerCandidatesProvider(id))
+                        .value
+                        ?.contains(props.dialerProxy.trim()),
+                  null => null,
+                },
         ))
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
@@ -524,7 +595,7 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
                       context,
                       selected: props.dialerProxy,
                     );
-                    if (res != null) {
+                    if (res != null && mounted) {
                       _update((state) => state.copyWith(dialerProxy: res));
                     }
                   },
@@ -542,7 +613,7 @@ class _TailscaleViewState extends ConsumerState<TailscaleView> {
                       peers:
                           _networkKey.currentState?.status?.peers ?? const [],
                     );
-                    if (res != null) {
+                    if (res != null && mounted) {
                       _update((state) => state.copyWith(exitNode: res.trim()));
                     }
                   },

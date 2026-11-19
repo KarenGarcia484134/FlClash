@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/features/form/form.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
-import 'package:fl_clash/ui/ui.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
@@ -39,23 +38,37 @@ class TailscaleNetworkSection extends ConsumerStatefulWidget {
 
 class TailscaleNetworkSectionState
     extends ConsumerState<TailscaleNetworkSection>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, ActivePollingMixin<TailscaleNetworkSection> {
   TailscaleNetStatus? _status;
 
   /// The node and peers as last read, for the page's exit node picker.
   TailscaleNetStatus? get status => _status;
   bool _loading = false;
+  bool _inFlight = false;
+  int _requestGeneration = 0;
+  int _pingGeneration = 0;
   String _query = '';
-  Timer? _timer;
   bool _settling = false;
   final Map<String, TailscalePingResult> _pings = {};
   final Set<String> _pinging = {};
 
   @override
+  Duration get pollInterval => _refreshInterval;
+
+  @override
+  bool get pollOnStart => false;
+
+  @override
+  Future<void> poll(PollGuard isCurrent) async {
+    if (widget.proxyName == null || _settling) {
+      return;
+    }
+    await refresh(silent: true);
+  }
+
+  @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    _startTimer();
     unawaited(refresh());
   }
 
@@ -63,30 +76,21 @@ class TailscaleNetworkSectionState
   void didUpdateWidget(TailscaleNetworkSection oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.proxyName != widget.proxyName) {
+      _requestGeneration++;
+      _pingGeneration++;
+      _inFlight = false;
+      _loading = false;
       unawaited(refresh());
     }
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      _startTimer();
+    final couldPoll = canPoll;
+    super.didChangeAppLifecycleState(state);
+    if (!couldPoll && canPoll && widget.proxyName != null && !_settling) {
       unawaited(refresh());
-    } else {
-      _timer?.cancel();
     }
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  void _startTimer() {
-    _timer?.cancel();
-    _timer = Timer.periodic(_refreshInterval, (_) => refresh(silent: true));
   }
 
   Future<void> refresh({
@@ -97,18 +101,36 @@ class TailscaleNetworkSectionState
   }) async {
     final name = widget.proxyName;
     if (name == null) {
-      if (mounted) setState(() => _status = null);
+      _requestGeneration++;
+      _inFlight = false;
+      if (mounted && (_status != null || _loading)) {
+        setState(() {
+          _status = null;
+          _loading = false;
+        });
+      } else {
+        _status = null;
+        _loading = false;
+      }
       return;
     }
-    if (_loading) {
+    if (_inFlight) {
       return;
     }
-    if (!silent && mounted) setState(() => _loading = true);
+    final generation = _requestGeneration;
+    _inFlight = true;
+    if (!silent && mounted) {
+      setState(() => _loading = true);
+    }
     try {
       final status = await ref
           .read(coreHandlerProvider)
           .tailscaleStatus(name, start: start, wait: wait, rebind: rebind);
-      if (!mounted) return;
+      if (!mounted ||
+          generation != _requestGeneration ||
+          widget.proxyName != name) {
+        return;
+      }
       setState(() {
         _status = status;
         final ids = {for (final peer in status.peers) peer.id};
@@ -118,11 +140,20 @@ class TailscaleNetworkSectionState
           .read(tailscaleStateProvider.notifier)
           .onStatus(status, name, settling: _settling);
     } catch (e) {
-      if (mounted) {
+      if (mounted &&
+          generation == _requestGeneration &&
+          widget.proxyName == name) {
         setState(() => _status = TailscaleNetStatus(error: e.toString()));
       }
     } finally {
-      if (mounted) setState(() => _loading = false);
+      if (generation == _requestGeneration) {
+        _inFlight = false;
+        if (mounted && _loading) {
+          setState(() => _loading = false);
+        } else {
+          _loading = false;
+        }
+      }
     }
   }
 
@@ -137,6 +168,7 @@ class TailscaleNetworkSectionState
   /// network.
   Future<void> onNetworkChanged() async {
     if (!mounted) return;
+    _pingGeneration++;
     setState(_pings.clear);
     if (_status?.started == true) {
       await _settle(rebind: true);
@@ -149,37 +181,52 @@ class TailscaleNetworkSectionState
       return;
     }
     _settling = true;
-    ref.read(tailscaleStateProvider.notifier).onConnecting(name);
+    final tailscaleNotifier = ref.read(tailscaleStateProvider.notifier);
+    tailscaleNotifier.onConnecting(name);
     try {
-      while (_loading && mounted) {
+      while (_inFlight && mounted) {
         await Future<void>.delayed(const Duration(milliseconds: 50));
       }
+      if (!mounted || widget.proxyName != name) {
+        return;
+      }
       await refresh(start: start, wait: true, rebind: rebind);
-      if (!mounted) return;
+      if (!mounted || widget.proxyName != name) {
+        return;
+      }
       if (start && _status?.started != true && _status?.error == null) {
         await widget.onApply();
-        if (!mounted) return;
+        if (!mounted || widget.proxyName != name) {
+          return;
+        }
         await refresh(start: true, wait: true);
       }
       final deadline = DateTime.now().add(tailscaleSettleTimeout);
       while (mounted &&
+          widget.proxyName == name &&
           _status != null &&
           !isTailscaleSettled(_status!) &&
           DateTime.now().isBefore(deadline)) {
         await Future<void>.delayed(tailscaleSettleInterval);
+        if (!mounted || widget.proxyName != name) {
+          return;
+        }
         await refresh(silent: true);
       }
     } finally {
       _settling = false;
       final status = _status;
-      if (mounted && status != null) {
-        ref.read(tailscaleStateProvider.notifier).onStatus(status, name);
+      if (status != null) {
+        tailscaleNotifier.onStatus(status, name);
+      } else if (!mounted) {
+        tailscaleNotifier.clearConnecting();
       }
     }
   }
 
   Future<void> _ping(List<TailscalePeer> peers) async {
     final name = widget.proxyName;
+    final pingFailedText = context.appLocalizations.tailscalePingFailed;
     final targets = {
       for (final peer in peers)
         if (peer.online && !_pinging.contains(peer.id))
@@ -188,29 +235,36 @@ class TailscaleNetworkSectionState
     if (name == null || targets.isEmpty) {
       return;
     }
+    final generation = _pingGeneration;
     setState(() => _pinging.addAll(targets.keys));
     try {
       final results = await ref
           .read(coreHandlerProvider)
           .tailscalePing(name, targets.values.toList());
       final byTarget = {for (final item in results) item.target: item};
-      if (!mounted) return;
+      if (!mounted || generation != _pingGeneration) {
+        return;
+      }
       setState(() {
         for (final MapEntry(key: id, value: ip) in targets.entries) {
           _pings[id] =
               byTarget[ip] ??
-              TailscalePingResult(target: ip, error: 'no reply');
+              TailscalePingResult(target: ip, error: pingFailedText);
         }
       });
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted || generation != _pingGeneration) {
+        return;
+      }
       setState(() {
         for (final MapEntry(key: id, value: ip) in targets.entries) {
           _pings[id] = TailscalePingResult(target: ip, error: e.toString());
         }
       });
     } finally {
-      if (mounted) setState(() => _pinging.removeAll(targets.keys));
+      if (mounted) {
+        setState(() => _pinging.removeAll(targets.keys));
+      }
     }
   }
 
@@ -239,18 +293,19 @@ class TailscaleNetworkSectionState
       target: target,
     );
     await ref.read(customRoutingsProvider.notifier).append(routing);
+    if (!mounted) {
+      return;
+    }
     final profileId = ref.read(currentProfileIdProvider);
     if (profileId != null) {
       ref
           .read(profileCustomRoutingIdsProvider(profileId).notifier)
           .toggle(routing.id);
     }
-    if (mounted) {
-      dialogs.showBanner(
-        '${appLocalizations.tailscaleRoutingAdded}: ${peer.displayName}',
-        level: BannerLevel.success,
-      );
-    }
+    dialogs.showBanner(
+      '${appLocalizations.tailscaleRoutingAdded}: ${peer.displayName}',
+      level: BannerLevel.success,
+    );
   }
 
   Widget _ipChip(String ip) {
@@ -416,7 +471,13 @@ class TailscaleNetworkSectionState
     }
     final peers = status.peers.where((peer) => peer.matches(_query)).toList();
     final testable = status.peers.any(
-      (peer) => peer.online && !_pinging.contains(peer.id),
+      (peer) =>
+          peer.online &&
+          !_pinging.contains(peer.id) &&
+          tailscalePingTarget(peer) != null,
+    );
+    final hasTestablePeers = status.peers.any(
+      (peer) => peer.online && tailscalePingTarget(peer) != null,
     );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -449,7 +510,7 @@ class TailscaleNetworkSectionState
           actions: [
             // Testing latency needs a device to test, so with none the
             // section shows no action that could pass for a connect button.
-            if (status.peers.any((peer) => peer.online))
+            if (hasTestablePeers)
               IconButtonData(
                 glyph: AppGlyphs.bolt,
                 tooltip: appLocalizations.tailscalePingAll,
