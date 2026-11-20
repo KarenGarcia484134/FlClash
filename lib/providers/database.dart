@@ -160,6 +160,13 @@ class Profiles extends _$Profiles {
     }, onError: _reportReread);
   }
 
+  Future<void> reload() async {
+    final rows = await database.profilesDao.query().get();
+    if (ref.mounted && _writes.admit()) {
+      state = rows;
+    }
+  }
+
   void _optimistic(List<Profile> next, FutureOr<void> Function() action) {
     unawaited(
       _optimisticAsync(next, action).catchError(_reportOptimisticFailure),

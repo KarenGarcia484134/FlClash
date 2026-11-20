@@ -210,9 +210,8 @@ Future<MigrationData> readBackupArchive({
       database.proxyDialers.readable((row) => row.toProxyDialer()).get(),
       database.mitmModulesDao.query().get(),
       database.customRoutingsDao.query().get(),
-      database
-          .select(database.profileCustomRoutings)
-          .map((item) => item.toProfileCustomRouting())
+      database.profileCustomRoutings
+          .readable((row) => row.toProfileCustomRouting())
           .get(),
     ]);
     return MigrationData(

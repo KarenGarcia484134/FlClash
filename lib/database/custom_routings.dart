@@ -45,12 +45,13 @@ class CustomRoutingsDao extends DatabaseAccessor<Database>
   CustomRoutingsDao(super.attachedDatabase);
 
   Selectable<CustomRouting> query() {
-    final query = customRoutings.select()
-      ..orderBy([
+    return customRoutings.readable(
+      (row) => row.toCustomRouting(),
+      orderBy: [
         (t) => OrderingTerm(expression: t.order, nulls: NullsOrder.last),
         (t) => OrderingTerm.asc(t.id),
-      ]);
-    return query.map((row) => row.toCustomRouting());
+      ],
+    );
   }
 
   Selectable<int> querySelectedIds(int profileId) {
@@ -66,13 +67,14 @@ class CustomRoutingsDao extends DatabaseAccessor<Database>
     final selected = selectOnly(profileCustomRoutings)
       ..addColumns([profileCustomRoutings.routingId])
       ..where(profileCustomRoutings.profileId.equals(profileId));
-    final query = customRoutings.select()
-      ..where((t) => t.enabled.equals(true) & t.id.isInQuery(selected))
-      ..orderBy([
+    return customRoutings.readable(
+      (row) => row.toCustomRouting(),
+      where: (t) => t.enabled.equals(true) & t.id.isInQuery(selected),
+      orderBy: [
         (t) => OrderingTerm(expression: t.order, nulls: NullsOrder.last),
         (t) => OrderingTerm.asc(t.id),
-      ]);
-    return query.map((row) => row.toCustomRouting());
+      ],
+    );
   }
 
   Future<int> put(CustomRouting routing) {
@@ -112,9 +114,10 @@ class CustomRoutingsDao extends DatabaseAccessor<Database>
       customRoutings,
       routings.map((item) => item.toCompanion()),
     );
-    batch.insertAllOnConflictUpdate(
+    batch.insertAll(
       profileCustomRoutings,
       links.map((item) => item.toCompanion()),
+      mode: InsertMode.insertOrIgnore,
     );
   }
 

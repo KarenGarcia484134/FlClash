@@ -1140,6 +1140,51 @@ void main() {
         71,
         72,
       ]);
+
+      await database.restore(
+        [profile],
+        const [],
+        const [],
+        const [],
+        const [],
+        customRoutings: const [keptRouting, extraRouting],
+        profileCustomRoutings: const [
+          ProfileCustomRouting(profileId: 1, routingId: 71),
+          ProfileCustomRouting(profileId: 1, routingId: 72),
+        ],
+      );
+
+      expect(await database.customRoutingsDao.query().get(), [
+        keptRouting,
+        extraRouting,
+      ]);
+      expect(await database.customRoutingsDao.querySelectedIds(1).get(), [
+        71,
+        72,
+      ]);
+    },
+  );
+
+  test(
+    'custom routings DAO skips unreadable rows while keeping valid ones',
+    () async {
+      const valid = CustomRouting(
+        id: 80,
+        label: 'Valid',
+        target: 'DIRECT',
+        order: 'a',
+        conditions: [
+          CustomRoutingCondition(values: ['example.com']),
+        ],
+      );
+      await database.customRoutingsDao.put(valid);
+      await database.customStatement(
+        'INSERT INTO custom_routings '
+        '(id, label, enabled, logic, conditions, target, "order") '
+        "VALUES (81, 'Corrupt', 1, 'or', 'not-json', 'DIRECT', 'b')",
+      );
+
+      expect(await database.customRoutingsDao.query().get(), [valid]);
     },
   );
 

@@ -98,6 +98,7 @@ class BackupAction extends _$BackupAction {
     final config = option == RestoreOption.onlyProfiles || configMap == null
         ? null
         : Config.fromJson(configMap);
+    final previousProfileId = ref.read(currentProfileIdProvider);
     final isOverride =
         ref.read(appSettingProvider).restoreStrategy ==
         RestoreStrategy.override;
@@ -124,10 +125,12 @@ class BackupAction extends _$BackupAction {
       await putBack?.call();
       rethrow;
     }
+    await ref.read(profilesProvider.notifier).reload();
     await _clearReplacedProviderCaches(previousProviders);
     await _clearOutdatedCompiledRuleSets(data.clashProviders);
     if (config == null) {
       await _restoreMitmModules();
+      _reapplyAfterRestore(previousProfileId);
       return;
     }
     // A desktop backup carries no package lists; the apps picked here stay.
@@ -144,6 +147,20 @@ class BackupAction extends _$BackupAction {
       ),
     );
     await _restoreMitmModules();
+    _reapplyAfterRestore(previousProfileId);
+  }
+
+  void _reapplyAfterRestore(int? previousProfileId) {
+    if (!ref.mounted || !ref.read(initProvider)) {
+      return;
+    }
+    final currentProfileId = ref.read(currentProfileIdProvider);
+    if (currentProfileId != previousProfileId) {
+      return;
+    }
+    if (currentProfileId != null) {
+      unawaited(ref.read(setupActionProvider.notifier).fullSetup());
+    }
   }
 
   Future<void> _restoreMitmModules() async {

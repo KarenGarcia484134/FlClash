@@ -7,11 +7,14 @@ import 'package:fl_clash/database/database.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/action.dart';
+import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
+import 'package:fl_clash/providers/database.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart';
+import 'package:riverpod/misc.dart' show Override;
 import 'package:riverpod/riverpod.dart';
 
 import '../helpers/app_paths.dart';
@@ -23,6 +26,16 @@ Profile _profile(int id, String label) => Profile(
   autoUpdateDuration: Duration.zero,
   extendType: ExtendType.standard,
 );
+
+class _RecordingSetupAction extends SetupAction {
+  int fullSetupCalls = 0;
+
+  @override
+  Future<bool> fullSetup() async {
+    fullSetupCalls++;
+    return true;
+  }
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -51,8 +64,9 @@ void main() {
   });
 
   // AppStateManager's listen keeps the settings alive while a restore awaits.
-  ProviderContainer buildContainer() {
-    final container = ProviderContainer()..listen(configProvider, (_, _) {});
+  ProviderContainer buildContainer({List<Override> overrides = const []}) {
+    final container = ProviderContainer(overrides: overrides)
+      ..listen(configProvider, (_, _) {});
     addTearDown(container.dispose);
     return container;
   }
@@ -142,6 +156,87 @@ void main() {
       expect(restored, isTrue);
       expect(own.readAsStringSync(), '{}');
       expect(stale.existsSync(), isFalse);
+    });
+
+    test('preserves custom routings and links across round trip in compatible '
+        'and override strategies', () async {
+      await testDatabase.profilesDao.putAll([
+        _profile(1, 'Backed up').toCompanion(0),
+      ]);
+      const enabledRouting = CustomRouting(
+        id: 10,
+        label: 'Corp',
+        enabled: true,
+        target: 'DIRECT',
+        order: 'a0',
+        conditions: [
+          CustomRoutingCondition(
+            ruleAction: RuleAction.DOMAIN_SUFFIX,
+            values: ['corp.example'],
+          ),
+        ],
+      );
+      const disabledRouting = CustomRouting(
+        id: 11,
+        label: 'Optional',
+        enabled: false,
+        target: 'REJECT',
+        order: 'a1',
+        conditions: [
+          CustomRoutingCondition(
+            ruleAction: RuleAction.IP_CIDR,
+            values: ['192.0.2.0/24'],
+            noResolve: true,
+          ),
+        ],
+      );
+      await testDatabase.customRoutingsDao.put(enabledRouting);
+      await testDatabase.customRoutingsDao.put(disabledRouting);
+      await testDatabase.customRoutingsDao.putSelected(1, enabledRouting.id);
+
+      final source = buildContainer();
+      final archivePath = await backupToKept(actionOf(source));
+
+      for (final strategy in [
+        RestoreStrategy.compatible,
+        RestoreStrategy.override,
+      ]) {
+        await testDatabase.delete(testDatabase.profileCustomRoutings).go();
+        await testDatabase.delete(testDatabase.customRoutings).go();
+        await testDatabase.delete(testDatabase.profiles).go();
+
+        final target = buildContainer();
+        target
+            .read(appSettingProvider.notifier)
+            .update((state) => state.copyWith(restoreStrategy: strategy));
+
+        final first = await actionOf(
+          target,
+        ).restore(RestoreOption.all, (_) async => archivePath);
+        expect(first, isTrue);
+        expect(await testDatabase.customRoutingsDao.query().get(), [
+          enabledRouting,
+          disabledRouting,
+        ]);
+        expect(await testDatabase.customRoutingsDao.querySelectedIds(1).get(), [
+          enabledRouting.id,
+        ]);
+
+        if (strategy == RestoreStrategy.compatible) {
+          final second = await actionOf(
+            target,
+          ).restore(RestoreOption.all, (_) async => archivePath);
+          expect(second, isTrue);
+          expect(await testDatabase.customRoutingsDao.query().get(), [
+            enabledRouting,
+            disabledRouting,
+          ]);
+          expect(
+            await testDatabase.customRoutingsDao.querySelectedIds(1).get(),
+            [enabledRouting.id],
+          );
+        }
+      }
     });
 
     test('removes the work directory when delivery fails', () async {
@@ -389,6 +484,90 @@ void main() {
         11,
       ]);
     });
+
+    test(
+      'reloads profilesProvider before notifying currentProfileId listeners',
+      () async {
+        await testDatabase.profiles.put(
+          _profile(9, 'Pre-existing').toCompanion(0),
+        );
+        final source = buildContainer();
+        source.read(currentProfileIdProvider.notifier).value = 7;
+        final configMap = configMapOf(source);
+
+        final target = buildContainer()
+          ..read(currentProfileIdProvider.notifier).value = 9;
+        target.read(profilesProvider.notifier);
+        await pumpEventQueue();
+
+        final seenProfileIds = <int>[];
+        target.listen(currentProfileIdProvider, (_, next) {
+          if (next == 7) {
+            seenProfileIds.addAll(
+              target.read(profilesProvider).map((item) => item.id),
+            );
+          }
+        });
+
+        await actionOf(target).applyRestore(
+          MigrationData(configMap: configMap, profiles: [_profile(7, 'New')]),
+          RestoreOption.all,
+        );
+
+        expect(seenProfileIds, contains(7));
+      },
+    );
+
+    test(
+      'reapplies via fullSetup only when currentProfileId stays unchanged',
+      () async {
+        final setupSameAll = _RecordingSetupAction();
+        final source = buildContainer();
+        source.read(currentProfileIdProvider.notifier).value = 7;
+        final configMap = configMapOf(source);
+
+        final sameAll = buildContainer(
+          overrides: [
+            initProvider.overrideWithBuild((_, _) => true),
+            setupActionProvider.overrideWith(() => setupSameAll),
+          ],
+        );
+        sameAll.read(currentProfileIdProvider.notifier).value = 7;
+        await actionOf(sameAll).applyRestore(
+          MigrationData(configMap: configMap, profiles: [_profile(7, 'Same')]),
+          RestoreOption.all,
+        );
+        expect(setupSameAll.fullSetupCalls, 1);
+
+        final setupOnlyProfiles = _RecordingSetupAction();
+        final onlyProfiles = buildContainer(
+          overrides: [
+            initProvider.overrideWithBuild((_, _) => true),
+            setupActionProvider.overrideWith(() => setupOnlyProfiles),
+          ],
+        );
+        onlyProfiles.read(currentProfileIdProvider.notifier).value = 9;
+        await actionOf(onlyProfiles).applyRestore(
+          MigrationData(profiles: [_profile(7, 'Other')]),
+          RestoreOption.onlyProfiles,
+        );
+        expect(setupOnlyProfiles.fullSetupCalls, 1);
+
+        final setupChangedAll = _RecordingSetupAction();
+        final changedAll = buildContainer(
+          overrides: [
+            initProvider.overrideWithBuild((_, _) => true),
+            setupActionProvider.overrideWith(() => setupChangedAll),
+          ],
+        );
+        changedAll.read(currentProfileIdProvider.notifier).value = 9;
+        await actionOf(changedAll).applyRestore(
+          MigrationData(configMap: configMap, profiles: [_profile(7, 'New')]),
+          RestoreOption.all,
+        );
+        expect(setupChangedAll.fullSetupCalls, 0);
+      },
+    );
   });
 
   group('applyRestore writes the settings providers', () {
