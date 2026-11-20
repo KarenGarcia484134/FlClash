@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.9.33 (2026-11-20)
+
+**Bug Fixes**
+
+- **backup,routing** Prevent profile reload races and apply restored custom routings to Core reliably across all restore modes (2bbeece)
+- **tailscale** Align Tailscale DERP direct fallback probe timeout with dial budget, back off premature post-read drops, and exclude FlClash TUN interfaces from Tailscale endpoints (4ab8b78)
+
 ## v0.9.32 (2026-11-19)
 
 **Bug Fixes**

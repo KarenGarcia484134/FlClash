@@ -2,6 +2,29 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.33",
+      "tag": "v0.9.33",
+      "date": "2026-11-20",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "2bbeece",
+              "scope": "backup,routing",
+              "text": "Prevent profile reload races and apply restored custom routings to Core reliably across all restore modes"
+            },
+            {
+              "id": "4ab8b78",
+              "scope": "tailscale",
+              "text": "Align Tailscale DERP direct fallback probe timeout with dial budget, back off premature post-read drops, and exclude FlClash TUN interfaces from Tailscale endpoints"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.32",
       "tag": "v0.9.32",
       "date": "2026-11-19",
