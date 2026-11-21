@@ -147,3 +147,32 @@ Future<String> mergeManifests(List<String> inputs, String output) async {
   }
   return writeManifest(output, entries);
 }
+
+Future<String> refreshManifest(String directory) async {
+  final entries = readManifest(directory);
+  if (entries.isEmpty) {
+    throw PackageError('${p.join(directory, manifestName)} has no artifacts');
+  }
+  final refreshed = <ManifestEntry>[];
+  for (final entry in entries) {
+    final file = File(p.join(directory, entry.name));
+    if (!file.existsSync()) {
+      throw PackageError('${file.path} is listed in manifest but missing');
+    }
+    refreshed.add(
+      ManifestEntry(
+        name: entry.name,
+        sha256: (await sha256.bind(file.openRead()).first).toString(),
+        size: file.lengthSync(),
+        line: entry.line,
+        version: entry.version,
+        channel: entry.channel,
+        os: entry.os,
+        arch: entry.arch,
+        form: entry.form,
+        commit: entry.commit,
+      ),
+    );
+  }
+  return writeManifest(directory, refreshed);
+}

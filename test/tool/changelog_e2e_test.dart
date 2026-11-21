@@ -293,4 +293,37 @@ void main() {
 
     expect(warnings.single, contains('not a conventional commit'));
   });
+
+  test(
+    'preserveRecorded keeps in-range omit IDs and skips derived duplicates',
+    () {
+      final first = build();
+      final version = first.changelog.versions.single;
+      final fixEntry = version.groups
+          .firstWhere((group) => group.type == ChangelogType.fix)
+          .entries
+          .single;
+      final recorded = Changelog(
+        versions: <ChangelogVersion>[
+          ChangelogVersion(
+            version: version.version,
+            tag: version.tag,
+            date: version.date,
+            groups: version.groups
+                .where((group) => group.type != ChangelogType.fix)
+                .toList(),
+            omit: [fixEntry.id, 'deadbee'],
+          ),
+        ],
+      );
+
+      final kept = preserveRecorded(first, recorded).versions.single;
+
+      expect(kept.omit, [fixEntry.id]);
+      expect(
+        kept.groups.where((group) => group.type == ChangelogType.fix),
+        isEmpty,
+      );
+    },
+  );
 }

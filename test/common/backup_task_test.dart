@@ -822,5 +822,43 @@ void main() {
       expect(data.profiles, isEmpty);
       expect(data.scripts, isEmpty);
     });
+
+    test(
+      'restoring a pre-v26 archive reads module consent from staged files',
+      () async {
+        final liveModulesDir = await appPath.mitmModulesDirPath;
+        final liveModule = writeFile(
+          join(liveModulesDir, '7.txt'),
+          '[URL Rewrite]\n^https://live _ reject\n',
+        );
+        addTearDown(() => liveModule.safeDelete());
+
+        final database = db.Database(NativeDatabase(File(databasePath)));
+        await database.customStatement(
+          'ALTER TABLE mitm_modules DROP COLUMN accepted',
+        );
+        await database.customStatement(
+          'ALTER TABLE mitm_modules DROP COLUMN asks_consent',
+        );
+        await database.customStatement(
+          'INSERT INTO mitm_modules (id, name, enabled, scripts, '
+          "last_update_time) VALUES (7, 'Network', 1, 0, 0)",
+        );
+        await database.customStatement('PRAGMA user_version = 24');
+        await database.close();
+
+        writeFile(
+          join(home.path, 'mitm', 'modules', '7.txt'),
+          '[General]\ndns-server = 223.5.5.5\n',
+        );
+        final archivePath = await backup(entries: const ['mitm/modules/7.txt']);
+
+        final data = await restore(archivePath);
+
+        final module = data.mitmModules.single;
+        expect(module.asksConsent, isTrue);
+        expect(module.accepted, isTrue);
+      },
+    );
   });
 }

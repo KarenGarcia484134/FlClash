@@ -37,9 +37,12 @@ Future<ClashConfig> clashConfig(Ref ref, int profileId) async {
 /// The groups a script leaves for a MATCH target; null without a script.
 @Riverpod(retry: _noRetry)
 Future<ClashConfig?> scriptOutbounds(Ref ref, int profileId) async {
-  final scriptId = ref.watch(
+  final (scriptId: scriptId, updated: _) = ref.watch(
     profileProvider(profileId).select(
-      (state) => state?.type == ProfileType.custom ? null : state?.scriptId,
+      (state) => (
+        scriptId: state?.type == ProfileType.custom ? null : state?.scriptId,
+        updated: state?.lastUpdateDate,
+      ),
     ),
   );
   if (scriptId == null) {

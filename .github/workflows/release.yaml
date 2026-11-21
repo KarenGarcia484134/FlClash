@@ -178,17 +178,49 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ninja-build libgtk-3-dev libsecret-1-dev rpm patchelf locate libfuse2
 
-      - name: Override version
-        if: steps.gate.outputs.skip != 'true' && inputs.version != ''
+      - name: Sync release version
+        id: version
+        if: steps.gate.outputs.skip != 'true'
         shell: bash
         env:
-          VERSION: ${{ inputs.version }}
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
-          current="$(sed -n 's/^version: *//p' pubspec.yaml)"
-          if [[ "$VERSION" != *+* ]]; then VERSION="$VERSION+${current#*+}"; fi
-          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+\+[0-9]+$ ]] || { echo "Bad version: $VERSION" >&2; exit 1; }
-          sed -i.bak "s/^version: .*/version: $VERSION/" pubspec.yaml && rm pubspec.yaml.bak
-          grep '^version:' pubspec.yaml
+          tag=""
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            tag="$GITHUB_REF_NAME"
+          fi
+          package_tag=""
+          version=""
+          if [[ -n "$tag" ]]; then
+            tag_base="${tag#v}"
+            tag_base="${tag_base%%+*}"
+            package_tag="$tag"
+            version="$tag_base"
+            if [[ -n "$INPUT_VERSION" ]]; then
+              in_base="${INPUT_VERSION%%+*}"
+              if [[ "$in_base" != "$tag_base" ]]; then
+                echo "::error::inputs.version ($INPUT_VERSION) conflicts with tag ($tag)" >&2
+                exit 1
+              fi
+              version="$INPUT_VERSION"
+            fi
+          elif [[ -n "$INPUT_VERSION" ]]; then
+            version="$INPUT_VERSION"
+            package_tag="v${INPUT_VERSION%%+*}"
+          fi
+          if [[ -n "$version" ]]; then
+            current="$(sed -n 's/^version: *//p' pubspec.yaml)"
+            if [[ "$version" != *+* ]]; then
+              version="$version+${current#*+}"
+            fi
+            [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?\+[0-9]+$ ]] || {
+              echo "Bad version: $version" >&2
+              exit 1
+            }
+            sed -i.bak "s/^version: .*/version: $version/" pubspec.yaml && rm pubspec.yaml.bak
+            grep '^version:' pubspec.yaml
+          fi
+          echo "package_tag=$package_tag" >> "$GITHUB_OUTPUT"
 
       - name: Get Flutter dependencies
         if: steps.gate.outputs.skip != 'true'
@@ -210,14 +242,15 @@ jobs:
 
       - name: Build
         if: steps.gate.outputs.skip != 'true'
+        shell: bash
         env:
           ANDROID_NDK_HOME: ${{ steps.ndk.outputs.ndk-path }}
           FLUTTER_MACOS_ARM64_ONLY: ${{ matrix.platform == 'macos' && matrix.arch == 'arm64' }}
-          INPUT_VERSION: ${{ inputs.version }}
+          PACKAGE_TAG: ${{ steps.version.outputs.package_tag }}
         run: |
           args=(${{ matrix.platform }} --env ${{ needs.meta.outputs.app_env }} -v)
-          if [ -n "$INPUT_VERSION" ]; then
-            args+=(--tag "v${INPUT_VERSION%%+*}")
+          if [ -n "$PACKAGE_TAG" ]; then
+            args+=(--tag "$PACKAGE_TAG")
           fi
           dart tool/package.dart "${args[@]}"
 
@@ -225,6 +258,7 @@ jobs:
       # installers then report the APK as unsigned, so re-sign with all schemes.
       - name: Re-sign APKs with v1+v2+v3
         if: steps.gate.outputs.skip != 'true' && matrix.platform == 'android' && hashFiles('android/app/keystore.jks') != ''
+        shell: bash
         env:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
@@ -240,6 +274,7 @@ jobs:
             mv "$apk.signed" "$apk"
             rm -f "$apk.signed.idsig"
           done
+          dart tool/package.dart refresh dist
 
       - name: Verify APK signatures
         if: steps.gate.outputs.skip != 'true' && matrix.platform == 'android'
@@ -316,10 +351,33 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
       - name: Merge and verify artifacts
+        shell: bash
         run: |
           flutter pub get
           yq -i '.hooks.user_defines.setup.build_assets = false | .hooks.user_defines.rust_api.build_assets = false' pubspec.yaml
           dart run tool/package.dart merge artifacts/* --out dist
+          legacy_sums="$(mktemp)"
+          trap 'rm -f "$legacy_sums"' EXIT
+          while IFS=$'\t' read -r name sha version os arch form; do
+            suffix=""
+            case "$os/$arch/$form" in
+              android/arm64/) suffix="android-arm64-v8a.apk" ;;
+              android/armv7/) suffix="android-armeabi-v7a.apk" ;;
+              android/amd64/) suffix="android-x86_64.apk" ;;
+              windows/amd64/setup) suffix="windows-amd64-setup.exe" ;;
+              macos/arm64/) suffix="macos-arm64.dmg" ;;
+              macos/amd64/) suffix="macos-amd64.dmg" ;;
+            esac
+            [[ -n "$suffix" ]] || continue
+            legacy="FlClash-${version}-${suffix}"
+            if [[ "$name" != "$legacy" ]]; then
+              cp -f "dist/$name" "dist/$legacy"
+            fi
+            printf '%s  %s\n' "$sha" "$legacy" >> "$legacy_sums"
+          done < <(jq -r '.artifacts[] | [.name, .sha256, .version, .os, .arch, (.form // "")] | @tsv' dist/manifest.json)
+          if [[ -s "$legacy_sums" ]]; then
+            LC_ALL=C sort -k2,2 "$legacy_sums" > dist/SHA256SUMS
+          fi
           ls -la dist
           test -n "$(ls dist)" || { echo "No artifacts were built" >&2; exit 1; }
 

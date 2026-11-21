@@ -183,6 +183,7 @@ Future<MigrationData> readBackupArchive({
         tempDirectoryPath: () async => stagingDirPath,
       ),
     ),
+    join(stagingDirPath, mitmDirectoryName, mitmModulesDirectoryName),
   );
   try {
     if (schemaVersion > database.schemaVersion) {

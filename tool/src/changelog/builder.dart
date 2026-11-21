@@ -242,9 +242,14 @@ ChangelogVersion _preserveVersion(
         type,
       ).where((entry) => range.contains(entry.id)).toList(),
   };
+  final keptOmit = [
+    for (final id in recorded.omit)
+      if (range.contains(id)) id,
+  ];
   final known = <String>{
     for (final entries in recordedByType.values)
-      for (final entry in entries) entry.id,
+      for (final entry in entries) ...[entry.id, ...entry.merges],
+    ...keptOmit,
   };
   final groups = <ChangelogGroup>[];
   for (final type in ChangelogType.values) {
@@ -262,6 +267,7 @@ ChangelogVersion _preserveVersion(
     date: recorded.date.isEmpty ? derived.date : recorded.date,
     prerelease: derived.prerelease,
     groups: groups,
+    omit: keptOmit,
   );
 }
 

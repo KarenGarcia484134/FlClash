@@ -453,6 +453,38 @@ hooks:
       );
     });
 
+    test('refreshManifest updates digests after post-build signing', () async {
+      final dir = p.join(temp.path, 'a');
+      final out = p.join(temp.path, 'dist');
+      final entry = await artifact(
+        dir,
+        ReleaseOs.android,
+        ReleaseArch.arm64,
+        'apk',
+      );
+      writeManifest(dir, [entry]);
+      final apk = File(p.join(dir, entry.name))
+        ..writeAsStringSync('signed-apk');
+
+      await expectLater(
+        mergeManifests([dir], out),
+        throwsA(isA<PackageError>()),
+      );
+
+      final checksums = await refreshManifest(dir);
+      final refreshed = readManifest(dir).single;
+      final expectedSha = sha256.convert(apk.readAsBytesSync()).toString();
+      expect(refreshed.sha256, expectedSha);
+      expect(refreshed.size, apk.lengthSync());
+      expect(
+        File(p.join(dir, checksums)).readAsStringSync(),
+        '$expectedSha  ${entry.name}\n',
+      );
+
+      await mergeManifests([dir], out);
+      expect(readManifest(out).single.sha256, expectedSha);
+    });
+
     test('keeps one line and version per manifest', () async {
       final dir = p.join(temp.path, 'a');
       final rs = await artifact(dir, ReleaseOs.linux, ReleaseArch.amd64, 'deb');

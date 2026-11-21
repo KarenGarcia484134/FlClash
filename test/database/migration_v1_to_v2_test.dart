@@ -1302,6 +1302,88 @@ void main() {
   });
 
   test(
+    'an earlier upstream v26 table without asks_consent keeps accepted',
+    () async {
+      final modules = await Directory(
+        await appPath.mitmModulesDirPath,
+      ).create(recursive: true);
+      await File(
+        '${modules.path}/2.txt',
+      ).writeAsString('[URL Rewrite]\n^https://a - reject\n');
+      await File(
+        '${modules.path}/3.txt',
+      ).writeAsString('[General]\ndns-server = 223.5.5.5\n');
+      raw.execute('ALTER TABLE mitm_modules DROP COLUMN asks_consent');
+      raw.execute(
+        'INSERT INTO mitm_modules (id, name, enabled, scripts, '
+        'last_update_time, accepted) VALUES '
+        "(1, 'Scripts', 1, 1, 0, 1), "
+        "(2, 'Declined', 0, 0, 0, NULL), "
+        "(3, 'ApprovedOff', 0, 0, 0, 1)",
+      );
+      raw.execute('PRAGMA user_version = 26');
+
+      final database = await openAndMigrate();
+
+      expect(_userVersion(raw), 27);
+      expect(_columnsOf(raw, 'mitm_modules'), contains('asks_consent'));
+      expect(
+        {
+          for (final module in await database.mitmModulesDao.query().get())
+            module.name: (module.asksConsent, module.accepted),
+        },
+        {
+          'Scripts': (true, true),
+          'Declined': (false, null),
+          'ApprovedOff': (true, true),
+        },
+      );
+    },
+  );
+
+  test(
+    'downgrading back to v24 and re-upgrading preserves exits and consent',
+    () async {
+      raw.execute(
+        'INSERT INTO profiles (id, type, label, url, extend_type, '
+                'auto_update_duration_millis, auto_update, selected_map, unfold_set, '
+                'match_target, exit_targets) VALUES '
+                "(1, 'url', 'Sub', 'https://example.com/sub', 'standard', 0, 0, "
+                ''' '{}', '[]', 'HK', '{"AI":"US"}')'''
+            .trim(),
+      );
+      raw.execute(
+        'INSERT INTO rules (id, profile_id, rule_action, content, '
+        'rule_target, custom_exit) VALUES '
+        "(10, NULL, 'DOMAIN', 'literal.example', 'MATCH', 0)",
+      );
+      raw.execute(
+        'INSERT INTO mitm_modules (id, name, enabled, scripts, '
+        'last_update_time, asks_consent, accepted) VALUES '
+        "(1, 'Pending', 0, 0, 0, 1, NULL), "
+        "(2, 'ApprovedOff', 0, 0, 0, 1, 1), "
+        "(3, 'Denied', 0, 0, 0, 0, 0)",
+      );
+      raw.execute('PRAGMA user_version = 24');
+
+      final database = await openAndMigrate();
+
+      expect(_userVersion(raw), 27);
+      final profile = (await database.profilesDao.query().get()).single;
+      expect(profile.exitTargets, {'AI': 'US', 'MATCH': 'HK'});
+      final rule = (await database.rulesDao.queryAddedRules(1).get()).single;
+      expect(rule.customExit, isFalse);
+      expect(
+        {
+          for (final module in await database.mitmModulesDao.query().get())
+            module.name: module.accepted,
+        },
+        {'Pending': null, 'ApprovedOff': true, 'Denied': false},
+      );
+    },
+  );
+
+  test(
     'a fork v24 database runs script merge and custom exit upgrade',
     () async {
       raw.execute('ALTER TABLE rules DROP COLUMN custom_exit');

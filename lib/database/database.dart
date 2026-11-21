@@ -59,7 +59,10 @@ part 'scripts.dart';
   ],
 )
 class Database extends _$Database {
-  Database([QueryExecutor? executor]) : super(executor ?? _openConnection());
+  Database([QueryExecutor? executor, this._mitmModulesDirPath])
+    : super(executor ?? _openConnection());
+
+  final String? _mitmModulesDirPath;
 
   @override
   int get schemaVersion => 27;
@@ -75,6 +78,8 @@ class Database extends _$Database {
   MigrationStrategy get migration {
     return MigrationStrategy(
       onUpgrade: (m, from, to) => transaction(() async {
+        final initialRuleCols = await _columnsOf(rules.actualTableName);
+        final initialMitmCols = await _columnsOf(mitmModules.actualTableName);
         if (from < 2) {
           await m.createTable(iconRecords);
           await _migrateV1Rules();
@@ -176,19 +181,41 @@ class Database extends _$Database {
           }
           await _addColumnIfMissing(m, rules, rules.customExit);
           await _addColumnIfMissing(m, profiles, profiles.exitTargets);
-          await _matchTargetToExit();
+          await _matchTargetToExit(
+            markCustomExits: !initialRuleCols.contains(rules.customExit.name),
+          );
         }
         if (from < 26) {
           // v23 rebuilds the table with both columns; v26 adds what is missing.
           await _addColumnIfMissing(m, mitmModules, mitmModules.asksConsent);
           await _addColumnIfMissing(m, mitmModules, mitmModules.accepted);
-          await _recordMitmConsent();
+          if (initialMitmCols.isNotEmpty &&
+              (!initialMitmCols.contains(mitmModules.asksConsent.name) ||
+                  !initialMitmCols.contains(mitmModules.accepted.name))) {
+            await _recordMitmConsent(
+              preserveExistingAccepted: initialMitmCols.contains(
+                mitmModules.accepted.name,
+              ),
+            );
+          }
         }
         if (from < 27) {
           await _createTableIfMissing(m, customRoutings);
           await _createTableIfMissing(m, profileCustomRoutings);
           await _createTableIfMissing(m, ipQualities);
           await _createTableIfMissing(m, mitmModules);
+          await _addColumnIfMissing(m, mitmModules, mitmModules.asksConsent);
+          await _addColumnIfMissing(m, mitmModules, mitmModules.accepted);
+          if (from == 26 &&
+              initialMitmCols.isNotEmpty &&
+              (!initialMitmCols.contains(mitmModules.asksConsent.name) ||
+                  !initialMitmCols.contains(mitmModules.accepted.name))) {
+            await _recordMitmConsent(
+              preserveExistingAccepted: initialMitmCols.contains(
+                mitmModules.accepted.name,
+              ),
+            );
+          }
         }
       }),
       beforeOpen: (_) => customStatement('PRAGMA foreign_keys = ON'),
@@ -251,14 +278,29 @@ class Database extends _$Database {
     );
   }
 
-  Future<void> _recordMitmConsent() async {
+  Future<String?> _resolveMitmModulesDirPath() async {
+    if (_mitmModulesDirPath case final path?) {
+      return path;
+    }
+    try {
+      return await appPath.mitmModulesDirPath;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _recordMitmConsent({
+    bool preserveExistingAccepted = false,
+  }) async {
     final rows = await select(mitmModules).get();
     if (rows.isEmpty) {
       return;
     }
-    final directory = await appPath.mitmModulesDirPath;
+    final directory = await _resolveMitmModulesDirPath();
     for (final row in rows) {
-      final fileAsks = await _fileAsksConsent(directory, row);
+      final fileAsks = directory == null
+          ? null
+          : await _fileAsksConsent(directory, row);
       bool? accepted = row.enabled ? null : false;
       if (row.enabled && (row.scripts > 0 || fileAsks == true)) {
         accepted = true;
@@ -266,7 +308,9 @@ class Database extends _$Database {
       await (update(mitmModules)..where((t) => t.id.equals(row.id))).write(
         MitmModulesCompanion(
           asksConsent: Value(fileAsks ?? true),
-          accepted: Value(accepted),
+          accepted: preserveExistingAccepted
+              ? const Value.absent()
+              : Value(accepted),
         ),
       );
     }
@@ -284,16 +328,19 @@ class Database extends _$Database {
     }
   }
 
-  Future<void> _matchTargetToExit() async {
+  Future<void> _matchTargetToExit({required bool markCustomExits}) async {
+    if (markCustomExits) {
+      await customStatement(
+        'UPDATE rules SET custom_exit = 1 '
+        "WHERE upper(trim(rule_target)) = 'MATCH' AND rule_action != 'SUB_RULE' "
+        'AND (profile_id IS NULL OR profile_id IN '
+        "(SELECT id FROM profiles WHERE type != 'custom'))",
+      );
+    }
     await customStatement(
-      'UPDATE rules SET custom_exit = 1 '
-      "WHERE upper(trim(rule_target)) = 'MATCH' AND rule_action != 'SUB_RULE' "
-      'AND (profile_id IS NULL OR profile_id IN '
-      "(SELECT id FROM profiles WHERE type != 'custom'))",
-    );
-    await customStatement(
-      "UPDATE profiles SET exit_targets = json_object('MATCH', "
-      'trim(match_target)) '
+      'UPDATE profiles SET exit_targets = json_set('
+      "coalesce(nullif(trim(exit_targets), ''), '{}'), "
+      r"'$.MATCH', trim(match_target)) "
       "WHERE trim(coalesce(match_target, '')) != '' AND type != 'custom'",
     );
     await customStatement('UPDATE profiles SET match_target = NULL');

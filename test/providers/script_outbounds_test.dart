@@ -123,4 +123,53 @@ void main() {
     expect(await outboundsOf(profile), isNull);
     verifyNever(() => core.readConfig(any()));
   });
+
+  test('re-evaluates when the profile update timestamp advances', () async {
+    scriptEvaluator =
+        ({required String script, required String config}) async => config;
+    final container = ProviderContainer(
+      overrides: [
+        profilesProvider.overrideWith(
+          () => TestProfiles([
+            Profile.normal(label: 'sub').copyWith(
+              id: 1,
+              scriptId: script.id,
+              lastUpdateDate: DateTime(2026, 1, 1),
+            ),
+          ]),
+        ),
+        scriptsProvider.overrideWith(() => TestScripts([script])),
+        coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
+      ],
+    );
+    addTearDown(container.dispose);
+    container.listen(scriptOutboundsProvider(1), (_, _) {});
+
+    final first = await container.read(scriptOutboundsProvider(1).future);
+    expect(first!.proxyGroups.map((group) => group.name), ['Before']);
+
+    when(() => core.readConfig(any())).thenAnswer(
+      (_) async => <String, dynamic>{
+        'proxies': [
+          {'name': 'node', 'type': 'ss', 'server': 'example.com'},
+        ],
+        'proxy-groups': [
+          {
+            'name': 'Refreshed',
+            'type': 'select',
+            'proxies': ['node'],
+          },
+        ],
+      },
+    );
+    container
+        .read(profilesProvider.notifier)
+        .updateProfile(
+          1,
+          (profile) => profile.copyWith(lastUpdateDate: DateTime(2026, 1, 2)),
+        );
+
+    final second = await container.read(scriptOutboundsProvider(1).future);
+    expect(second!.proxyGroups.map((group) => group.name), ['Refreshed']);
+  });
 }

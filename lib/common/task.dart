@@ -384,10 +384,14 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
   confineProviders('proxy-providers', proxiesProviderDirectoryName);
   confineProviders('rule-providers', rulesProviderDirectoryName);
   injectUnconfinedProviders('proxy-providers', data.injectedProxyProviders);
-  injectUnconfinedProviders('rule-providers', {
-    ...data.injectedRuleProviders,
-    ...attachedRuleSets,
-  });
+  injectUnconfinedProviders('rule-providers', data.injectedRuleProviders);
+  if (attachedRuleSets.isNotEmpty) {
+    final providers = rawConfig['rule-providers'];
+    rawConfig['rule-providers'] = {
+      if (providers is Map) ...providers.cast<String, dynamic>(),
+      ...attachedRuleSets,
+    };
+  }
   rawConfig['profile']['store-selected'] = false;
   rawConfig['geox-url'] = realPatchConfig.geoXUrl.raw;
   rawConfig['global-ua'] = realPatchConfig.globalUa ?? defaultUA;
@@ -446,6 +450,20 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
       };
     }
   }
+  if (data.proxyGroups.isNotEmpty) {
+    rawConfig['proxy-groups'] = data.proxyGroups
+        .map((item) => item.definition)
+        .toList();
+  }
+  final tailscaleName = !data.safeMode && data.tailscale.enable
+      ? tailscaleProxyNameFor(rawConfig)
+      : null;
+  final tailscaleRules = data.safeMode
+      ? const <String>[]
+      : injectTailscale(rawConfig, data.tailscale);
+  final outbounds = data.outboundNames != null
+      ? {...data.outboundNames!, ?tailscaleName}
+      : outboundNamesOf(rawConfig);
   List<String> rules = [];
   if (data.rules.isEmpty) {
     if (rawConfig['rules'] != null) {
@@ -454,7 +472,7 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
     if (addedRules.isNotEmpty) {
       final exitTarget = exitTargetResolver(
         targets: data.exitTargets,
-        outbounds: data.outboundNames ?? outboundNamesOf(rawConfig),
+        outbounds: outbounds,
         fallback: data.defaultExitTarget ?? lastMatchTarget(rules),
       );
       final finalAddedRules = [
@@ -469,11 +487,6 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
   } else {
     rules = data.rules.map((item) => item.rawValue).toList();
   }
-  if (data.proxyGroups.isNotEmpty) {
-    rawConfig['proxy-groups'] = data.proxyGroups
-        .map((item) => item.definition)
-        .toList();
-  }
   final mitmRules = mitm.exits.isEmpty
       ? mitm.rules
       : mitmRulesWithExits(
@@ -481,13 +494,10 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
           mitm.exits,
           exitTargetResolver(
             targets: data.exitTargets,
-            outbounds: data.outboundNames ?? outboundNamesOf(rawConfig),
+            outbounds: outbounds,
             fallback: data.defaultExitTarget ?? lastMatchTarget(rules),
           ),
         );
-  final tailscaleRules = data.safeMode
-      ? const <String>[]
-      : injectTailscale(rawConfig, data.tailscale);
   injectDialerProxies(rawConfig, data.dialerProxies);
   if (!data.safeMode) {
     injectListeners(

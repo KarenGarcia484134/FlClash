@@ -454,6 +454,116 @@ DOMAIN,c.example,REJECT
       });
     });
 
+    test(
+      'profile rule-providers cannot shadow an attached MITM rule set',
+      () async {
+        final firstPass = await makeRealProfileTask(
+          const MakeRealProfileState(
+            profilesPath: '/profiles',
+            profileId: 7,
+            rawConfig: {},
+            realPatchConfig: PatchClashConfig(mitm: Mitm(enable: true)),
+            appendSystemDns: false,
+            proxyGroups: [],
+            rules: [],
+            addedRules: [],
+            defaultUA: 'FlClash-Test',
+            mitmModules: [
+              MitmModuleSource(
+                content: '[Rule]\nDOMAIN-SET,reject.conf,REJECT\n',
+                resources: {'reject.conf': 'ab12.conf'},
+              ),
+            ],
+          ),
+        );
+        final set =
+            '${((loadYaml(firstPass.yaml) as YamlMap)['rules'] as List).first}'
+                .split(',')[1];
+        final secondPass = await makeRealProfileTask(
+          MakeRealProfileState(
+            profilesPath: '/profiles',
+            profileId: 7,
+            rawConfig: {
+              'rule-providers': {
+                set: {'type': 'http', 'url': 'https://evil.example/rules.yaml'},
+              },
+              'rules': const ['MATCH,DIRECT'],
+            },
+            realPatchConfig: const PatchClashConfig(mitm: Mitm(enable: true)),
+            appendSystemDns: false,
+            proxyGroups: const [],
+            rules: const [],
+            addedRules: const [],
+            defaultUA: 'FlClash-Test',
+            mitmModules: const [
+              MitmModuleSource(
+                content: '[Rule]\nDOMAIN-SET,reject.conf,REJECT\n',
+                resources: {'reject.conf': 'ab12.conf'},
+              ),
+            ],
+          ),
+        );
+        final providers =
+            (loadYaml(secondPass.yaml) as YamlMap)['rule-providers'] as YamlMap;
+
+        expect(Map.of(providers[set] as YamlMap), {
+          'type': 'file',
+          'behavior': 'domain',
+          'format': 'domain-set',
+          'path': 'mitm/resources/ab12.conf',
+        });
+      },
+    );
+
+    test(
+      'added and MITM exits resolve injected Tailscale on outline profiles',
+      () async {
+        final rawConfig = await decodeJSONTask<Map<String, dynamic>>(
+          jsonEncode({
+            'rules': ['MATCH,Proxy'],
+          }),
+        );
+        final real = await makeRealProfileTask(
+          MakeRealProfileState(
+            profilesPath: '/profiles',
+            profileId: 7,
+            rawConfig: rawConfig,
+            realPatchConfig: const PatchClashConfig(mitm: Mitm(enable: true)),
+            appendSystemDns: false,
+            proxyGroups: const [],
+            rules: const [],
+            addedRules: const [
+              Rule(
+                ruleAction: RuleAction.DOMAIN,
+                content: 'added.ts.internal',
+                ruleTarget: 'Tailscale',
+                customExit: true,
+              ),
+            ],
+            tailscale: const TailscaleProps(
+              enable: true,
+              authKey: 'tskey-test',
+            ),
+            defaultUA: 'FlClash-Test',
+            outboundNames: const {'Proxy'},
+            defaultExitTarget: 'Proxy',
+            outlineOnly: true,
+            mitmModules: const [
+              MitmModuleSource(
+                content: '[Rule]\nDOMAIN,mod.ts.internal,Tailscale\n',
+              ),
+            ],
+          ),
+        );
+        final rules = List<String>.from(
+          (loadYaml(real.yaml) as YamlMap)['rules'] as List,
+        );
+
+        expect(rules, contains('DOMAIN,mod.ts.internal,Tailscale'));
+        expect(rules, contains('DOMAIN,added.ts.internal,Tailscale'));
+      },
+    );
+
     test('in a custom profile go to its own groups', () async {
       final real = await makeRealProfileTask(
         const MakeRealProfileState(

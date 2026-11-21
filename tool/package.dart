@@ -64,6 +64,7 @@ void _usage(ArgParser parser) {
   stderr
     ..writeln('Usage: dart tool/package.dart [platform] [options]')
     ..writeln('       dart tool/package.dart merge <dir>... [--out dist]')
+    ..writeln('       dart tool/package.dart refresh [dir]')
     ..writeln()
     ..writeln('Platform: the host platform (default) or android.')
     ..writeln(parser.usage);
@@ -343,11 +344,26 @@ Future<int> _merge(List<String> arguments) async {
   return 0;
 }
 
+Future<int> _refresh(List<String> arguments) async {
+  final parser = ArgParser();
+  final results = parser.parse(arguments);
+  if (results.rest.length > 1) {
+    throw const PackageError('refresh takes at most one directory');
+  }
+  final directory = results.rest.isEmpty ? 'dist' : results.rest.single;
+  final checksums = await refreshManifest(directory);
+  stdout.writeln('refreshed $manifestName and $checksums in $directory');
+  return 0;
+}
+
 Future<void> main(List<String> arguments) async {
   final parser = createPackageArgParser();
   try {
     if (arguments.firstOrNull == 'merge') {
       exit(await _merge(arguments.skip(1).toList()));
+    }
+    if (arguments.firstOrNull == 'refresh') {
+      exit(await _refresh(arguments.skip(1).toList()));
     }
     final results = parser.parse(arguments);
     if (results['help'] as bool) {
