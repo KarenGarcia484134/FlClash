@@ -6,6 +6,7 @@ import '../../tool/src/changelog/builder.dart';
 import '../../tool/src/changelog/git.dart';
 import '../../tool/src/changelog/models.dart';
 import '../../tool/src/changelog/render.dart';
+import '../../tool/src/changelog/verify.dart';
 
 void main() {
   late Directory repo;
@@ -324,6 +325,68 @@ void main() {
         kept.groups.where((group) => group.type == ChangelogType.fix),
         isEmpty,
       );
+    },
+  );
+
+  test(
+    'preserveRecorded drops out-of-range merge IDs while keeping valid ones',
+    () {
+      final first = build();
+      final version = first.changelog.versions.single;
+      final featGroup = version.groups.firstWhere(
+        (group) => group.type == ChangelogType.feat,
+      );
+      final fixEntry = version.groups
+          .firstWhere((group) => group.type == ChangelogType.fix)
+          .entries
+          .single;
+      final headFeat = featGroup.entries.first;
+      final mergedFeat = ChangelogEntry(
+        id: headFeat.id,
+        scope: headFeat.scope,
+        text: headFeat.text,
+        merges: [fixEntry.id, 'deadbee'],
+      );
+      final recorded = Changelog(
+        versions: <ChangelogVersion>[
+          ChangelogVersion(
+            version: version.version,
+            tag: version.tag,
+            date: version.date,
+            groups: [
+              ChangelogGroup(
+                type: ChangelogType.feat,
+                entries: [mergedFeat, ...featGroup.entries.skip(1)],
+              ),
+              ...version.groups.where(
+                (group) =>
+                    group.type != ChangelogType.feat &&
+                    group.type != ChangelogType.fix,
+              ),
+            ],
+          ),
+        ],
+      );
+
+      final next = preserveRecorded(first, recorded);
+      final kept = next.versions.single;
+      final keptFeat = kept.groups
+          .firstWhere((group) => group.type == ChangelogType.feat)
+          .entries
+          .first;
+
+      expect(keptFeat.merges, [fixEntry.id]);
+      expect(
+        kept.groups.where((group) => group.type == ChangelogType.fix),
+        isEmpty,
+      );
+      final check = checkChangelog(
+        git: Git(workingDirectory: repo.path),
+        changelog: next,
+        markdown: renderMarkdown(next),
+        boundary: 'v1.0.0',
+      );
+      expect(check.problems, isEmpty);
     },
   );
 }

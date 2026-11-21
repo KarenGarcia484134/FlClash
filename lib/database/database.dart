@@ -305,12 +305,17 @@ class Database extends _$Database {
       if (row.enabled && (row.scripts > 0 || fileAsks == true)) {
         accepted = true;
       }
+      final Value<bool?> acceptedValue = preserveExistingAccepted
+          ? (row.accepted == null &&
+                    row.enabled &&
+                    (row.scripts > 0 || fileAsks == true)
+                ? const Value(true)
+                : const Value.absent())
+          : Value(accepted);
       await (update(mitmModules)..where((t) => t.id.equals(row.id))).write(
         MitmModulesCompanion(
           asksConsent: Value(fileAsks ?? true),
-          accepted: preserveExistingAccepted
-              ? const Value.absent()
-              : Value(accepted),
+          accepted: acceptedValue,
         ),
       );
     }

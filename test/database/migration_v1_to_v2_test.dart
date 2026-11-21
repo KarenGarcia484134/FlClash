@@ -1313,13 +1313,17 @@ void main() {
       await File(
         '${modules.path}/3.txt',
       ).writeAsString('[General]\ndns-server = 223.5.5.5\n');
+      await File(
+        '${modules.path}/4.txt',
+      ).writeAsString('[General]\ndns-server = 223.5.5.5\n');
       raw.execute('ALTER TABLE mitm_modules DROP COLUMN asks_consent');
       raw.execute(
         'INSERT INTO mitm_modules (id, name, enabled, scripts, '
         'last_update_time, accepted) VALUES '
         "(1, 'Scripts', 1, 1, 0, 1), "
         "(2, 'Declined', 0, 0, 0, NULL), "
-        "(3, 'ApprovedOff', 0, 0, 0, 1)",
+        "(3, 'ApprovedOff', 0, 0, 0, 1), "
+        "(4, 'ImplicitOn', 1, 0, 0, NULL)",
       );
       raw.execute('PRAGMA user_version = 26');
 
@@ -1336,6 +1340,7 @@ void main() {
           'Scripts': (true, true),
           'Declined': (false, null),
           'ApprovedOff': (true, true),
+          'ImplicitOn': (true, true),
         },
       );
     },

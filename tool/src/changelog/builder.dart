@@ -235,12 +235,27 @@ ChangelogVersion _preserveVersion(
       .where((group) => group.type == type)
       .expand((group) => group.entries);
 
+  ChangelogEntry keepEntry(ChangelogEntry entry) {
+    final merges = [
+      for (final id in entry.merges)
+        if (range.contains(id)) id,
+    ];
+    return merges.length == entry.merges.length
+        ? entry
+        : ChangelogEntry(
+            id: entry.id,
+            text: entry.text,
+            scope: entry.scope,
+            merges: merges,
+          );
+  }
+
   final recordedByType = <ChangelogType, List<ChangelogEntry>>{
     for (final type in ChangelogType.values)
-      type: entriesOf(
-        recorded,
-        type,
-      ).where((entry) => range.contains(entry.id)).toList(),
+      type: [
+        for (final entry in entriesOf(recorded, type))
+          if (range.contains(entry.id)) keepEntry(entry),
+      ],
   };
   final keptOmit = [
     for (final id in recorded.omit)
