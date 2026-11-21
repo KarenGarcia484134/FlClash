@@ -86,7 +86,6 @@ final tailscaleDialerCandidatesProvider = FutureProvider.autoDispose
         profileProvider(profileId).select(
           (state) => (
             type: state?.type ?? ProfileType.file,
-            extendType: state?.extendType ?? ExtendType.standard,
             scriptId: state?.scriptId,
             updatedAt: state?.lastUpdateDate?.millisecondsSinceEpoch,
           ),
@@ -110,9 +109,7 @@ final tailscaleDialerCandidatesProvider = FutureProvider.autoDispose
           'proxy-groups': [for (final group in proxyGroups) group.definition],
         };
       } else {
-        final scriptId = profileMeta.extendType == ExtendType.script
-            ? profileMeta.scriptId
-            : null;
+        final scriptId = profileMeta.scriptId;
         final script = scriptId == null
             ? null
             : (await ref.watch(

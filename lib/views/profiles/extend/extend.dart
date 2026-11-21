@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/config/custom_routings.dart';
@@ -11,8 +9,8 @@ import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'added_rules.dart';
 import 'script.dart';
-import 'standard.dart';
 
 /// Long enough that a quick apply still reads as one, not as a flicker.
 const _minApplyingDuration = Duration(milliseconds: 600);
@@ -26,22 +24,11 @@ class ExtendView extends ConsumerStatefulWidget {
   ConsumerState<ExtendView> createState() => _ExtendViewState();
 }
 
-/// Custom routing is a view of its own rather than a mode: it applies on top
-/// of whichever of standard or script the profile uses.
-enum _ExtendTab { customRouting, standard, script }
-
 class _ExtendViewState extends ConsumerState<ExtendView> {
   late SetupAction _setupAction;
   List<Object?>? _applied;
   var _unappliedOnOpen = false;
   var _applying = false;
-  var _tab = _ExtendTab.customRouting;
-
-  void _handleTab(_ExtendTab tab) {
-    setState(() {
-      _tab = tab;
-    });
-  }
 
   @override
   void initState() {
@@ -65,9 +52,9 @@ class _ExtendViewState extends ConsumerState<ExtendView> {
   List<Object?>? _watchInputs() {
     final profileId = widget.profileId;
     final profile = ref.watch(
-      profileProvider(profileId).select(
-        (state) => (state?.extendType, state?.scriptId, state?.matchTarget),
-      ),
+      profileProvider(
+        profileId,
+      ).select((state) => (state?.scriptId, state?.exitTargets)),
     );
     final rules = ref.watch(profileRulesProvider(profileId)).value;
     final disabledRuleIds = ref
@@ -143,8 +130,9 @@ class _ExtendViewState extends ConsumerState<ExtendView> {
                 SliverToBoxAdapter(
                   child: SizedBox(height: context.sectionsTopPadding),
                 ),
-                _ModeSection(tab: _tab, onTab: _handleTab),
-                _Content(tab: _tab),
+                const ScriptContent(),
+                const AddedRulesContent(),
+                const CustomRoutingContent(),
                 SliverToBoxAdapter(
                   child: SizedBox(height: context.bottomInset),
                 ),
@@ -160,96 +148,5 @@ class _ExtendViewState extends ConsumerState<ExtendView> {
   void dispose() {
     _setupAction.autoApplyProfile();
     super.dispose();
-  }
-}
-
-class _ModeSection extends ConsumerWidget {
-  final _ExtendTab tab;
-  final ValueChanged<_ExtendTab> onTab;
-
-  const _ModeSection({required this.tab, required this.onTab});
-
-  String _modeLabel(AppLocalizations l, ExtendType type) => switch (type) {
-    ExtendType.standard => l.standard,
-    ExtendType.script => l.script,
-  };
-
-  String _label(AppLocalizations l, _ExtendTab tab) => switch (tab) {
-    _ExtendTab.customRouting => l.customRouting,
-    _ExtendTab.standard => l.standard,
-    _ExtendTab.script => l.script,
-  };
-
-  String _description(
-    AppLocalizations l,
-    _ExtendTab tab,
-    ExtendType extendType,
-  ) => switch (tab) {
-    _ExtendTab.customRouting =>
-      '${l.customRoutingDesc}\n'
-          '${l.currentExtendMode(_modeLabel(l, extendType))}',
-    _ExtendTab.standard => l.standardModeDesc,
-    _ExtendTab.script => l.scriptModeDesc,
-  };
-
-  ExtendType? _modeOf(_ExtendTab tab) => switch (tab) {
-    _ExtendTab.customRouting => null,
-    _ExtendTab.standard => ExtendType.standard,
-    _ExtendTab.script => ExtendType.script,
-  };
-
-  void _handleSelect(WidgetRef ref, int profileId, _ExtendTab tab) {
-    onTab(tab);
-    final mode = _modeOf(tab);
-    if (mode == null) {
-      return;
-    }
-    ref.read(profilesProvider.notifier).updateProfile(profileId, (state) {
-      return state.copyWith(extendType: mode);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final appLocalizations = context.appLocalizations;
-    final profileId = ProfileIdProvider.of(context)!.profileId;
-    final extendType = ref.watch(extendTypeProvider(profileId));
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      sliver: SliverToBoxAdapter(
-        child: generateSection(
-          title: appLocalizations.extendMode,
-          items: [
-            for (final item in _ExtendTab.values)
-              DecorationListItem(
-                isSelected: item == tab,
-                title: Text(_label(appLocalizations, item)),
-                subtitle: Text(
-                  _description(appLocalizations, item, extendType),
-                ),
-                trailing: _modeOf(item) == extendType
-                    ? const SelectionBadge(size: 24)
-                    : null,
-                onPressed: () => _handleSelect(ref, profileId, item),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Content extends StatelessWidget {
-  final _ExtendTab tab;
-
-  const _Content({required this.tab});
-
-  @override
-  Widget build(BuildContext context) {
-    return switch (tab) {
-      _ExtendTab.customRouting => const CustomRoutingContent(),
-      _ExtendTab.standard => const StandardContent(),
-      _ExtendTab.script => const ScriptContent(),
-    };
   }
 }

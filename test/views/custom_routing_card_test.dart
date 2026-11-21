@@ -1,4 +1,4 @@
-import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
@@ -11,8 +11,8 @@ import '../helpers/test_app.dart';
 import '../helpers/test_database_providers.dart';
 
 void main() {
-  setUpAll(() async {
-    await AppLocalizations.load(const Locale('en'));
+  setUpAll(() {
+    loadAppLocalizations(const Locale('en'));
   });
 
   testWidgets('shows how many routings the profile uses', (tester) async {
@@ -40,7 +40,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(
-      find.text(AppLocalizations.current.customRoutingCardCount(1, 2)),
+      find.text(currentAppLocalizations.customRoutingCardCount(1, 2)),
       findsOneWidget,
     );
   });

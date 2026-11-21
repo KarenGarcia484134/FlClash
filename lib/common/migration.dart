@@ -315,7 +315,7 @@ final migration = Migration(store: const _AppMigrationStore());
 /// the connections page lists every one without a name.
 Config findProcessesOnWindows(Config config, {required bool windows}) {
   if (!windows ||
-      config.patchClashConfig.findProcessMode != FindProcessMode.off) {
+      config.patchClashConfig.findProcessMode != FindProcessMode.strict) {
     return config;
   }
   return config.copyWith.patchClashConfig(

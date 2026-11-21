@@ -146,6 +146,9 @@ class BackupAction extends _$BackupAction {
         ),
       ),
     );
+    if (unusableMixedPort(configMap?['patchClashConfig']) case final value?) {
+      dialogs.showMixedPortReset(value, config.patchClashConfig.mixedPort);
+    }
     await _restoreMitmModules();
     _reapplyAfterRestore(previousProfileId);
   }
@@ -165,6 +168,7 @@ class BackupAction extends _$BackupAction {
 
   Future<void> _restoreMitmModules() async {
     final action = ref.read(mitmModulesActionProvider.notifier);
+    await action.recheckConsent();
     await action.clean();
     if (ref.mounted) {
       unawaited(action.autoUpdate());

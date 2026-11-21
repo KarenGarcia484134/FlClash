@@ -1,6 +1,5 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
@@ -34,8 +33,8 @@ void main() {
 
   late ProviderContainer container;
 
-  setUpAll(() async {
-    await AppLocalizations.load(const Locale('en'));
+  setUpAll(() {
+    loadAppLocalizations(const Locale('en'));
   });
 
   setUp(() {
@@ -110,15 +109,12 @@ void main() {
     expect(tester.widget<Checkbox>(find.byType(Checkbox)).value, isTrue);
   });
 
-  testWidgets('the extend page opens on custom routing without changing mode', (
+  testWidgets('the extend page shows custom routing with script and rules', (
     tester,
   ) async {
     container
         .read(profilesProvider.notifier)
-        .updateProfile(
-          _profileId,
-          (state) => state.copyWith(extendType: ExtendType.script),
-        );
+        .updateProfile(_profileId, (state) => state.copyWith(scriptId: 5));
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
@@ -129,29 +125,15 @@ void main() {
 
     expect(find.byType(CustomRoutingContent), findsOneWidget);
     expect(find.text('alpha'), findsOneWidget);
-    // The mode list runs top to bottom: custom routing first, and the badge
-    // stays on the profile's mode.
     expect(
-      tester
-          .getTopLeft(find.text(currentAppLocalizations.customRouting).first)
-          .dy,
-      lessThan(
-        tester.getTopLeft(find.text(currentAppLocalizations.standard)).dy,
-      ),
+      find.text(currentAppLocalizations.customRouting),
+      findsAtLeastNWidgets(1),
     );
+    expect(find.text(currentAppLocalizations.script), findsOneWidget);
+    expect(find.text(currentAppLocalizations.addedRules), findsOneWidget);
     expect(
-      find.ancestor(
-        of: find.byType(SelectionBadge),
-        matching: find.widgetWithText(
-          DecorationListItem,
-          currentAppLocalizations.script,
-        ),
-      ),
-      findsOneWidget,
-    );
-    expect(
-      container.read(profilesProvider).getProfile(_profileId)?.extendType,
-      ExtendType.script,
+      container.read(profilesProvider).getProfile(_profileId)?.scriptId,
+      5,
     );
   });
 }

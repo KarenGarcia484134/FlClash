@@ -6,9 +6,11 @@ import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/common/mitm_module.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
+import 'package:path/path.dart' show join;
 
 part 'clash_providers.dart';
 part 'converter.dart';
@@ -60,7 +62,7 @@ class Database extends _$Database {
   Database([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 24;
+  int get schemaVersion => 27;
 
   static LazyDatabase _openConnection() {
     return LazyDatabase(() async {
@@ -134,13 +136,55 @@ class Database extends _$Database {
         // creates it here instead of rebuilding a table that is not there.
         if (from < 23) {
           if (!await _createTableIfMissing(m, mitmModules)) {
-            await m.alterTable(TableMigration(mitmModules));
+            final cols = await _columnsOf(mitmModules.actualTableName);
+            if (cols.contains('update_interval_minutes') ||
+                !cols.contains(mitmModules.asksConsent.name) ||
+                !cols.contains(mitmModules.accepted.name)) {
+              await m.alterTable(
+                TableMigration(
+                  mitmModules,
+                  newColumns: [
+                    if (!cols.contains(mitmModules.asksConsent.name))
+                      mitmModules.asksConsent,
+                    if (!cols.contains(mitmModules.accepted.name))
+                      mitmModules.accepted,
+                  ],
+                ),
+              );
+            }
           }
         }
         // v24 joins the fork (custom routings, IP qualities at v22) and
         // upstream (MITM modules at v22/v23): any database from either side
         // gains whatever tables it is missing, keeping the rows it has.
         if (from < 24) {
+          await _createTableIfMissing(m, customRoutings);
+          await _createTableIfMissing(m, profileCustomRoutings);
+          await _createTableIfMissing(m, ipQualities);
+          await _createTableIfMissing(m, mitmModules);
+          await _mergeExtendModes();
+        }
+        if (from < 25) {
+          final customRoutingsCols = await _columnsOf(
+            customRoutings.actualTableName,
+          );
+          final ruleCols = await _columnsOf(rules.actualTableName);
+          if (from == 24 &&
+              customRoutingsCols.isNotEmpty &&
+              !ruleCols.contains(rules.customExit.name)) {
+            await _mergeExtendModes();
+          }
+          await _addColumnIfMissing(m, rules, rules.customExit);
+          await _addColumnIfMissing(m, profiles, profiles.exitTargets);
+          await _matchTargetToExit();
+        }
+        if (from < 26) {
+          // v23 rebuilds the table with both columns; v26 adds what is missing.
+          await _addColumnIfMissing(m, mitmModules, mitmModules.asksConsent);
+          await _addColumnIfMissing(m, mitmModules, mitmModules.accepted);
+          await _recordMitmConsent();
+        }
+        if (from < 27) {
           await _createTableIfMissing(m, customRoutings);
           await _createTableIfMissing(m, profileCustomRoutings);
           await _createTableIfMissing(m, ipQualities);
@@ -187,6 +231,72 @@ class Database extends _$Database {
       return;
     }
     await m.renameColumn(table, oldName, column);
+  }
+
+  /// A profile keeps the rules it applied when it ran a script or added rules.
+  Future<void> _mergeExtendModes() async {
+    await customStatement(
+      'INSERT OR IGNORE INTO disabled_rules (profile_id, rule_id) '
+      'SELECT profiles.id, rules.id FROM profiles, rules '
+      "WHERE rules.profile_id IS NULL AND profiles.extend_type = 'script'",
+    );
+    await customStatement(
+      'UPDATE profiles SET script_id = NULL '
+      "WHERE extend_type != 'script' "
+      'OR script_id NOT IN (SELECT id FROM scripts)',
+    );
+    await customStatement(
+      'UPDATE profiles SET extend_type = '
+      "CASE WHEN script_id IS NULL THEN 'standard' ELSE 'script' END",
+    );
+  }
+
+  Future<void> _recordMitmConsent() async {
+    final rows = await select(mitmModules).get();
+    if (rows.isEmpty) {
+      return;
+    }
+    final directory = await appPath.mitmModulesDirPath;
+    for (final row in rows) {
+      final fileAsks = await _fileAsksConsent(directory, row);
+      bool? accepted = row.enabled ? null : false;
+      if (row.enabled && (row.scripts > 0 || fileAsks == true)) {
+        accepted = true;
+      }
+      await (update(mitmModules)..where((t) => t.id.equals(row.id))).write(
+        MitmModulesCompanion(
+          asksConsent: Value(fileAsks ?? true),
+          accepted: Value(accepted),
+        ),
+      );
+    }
+  }
+
+  Future<bool?> _fileAsksConsent(String directory, RawMitmModule row) async {
+    try {
+      final file = File(join(directory, row.toMitmModule().fileName));
+      return parseMitmModule(
+        await file.readAsString(),
+        values: row.arguments,
+      ).asksConsent;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _matchTargetToExit() async {
+    await customStatement(
+      'UPDATE rules SET custom_exit = 1 '
+      "WHERE upper(trim(rule_target)) = 'MATCH' AND rule_action != 'SUB_RULE' "
+      'AND (profile_id IS NULL OR profile_id IN '
+      "(SELECT id FROM profiles WHERE type != 'custom'))",
+    );
+    await customStatement(
+      "UPDATE profiles SET exit_targets = json_object('MATCH', "
+      'trim(match_target)) '
+      "WHERE trim(coalesce(match_target, '')) != '' AND type != 'custom'",
+    );
+    await customStatement('UPDATE profiles SET match_target = NULL');
   }
 
   /// alterTable re-creates the old index, which names the dropped column.

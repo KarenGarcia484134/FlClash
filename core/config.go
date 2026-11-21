@@ -164,8 +164,10 @@ func applyConfig(params *SetupParams) error {
 	hub.ApplyConfig(cfg)
 	reconcileTailscale()
 	patchSelectGroup(params.SelectedMap)
-	bumpRouteEpoch()
 	updateListeners(cfg)
+	// After the listeners: a probe sent while the TUN is rebuilt carries the
+	// older epoch, and its failure goes with it.
+	bumpRouteEpoch()
 	reconcileGeoUpdater()
 	scheduleLoadMemoryRelease()
 	if err != nil {

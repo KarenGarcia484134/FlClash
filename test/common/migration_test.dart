@@ -318,12 +318,12 @@ void main() {
         );
         expect(
           await upgrade('off', from: 2, windows: false),
-          FindProcessMode.off,
+          FindProcessMode.strict,
         );
         // A stored 3 is this fork's, which already turned it on once.
         expect(
           await upgrade('off', from: 3, windows: true),
-          FindProcessMode.off,
+          FindProcessMode.strict,
         );
         // A stored 4 is upstream's, which never did.
         expect(
@@ -332,7 +332,7 @@ void main() {
         );
         expect(
           await upgrade('off', from: 5, windows: true),
-          FindProcessMode.off,
+          FindProcessMode.strict,
         );
       });
 

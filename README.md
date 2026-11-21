@@ -90,17 +90,54 @@ Releases are built by [`.github/workflows/release.yaml`](.github/workflows/relea
 - Android signing uses the repository secrets `KEYSTORE`, `KEY_ALIAS`, `STORE_PASSWORD` and `KEY_PASSWORD`; APKs are re-signed and their v1 / v2 / v3 signatures verified before upload
 - **Release notes** are generated from [`changelog.json`](changelog.json) by `dart run tool/changelog.dart render fork-release`. Before tagging, bump `pubspec.yaml`, run `dart run tool/changelog.dart release --version X.Y.Z`, optionally rewrite the new entries' wording (in Chinese), and commit `CHANGELOG.md` and `changelog.json` with the bump. If a tag is pushed without this step, the workflow builds its notes from the conventional commits since the previous tag instead
 
-Local builds work as upstream:
+FlClash starts the core only after the disclaimer is accepted. Where nobody can click it, such as a container, set
+`FLCLASH_ACCEPT_DISCLAIMER=1` in the app's environment to accept it on first launch.
 
-```sh
+On Linux, the tray icon is a StatusNotifierItem. KDE Plasma, XFCE and most panels show it as is; GNOME needs the
+AppIndicator and KStatusNotifierItem Support extension.
+
+## Usage
+
+**Import a profile from a link.** Opening a link in this form imports the subscription into FlClash. The `clashmeta://`
+and `flclash://` schemes work the same way.
+
+```text
+clash://install-config?url=<URL-encoded subscription link>
+```
+
+**Automate on Android.** Tasker, MacroDroid and similar apps can start, stop or toggle the proxy by starting an
+activity with one of these actions:
+
+```text
+com.follow.clash.action.START
+com.follow.clash.action.STOP
+com.follow.clash.action.TOGGLE
+```
+
+From a computer, the same works over adb:
+
+```bash
+adb shell am start -a com.follow.clash.action.TOGGLE
+```
+
+## Build from source
+
+You need [Flutter](https://docs.flutter.dev/get-started/install) 3.50 (release builds use 3.50.0),
+[Go](https://go.dev/dl/) 1.27 and [Rust](https://rustup.rs/) installed through rustup. Each platform builds on its own
+host, except Android, which builds anywhere.
+
+```bash
 git clone --recursive https://github.com/KarenGarcia484134/FlClash.git
 cd FlClash
-dart setup.dart android   # or windows / linux / macos
+flutter pub get
+dart run tool/package.dart android   # or windows, macos, linux
 ```
+
+Run `dart run tool/package.dart --help` for the remaining options, such as `--targets` to build only some package formats or `--dry-run` to list the files a run would write.
 
 ## Patched core
 
-The `core/Clash.Meta` submodule points at the `FlClash-patched-v0.9.3` branch of [KarenGarcia484134/Clash.Meta](https://github.com/KarenGarcia484134/Clash.Meta): upstream's `FlClash` branch plus a few patches. The patches only **add** files (reading Tailscale node status, keeping one node across config reloads) and change no upstream file. See [`core/PATCHES.md`](core/PATCHES.md).
+The `core/Clash.Meta` submodule points at the `FlClash-patched-v0.9.4` branch of [KarenGarcia484134/Clash.Meta](https://github.com/KarenGarcia484134/Clash.Meta): upstream's `FlClash` branch plus a few patches. The patches only **add** files (reading Tailscale node status, keeping one node across config reloads) and change no upstream file. See [`core/PATCHES.md`](core/PATCHES.md).
 
 ## Syncing with upstream
 
@@ -108,11 +145,11 @@ App code:
 
 ```sh
 git remote add upstream https://github.com/chen08209/FlClash.git
-git fetch upstream --tags
-git merge v<upstream release>   # prefer the latest release tag over main
+git fetch --no-tags upstream v<upstream release>   # prefer the latest release tag over main
+git merge --no-commit --no-ff FETCH_HEAD
 ```
 
-The fork is currently synced to upstream **v0.9.3** (mihomo v1.19.33).
+The fork is currently synced to upstream **v0.9.4** (mihomo v1.19.34).
 
 Core submodule: follow [`core/PATCHES.md`](core/PATCHES.md) to move the patches onto upstream's latest `FlClash` branch, push it, then commit the new submodule pointer.
 

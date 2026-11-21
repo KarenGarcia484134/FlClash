@@ -1,5 +1,5 @@
+import 'package:fl_clash/common/app_localizations.dart';
 import 'package:fl_clash/features/form/form.dart';
-import 'package:fl_clash/l10n/l10n.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/widgets.dart';
@@ -7,8 +7,8 @@ import 'package:flutter/widgets.dart';
 import '../helpers/test_app.dart';
 
 void main() {
-  setUpAll(() async {
-    await AppLocalizations.load(const Locale('en'));
+  setUpAll(() {
+    loadAppLocalizations(const Locale('en'));
   });
 
   testWidgets('long press runs its action without selecting', (tester) async {

@@ -21,10 +21,12 @@ const _sections = <(String, List<ChangelogType>)>[
 const forkEmptyVersionNote = '仅内部改进，无用户可见变化。';
 
 class _Asset {
-  const _Asset(this.label, this.suffix);
+  const _Asset(this.label, this.suffix, [String? packageSuffix])
+    : packageSuffix = packageSuffix ?? suffix;
 
   final String label;
   final String suffix;
+  final String packageSuffix;
 }
 
 class _Platform {
@@ -41,13 +43,13 @@ class _Platform {
 
 const _platforms = <_Platform>[
   _Platform('Android', [
-    _Asset('arm64-v8a', 'android-arm64-v8a.apk'),
-    _Asset('armeabi-v7a', 'android-armeabi-v7a.apk'),
-    _Asset('x86_64', 'android-x86_64.apk'),
+    _Asset('arm64-v8a', 'android-arm64-v8a.apk', 'android-arm64.apk'),
+    _Asset('armeabi-v7a', 'android-armeabi-v7a.apk', 'android-armv7.apk'),
+    _Asset('x86_64', 'android-x86_64.apk', 'android-amd64.apk'),
   ], '绝大多数手机选 arm64-v8a；老旧 32 位设备选 armeabi-v7a；模拟器选 x86_64'),
   _Platform('Windows', [
     _Asset('安装版 setup.exe', 'windows-amd64-setup.exe'),
-    _Asset('便携版 zip', 'windows-amd64.zip'),
+    _Asset('便携版 zip', 'windows-amd64.zip', 'windows-amd64-portable.zip'),
   ], 'x64'),
   _Platform(
     'macOS',
@@ -115,8 +117,16 @@ String renderForkRelease(
     final links = <String>[];
     final published = <String>[];
     for (final asset in platform.assets) {
-      final file = 'FlClash-${version.version}-${asset.suffix}';
-      if (assets == null || assets.contains(file)) {
+      final legacyFile = 'FlClash-${version.version}-${asset.suffix}';
+      final devFile = 'FlClash-dev-${version.version}-${asset.packageSuffix}';
+      final file = assets == null
+          ? legacyFile
+          : assets.contains(devFile)
+          ? devFile
+          : assets.contains(legacyFile)
+          ? legacyFile
+          : null;
+      if (file != null) {
         published.add(asset.suffix);
         links.add(
           '[${asset.label}]($base/releases/download/${version.tag}/$file)',

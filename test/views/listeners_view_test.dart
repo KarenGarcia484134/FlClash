@@ -1,4 +1,4 @@
-import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
@@ -11,8 +11,8 @@ import 'package:flutter/widgets.dart';
 import '../helpers/test_app.dart';
 
 void main() {
-  setUpAll(() async {
-    await AppLocalizations.load(const Locale('en'));
+  setUpAll(() {
+    loadAppLocalizations(const Locale('en'));
   });
 
   testWidgets('lists listeners with their address and conflicts', (
@@ -41,7 +41,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('socks5://127.0.0.1:7891'), findsOneWidget);
     expect(
-      find.textContaining(AppLocalizations.current.listenerAppPort),
+      find.textContaining(currentAppLocalizations.listenerAppPort),
       findsOneWidget,
     );
   });
@@ -59,7 +59,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    final l = AppLocalizations.current;
+    final l = currentAppLocalizations;
     expect(find.text(l.listenerLanWarning), findsNothing);
     await tester.tap(find.text(l.listenerLan));
     await tester.pumpAndSettle();

@@ -90,17 +90,50 @@
 - Android 签名使用仓库密钥 `KEYSTORE`、`KEY_ALIAS`、`STORE_PASSWORD`、`KEY_PASSWORD`；APK 会重新签名，并在上传前校验 v1 / v2 / v3 签名
 - **发布说明**由 `dart run tool/changelog.dart render fork-release` 从 [`changelog.json`](changelog.json) 生成。打标签前：修改 `pubspec.yaml` 版本号，运行 `dart run tool/changelog.dart release --version X.Y.Z`，按需把新条目改写成中文，然后把 `CHANGELOG.md` 和 `changelog.json` 与版本号一起提交。如果推送标签前漏了这一步，工作流会根据上一个标签以来的约定式提交自动生成说明
 
-本地构建方法与上游相同：
+FlClash 要在免责声明被接受后才会启动核心。在容器等无人点击的环境里，可在应用的环境变量中设置
+`FLCLASH_ACCEPT_DISCLAIMER=1`，首次启动时即视为接受。
 
-```sh
+在 Linux 上，托盘图标是 StatusNotifierItem。KDE Plasma、XFCE 和多数面板直接显示；GNOME 需要安装 AppIndicator and KStatusNotifierItem Support 扩展。
+
+## 使用
+
+**通过链接导入配置。** 打开下面格式的链接，即可把订阅导入 FlClash。`clashmeta://` 和 `flclash://` 开头的链接同样可用。
+
+```text
+clash://install-config?url=<经过 URL 编码的订阅链接>
+```
+
+**Android 自动化。** Tasker、MacroDroid 等应用可以用下面的 Action 启动 Activity，从而启动、停止或切换代理：
+
+```text
+com.follow.clash.action.START
+com.follow.clash.action.STOP
+com.follow.clash.action.TOGGLE
+```
+
+在电脑上也可以通过 adb 触发：
+
+```bash
+adb shell am start -a com.follow.clash.action.TOGGLE
+```
+
+## 从源码构建
+
+需要 [Flutter](https://docs.flutter.dev/get-started/install) 3.50（正式版构建使用 3.50.0）、[Go](https://go.dev/dl/) 1.27，
+以及通过 rustup 安装的 [Rust](https://rustup.rs/)。桌面端需要在对应系统上构建，Android 在任意系统上都能构建。
+
+```bash
 git clone --recursive https://github.com/KarenGarcia484134/FlClash.git
 cd FlClash
-dart setup.dart android   # 或 windows / linux / macos
+flutter pub get
+dart run tool/package.dart android   # 或 windows、macos、linux
 ```
+
+其余选项可以运行 `dart run tool/package.dart --help` 查看，例如用 `--targets` 只构建部分安装包格式，用 `--dry-run` 列出这次会生成的文件。
 
 ## 内核补丁
 
-`core/Clash.Meta` 子模块指向 [KarenGarcia484134/Clash.Meta](https://github.com/KarenGarcia484134/Clash.Meta) 的 `FlClash-patched-v0.9.3` 分支，即上游 `FlClash` 分支加上少量补丁。补丁只**新增**文件（读取 Tailscale 节点状态、在重载配置时保留同一个节点），不修改上游文件，详见 [`core/PATCHES.md`](core/PATCHES.md)。
+`core/Clash.Meta` 子模块指向 [KarenGarcia484134/Clash.Meta](https://github.com/KarenGarcia484134/Clash.Meta) 的 `FlClash-patched-v0.9.4` 分支，即上游 `FlClash` 分支加上少量补丁。补丁只**新增**文件（读取 Tailscale 节点状态、在重载配置时保留同一个节点），不修改上游文件，详见 [`core/PATCHES.md`](core/PATCHES.md)。
 
 ## 同步上游
 
@@ -108,11 +141,11 @@ dart setup.dart android   # 或 windows / linux / macos
 
 ```sh
 git remote add upstream https://github.com/chen08209/FlClash.git
-git fetch upstream --tags
-git merge v<上游版本>   # 优先合并最新的发布标签而不是 main
+git fetch --no-tags upstream v<上游版本>   # 优先合并最新的发布标签而不是 main
+git merge --no-commit --no-ff FETCH_HEAD
 ```
 
-当前已同步到上游 **v0.9.3**（mihomo v1.19.33）。
+当前已同步到上游 **v0.9.4**（mihomo v1.19.34）。
 
 内核子模块：按 [`core/PATCHES.md`](core/PATCHES.md) 中的步骤，把补丁移到上游最新的 `FlClash` 分支并推送，再提交子模块的新指针。
 
