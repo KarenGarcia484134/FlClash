@@ -8501,6 +8501,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Node name'**
   String get tailscaleNodeName;
+
+  /// No description provided for @quickRoutingCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create custom routing'**
+  String get quickRoutingCreate;
+
+  /// No description provided for @quickRoutingModeNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Create new'**
+  String get quickRoutingModeNew;
+
+  /// No description provided for @quickRoutingModeAppend.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to existing'**
+  String get quickRoutingModeAppend;
+
+  /// No description provided for @quickRoutingTargetRouting.
+  ///
+  /// In en, this message translates to:
+  /// **'Existing routing'**
+  String get quickRoutingTargetRouting;
+
+  /// No description provided for @quickRoutingCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Created custom routing: {name}'**
+  String quickRoutingCreated(String name);
+
+  /// No description provided for @quickRoutingAppended.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to {name}'**
+  String quickRoutingAppended(String name);
+
+  /// No description provided for @quickRoutingAlreadyExists.
+  ///
+  /// In en, this message translates to:
+  /// **'All selected conditions already exist in this routing'**
+  String get quickRoutingAlreadyExists;
+
+  /// No description provided for @quickRoutingMatchedExisting.
+  ///
+  /// In en, this message translates to:
+  /// **'Already in: {names}'**
+  String quickRoutingMatchedExisting(String names);
+
+  /// No description provided for @quickRoutingAndLogicNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This routing uses AND logic; every condition must match'**
+  String get quickRoutingAndLogicNote;
 }
 
 class _AppLocalizationsDelegate

@@ -1404,5 +1404,14 @@
   "tailscaleExitNodeHint": "IP Tailscale или имя устройства",
   "tailscaleExitNodeFailed": "Не удалось задать выходной узел: {error}",
   "tailscaleDialerProxyPending": "Выбранный прокси подключения ещё не применён. Нажмите «Переподключить».",
-  "tailscaleNodeName": "Имя узла"
+  "tailscaleNodeName": "Имя узла",
+  "quickRoutingCreate": "Создать правило маршрутизации",
+  "quickRoutingModeNew": "Создать новое",
+  "quickRoutingModeAppend": "Добавить к существующему",
+  "quickRoutingTargetRouting": "Существующее правило",
+  "quickRoutingCreated": "Создано правило маршрутизации: {name}",
+  "quickRoutingAppended": "Добавлено в «{name}»",
+  "quickRoutingAlreadyExists": "Все выбранные условия уже есть в этом правиле",
+  "quickRoutingMatchedExisting": "Уже есть в: {names}",
+  "quickRoutingAndLogicNote": "Это правило использует логику И: должны совпасть все условия"
 }

@@ -1404,5 +1404,14 @@
   "tailscaleExitNodeHint": "Tailscale IP またはデバイス名",
   "tailscaleExitNodeFailed": "出口ノードを設定できませんでした：{error}",
   "tailscaleDialerProxyPending": "選んだ接続プロキシはまだ使われていません。「再接続」をタップすると適用されます。",
-  "tailscaleNodeName": "ノード名"
+  "tailscaleNodeName": "ノード名",
+  "quickRoutingCreate": "カスタムルーティングを作成",
+  "quickRoutingModeNew": "新規作成",
+  "quickRoutingModeAppend": "既存に追加",
+  "quickRoutingTargetRouting": "追加先のルーティング",
+  "quickRoutingCreated": "カスタムルーティングを作成しました：{name}",
+  "quickRoutingAppended": "「{name}」に追加しました",
+  "quickRoutingAlreadyExists": "選択した条件はすべてこのルーティングに既に存在します",
+  "quickRoutingMatchedExisting": "既に含まれています：{names}",
+  "quickRoutingAndLogicNote": "このルーティングは AND ロジックを使用しており、すべての条件に一致する必要があります"
 }

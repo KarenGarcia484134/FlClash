@@ -1414,5 +1414,14 @@
   "tailscaleExitNodeHint": "IP de Tailscale o nombre del dispositivo",
   "tailscaleExitNodeFailed": "No se pudo establecer el nodo de salida: {error}",
   "tailscaleDialerProxyPending": "El proxy de conexión elegido aún no está en uso. Toca Reconectar para aplicarlo.",
-  "tailscaleNodeName": "Nombre del nodo"
+  "tailscaleNodeName": "Nombre del nodo",
+  "quickRoutingCreate": "Crear enrutamiento personalizado",
+  "quickRoutingModeNew": "Crear nuevo",
+  "quickRoutingModeAppend": "Añadir a uno existente",
+  "quickRoutingTargetRouting": "Enrutamiento existente",
+  "quickRoutingCreated": "Enrutamiento personalizado creado: {name}",
+  "quickRoutingAppended": "Añadido a «{name}»",
+  "quickRoutingAlreadyExists": "Todas las condiciones seleccionadas ya existen en este enrutamiento",
+  "quickRoutingMatchedExisting": "Ya existe en: {names}",
+  "quickRoutingAndLogicNote": "Este enrutamiento usa lógica Y: deben cumplirse todas las condiciones"
 }

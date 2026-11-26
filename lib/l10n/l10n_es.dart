@@ -4870,4 +4870,39 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get tailscaleNodeName => 'Nombre del nodo';
+
+  @override
+  String get quickRoutingCreate => 'Crear enrutamiento personalizado';
+
+  @override
+  String get quickRoutingModeNew => 'Crear nuevo';
+
+  @override
+  String get quickRoutingModeAppend => 'Añadir a uno existente';
+
+  @override
+  String get quickRoutingTargetRouting => 'Enrutamiento existente';
+
+  @override
+  String quickRoutingCreated(String name) {
+    return 'Enrutamiento personalizado creado: $name';
+  }
+
+  @override
+  String quickRoutingAppended(String name) {
+    return 'Añadido a «$name»';
+  }
+
+  @override
+  String get quickRoutingAlreadyExists =>
+      'Todas las condiciones seleccionadas ya existen en este enrutamiento';
+
+  @override
+  String quickRoutingMatchedExisting(String names) {
+    return 'Ya existe en: $names';
+  }
+
+  @override
+  String get quickRoutingAndLogicNote =>
+      'Este enrutamiento usa lógica Y: deben cumplirse todas las condiciones';
 }

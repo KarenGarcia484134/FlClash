@@ -1414,5 +1414,14 @@
   "tailscaleExitNodeHint": "IP Tailscale ou nom de l’appareil",
   "tailscaleExitNodeFailed": "Impossible de définir le nœud de sortie : {error}",
   "tailscaleDialerProxyPending": "Le proxy de connexion choisi n’est pas encore utilisé. Touchez Reconnecter pour l’appliquer.",
-  "tailscaleNodeName": "Nom du nœud"
+  "tailscaleNodeName": "Nom du nœud",
+  "quickRoutingCreate": "Créer un routage personnalisé",
+  "quickRoutingModeNew": "Créer",
+  "quickRoutingModeAppend": "Ajouter à un existant",
+  "quickRoutingTargetRouting": "Routage existant",
+  "quickRoutingCreated": "Routage personnalisé créé : {name}",
+  "quickRoutingAppended": "Ajouté à « {name} »",
+  "quickRoutingAlreadyExists": "Toutes les conditions sélectionnées existent déjà dans ce routage",
+  "quickRoutingMatchedExisting": "Déjà présent dans : {names}",
+  "quickRoutingAndLogicNote": "Ce routage utilise la logique ET : toutes les conditions doivent correspondre"
 }

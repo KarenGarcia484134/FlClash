@@ -4872,4 +4872,39 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tailscaleNodeName => 'Nom du nœud';
+
+  @override
+  String get quickRoutingCreate => 'Créer un routage personnalisé';
+
+  @override
+  String get quickRoutingModeNew => 'Créer';
+
+  @override
+  String get quickRoutingModeAppend => 'Ajouter à un existant';
+
+  @override
+  String get quickRoutingTargetRouting => 'Routage existant';
+
+  @override
+  String quickRoutingCreated(String name) {
+    return 'Routage personnalisé créé : $name';
+  }
+
+  @override
+  String quickRoutingAppended(String name) {
+    return 'Ajouté à « $name »';
+  }
+
+  @override
+  String get quickRoutingAlreadyExists =>
+      'Toutes les conditions sélectionnées existent déjà dans ce routage';
+
+  @override
+  String quickRoutingMatchedExisting(String names) {
+    return 'Déjà présent dans : $names';
+  }
+
+  @override
+  String get quickRoutingAndLogicNote =>
+      'Ce routage utilise la logique ET : toutes les conditions doivent correspondre';
 }

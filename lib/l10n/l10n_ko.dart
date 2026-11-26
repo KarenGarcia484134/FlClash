@@ -4691,4 +4691,37 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get tailscaleNodeName => '노드 이름';
+
+  @override
+  String get quickRoutingCreate => '사용자 지정 라우팅 만들기';
+
+  @override
+  String get quickRoutingModeNew => '새로 만들기';
+
+  @override
+  String get quickRoutingModeAppend => '기존 항목에 추가';
+
+  @override
+  String get quickRoutingTargetRouting => '기존 라우팅';
+
+  @override
+  String quickRoutingCreated(String name) {
+    return '사용자 지정 라우팅이 생성되었습니다: $name';
+  }
+
+  @override
+  String quickRoutingAppended(String name) {
+    return '\"$name\"에 추가되었습니다';
+  }
+
+  @override
+  String get quickRoutingAlreadyExists => '선택한 조건이 모두 이 라우팅에 이미 있습니다';
+
+  @override
+  String quickRoutingMatchedExisting(String names) {
+    return '이미 포함됨: $names';
+  }
+
+  @override
+  String get quickRoutingAndLogicNote => '이 라우팅은 AND 논리를 사용하므로 모든 조건이 일치해야 합니다';
 }

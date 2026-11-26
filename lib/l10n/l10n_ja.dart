@@ -4609,4 +4609,38 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get tailscaleNodeName => 'ノード名';
+
+  @override
+  String get quickRoutingCreate => 'カスタムルーティングを作成';
+
+  @override
+  String get quickRoutingModeNew => '新規作成';
+
+  @override
+  String get quickRoutingModeAppend => '既存に追加';
+
+  @override
+  String get quickRoutingTargetRouting => '追加先のルーティング';
+
+  @override
+  String quickRoutingCreated(String name) {
+    return 'カスタムルーティングを作成しました：$name';
+  }
+
+  @override
+  String quickRoutingAppended(String name) {
+    return '「$name」に追加しました';
+  }
+
+  @override
+  String get quickRoutingAlreadyExists => '選択した条件はすべてこのルーティングに既に存在します';
+
+  @override
+  String quickRoutingMatchedExisting(String names) {
+    return '既に含まれています：$names';
+  }
+
+  @override
+  String get quickRoutingAndLogicNote =>
+      'このルーティングは AND ロジックを使用しており、すべての条件に一致する必要があります';
 }

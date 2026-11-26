@@ -4820,4 +4820,39 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get tailscaleNodeName => 'Имя узла';
+
+  @override
+  String get quickRoutingCreate => 'Создать правило маршрутизации';
+
+  @override
+  String get quickRoutingModeNew => 'Создать новое';
+
+  @override
+  String get quickRoutingModeAppend => 'Добавить к существующему';
+
+  @override
+  String get quickRoutingTargetRouting => 'Существующее правило';
+
+  @override
+  String quickRoutingCreated(String name) {
+    return 'Создано правило маршрутизации: $name';
+  }
+
+  @override
+  String quickRoutingAppended(String name) {
+    return 'Добавлено в «$name»';
+  }
+
+  @override
+  String get quickRoutingAlreadyExists =>
+      'Все выбранные условия уже есть в этом правиле';
+
+  @override
+  String quickRoutingMatchedExisting(String names) {
+    return 'Уже есть в: $names';
+  }
+
+  @override
+  String get quickRoutingAndLogicNote =>
+      'Это правило использует логику И: должны совпасть все условия';
 }

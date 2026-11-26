@@ -4822,4 +4822,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tailscaleNodeName => 'Node name';
+
+  @override
+  String get quickRoutingCreate => 'Create custom routing';
+
+  @override
+  String get quickRoutingModeNew => 'Create new';
+
+  @override
+  String get quickRoutingModeAppend => 'Add to existing';
+
+  @override
+  String get quickRoutingTargetRouting => 'Existing routing';
+
+  @override
+  String quickRoutingCreated(String name) {
+    return 'Created custom routing: $name';
+  }
+
+  @override
+  String quickRoutingAppended(String name) {
+    return 'Added to $name';
+  }
+
+  @override
+  String get quickRoutingAlreadyExists =>
+      'All selected conditions already exist in this routing';
+
+  @override
+  String quickRoutingMatchedExisting(String names) {
+    return 'Already in: $names';
+  }
+
+  @override
+  String get quickRoutingAndLogicNote =>
+      'This routing uses AND logic; every condition must match';
 }

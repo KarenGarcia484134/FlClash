@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'detail_tabs.dart';
 import 'mitm_exchanges.dart';
+import 'tracker_custom_routing.dart';
 import 'tracker_detail_parts.dart';
 import 'tracker_mitm_host.dart';
 import 'tracker_texts.dart';
@@ -155,6 +156,7 @@ class TrackerInfoDetailView extends ConsumerWidget {
           TrackerPathSection(trackerInfo: trackerInfo, atTop: failure == null),
           ListHeader(title: appLocalizations.traffic),
           TrackerTrafficSummary(trackerInfo: trackerInfo),
+          QuickCustomRoutingSection(trackerInfo: trackerInfo),
           if (rsFeature)
             MitmHostSection(metadata: trackerInfo.metadata, last: columns),
         ];

@@ -1641,5 +1641,35 @@
         "type": "String"
       }
     }
-  }
+  },
+  "quickRoutingCreate": "Create custom routing",
+  "quickRoutingModeNew": "Create new",
+  "quickRoutingModeAppend": "Add to existing",
+  "quickRoutingTargetRouting": "Existing routing",
+  "quickRoutingCreated": "Created custom routing: {name}",
+  "@quickRoutingCreated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "quickRoutingAppended": "Added to {name}",
+  "@quickRoutingAppended": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "quickRoutingAlreadyExists": "All selected conditions already exist in this routing",
+  "quickRoutingMatchedExisting": "Already in: {names}",
+  "@quickRoutingMatchedExisting": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "quickRoutingAndLogicNote": "This routing uses AND logic; every condition must match"
 }

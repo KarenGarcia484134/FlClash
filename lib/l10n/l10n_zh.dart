@@ -4551,4 +4551,37 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tailscaleNodeName => '节点名';
+
+  @override
+  String get quickRoutingCreate => '创建自定义分流';
+
+  @override
+  String get quickRoutingModeNew => '新建分流';
+
+  @override
+  String get quickRoutingModeAppend => '追加到已有';
+
+  @override
+  String get quickRoutingTargetRouting => '目标分流';
+
+  @override
+  String quickRoutingCreated(String name) {
+    return '已创建自定义分流：$name';
+  }
+
+  @override
+  String quickRoutingAppended(String name) {
+    return '已追加到「$name」';
+  }
+
+  @override
+  String get quickRoutingAlreadyExists => '所选条件已全部存在于该分流中';
+
+  @override
+  String quickRoutingMatchedExisting(String names) {
+    return '已存在于：$names';
+  }
+
+  @override
+  String get quickRoutingAndLogicNote => '该分流使用「满足全部 (AND)」逻辑，追加的条件需同时匹配';
 }

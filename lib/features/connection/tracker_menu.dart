@@ -6,6 +6,7 @@ import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'tracker_custom_routing.dart';
 import 'tracker_mitm_host.dart';
 import 'tracker_texts.dart';
 
@@ -51,6 +52,9 @@ List<PopupMenuItem> trackerDetailMenuItems(
     metadata,
     ref.read(patchClashConfigProvider).mitm,
   );
+  final hasRoutingCandidates = extractTrackerRoutingCandidates(
+    trackerInfo,
+  ).isNotEmpty;
   return [
     if (metadata.host.isNotEmpty)
       copyMenuItem(appLocalizations.copyHost, metadata.host),
@@ -60,11 +64,18 @@ List<PopupMenuItem> trackerDetailMenuItems(
       appLocalizations.copySummary,
       trackerSummaryText(appLocalizations, trackerInfo),
     ),
+    if (hasRoutingCandidates)
+      PopupMenuItem(
+        glyph: AppGlyphs.split,
+        label: appLocalizations.quickRoutingCreate,
+        section: const PopupMenuSection(),
+        onPressed: () => showQuickCustomRoutingSheet(context, trackerInfo),
+      ),
     if (rsFeature && mitmChange != null)
       PopupMenuItem(
         glyph: AppGlyphs.lock,
         label: mitmChange.title,
-        section: const PopupMenuSection(),
+        section: hasRoutingCandidates ? null : const PopupMenuSection(),
         onPressed: () => applyMitmHostChange(ref, mitmChange),
       ),
   ];

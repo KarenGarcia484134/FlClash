@@ -1404,5 +1404,14 @@
   "tailscaleExitNodeHint": "Tailscale IP 或设备名",
   "tailscaleExitNodeFailed": "无法设置出口节点：{error}",
   "tailscaleDialerProxyPending": "所选连接代理尚未生效，点「重新连接」即可应用。",
-  "tailscaleNodeName": "节点名"
+  "tailscaleNodeName": "节点名",
+  "quickRoutingCreate": "创建自定义分流",
+  "quickRoutingModeNew": "新建分流",
+  "quickRoutingModeAppend": "追加到已有",
+  "quickRoutingTargetRouting": "目标分流",
+  "quickRoutingCreated": "已创建自定义分流：{name}",
+  "quickRoutingAppended": "已追加到「{name}」",
+  "quickRoutingAlreadyExists": "所选条件已全部存在于该分流中",
+  "quickRoutingMatchedExisting": "已存在于：{names}",
+  "quickRoutingAndLogicNote": "该分流使用「满足全部 (AND)」逻辑，追加的条件需同时匹配"
 }
