@@ -1252,6 +1252,50 @@ class CustomRoutings extends _$CustomRoutings
     }
   }
 
+  Future<void> saveWithSelection(
+    CustomRouting routing, {
+    int? applyProfileId,
+    bool append = false,
+  }) async {
+    final link = ref.keepAlive();
+    try {
+      final current = state.value ?? await future;
+      final next = List<CustomRouting>.from(current);
+      final index = next.indexWhere((item) => item.id == routing.id);
+      final CustomRouting placed;
+      if (!append && index != -1) {
+        placed = routing;
+        next[index] = placed;
+      } else {
+        placed = routing.copyWith(
+          order:
+              routing.order ??
+              indexing.generateKeyBetween(next.lastOrNull?.order, null),
+        );
+        if (index != -1) {
+          next[index] = placed;
+        } else {
+          next.add(placed);
+        }
+      }
+      await optimisticAsync(
+        next,
+        _reapplyAfter(ref, () async {
+          await database.customRoutingsDao.saveWithSelection(
+            placed,
+            profileId: applyProfileId,
+            append: append,
+          );
+          if (applyProfileId != null && ref.mounted) {
+            ref.invalidate(profileCustomRoutingIdsProvider(applyProfileId));
+          }
+        }),
+      );
+    } finally {
+      link.close();
+    }
+  }
+
   void duplicate(CustomRouting routing) {
     final index = value.indexWhere((item) => item.id == routing.id);
     if (index == -1) {

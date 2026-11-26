@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/features/form/form.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
@@ -106,11 +107,66 @@ typedef CustomRoutingMergeResult = ({
   int duplicateCount,
 });
 
-bool _isInvalidRoutingValue(String value) =>
-    value.isEmpty ||
-    value.contains(customRoutingValueSeparator) ||
-    value.contains('\n') ||
-    value.contains('\r');
+final _controlCharsPattern = RegExp(r'[\x00-\x1f\x7f]');
+final _domainLabelPattern = RegExp(
+  r'^[a-zA-Z0-9_](?:[a-zA-Z0-9_-]{0,61}[a-zA-Z0-9_])?$',
+);
+final _portPattern = RegExp(r'^[1-9][0-9]{0,4}$');
+
+bool _isValidDomainValue(String value) {
+  if (value.isEmpty || value.length > 253) {
+    return false;
+  }
+  return value.split('.').every(_domainLabelPattern.hasMatch);
+}
+
+String? validateTrackerRoutingValue(
+  RuleAction action,
+  String raw, {
+  AppLocalizations? l10n,
+}) {
+  final localizations = l10n ?? currentAppLocalizations;
+  final value = raw.trim();
+  if (value.isEmpty) {
+    return localizations.routingConditionsEmptyTip;
+  }
+  if (value.contains(customRoutingValueSeparator)) {
+    return localizations.routingValueCommaTip;
+  }
+  if (raw.contains('\n') ||
+      raw.contains('\r') ||
+      _controlCharsPattern.hasMatch(value) ||
+      value.contains('(') ||
+      value.contains(')')) {
+    return localizations.singleValueTip(action.value);
+  }
+  switch (action) {
+    case RuleAction.DST_PORT:
+      final port = _portPattern.hasMatch(value) ? int.tryParse(value) : null;
+      if (port == null || port < 1 || port > 65535) {
+        return localizations.listenerPortInvalid;
+      }
+      return null;
+    case RuleAction.IP_CIDR:
+      if (!isCidr(value) || value.contains(':')) {
+        return localizations.invalidCidrContent;
+      }
+      return null;
+    case RuleAction.IP_CIDR6:
+      if (!isCidr(value) || !value.contains(':')) {
+        return localizations.invalidCidrContent;
+      }
+      return null;
+    case RuleAction.DOMAIN:
+    case RuleAction.DOMAIN_SUFFIX:
+      if (!_isValidDomainValue(value)) {
+        return localizations.invalidHostContent;
+      }
+      return null;
+    default:
+      return null;
+  }
+}
 
 InternetAddress? _parseIpLiteral(String raw) {
   final trimmed = raw.trim();
@@ -179,8 +235,8 @@ List<TrackerRoutingCandidate> extractTrackerRoutingCandidates(
     final normalizedHost = rawHost
         .replaceAll(RegExp(r'\.+$'), '')
         .toLowerCase();
-    if (!_isInvalidRoutingValue(normalizedHost) &&
-        !normalizedHost.contains(RegExp(r'\s'))) {
+    if (validateTrackerRoutingValue(RuleAction.DOMAIN, normalizedHost) ==
+        null) {
       candidates.add(
         TrackerRoutingCandidate(
           ruleAction: RuleAction.DOMAIN,
@@ -188,7 +244,9 @@ List<TrackerRoutingCandidate> extractTrackerRoutingCandidates(
         ),
       );
       final suffix = _registrableDomainOf(normalizedHost);
-      if (suffix != null && !_isInvalidRoutingValue(suffix)) {
+      if (suffix != null &&
+          validateTrackerRoutingValue(RuleAction.DOMAIN_SUFFIX, suffix) ==
+              null) {
         candidates.add(
           TrackerRoutingCandidate(
             ruleAction: RuleAction.DOMAIN_SUFFIX,
@@ -199,10 +257,7 @@ List<TrackerRoutingCandidate> extractTrackerRoutingCandidates(
     }
   }
 
-  final ip =
-      _parseIpLiteral(metadata.destinationIP) ??
-      hostIp ??
-      _parseIpLiteral(metadata.remoteDestination);
+  final ip = _parseIpLiteral(metadata.destinationIP) ?? hostIp;
   if (ip != null) {
     final isV6 = ip.type == InternetAddressType.IPv6;
     candidates.add(
@@ -215,7 +270,8 @@ List<TrackerRoutingCandidate> extractTrackerRoutingCandidates(
   }
 
   final processName = _processNameOf(metadata);
-  if (!_isInvalidRoutingValue(processName)) {
+  if (validateTrackerRoutingValue(RuleAction.PROCESS_NAME, processName) ==
+      null) {
     candidates.add(
       TrackerRoutingCandidate(
         ruleAction: RuleAction.PROCESS_NAME,
@@ -241,8 +297,8 @@ TrackerRoutingCandidate? defaultTrackerRoutingCandidate(
     return null;
   }
   for (final action in const [
-    RuleAction.DOMAIN_SUFFIX,
     RuleAction.DOMAIN,
+    RuleAction.DOMAIN_SUFFIX,
     RuleAction.IP_CIDR,
     RuleAction.IP_CIDR6,
     RuleAction.PROCESS_NAME,
@@ -263,7 +319,7 @@ List<CustomRoutingCondition> buildConditionsFromCandidates(
   final conditions = <CustomRoutingCondition>[];
   for (final candidate in candidates) {
     final value = candidate.value.trim();
-    if (_isInvalidRoutingValue(value)) {
+    if (validateTrackerRoutingValue(candidate.ruleAction, value) != null) {
       continue;
     }
     final noResolve = candidate.effectiveNoResolve;
@@ -296,6 +352,20 @@ List<CustomRoutingCondition> buildConditionsFromCandidates(
   return conditions;
 }
 
+bool _conditionsContainCandidate(
+  List<CustomRoutingCondition> conditions,
+  RuleAction ruleAction,
+  String lowerValue,
+  bool noResolve,
+) {
+  return conditions.any(
+    (condition) =>
+        condition.ruleAction == ruleAction &&
+        (condition.noResolve && condition.ruleAction.hasParams) == noResolve &&
+        condition.cleanValues.any((item) => item.toLowerCase() == lowerValue),
+  );
+}
+
 CustomRoutingMergeResult mergeCandidatesIntoRouting(
   CustomRouting routing,
   Iterable<TrackerRoutingCandidate> candidates,
@@ -306,17 +376,29 @@ CustomRoutingMergeResult mergeCandidatesIntoRouting(
 
   for (final candidate in candidates) {
     final value = candidate.value.trim();
-    if (_isInvalidRoutingValue(value)) {
+    if (validateTrackerRoutingValue(candidate.ruleAction, value) != null) {
       continue;
     }
     final noResolve = candidate.effectiveNoResolve;
     final lower = value.toLowerCase();
-    final matchingIndex = conditions.indexWhere(
-      (item) =>
-          item.ruleAction == candidate.ruleAction &&
-          (item.noResolve && item.ruleAction.hasParams) == noResolve,
-    );
-    if (matchingIndex == -1) {
+    if (_conditionsContainCandidate(
+      conditions,
+      candidate.ruleAction,
+      lower,
+      noResolve,
+    )) {
+      duplicateCount++;
+      continue;
+    }
+    final matchingIndices = [
+      for (final (index, item) in conditions.indexed)
+        if (item.ruleAction == candidate.ruleAction &&
+            (item.noResolve && item.ruleAction.hasParams) == noResolve)
+          index,
+    ];
+    if (matchingIndices.isEmpty ||
+        (routing.logic == CustomRoutingLogic.and &&
+            matchingIndices.length > 1)) {
       conditions.add(
         CustomRoutingCondition(
           ruleAction: candidate.ruleAction,
@@ -327,15 +409,9 @@ CustomRoutingMergeResult mergeCandidatesIntoRouting(
       addedCount++;
       continue;
     }
-    final existing = conditions[matchingIndex];
-    final exists = existing.cleanValues.any(
-      (item) => item.toLowerCase() == lower,
-    );
-    if (exists) {
-      duplicateCount++;
-      continue;
-    }
-    conditions[matchingIndex] = existing.copyWith(
+    final targetIndex = matchingIndices.first;
+    final existing = conditions[targetIndex];
+    conditions[targetIndex] = existing.copyWith(
       values: [...existing.cleanValues, value],
     );
     addedCount++;
@@ -358,12 +434,11 @@ bool routingContainsCandidate(
   if (value.isEmpty) {
     return false;
   }
-  final noResolve = candidate.effectiveNoResolve;
-  return routing.conditions.any(
-    (condition) =>
-        condition.ruleAction == candidate.ruleAction &&
-        (condition.noResolve && condition.ruleAction.hasParams) == noResolve &&
-        condition.cleanValues.any((item) => item.toLowerCase() == value),
+  return _conditionsContainCandidate(
+    routing.conditions,
+    candidate.ruleAction,
+    value,
+    candidate.effectiveNoResolve,
   );
 }
 
@@ -504,7 +579,12 @@ class _QuickCustomRoutingSheetState
       widget.trackerInfo,
       groupNames: groupNames,
     );
-    _useInCurrentProfile = ref.read(currentProfileIdProvider) != null;
+    final profileId = ref.read(currentProfileIdProvider);
+    final profile = profileId == null
+        ? null
+        : ref.read(profileProvider(profileId));
+    _useInCurrentProfile =
+        profile != null && profile.type != ProfileType.custom;
     final routings = ref.read(customRoutingsProvider).value ?? const [];
     if (routings.isNotEmpty) {
       _selectedRoutingId = routings.first.id;
@@ -575,15 +655,30 @@ class _QuickCustomRoutingSheetState
     });
   }
 
+  int? _effectiveApplyProfileId() {
+    if (!_useInCurrentProfile) {
+      return null;
+    }
+    final profileId = ref.read(currentProfileIdProvider);
+    if (profileId == null) {
+      return null;
+    }
+    final profile = ref.read(profileProvider(profileId));
+    if (profile == null || profile.type == ProfileType.custom) {
+      return null;
+    }
+    return profileId;
+  }
+
   String? _validateValue(String? value) {
-    final text = value?.trim() ?? '';
-    if (text.isEmpty) {
-      return context.appLocalizations.routingConditionsEmptyTip;
+    if (_selectedIndices.length != 1) {
+      return null;
     }
-    if (text.contains(customRoutingValueSeparator)) {
-      return context.appLocalizations.routingValueCommaTip;
-    }
-    return null;
+    return validateTrackerRoutingValue(
+      _candidates[_selectedIndices.single].ruleAction,
+      value ?? '',
+      l10n: context.appLocalizations,
+    );
   }
 
   Future<void> _handleSave() async {
@@ -592,34 +687,46 @@ class _QuickCustomRoutingSheetState
     }
     final appLocalizations = context.appLocalizations;
     final selected = _effectiveSelectedCandidates();
-    if (selected.isEmpty || selected.any((item) => item.value.isEmpty)) {
+    if (selected.isEmpty) {
       dialogs.showBanner(
         appLocalizations.routingConditionsEmptyTip,
         level: BannerLevel.warning,
       );
       return;
     }
-    if (selected.any((item) => _isInvalidRoutingValue(item.value))) {
-      dialogs.showBanner(
-        appLocalizations.routingValueCommaTip,
-        level: BannerLevel.warning,
-      );
+    if (_formKey.currentState?.validate() == false) {
       return;
+    }
+    for (final candidate in selected) {
+      final error = validateTrackerRoutingValue(
+        candidate.ruleAction,
+        candidate.value,
+        l10n: appLocalizations,
+      );
+      if (error != null) {
+        dialogs.showBanner(error, level: BannerLevel.warning);
+        return;
+      }
     }
 
     final routings = ref.read(customRoutingsProvider).value ?? const [];
     final effectiveMode = routings.isEmpty ? _QuickRoutingMode.create : _mode;
+    final applyProfileId = _effectiveApplyProfileId();
     if (effectiveMode == _QuickRoutingMode.create) {
-      await _saveNewRouting(selected);
+      await _saveNewRouting(selected, applyProfileId: applyProfileId);
       return;
     }
-    _saveAppendRouting(routings, selected);
+    await _saveAppendRouting(
+      routings,
+      selected,
+      applyProfileId: applyProfileId,
+    );
   }
 
-  Future<void> _saveNewRouting(List<TrackerRoutingCandidate> selected) async {
-    if (_formKey.currentState?.validate() == false) {
-      return;
-    }
+  Future<void> _saveNewRouting(
+    List<TrackerRoutingCandidate> selected, {
+    required int? applyProfileId,
+  }) async {
     final appLocalizations = context.appLocalizations;
     final target = _target?.trim() ?? '';
     if (target.isEmpty) {
@@ -643,13 +750,25 @@ class _QuickCustomRoutingSheetState
       conditions: conditions,
       target: target,
     );
+    final compiled = routing.toRule();
+    if (compiled == null || compiled.trim().isEmpty) {
+      dialogs.showBanner(
+        appLocalizations.ruleTextInvalid,
+        level: BannerLevel.warning,
+      );
+      return;
+    }
+    final notifier = ref.read(customRoutingsProvider.notifier);
     setState(() => _saving = true);
     try {
-      await ref.read(customRoutingsProvider.notifier).append(routing);
+      await notifier.saveWithSelection(
+        routing,
+        applyProfileId: applyProfileId,
+        append: true,
+      );
       if (!mounted) {
         return;
       }
-      _ensureAppliedToCurrentProfile(routing.id);
       dialogs.showBanner(
         appLocalizations.quickRoutingCreated(routing.label),
         level: BannerLevel.success,
@@ -662,10 +781,11 @@ class _QuickCustomRoutingSheetState
     }
   }
 
-  void _saveAppendRouting(
+  Future<void> _saveAppendRouting(
     List<CustomRouting> routings,
-    List<TrackerRoutingCandidate> selected,
-  ) {
+    List<TrackerRoutingCandidate> selected, {
+    required int? applyProfileId,
+  }) async {
     final appLocalizations = context.appLocalizations;
     final targetRouting =
         routings.firstWhereOrNull((item) => item.id == _selectedRoutingId) ??
@@ -674,37 +794,48 @@ class _QuickCustomRoutingSheetState
       return;
     }
     final merged = mergeCandidatesIntoRouting(targetRouting, selected);
-    if (merged.addedCount == 0) {
+    final selectedIds = applyProfileId == null
+        ? const <int>[]
+        : ref.read(profileCustomRoutingIdsProvider(applyProfileId)).value ??
+              const <int>[];
+    final needsProfileLink =
+        applyProfileId != null && !selectedIds.contains(targetRouting.id);
+    if (merged.addedCount == 0 && !needsProfileLink) {
       dialogs.showBanner(
         appLocalizations.quickRoutingAlreadyExists,
         level: BannerLevel.warning,
       );
       return;
     }
-    final updated = _useInCurrentProfile && !merged.routing.enabled
-        ? merged.routing.copyWith(enabled: true)
-        : merged.routing;
-    ref.read(customRoutingsProvider.notifier).put(updated);
-    _ensureAppliedToCurrentProfile(updated.id);
-    dialogs.showBanner(
-      appLocalizations.quickRoutingAppended(updated.label),
-      level: BannerLevel.success,
-    );
-    Navigator.of(context).pop(updated);
-  }
-
-  void _ensureAppliedToCurrentProfile(int routingId) {
-    final profileId = ref.read(currentProfileIdProvider);
-    if (!_useInCurrentProfile || profileId == null) {
+    final updated = merged.routing;
+    final compiled = updated.toRule();
+    if (compiled == null || compiled.trim().isEmpty) {
+      dialogs.showBanner(
+        appLocalizations.ruleTextInvalid,
+        level: BannerLevel.warning,
+      );
       return;
     }
-    final selectedIds =
-        ref.read(profileCustomRoutingIdsProvider(profileId)).value ??
-        const <int>[];
-    if (!selectedIds.contains(routingId)) {
-      ref
-          .read(profileCustomRoutingIdsProvider(profileId).notifier)
-          .toggle(routingId);
+    final notifier = ref.read(customRoutingsProvider.notifier);
+    setState(() => _saving = true);
+    try {
+      await notifier.saveWithSelection(
+        updated,
+        applyProfileId: applyProfileId,
+        append: false,
+      );
+      if (!mounted) {
+        return;
+      }
+      dialogs.showBanner(
+        appLocalizations.quickRoutingAppended(updated.label),
+        level: BannerLevel.success,
+      );
+      Navigator.of(context).pop(updated);
+    } finally {
+      if (mounted) {
+        setState(() => _saving = false);
+      }
     }
   }
 
@@ -828,7 +959,14 @@ class _QuickCustomRoutingSheetState
     final appLocalizations = context.appLocalizations;
     final routings = ref.watch(customRoutingsProvider).value ?? const [];
     final profileId = ref.watch(currentProfileIdProvider);
-    if (profileId != null) {
+    final supportsCustomRouting =
+        profileId != null &&
+        ref.watch(
+          profileProvider(
+            profileId,
+          ).select((p) => p != null && p.type != ProfileType.custom),
+        );
+    if (supportsCustomRouting) {
       ref.watch(profileCustomRoutingIdsProvider(profileId));
     }
     final clashConfig = profileId == null
@@ -999,12 +1137,12 @@ class _QuickCustomRoutingSheetState
                               ),
                           ],
                         ),
-                        if (profileId != null) ...[
+                        if (supportsCustomRouting) ...[
                           const SizedBox(height: 16),
                           _buildProfileSwitch(context),
                         ],
                       ] else ...[
-                        if (profileId != null) ...[
+                        if (supportsCustomRouting) ...[
                           _buildProfileSwitch(context),
                           const SizedBox(height: 16),
                         ],

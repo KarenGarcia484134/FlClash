@@ -81,6 +81,25 @@ class CustomRoutingsDao extends DatabaseAccessor<Database>
     return customRoutings.insertOnConflictUpdate(routing.toCompanion());
   }
 
+  Future<void> saveWithSelection(
+    CustomRouting routing, {
+    int? profileId,
+    bool append = false,
+  }) {
+    return transaction(() async {
+      await customRoutings.insertOnConflictUpdate(routing.toCompanion());
+      if (profileId != null) {
+        await profileCustomRoutings.insertOne(
+          ProfileCustomRoutingsCompanion.insert(
+            profileId: profileId,
+            routingId: routing.id,
+          ),
+          mode: InsertMode.insertOrIgnore,
+        );
+      }
+    });
+  }
+
   Future<int> order({required int id, required String order}) {
     final stmt = customRoutings.update()..where((t) => t.id.equals(id));
     return stmt.write(CustomRoutingsCompanion(order: Value(order)));

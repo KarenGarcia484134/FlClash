@@ -45,6 +45,35 @@ class TestCustomRoutings extends CustomRoutings {
 
   @override
   Stream<List<CustomRouting>> build() => Stream.value(initial);
+
+  @override
+  Future<void> saveWithSelection(
+    CustomRouting routing, {
+    int? applyProfileId,
+    bool append = false,
+  }) async {
+    final link = ref.keepAlive();
+    try {
+      final next = List<CustomRouting>.from(value);
+      final index = next.indexWhere((item) => item.id == routing.id);
+      if (index != -1) {
+        next[index] = routing;
+      } else {
+        next.add(routing);
+      }
+      state = AsyncData(next);
+      if (applyProfileId != null) {
+        final idsNotifier = ref.read(
+          profileCustomRoutingIdsProvider(applyProfileId).notifier,
+        );
+        if (!idsNotifier.value.contains(routing.id)) {
+          idsNotifier.toggle(routing.id);
+        }
+      }
+    } finally {
+      link.close();
+    }
+  }
 }
 
 class TestProfileCustomRoutingIds extends ProfileCustomRoutingIds {
