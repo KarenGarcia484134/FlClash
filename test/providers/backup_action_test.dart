@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:drift/native.dart';
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/common/migration.dart';
 import 'package:fl_clash/database/database.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
@@ -586,6 +587,46 @@ void main() {
       expect(target.read(currentProfileIdProvider), 42);
       expect(target.read(appSettingProvider).autoLaunch, isTrue);
       expect(target.read(patchClashConfigProvider).mixedPort, 7899);
+    });
+
+    test('normalizes former default hosts from an old backup even at current '
+        'upgradeVersion', () async {
+      await mockPreferences({
+        'version': Migration.currentVersion,
+        'upgradeVersion': Migration.upgradeVersion,
+      });
+      expect(await preferences.getUpgradeVersion(), Migration.upgradeVersion);
+
+      final configMap = configMapOf(buildContainer())
+        ..['networkProps'] = {
+          'bypassDomain': ['localhost', '172.19.*', '172.2*', 'custom.lan'],
+        }
+        ..['patchClashConfig'] = {
+          'dns': {
+            'fake-ip-filter': [
+              'dns.msftnsci.com',
+              'www.msftnsci.com',
+              'custom.example',
+            ],
+          },
+        };
+
+      final target = buildContainer();
+      await actionOf(
+        target,
+      ).applyRestore(MigrationData(configMap: configMap), RestoreOption.all);
+
+      expect(target.read(networkSettingProvider).bypassDomain, [
+        'localhost',
+        '172.19.*',
+        for (var i = 0; i < 10; i++) '172.2$i.*',
+        'custom.lan',
+      ]);
+      expect(target.read(patchClashConfigProvider).dns.fakeIpFilter, [
+        'dns.msftncsi.com',
+        'www.msftncsi.com',
+        'custom.example',
+      ]);
     });
 
     test(

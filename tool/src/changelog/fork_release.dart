@@ -117,14 +117,17 @@ String renderForkRelease(
     final links = <String>[];
     final published = <String>[];
     for (final asset in platform.assets) {
+      final primaryFile = 'FlClash-${version.version}-${asset.packageSuffix}';
       final legacyFile = 'FlClash-${version.version}-${asset.suffix}';
       final devFile = 'FlClash-dev-${version.version}-${asset.packageSuffix}';
       final file = assets == null
+          ? primaryFile
+          : assets.contains(primaryFile)
+          ? primaryFile
+          : assets.contains(legacyFile)
           ? legacyFile
           : assets.contains(devFile)
           ? devFile
-          : assets.contains(legacyFile)
-          ? legacyFile
           : null;
       if (file != null) {
         published.add(asset.suffix);

@@ -162,4 +162,50 @@ void main() {
       {1, 2, 3},
     ]);
   });
+
+  test('watchApart subscription.cancel completes promptly', () async {
+    final db = Database(NativeDatabase.memory());
+    addTearDown(db.close);
+
+    final first = Completer<List<Rule>>();
+    final emissions = <List<Rule>>[];
+    final sub = db.watchApart([db.rules], _readGlobalRules).listen((rows) {
+      emissions.add(rows);
+      if (!first.isCompleted) {
+        first.complete(rows);
+      }
+    });
+
+    await first.future.timeout(const Duration(seconds: 2));
+    await sub.cancel().timeout(const Duration(seconds: 2));
+
+    await db.rulesDao.putRule(_rule(99));
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    expect(emissions, hasLength(1));
+  });
+
+  test('watchApart closes and cancels promptly when database closes', () async {
+    final db = Database(NativeDatabase.memory());
+    final first = Completer<List<Rule>>();
+    final done = Completer<void>();
+    final sub = db
+        .watchApart([db.rules], _readGlobalRules)
+        .listen(
+          (rows) {
+            if (!first.isCompleted) {
+              first.complete(rows);
+            }
+          },
+          onDone: () {
+            if (!done.isCompleted) {
+              done.complete();
+            }
+          },
+        );
+
+    await first.future.timeout(const Duration(seconds: 2));
+    await db.close();
+    await done.future.timeout(const Duration(seconds: 2));
+    await sub.cancel().timeout(const Duration(seconds: 2));
+  });
 }

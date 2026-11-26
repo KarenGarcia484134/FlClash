@@ -154,18 +154,22 @@ class Database extends _$Database {
 
     controller = StreamController<T>(
       onListen: () {
-        updates = tableUpdates(
-          TableUpdateQuery.onAllTables(tables),
-        ).listen((_) => unawaited(fetch()));
+        updates = tableUpdates(TableUpdateQuery.onAllTables(tables)).listen(
+          (_) => unawaited(fetch()),
+          onDone: () {
+            canceled = true;
+            updates = null;
+            if (!controller.isClosed) {
+              unawaited(controller.close());
+            }
+          },
+        );
         unawaited(fetch());
       },
       onCancel: () async {
         canceled = true;
         await updates?.cancel();
         updates = null;
-        if (!controller.isClosed) {
-          await controller.close();
-        }
       },
     );
     return controller.stream;

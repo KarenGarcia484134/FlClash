@@ -4,7 +4,11 @@ part of '../action.dart';
 class CommonAction extends _$CommonAction {
   CoreController get _core => ref.read(coreHandlerProvider);
   bool _isUpdatingTraffic = false;
+  bool _installingUpdate = false;
   CancelToken? _updateCancelToken;
+
+  @visibleForTesting
+  MacosAppUpdate? get macosUpdate => macosAppUpdate;
 
   @override
   void build() {}
@@ -195,7 +199,9 @@ class CommonAction extends _$CommonAction {
   /// Downloads the latest release for this build even when it is not newer.
   Future<void> testUpdateDownload() async {
     final asset = selfUpdateAsset;
-    if (asset == null || ref.read(updateDownloadStateProvider) != null) {
+    if (asset == null ||
+        _installingUpdate ||
+        ref.read(updateDownloadStateProvider) != null) {
       return;
     }
     final channel = ref.read(appSettingProvider).updateChannel;
@@ -211,7 +217,7 @@ class CommonAction extends _$CommonAction {
 
   Future<void> _downloadUpdate(String tag, String name) async {
     final download = ref.read(updateDownloadStateProvider.notifier);
-    if (download.value != null) return;
+    if (_installingUpdate || download.value != null) return;
     final cancelToken = CancelToken();
     _updateCancelToken = cancelToken;
     download.value = UpdateDownloading(tag);
@@ -238,7 +244,7 @@ class CommonAction extends _$CommonAction {
           );
         },
       );
-      final ready = switch (macosAppUpdate) {
+      final ready = switch (macosUpdate) {
         final macos? => await macos.stage(path, directory),
         null => path,
       };
@@ -280,12 +286,16 @@ class CommonAction extends _$CommonAction {
   }
 
   Future<void> discardUpdate() async {
-    if (ref.read(updateDownloadStateProvider) is! UpdateReady) return;
+    if (_installingUpdate ||
+        ref.read(updateDownloadStateProvider) is! UpdateReady) {
+      return;
+    }
     ref.read(updateDownloadStateProvider.notifier).value = null;
     await clearUpdateDownloads();
   }
 
   Future<void> installUpdate() async {
+    if (_installingUpdate) return;
     final download = ref.read(updateDownloadStateProvider);
     if (download is! UpdateReady) return;
     if (system.isAndroid) {
@@ -300,12 +310,14 @@ class CommonAction extends _$CommonAction {
       }
       return;
     }
-    if (macosAppUpdate case final macos?) {
+    if (macosUpdate case final macos?) {
       await _installMacosUpdate(macos, download);
       return;
     }
     final started = windows?.runas(download.path, windowsUpdateArguments(pid));
     if (started == true) {
+      _installingUpdate = true;
+      ref.read(updateDownloadStateProvider.notifier).value = null;
       await ref.read(systemActionProvider.notifier).handleExit();
     } else if (started == false) {
       await _showUpdateFailure(
@@ -319,14 +331,20 @@ class CommonAction extends _$CommonAction {
     MacosAppUpdate macos,
     UpdateReady download,
   ) async {
+    if (_installingUpdate) return;
+    _installingUpdate = true;
+    final state = ref.read(updateDownloadStateProvider.notifier);
+    state.value = null;
+    final bool started;
     try {
-      final started = await macos.install(
+      started = await macos.install(
         staged: download.path,
         tag: download.tag,
         marker: await macosInstallFailurePath,
       );
-      if (!started) return;
     } catch (error) {
+      state.value = download;
+      _installingUpdate = false;
       commonPrint.log(
         'Update install failed: ${compactError(error)}',
         logLevel: LogLevel.warning,
@@ -335,6 +353,11 @@ class CommonAction extends _$CommonAction {
         download.tag,
         currentAppLocalizations.updateInstallFailed,
       );
+      return;
+    }
+    if (!started) {
+      state.value = download;
+      _installingUpdate = false;
       return;
     }
     await ref.read(systemActionProvider.notifier).handleExit();

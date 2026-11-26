@@ -115,7 +115,7 @@ class Migration {
     2: _keepGlassLook,
     3: _followSystemColors,
     4: _turnOffSidebarBlur,
-    6: _fixFormerDefaultHosts,
+    6: fixFormerDefaultHosts,
   };
 
   Future<Config> run() async {
@@ -308,7 +308,7 @@ const _formerFakeIpFilterDefaults = {
   'www.msftnsci.com': ['www.msftncsi.com'],
 };
 
-Config _fixFormerDefaultHosts(Config config) {
+Config fixFormerDefaultHosts(Config config) {
   final dns = config.patchClashConfig.dns;
   return config.copyWith(
     networkProps: config.networkProps.copyWith(

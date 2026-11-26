@@ -365,25 +365,39 @@ jobs:
           yq -i '.hooks.user_defines.setup.build_assets = false | .hooks.user_defines.rust_api.build_assets = false' pubspec.yaml
           dart run tool/package.dart merge artifacts/* --out dist
           sums_tmp="$(mktemp)"
-          trap 'rm -f "$sums_tmp"' EXIT
+          dev_sums_tmp="$(mktemp)"
+          trap 'rm -f "$sums_tmp" "$dev_sums_tmp"' EXIT
+          release_version=""
           while IFS=$'\t' read -r name sha version os arch form; do
+            release_version="$version"
             printf '%s  %s\n' "$sha" "$name" >> "$sums_tmp"
-            suffix=""
+            legacy_suffix=""
+            dev_compat=0
             case "$os/$arch/$form" in
-              android/arm64/) suffix="android-arm64-v8a.apk" ;;
-              android/armv7/) suffix="android-armeabi-v7a.apk" ;;
-              android/amd64/) suffix="android-x86_64.apk" ;;
-              windows/amd64/setup) suffix="windows-amd64-setup.exe" ;;
-              macos/arm64/) suffix="macos-arm64.dmg" ;;
-              macos/amd64/) suffix="macos-amd64.dmg" ;;
+              android/arm64/) legacy_suffix="android-arm64-v8a.apk"; dev_compat=1 ;;
+              android/armv7/) legacy_suffix="android-armeabi-v7a.apk"; dev_compat=1 ;;
+              android/amd64/) legacy_suffix="android-x86_64.apk"; dev_compat=1 ;;
+              windows/amd64/setup) dev_compat=1 ;;
+              macos/arm64/) dev_compat=1 ;;
+              macos/amd64/) dev_compat=1 ;;
             esac
-            [[ -n "$suffix" ]] || continue
-            legacy="FlClash-${version}-${suffix}"
-            if [[ "$name" != "$legacy" ]]; then
-              cp -f "dist/$name" "dist/$legacy"
-              printf '%s  %s\n' "$sha" "$legacy" >> "$sums_tmp"
+            if [[ -n "$legacy_suffix" ]]; then
+              legacy="FlClash-${version}-${legacy_suffix}"
+              if [[ "$name" != "$legacy" ]]; then
+                cp -f "dist/$name" "dist/$legacy"
+                printf '%s  %s\n' "$sha" "$legacy" >> "$sums_tmp"
+              fi
+            fi
+            if [[ "$dev_compat" -eq 1 && "$name" == FlClash-* && "$name" != FlClash-dev-* ]]; then
+              dev="FlClash-dev-${name#FlClash-}"
+              cp -f "dist/$name" "dist/$dev"
+              printf '%s  %s\n' "$sha" "$dev" >> "$dev_sums_tmp"
+              printf '%s  %s\n' "$sha" "$dev" >> "$sums_tmp"
             fi
           done < <(jq -r '.artifacts[] | [.name, .sha256, .version, .os, .arch, (.form // "")] | @tsv' dist/manifest.json)
+          if [[ -s "$dev_sums_tmp" && -n "$release_version" ]]; then
+            LC_ALL=C sort -k2,2 "$dev_sums_tmp" > "dist/FlClash-dev-${release_version}-SHA256SUMS"
+          fi
           if [[ -s "$sums_tmp" ]]; then
             LC_ALL=C sort -k2,2 "$sums_tmp" > dist/SHA256SUMS
           fi

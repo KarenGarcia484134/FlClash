@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/common/macos_update.dart';
 import 'package:fl_clash/core/controller.dart';
 import 'package:fl_clash/core/interface.dart';
 import 'package:fl_clash/enum/enum.dart';
@@ -9,12 +12,63 @@ import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/providers/core.dart';
 import 'package:fl_clash/state.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:riverpod/riverpod.dart';
+import 'package:path/path.dart';
+import 'package:prism_ui/common_button.dart';
+
+import '../helpers/app_paths.dart';
+import '../helpers/host_scaffold.dart';
+import '../helpers/test_app.dart';
 
 class MockCoreHandlerInterface extends Mock implements CoreHandlerInterface {}
+
+class _FakeMacosAppUpdate extends MacosAppUpdate {
+  _FakeMacosAppUpdate(this.onInstall) : super('/Applications/FlClash.app');
+
+  final Future<bool> Function({
+    required String staged,
+    required String tag,
+    required String marker,
+  })
+  onInstall;
+  int installCalls = 0;
+
+  @override
+  Future<bool> install({
+    required String staged,
+    required String tag,
+    required String marker,
+  }) {
+    installCalls++;
+    return onInstall(staged: staged, tag: tag, marker: marker);
+  }
+}
+
+class _MacosCommonAction extends CommonAction {
+  _MacosCommonAction(this._macos);
+
+  final MacosAppUpdate _macos;
+
+  @override
+  MacosAppUpdate? get macosUpdate => _macos;
+}
+
+class _RecordingSystemAction extends SystemAction {
+  _RecordingSystemAction({this.onExit});
+
+  final Future<void> Function()? onExit;
+  int exitCalls = 0;
+
+  @override
+  Future<void> handleExit([bool needSave = true]) {
+    exitCalls++;
+    return onExit?.call() ?? Future<void>.value();
+  }
+}
 
 const runningVersion = '0.8.96';
 
@@ -167,6 +221,164 @@ void main() {
         container.read(commonActionProvider.notifier).autoCheckUpdate(),
         completion(isFalse),
       );
+    });
+  });
+
+  group('CommonAction.installUpdate on macOS', () {
+    late Directory home;
+
+    setUp(() async {
+      home = await Directory.systemTemp.createTemp('flclash-macos-install-');
+      await useAppPaths(home);
+    });
+
+    tearDown(() async {
+      if (home.existsSync()) {
+        await home.delete(recursive: true);
+      }
+    });
+
+    File stageUpdateFile() {
+      return File(join(home.path, 'update', 'FlClash.app'))
+        ..createSync(recursive: true)
+        ..writeAsStringSync('staged');
+    }
+
+    test(
+      'ignores discardUpdate while macOS install and exit are in flight',
+      () async {
+        final staged = stageUpdateFile();
+        final installStarted = Completer<bool>();
+        final exitCompleter = Completer<void>();
+        final macos = _FakeMacosAppUpdate(
+          ({required staged, required tag, required marker}) =>
+              installStarted.future,
+        );
+        final systemAction = _RecordingSystemAction(
+          onExit: () => exitCompleter.future,
+        );
+        final container = ProviderContainer(
+          overrides: [
+            commonActionProvider.overrideWith(() => _MacosCommonAction(macos)),
+            systemActionProvider.overrideWith(() => systemAction),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        final ready = UpdateReady('v0.9.35', staged.path);
+        container.read(updateDownloadStateProvider.notifier).value = ready;
+
+        final action = container.read(commonActionProvider.notifier);
+        final installFuture = action.installUpdate();
+
+        expect(container.read(updateDownloadStateProvider), isNull);
+        await action.discardUpdate();
+        expect(staged.existsSync(), isTrue);
+
+        installStarted.complete(true);
+        await pumpEventQueue();
+        expect(systemAction.exitCalls, 1);
+
+        await action.discardUpdate();
+        expect(staged.existsSync(), isTrue);
+        expect(container.read(updateDownloadStateProvider), isNull);
+
+        exitCompleter.complete();
+        await installFuture;
+      },
+    );
+
+    test(
+      'restores UpdateReady when macOS install returns without starting',
+      () async {
+        final staged = stageUpdateFile();
+        var shouldStart = false;
+        final macos = _FakeMacosAppUpdate(
+          ({required staged, required tag, required marker}) async =>
+              shouldStart,
+        );
+        final systemAction = _RecordingSystemAction();
+        final container = ProviderContainer(
+          overrides: [
+            commonActionProvider.overrideWith(() => _MacosCommonAction(macos)),
+            systemActionProvider.overrideWith(() => systemAction),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        final ready = UpdateReady('v0.9.35', staged.path);
+        container.read(updateDownloadStateProvider.notifier).value = ready;
+
+        final action = container.read(commonActionProvider.notifier);
+        await action.installUpdate();
+
+        expect(container.read(updateDownloadStateProvider), ready);
+        expect(systemAction.exitCalls, 0);
+
+        shouldStart = true;
+        await action.installUpdate();
+        expect(macos.installCalls, 2);
+        expect(systemAction.exitCalls, 1);
+      },
+    );
+
+    testWidgets('restores UpdateReady for retry when macOS install throws', (
+      tester,
+    ) async {
+      await useAppPaths(home);
+      final staged = stageUpdateFile();
+      var attempt = 0;
+      final macos = _FakeMacosAppUpdate(({
+        required staged,
+        required tag,
+        required marker,
+      }) async {
+        attempt++;
+        if (attempt == 1) {
+          throw const MacosUpdateException('permission denied');
+        }
+        return true;
+      });
+      final systemAction = _RecordingSystemAction();
+      final container = ProviderContainer(
+        overrides: [
+          commonActionProvider.overrideWith(() => _MacosCommonAction(macos)),
+          systemActionProvider.overrideWith(() => systemAction),
+        ],
+      );
+      addTearDown(container.dispose);
+      globalState.container = container;
+      container
+          .read(viewSizeProvider.notifier)
+          .update((_) => const Size(1200, 800));
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const TestApp(child: HostScaffold(body: SizedBox.shrink())),
+        ),
+      );
+      await tester.pump();
+
+      final ready = UpdateReady('v0.9.35', staged.path);
+      container.read(updateDownloadStateProvider.notifier).value = ready;
+
+      final action = container.read(commonActionProvider.notifier);
+      final firstInstall = action.installUpdate();
+      await tester.pumpAndSettle();
+
+      expect(container.read(updateDownloadStateProvider), ready);
+      expect(find.text('Update failed'), findsOneWidget);
+      await tester.tap(find.byType(TextButton).first);
+      await tester.pumpAndSettle();
+      await firstInstall;
+
+      expect(staged.existsSync(), isTrue);
+      expect(systemAction.exitCalls, 0);
+
+      await action.installUpdate();
+      expect(macos.installCalls, 2);
+      expect(systemAction.exitCalls, 1);
+      expect(container.read(updateDownloadStateProvider), isNull);
     });
   });
 }

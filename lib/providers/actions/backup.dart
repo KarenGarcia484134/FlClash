@@ -97,7 +97,7 @@ class BackupAction extends _$BackupAction {
     final configMap = data.configMap;
     final config = option == RestoreOption.onlyProfiles || configMap == null
         ? null
-        : Config.fromJson(configMap);
+        : fixFormerDefaultHosts(Config.fromJson(configMap));
     final previousProfileId = ref.read(currentProfileIdProvider);
     final isOverride =
         ref.read(appSettingProvider).restoreStrategy ==

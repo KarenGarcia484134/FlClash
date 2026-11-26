@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:test/test.dart';
+import 'package:yaml/yaml.dart';
 
 import '../../tool/src/changelog/fork_release.dart';
 import '../../tool/src/changelog/models.dart';
@@ -58,11 +60,16 @@ void main() {
     final body = _render();
 
     for (final file in [
-      'FlClash-0.9.13-android-arm64-v8a.apk',
+      'FlClash-0.9.13-android-arm64.apk',
+      'FlClash-0.9.13-android-armv7.apk',
+      'FlClash-0.9.13-android-amd64.apk',
       'FlClash-0.9.13-windows-amd64-setup.exe',
+      'FlClash-0.9.13-windows-amd64-portable.zip',
       'FlClash-0.9.13-macos-arm64.dmg',
       'FlClash-0.9.13-macos-amd64.dmg',
       'FlClash-0.9.13-linux-amd64.AppImage',
+      'FlClash-0.9.13-linux-amd64.deb',
+      'FlClash-0.9.13-linux-amd64.rpm',
     ]) {
       expect(
         body,
@@ -73,6 +80,57 @@ void main() {
     }
     expect(body, contains('/compare/v0.9.12...v0.9.13'));
   });
+
+  test('prefers primary asset names over legacy and dev compat aliases', () {
+    final body = _render(
+      assets: {
+        'FlClash-0.9.13-android-arm64.apk',
+        'FlClash-0.9.13-android-arm64-v8a.apk',
+        'FlClash-dev-0.9.13-android-arm64.apk',
+        'FlClash-0.9.13-windows-amd64-setup.exe',
+        'FlClash-dev-0.9.13-windows-amd64-setup.exe',
+        'FlClash-0.9.13-windows-amd64-portable.zip',
+        'FlClash-0.9.13-macos-arm64.dmg',
+        'FlClash-dev-0.9.13-macos-arm64.dmg',
+      },
+    );
+
+    expect(body, contains('FlClash-0.9.13-android-arm64.apk'));
+    expect(body, contains('FlClash-0.9.13-windows-amd64-setup.exe'));
+    expect(body, contains('FlClash-0.9.13-windows-amd64-portable.zip'));
+    expect(body, contains('FlClash-0.9.13-macos-arm64.dmg'));
+    expect(body, isNot(contains('FlClash-dev-0.9.13-')));
+    expect(body, isNot(contains('FlClash-0.9.13-android-arm64-v8a.apk')));
+  });
+
+  test('falls back to dev asset names when only those were published', () {
+    final body = _render(
+      assets: {'FlClash-dev-0.9.13-android-arm64.apk'},
+      previousTag: null,
+    );
+
+    expect(body, contains('FlClash-dev-0.9.13-android-arm64.apk'));
+  });
+
+  test(
+    'release workflow publishes v0.9.34 dev self-update aliases and sums',
+    () {
+      final workflow =
+          loadYaml(File('.github/workflows/release.yaml').readAsStringSync())
+              as YamlMap;
+      final steps =
+          ((workflow['jobs'] as YamlMap)['release'] as YamlMap)['steps']
+              as YamlList;
+      final mergeStep = steps.cast<YamlMap>().firstWhere(
+        (step) => step['name'] == 'Merge and verify artifacts',
+      );
+      final run = mergeStep['run'] as String;
+
+      expect(run, contains(r'FlClash-dev-${name#FlClash-}'));
+      expect(run, contains(r'dist/FlClash-dev-${release_version}-SHA256SUMS'));
+      expect(run, contains('dist/SHA256SUMS'));
+    },
+  );
 
   test('only links published files when the asset list is known', () {
     final body = _render(
