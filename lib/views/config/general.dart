@@ -16,23 +16,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'general/overrides.dart';
 part 'general/port_form.dart';
 
-class LogLevelItem extends ConsumerWidget {
-  const LogLevelItem({super.key});
-
-  @override
-  Widget build(BuildContext context, ref) {
-    return ConfigOptionsItem<LogLevel>(
-      title: (l) => l.logLevel,
-      options: LogLevel.values,
-      textBuilder: (logLevel) => logLevel.name,
-      selector: patchClashConfigProvider.select((state) => state.logLevel),
-      onChanged: (ref, value) => ref
-          .read(patchClashConfigProvider.notifier)
-          .update((state) => state.copyWith(logLevel: value)),
-    );
-  }
-}
-
 class UaItem extends ConsumerWidget {
   const UaItem({super.key});
 
@@ -366,11 +349,6 @@ class GeneralView extends ConsumerWidget {
         select: (state) => state.checkCertificate,
         update: (state, value) => state.copyWith(checkCertificate: value),
       ),
-      _appSettingToggle(
-        title: (l) => l.autoCheckUpdate,
-        select: (state) => state.autoCheckUpdate,
-        update: (state, value) => state.copyWith(autoCheckUpdate: value),
-      ),
     ];
   }
 
@@ -392,7 +370,6 @@ class GeneralView extends ConsumerWidget {
 
   List<Widget> _logItems() {
     return [
-      const LogLevelItem(),
       _appSettingToggle(
         title: (l) => l.logcat,
         select: (state) => state.openLogs,
@@ -415,7 +392,7 @@ class GeneralView extends ConsumerWidget {
     return BaseScaffold(
       title: appLocalizations.general,
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(
+        padding: context.listInsets.page().copyWith(
           top: context.sectionsTopPadding,
           bottom: 16 + context.bottomInset,
         ),
@@ -426,7 +403,7 @@ class GeneralView extends ConsumerWidget {
             footer: appLocalizations.autoRunDesc,
           ),
           generateSection(
-            title: appLocalizations.requestsAndUpdates,
+            title: appLocalizations.requests,
             items: _requestItems(),
             footer: appLocalizations.checkCertificateDesc,
           ),
@@ -451,6 +428,7 @@ class GeneralView extends ConsumerWidget {
             title: appLocalizations.logsAndDiagnostics,
             items: _logItems(),
             footer: appLocalizations.logcatDesc,
+            last: true,
           ),
         ],
       ),

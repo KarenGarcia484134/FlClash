@@ -16,6 +16,16 @@ import '../helpers/test_profiles.dart';
 
 const _profileId = 1;
 
+class _TestProfileRules extends ProfileRules {
+  @override
+  Stream<List<Rule>> build(int profileId) => Stream.value(const []);
+}
+
+class _TestProfileDisabledRuleIds extends ProfileDisabledRuleIds {
+  @override
+  Stream<List<int>> build(int profileId) => Stream.value(const []);
+}
+
 CustomRouting _routing(int id, String label, {bool enabled = true}) {
   return CustomRouting(
     id: id,
@@ -62,6 +72,12 @@ void main() {
         profileCustomRoutingIdsProvider(
           _profileId,
         ).overrideWith(TestProfileCustomRoutingIds.new),
+        profileRulesProvider.overrideWith2((_) => _TestProfileRules()),
+        profileDisabledRuleIdsProvider.overrideWith2(
+          (_) => _TestProfileDisabledRuleIds(),
+        ),
+        scriptsProvider.overrideWith(TestScripts.new),
+        globalRulesProvider.overrideWith(TestGlobalRules.new),
       ],
     );
     addTearDown(container.dispose);

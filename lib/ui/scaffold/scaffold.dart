@@ -27,20 +27,12 @@ class ScaffoldKeyword {
   const ScaffoldKeyword({
     required this.key,
     required this.label,
-    this.onDeleted,
-    this.onPressed,
-    this.selected = false,
-    this.startsSection = false,
+    required this.onDeleted,
   });
 
   final Object key;
   final String label;
-  final VoidCallback? onDeleted;
-
-  final VoidCallback? onPressed;
-  final bool selected;
-
-  final bool startsSection;
+  final VoidCallback onDeleted;
 }
 
 typedef AppBarSearchStateBuilder =
@@ -81,6 +73,12 @@ class Scaffold extends StatefulWidget {
 
   /// Removable chips under the bar, kept by the page that filters by them.
   final ValueListenable<List<ScaffoldKeyword>>? keywords;
+
+  /// A line under the [keywords] strip, as a summary of what they select.
+  final Widget? keywordsCaption;
+
+  /// A bar of the page's own under the app bar, in place of [keywords].
+  final Widget? header;
   final bool? resizeToAvoidBottomInset;
   final VoidCallback? backAction;
 
@@ -107,6 +105,8 @@ class Scaffold extends StatefulWidget {
     this.menuItems = const [],
     this.confirmationAction,
     this.keywords,
+    this.keywordsCaption,
+    this.header,
     this.resizeToAvoidBottomInset,
     this.canSort = false,
   });
@@ -174,6 +174,12 @@ class ScaffoldState extends State<Scaffold>
     _searchOrigin.value = _measureSearchOrigin();
     _updateSearchState((state) => state?.withQuery(''));
     _moveSearch(open: true);
+    // The field's autofocus yields to any focus already in the page's scope.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _isSearch) {
+        _searchFocusNode.requestFocus();
+      }
+    });
   }
 
   Rect? _measureInBar(GlobalKey key) {
@@ -545,6 +551,32 @@ class ScaffoldState extends State<Scaffold>
     );
   }
 
+  Widget _buildKeywords(List<ScaffoldKeyword> keywords) {
+    final caption = widget.keywordsCaption;
+    final strip = _KeywordStrip(keywords: keywords);
+    if (caption == null) {
+      return strip;
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: 8,
+      children: [
+        strip,
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: context.listInsets.margin),
+          child: DefaultTextStyle.merge(
+            style: AppTextStyle.caption1
+                .of(context)
+                .copyWith(color: context.colorScheme.onSurfaceVariant),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            child: caption,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildTitle({required bool compact}) {
     return BarItemPresence.title(
       child:
@@ -760,6 +792,7 @@ class ScaffoldState extends State<Scaffold>
         ModalRoute.of(context)?.impliesAppBarDismissal == true;
     final compactTitle = isCompact || pushed;
     final titleEndInset = appBarActionInset(
+      context,
       isCompactBar(context, isMobileView),
     );
     // Under a sheet the bar drops its actions, so none reads as the sheet's.
@@ -861,18 +894,21 @@ class ScaffoldState extends State<Scaffold>
     _searchFillsBar = isCompactBar(context, ViewScope.isMobileOf(context));
     _searchDocked = form.hasDockedSearch;
     final keywords = widget.keywords;
+    final header = widget.header;
     final docked = form.dockedSearch;
     return PrismScaffold(
       bar: _buildAppBar(backAction, form),
       body: SortModeScope(sorting: _sorting, child: widget.body),
       headerListenable: keywords,
-      headerBuilder: keywords == null
+      headerBuilder: header != null
+          ? (_) => header
+          : keywords == null
           ? null
           : (_) => keywords.value.isEmpty
                 ? null
                 : Padding(
                     padding: const EdgeInsets.only(top: 4, bottom: 16),
-                    child: _KeywordStrip(keywords: keywords.value),
+                    child: _buildKeywords(keywords.value),
                   ),
       foot: docked == null ? null : _buildDockedSearch(docked),
       footHidden: _sorting,

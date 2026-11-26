@@ -41,7 +41,10 @@ class _IpQualitySheet extends ConsumerWidget {
           ),
         ),
       ],
-      body: _IpQualityDetail(ip: ip),
+      body: ListTextScope(
+        scale: ListTextScale.compact,
+        child: _IpQualityDetail(ip: ip),
+      ),
     );
   }
 }
@@ -68,9 +71,6 @@ class _HideIpItem extends ConsumerWidget {
 class _IpQualityDetail extends ConsumerWidget {
   const _IpQualityDetail({required this.ip});
 
-  /// The optical edge of the xl-radius cards, as in the memory sheet.
-  static const _tipInset = 5.0;
-
   final String ip;
 
   @override
@@ -82,18 +82,18 @@ class _IpQualityDetail extends ConsumerWidget {
     final failed = quality == null && !result.isLoading;
     return ListView(
       shrinkWrap: true,
-      padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(
+      padding: context.listInsets.page().copyWith(
         bottom: 20 + context.bottomInset,
         top: context.contentTopPadding,
       ),
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(_tipInset, 8, _tipInset, 0),
+          padding: EdgeInsets.symmetric(
+            horizontal: context.listInsets.leading,
+          ).copyWith(top: infoSectionContentGap),
           child: Text(
             localizations.detectionTip,
-            style: AppTextStyle.body
-                .of(context)
-                .copyWith(color: context.colorScheme.onSurfaceVariant),
+            style: context.listCaptionStyle,
           ),
         ),
         generateSection(

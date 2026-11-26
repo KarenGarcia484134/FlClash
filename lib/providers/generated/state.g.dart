@@ -436,7 +436,7 @@ final class SharedStateProvider
   }
 }
 
-String _$sharedStateHash() => r'bad20df240acfd1b384cad3655a58987a992a4ca';
+String _$sharedStateHash() => r'811d90580b23289e745bbeaad4e8409d055dc2ee';
 
 @ProviderFor(vpnRouteAddress)
 final vpnRouteAddressProvider = VpnRouteAddressProvider._();
@@ -3046,7 +3046,7 @@ final class NavigationItemsStateProvider
 }
 
 String _$navigationItemsStateHash() =>
-    r'3c633d4f3e5f2e80b7cfd166a46397f9a207bb1e';
+    r'b02ddbfa7219f7e8de27a1a92499a064d6b1174c';
 
 @ProviderFor(currentNavigationItemsState)
 final currentNavigationItemsStateProvider =
@@ -3848,7 +3848,7 @@ final class SetupStateProvider
   }
 }
 
-String _$setupStateHash() => r'9538bc178f0a91f8134155adacf5437c95fc0e9b';
+String _$setupStateHash() => r'1cccecdf595e6ed0354fa70c47e13eefdd01fddc';
 
 final class SetupStateFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<SetupState>, int?> {

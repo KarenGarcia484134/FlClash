@@ -91,10 +91,11 @@ class CommonAction extends _$CommonAction {
   }
 
   Future<bool> autoCheckUpdate() async {
-    if (!ref.read(appSettingProvider).autoCheckUpdate) return false;
+    final setting = ref.read(appSettingProvider);
+    if (!setting.autoCheckUpdate) return false;
     final Map<String, dynamic>? res;
     try {
-      res = await request.checkForUpdate();
+      res = await request.checkForUpdate(setting.updateChannel);
     } catch (error) {
       commonPrint.log(
         'checkForUpdate failed: ${compactError(error)}',
@@ -187,8 +188,8 @@ class CommonAction extends _$CommonAction {
     }
   }
 
-  void _openReleasePage([String? tag]) {
-    unawaited(launchUrl(Uri.parse(releasePageUrl(tag))));
+  void _openReleasePage(String tag) {
+    unawaited(openReleasePage(tag));
   }
 
   /// Downloads the latest release for this build even when it is not newer.
@@ -197,8 +198,9 @@ class CommonAction extends _$CommonAction {
     if (asset == null || ref.read(updateDownloadStateProvider) != null) {
       return;
     }
+    final channel = ref.read(appSettingProvider).updateChannel;
     final release = await globalState.loadingRun(
-      request.latestRelease,
+      () => request.newestRelease(channel),
       title: currentAppLocalizations.updateDownloadTest,
       tag: LoadingTag.checkUpdate,
     );
@@ -236,7 +238,12 @@ class CommonAction extends _$CommonAction {
           );
         },
       );
-      download.value = UpdateReady(tag, path);
+      final ready = switch (macosAppUpdate) {
+        final macos? => await macos.stage(path, directory),
+        null => path,
+      };
+      if (cancelToken.cancelError case final cancelled?) throw cancelled;
+      download.value = UpdateReady(tag, ready);
       dialogs.showBanner(
         currentAppLocalizations.updateReadyTip,
         level: BannerLevel.success,
@@ -248,13 +255,18 @@ class CommonAction extends _$CommonAction {
       if (error is DioException && CancelToken.isCancel(error)) {
         return;
       }
+      if (error is ReleaseFileMissingException) {
+        _openReleasePage(tag);
+        dialogs.showBanner(currentAppLocalizations.updateFileMissing);
+        return;
+      }
       commonPrint.log(
         'Update download failed: ${compactError(error)}',
         logLevel: LogLevel.warning,
       );
       await _showUpdateFailure(
+        tag,
         userFacingErrorMessage(error, currentAppLocalizations),
-        tag: tag,
       );
     } finally {
       if (identical(_updateCancelToken, cancelToken)) {
@@ -282,20 +294,14 @@ class CommonAction extends _$CommonAction {
       await clearUpdateDownloads();
       if (status != null && packageInstallFailed(status)) {
         await _showUpdateFailure(
+          download.tag,
           currentAppLocalizations.updateInstallFailed,
-          tag: download.tag,
         );
       }
       return;
     }
-    if (system.isMacOS) {
-      final result = await Process.run('open', [download.path]);
-      if (result.exitCode != 0) {
-        await _showUpdateFailure(
-          currentAppLocalizations.updateInstallFailed,
-          tag: download.tag,
-        );
-      }
+    if (macosAppUpdate case final macos?) {
+      await _installMacosUpdate(macos, download);
       return;
     }
     final started = windows?.runas(download.path, windowsUpdateArguments(pid));
@@ -303,13 +309,56 @@ class CommonAction extends _$CommonAction {
       await ref.read(systemActionProvider.notifier).handleExit();
     } else if (started == false) {
       await _showUpdateFailure(
+        download.tag,
         currentAppLocalizations.updateInstallFailed,
-        tag: download.tag,
       );
     }
   }
 
-  Future<void> _showUpdateFailure(String message, {String? tag}) async {
+  Future<void> _installMacosUpdate(
+    MacosAppUpdate macos,
+    UpdateReady download,
+  ) async {
+    try {
+      final started = await macos.install(
+        staged: download.path,
+        tag: download.tag,
+        marker: await macosInstallFailurePath,
+      );
+      if (!started) return;
+    } catch (error) {
+      commonPrint.log(
+        'Update install failed: ${compactError(error)}',
+        logLevel: LogLevel.warning,
+      );
+      await _showUpdateFailure(
+        download.tag,
+        currentAppLocalizations.updateInstallFailed,
+      );
+      return;
+    }
+    await ref.read(systemActionProvider.notifier).handleExit();
+  }
+
+  /// Clears what an earlier update left behind and reports a macOS install
+  /// that could not finish after the app quit.
+  Future<void> settleUpdateDownloads() async {
+    final failure = system.isMacOS
+        ? await takeMacosInstallFailure(await macosInstallFailurePath)
+        : null;
+    await clearUpdateDownloads();
+    if (failure == null) return;
+    commonPrint.log(
+      'Update install failed: ${failure.reason}',
+      logLevel: LogLevel.warning,
+    );
+    await _showUpdateFailure(
+      failure.tag,
+      currentAppLocalizations.updateInstallFailed,
+    );
+  }
+
+  Future<void> _showUpdateFailure(String tag, String message) async {
     final res = await dialogs.showMessage(
       title: currentAppLocalizations.updateFailed,
       message: TextSpan(text: message),

@@ -45,6 +45,50 @@ abstract final class AppGlyphs {
   ]);
 
   static const requests = Glyph([
+    GlyphBox(3.5, 3.5, 20.5, 20.5, 5),
+    GlyphPolyline([
+      GlyphVertex(9, 16.5),
+      GlyphVertex(9, 7.8),
+    ], role: GlyphRole.detail),
+    GlyphPolyline([
+      GlyphVertex(6.4, 10.4),
+      GlyphVertex(9, 7.8, 0.4),
+      GlyphVertex(11.6, 10.4),
+    ], role: GlyphRole.detail),
+    GlyphPolyline([
+      GlyphVertex(15, 7.5),
+      GlyphVertex(15, 16.2),
+    ], role: GlyphRole.detail),
+    GlyphPolyline([
+      GlyphVertex(12.4, 13.6),
+      GlyphVertex(15, 16.2, 0.4),
+      GlyphVertex(17.6, 13.6),
+    ], role: GlyphRole.detail),
+  ]);
+
+  static const exchanges = Glyph([
+    GlyphBox(3.5, 3.5, 20.5, 20.5, 5),
+    GlyphPolyline([
+      GlyphVertex(7.5, 9.2),
+      GlyphVertex(16.2, 9.2),
+    ], role: GlyphRole.detail),
+    GlyphPolyline([
+      GlyphVertex(13.6, 6.6),
+      GlyphVertex(16.2, 9.2, 0.4),
+      GlyphVertex(13.6, 11.8),
+    ], role: GlyphRole.detail),
+    GlyphPolyline([
+      GlyphVertex(16.5, 14.8),
+      GlyphVertex(7.8, 14.8),
+    ], role: GlyphRole.detail),
+    GlyphPolyline([
+      GlyphVertex(10.4, 12.2),
+      GlyphVertex(7.8, 14.8, 0.4),
+      GlyphVertex(10.4, 17.4),
+    ], role: GlyphRole.detail),
+  ]);
+
+  static const clock = Glyph([
     GlyphCircle(12, 12, 8.8),
     GlyphPolyline([
       GlyphVertex(12, 7.2),
@@ -52,8 +96,6 @@ abstract final class AppGlyphs {
       GlyphVertex(15.2, 14),
     ], role: GlyphRole.detail),
   ]);
-
-  static const clock = requests;
 
   static const connections = Glyph([
     GlyphCircle(12, 5.2, 2.4),
@@ -272,6 +314,24 @@ abstract final class AppGlyphs {
       GlyphVertex(13.7, 10.5),
       GlyphVertex(9.9, 6.7, 0.4),
       GlyphVertex(13.7, 2.9),
+    ], role: GlyphRole.line),
+  ]);
+
+  static const autoCheckUpdate = Glyph([
+    GlyphArc(12, 12, 8.2, 0, math.pi * 1.75, role: GlyphRole.line),
+    GlyphPolyline([
+      GlyphVertex(17.8, 6.2),
+      GlyphVertex(20.2, 8.4),
+    ], role: GlyphRole.line),
+    GlyphPolyline([
+      GlyphVertex(20.2, 3.8),
+      GlyphVertex(20.2, 8.4, 0.4),
+      GlyphVertex(15.6, 8.4),
+    ], role: GlyphRole.line),
+    GlyphPolyline([
+      GlyphVertex(12, 8),
+      GlyphVertex(12, 12, 0.6),
+      GlyphVertex(14.6, 13.6),
     ], role: GlyphRole.line),
   ]);
 
@@ -995,12 +1055,13 @@ abstract final class AppGlyphs {
 
   static const bolt = Glyph([
     GlyphPolyline([
-      GlyphVertex(14.5, 2.8, 1),
-      GlyphVertex(5, 13.7, 1),
-      GlyphVertex(11.2, 13.7, 0.6),
-      GlyphVertex(9.5, 21.2, 1),
-      GlyphVertex(19, 10.3, 1),
-      GlyphVertex(12.8, 10.3, 0.6),
+      GlyphVertex(8.4, 2.8, 2),
+      GlyphVertex(16.8, 2.8, 2),
+      GlyphVertex(13.8, 9.4, 1.2),
+      GlyphVertex(19.2, 9.4, 2.2),
+      GlyphVertex(9.4, 21.2, 4.2),
+      GlyphVertex(11, 13.6, 1.2),
+      GlyphVertex(5.2, 13.6, 2.2),
     ], closed: true),
   ]);
 
@@ -1573,6 +1634,17 @@ abstract final class AppGlyphs {
       GlyphVertex(19.5, 4, 0.5),
       GlyphVertex(19.5, 9.5),
     ], role: GlyphRole.line),
+  ]);
+
+  static const updateChannel = Glyph([
+    GlyphCircle(7, 5.6, 2.2),
+    GlyphCircle(7, 18.4, 2.2),
+    GlyphCircle(17, 7.4, 2.2),
+    GlyphPolyline([
+      GlyphVertex(7, 7.8),
+      GlyphVertex(7, 16.2),
+    ], role: GlyphRole.line),
+    GlyphPath('M17 9.6C17 13.4 7 12 7 16.2', role: GlyphRole.line),
   ]);
 
   static const speed = Glyph([

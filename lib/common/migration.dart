@@ -106,14 +106,16 @@ class Migration {
   /// This fork shipped 3 as [findProcessesOnWindows] while upstream shipped 3
   /// and 4 as below. 5 reconciles them: a stored 3 is taken to be this fork's,
   /// which has seen no system color move, and any other has not had
-  /// [findProcessesOnWindows] yet.
-  static const upgradeVersion = 5;
+  /// [findProcessesOnWindows] yet. 6 runs upstream's former-default host fix
+  /// so installs already at this fork's 5 receive it once.
+  static const upgradeVersion = 6;
 
   static const Map<int, Config Function(Config config)> _upgrades = {
     1: _resetThemeColors,
     2: _keepGlassLook,
     3: _followSystemColors,
     4: _turnOffSidebarBlur,
+    6: _fixFormerDefaultHosts,
   };
 
   Future<Config> run() async {
@@ -166,7 +168,7 @@ class Migration {
     var upgraded = config;
     if (installed) {
       for (var version = from + 1; version <= upgradeVersion; version++) {
-        upgraded = version == upgradeVersion
+        upgraded = version == 5
             ? _reconcileForkUpgrades(upgraded, from: from)
             : _upgrades[version]!(upgraded);
       }
@@ -296,6 +298,50 @@ Config _followSystemColors(Config config) {
 // Releases stored sidebar blur on while its switch stayed hidden.
 Config _turnOffSidebarBlur(Config config) =>
     config.copyWith(themeProps: config.themeProps.copyWith(sidebarBlur: false));
+
+// Wrong former defaults, which stored lists keep as the user's own entries.
+final _formerBypassDefaults = {
+  '172.2*': [for (var i = 0; i < 10; i++) '172.2$i.*'],
+};
+const _formerFakeIpFilterDefaults = {
+  'dns.msftnsci.com': ['dns.msftncsi.com'],
+  'www.msftnsci.com': ['www.msftncsi.com'],
+};
+
+Config _fixFormerDefaultHosts(Config config) {
+  final dns = config.patchClashConfig.dns;
+  return config.copyWith(
+    networkProps: config.networkProps.copyWith(
+      bypassDomain: _replacing(
+        config.networkProps.bypassDomain,
+        _formerBypassDefaults,
+      ),
+    ),
+    patchClashConfig: config.patchClashConfig.copyWith(
+      dns: dns.copyWith(
+        fakeIpFilter: _replacing(dns.fakeIpFilter, _formerFakeIpFilterDefaults),
+      ),
+    ),
+  );
+}
+
+List<String> _replacing(List<String> hosts, Map<String, List<String>> former) {
+  if (!hosts.any(former.containsKey)) {
+    return hosts;
+  }
+  final added = <String>{};
+  return [
+    for (final host in hosts)
+      ...switch (former[host]) {
+        null => [host],
+        final replacements => [
+          for (final replacement in replacements)
+            if (!hosts.contains(replacement) && added.add(replacement))
+              replacement,
+        ],
+      },
+  ];
+}
 
 bool _isV0(Map<String, Object?>? configMap) =>
     configMap?['proxiesStyle'] != null;

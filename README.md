@@ -79,6 +79,12 @@ Get builds from this repository's [Releases](https://github.com/KarenGarcia48413
 - APKs carry v1 / v2 / v3 signatures
 - On Android the Tailscale node runs inside FlClash; Android allows one VPN at a time, so it cannot run alongside the official Tailscale app's VPN
 
+**macOS first launch**
+
+The app is not notarized, so macOS refuses to open it the first time. After dragging it to Applications, run
+`xattr -dr com.apple.quarantine /Applications/FlClash*.app`, or choose Open Anyway under System Settings > Privacy &
+Security. Later updates install from inside the app.
+
 ## Build & release
 
 Releases are built by [`.github/workflows/release.yaml`](.github/workflows/release.yaml) and published to this repository's GitHub Releases:
@@ -122,7 +128,7 @@ adb shell am start -a com.follow.clash.action.TOGGLE
 
 ## Build from source
 
-You need [Flutter](https://docs.flutter.dev/get-started/install) 3.50 (release builds use 3.50.0),
+You need [Flutter](https://docs.flutter.dev/get-started/install) 3.50 (release builds use 3.50.1),
 [Go](https://go.dev/dl/) 1.27 and [Rust](https://rustup.rs/) installed through rustup. Each platform builds on its own
 host, except Android, which builds anywhere.
 

@@ -16,7 +16,7 @@ env:
   IS_STABLE: ${{ !contains(github.ref, '-') }}
   # See CI Caches in .agents/commands.md.
   BRANCH_CACHE: ${{ !startsWith(github.ref, 'refs/tags/') }}
-  FLUTTER_VERSION: '3.50.0'
+  FLUTTER_VERSION: '3.50.1'
   GO_VERSION: '1.27.1'
   NDK_VERSION: r28c
 
@@ -479,6 +479,11 @@ jobs:
           flutter --version
           flutter pub get
 
+      # See .agents/flutter-upgrade.md before bumping FLUTTER_VERSION.
+      - name: Disable Impeller on Intel macOS
+        if: matrix.platform == 'macos' && matrix.arch == 'amd64'
+        run: plutil -replace FLTEnableImpeller -bool NO macos/Runner/Info.plist
+
       # The core embeds this bundle and FlClashHttpOverrides.trustCoreRoots loads it for Dart.
       # Pinned by hash, so a new bundle from https://curl.se/docs/caextract.html is a reviewed bump.
       - name: Fetch CA certificates
@@ -511,14 +516,6 @@ jobs:
       contents: write
     needs: [ version, build, dart, plugins, go, android, rust, windows-helper-test ]
     runs-on: ubuntu-latest
-    services:
-      telegram-bot-api:
-        image: aiogram/telegram-bot-api:latest
-        env:
-          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
-          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
-        ports:
-          - 8081:8081
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -568,49 +565,23 @@ jobs:
             dart run tool/changelog.dart build --unreleased
           fi
           dart run tool/changelog.dart render release "${target[@]}" --out release.md
-          dart run tool/changelog.dart render telegram "${target[@]}" --out telegram.md
-
-      - name: Push to telegram
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TAG: ${{ github.ref_name }}
-          RUN_ID: ${{ github.run_id }}
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests
-          python release_telegram.py
 
       - name: Patch release.md
         run: |
-          line=$(jq -r '.artifacts[0].line' dist/manifest.json)
           version=$(jq -r '.artifacts[0].version' dist/manifest.json)
-          sed -e "s|TAG|${{ github.ref_name }}|g" -e "s|LINE|$line|g" -e "s|VERSION|$version|g" \
+          sed -e "s|TAG|${{ github.ref_name }}|g" -e "s|VERSION|$version|g" \
             ./.github/release_template.md >> release.md
 
-      # Dev-line apps released before these names update from the old names; keep until the user says stop.
-      - name: Copy the Windows installers and APKs under their old names
-        if: ${{ env.IS_STABLE == 'true' }}
-        run: |
-          cd ./dist
-          jq -r '.artifacts[]
-            | select(.line == "dev")
-            | select((.os == "windows" and .form == "setup") or .os == "android")
-            | [.name, "FlClash-\(.version)-" + (
-                if .os == "windows" then "windows-\(.arch)-setup.exe"
-                else "android-" + {arm64: "arm64-v8a", armv7: "armeabi-v7a", amd64: "x86_64"}[.arch] + ".apk"
-                end)]
-            | @tsv' manifest.json |
-            while IFS=$'\t' read -r name legacy; do
-              cp "$name" "$legacy"
-              sha256sum "./$legacy" >> SHA256SUMS
-            done
+      - name: Check every file the release is looked up by
+        run: dart run tool/package.dart check dist
 
       - name: Release
-        if: ${{ env.IS_STABLE == 'true' }}
         uses: softprops/action-gh-release@v2
         with:
           files: ./dist/*
           body_path: './release.md'
+          prerelease: ${{ env.IS_STABLE != 'true' }}
+          make_latest: ${{ env.IS_STABLE == 'true' }}
 
       - name: Create Homebrew Cask Source Dir
         if: ${{ env.IS_STABLE == 'true' }}
@@ -618,14 +589,12 @@ jobs:
           dmg() {
             jq -er --arg arch "$1" '.artifacts[] | select(.os == "macos" and .arch == $arch)' dist/manifest.json
           }
-          line=$(dmg arm64 | jq -r .line)
           version=$(dmg arm64 | jq -r .version)
           arm_sha=$(dmg arm64 | jq -r .sha256)
           amd_sha=$(dmg amd64 | jq -r .sha256)
 
           mkdir -p ./brew/Casks
           sed \
-            -e "s|LINE|$line|g" \
             -e "s|VERSION|$version|g" \
             -e "s|ARM_SHA256|$arm_sha|g" \
             -e "s|AMD_SHA256|$amd_sha|g" \
@@ -667,3 +636,20 @@ jobs:
           target-branch: main
           commit-message: Update from ${{ github.ref_name }}
           target-directory: /tmp/
+
+      # After the packages, so a failed post holds none of them back.
+      - name: Post to Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: dart tool/publish.dart telegram "$TAG"
+
+      # Runs last, so a failed cleanup holds back no announcement or package.
+      - name: Delete superseded prereleases
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh api --paginate "repos/$GITHUB_REPOSITORY/releases?per_page=100" | jq -s add > releases.json
+          dart tool/publish.dart prune "$TAG" --releases releases.json

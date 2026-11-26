@@ -79,6 +79,11 @@
 - 安装包同时带有 v1 / v2 / v3 签名
 - 在 Android 上，Tailscale 节点运行在 FlClash 内部；Android 同一时间只允许一个 VPN，因此无法与官方 Tailscale 应用同时开启 VPN
 
+**macOS 首次打开**
+
+应用未经 Apple 公证，macOS 第一次会拒绝打开。拖进“应用程序”后运行
+`xattr -dr com.apple.quarantine /Applications/FlClash*.app`，或在“系统设置 > 隐私与安全性”里点“仍要打开”。之后的更新在应用内直接安装。
+
 ## 构建与发布
 
 发布由 [`.github/workflows/release.yaml`](.github/workflows/release.yaml) 完成，产物发布到本仓库的 GitHub Releases：
@@ -119,7 +124,7 @@ adb shell am start -a com.follow.clash.action.TOGGLE
 
 ## 从源码构建
 
-需要 [Flutter](https://docs.flutter.dev/get-started/install) 3.50（正式版构建使用 3.50.0）、[Go](https://go.dev/dl/) 1.27，
+需要 [Flutter](https://docs.flutter.dev/get-started/install) 3.50（正式版构建使用 3.50.1）、[Go](https://go.dev/dl/) 1.27，
 以及通过 rustup 安装的 [Rust](https://rustup.rs/)。桌面端需要在对应系统上构建，Android 在任意系统上都能构建。
 
 ```bash

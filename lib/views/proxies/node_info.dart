@@ -119,6 +119,7 @@ class _NodeInfoViewState extends ConsumerState<NodeInfoView> {
                   DetailRow.text(
                     title: appLocalizations.name,
                     value: proxy.name,
+                    copyable: true,
                   ),
                   DetailRow.text(
                     title: appLocalizations.proxyType,
@@ -186,6 +187,7 @@ class _NodeInfoViewState extends ConsumerState<NodeInfoView> {
                               key: ValueKey('node-field-${field.path}'),
                               title: field.path,
                               value: field.value,
+                              copyable: true,
                             ),
                   ],
                 ),
@@ -194,11 +196,13 @@ class _NodeInfoViewState extends ConsumerState<NodeInfoView> {
                     DetailRow(
                       key: const ValueKey('node-copy-yaml'),
                       title: appLocalizations.copyAsYaml,
+                      value: const GlyphIcon(AppGlyphs.copy),
                       copyText: resolved.yaml,
                     ),
                     DetailRow(
                       key: const ValueKey('node-copy-json'),
                       title: appLocalizations.copyAsJson,
+                      value: const GlyphIcon(AppGlyphs.copy),
                       copyText: resolved.json,
                     ),
                   ],
