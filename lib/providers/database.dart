@@ -1358,6 +1358,25 @@ class ProfileCustomRoutingIds extends _$ProfileCustomRoutingIds
     return !intListEquality.equals(previous.value, next.value);
   }
 
+  Future<void> ensureSelected(int routingId) async {
+    final link = ref.keepAlive();
+    try {
+      final current = state.value ?? await future;
+      final next = current.contains(routingId)
+          ? current
+          : [...current, routingId];
+      await optimisticAsync(
+        next,
+        _reapplyAfter(
+          ref,
+          () => database.customRoutingsDao.ensureSelected(profileId, routingId),
+        ),
+      );
+    } finally {
+      link.close();
+    }
+  }
+
   void toggle(int routingId) {
     if (value.contains(routingId)) {
       optimistic(

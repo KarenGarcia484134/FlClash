@@ -229,13 +229,18 @@ class _CustomRoutingsViewState extends ConsumerState<CustomRoutingsView> {
         _CustomRoutingFilter.applied => l.routingFilterApplied,
       };
 
-  void _setFilter(_CustomRoutingFilter filter, AppLocalizations l) {
+  void _setFilter(
+    _CustomRoutingFilter filter,
+    AppLocalizations l, {
+    int? expectedProfileId,
+  }) {
     if (!mounted) {
       return;
     }
     if (filter == _CustomRoutingFilter.applied &&
-        ref.read(currentProfileIdProvider) == null) {
-      filter = _CustomRoutingFilter.all;
+        (expectedProfileId == null ||
+            ref.read(currentProfileIdProvider) != expectedProfileId)) {
+      return;
     }
     if (_filter == filter) {
       return;
@@ -272,7 +277,13 @@ class _CustomRoutingsViewState extends ConsumerState<CustomRoutingsView> {
           label: _filterLabel(l, option),
           checked: activeFilter == option,
           section: index == 0 ? PopupMenuSection(title: l.status) : null,
-          onPressed: () => _setFilter(option, l),
+          onPressed: () => _setFilter(
+            option,
+            l,
+            expectedProfileId: option == _CustomRoutingFilter.applied
+                ? profileId
+                : null,
+          ),
         ),
     ];
   }

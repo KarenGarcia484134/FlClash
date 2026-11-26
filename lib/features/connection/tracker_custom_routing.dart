@@ -105,7 +105,17 @@ typedef CustomRoutingMergeResult = ({
   CustomRouting routing,
   int addedCount,
   int duplicateCount,
+  bool ambiguousAnd,
 });
+
+const _validatedRoutingActions = {
+  RuleAction.DOMAIN,
+  RuleAction.DOMAIN_SUFFIX,
+  RuleAction.IP_CIDR,
+  RuleAction.IP_CIDR6,
+  RuleAction.DST_PORT,
+  RuleAction.PROCESS_NAME,
+};
 
 final _controlCharsPattern = RegExp(r'[\x00-\x1f\x7f]');
 final _domainLabelPattern = RegExp(
@@ -166,6 +176,33 @@ String? validateTrackerRoutingValue(
     default:
       return null;
   }
+}
+
+String? validateCustomRoutingForSave(
+  CustomRouting routing, {
+  AppLocalizations? l10n,
+}) {
+  final localizations = l10n ?? currentAppLocalizations;
+  final compiled = routing.toRule();
+  if (compiled == null || compiled.trim().isEmpty) {
+    return localizations.ruleTextInvalid;
+  }
+  for (final condition in routing.conditions) {
+    if (!_validatedRoutingActions.contains(condition.ruleAction)) {
+      continue;
+    }
+    for (final value in condition.cleanValues) {
+      final error = validateTrackerRoutingValue(
+        condition.ruleAction,
+        value,
+        l10n: localizations,
+      );
+      if (error != null) {
+        return error;
+      }
+    }
+  }
+  return null;
 }
 
 InternetAddress? _parseIpLiteral(String raw) {
@@ -373,6 +410,7 @@ CustomRoutingMergeResult mergeCandidatesIntoRouting(
   final conditions = List<CustomRoutingCondition>.from(routing.conditions);
   var addedCount = 0;
   var duplicateCount = 0;
+  var ambiguousAnd = false;
 
   for (final candidate in candidates) {
     final value = candidate.value.trim();
@@ -396,9 +434,11 @@ CustomRoutingMergeResult mergeCandidatesIntoRouting(
             (item.noResolve && item.ruleAction.hasParams) == noResolve)
           index,
     ];
-    if (matchingIndices.isEmpty ||
-        (routing.logic == CustomRoutingLogic.and &&
-            matchingIndices.length > 1)) {
+    if (routing.logic == CustomRoutingLogic.and && matchingIndices.length > 1) {
+      ambiguousAnd = true;
+      continue;
+    }
+    if (matchingIndices.isEmpty) {
       conditions.add(
         CustomRoutingCondition(
           ruleAction: candidate.ruleAction,
@@ -418,11 +458,12 @@ CustomRoutingMergeResult mergeCandidatesIntoRouting(
   }
 
   return (
-    routing: addedCount == 0
+    routing: addedCount == 0 || ambiguousAnd
         ? routing
         : routing.copyWith(conditions: conditions),
-    addedCount: addedCount,
+    addedCount: ambiguousAnd ? 0 : addedCount,
     duplicateCount: duplicateCount,
+    ambiguousAnd: ambiguousAnd,
   );
 }
 
@@ -750,12 +791,12 @@ class _QuickCustomRoutingSheetState
       conditions: conditions,
       target: target,
     );
-    final compiled = routing.toRule();
-    if (compiled == null || compiled.trim().isEmpty) {
-      dialogs.showBanner(
-        appLocalizations.ruleTextInvalid,
-        level: BannerLevel.warning,
-      );
+    final validationError = validateCustomRoutingForSave(
+      routing,
+      l10n: appLocalizations,
+    );
+    if (validationError != null) {
+      dialogs.showBanner(validationError, level: BannerLevel.warning);
       return;
     }
     final notifier = ref.read(customRoutingsProvider.notifier);
@@ -773,7 +814,17 @@ class _QuickCustomRoutingSheetState
         appLocalizations.quickRoutingCreated(routing.label),
         level: BannerLevel.success,
       );
-      Navigator.of(context).pop(routing);
+      if (mounted && (ModalRoute.of(context)?.isCurrent ?? false)) {
+        Navigator.of(context).pop(routing);
+      }
+    } catch (error, stackTrace) {
+      commonPrint.log(
+        'Save quick custom routing failed: ${compactError(error)}, $stackTrace',
+        logLevel: LogLevel.warning,
+      );
+      if (mounted) {
+        dialogs.showBanner(compactError(error), level: BannerLevel.error);
+      }
     } finally {
       if (mounted) {
         setState(() => _saving = false);
@@ -794,6 +845,13 @@ class _QuickCustomRoutingSheetState
       return;
     }
     final merged = mergeCandidatesIntoRouting(targetRouting, selected);
+    if (merged.ambiguousAnd) {
+      dialogs.showBanner(
+        appLocalizations.quickRoutingAndLogicNote,
+        level: BannerLevel.warning,
+      );
+      return;
+    }
     final selectedIds = applyProfileId == null
         ? const <int>[]
         : ref.read(profileCustomRoutingIdsProvider(applyProfileId)).value ??
@@ -808,22 +866,29 @@ class _QuickCustomRoutingSheetState
       return;
     }
     final updated = merged.routing;
-    final compiled = updated.toRule();
-    if (compiled == null || compiled.trim().isEmpty) {
-      dialogs.showBanner(
-        appLocalizations.ruleTextInvalid,
-        level: BannerLevel.warning,
-      );
+    final validationError = validateCustomRoutingForSave(
+      updated,
+      l10n: appLocalizations,
+    );
+    if (validationError != null) {
+      dialogs.showBanner(validationError, level: BannerLevel.warning);
       return;
     }
-    final notifier = ref.read(customRoutingsProvider.notifier);
     setState(() => _saving = true);
     try {
-      await notifier.saveWithSelection(
-        updated,
-        applyProfileId: applyProfileId,
-        append: false,
-      );
+      if (merged.addedCount == 0 && applyProfileId != null) {
+        await ref
+            .read(profileCustomRoutingIdsProvider(applyProfileId).notifier)
+            .ensureSelected(targetRouting.id);
+      } else {
+        await ref
+            .read(customRoutingsProvider.notifier)
+            .saveWithSelection(
+              updated,
+              applyProfileId: applyProfileId,
+              append: false,
+            );
+      }
       if (!mounted) {
         return;
       }
@@ -831,7 +896,17 @@ class _QuickCustomRoutingSheetState
         appLocalizations.quickRoutingAppended(updated.label),
         level: BannerLevel.success,
       );
-      Navigator.of(context).pop(updated);
+      if (mounted && (ModalRoute.of(context)?.isCurrent ?? false)) {
+        Navigator.of(context).pop(updated);
+      }
+    } catch (error, stackTrace) {
+      commonPrint.log(
+        'Append quick custom routing failed: ${compactError(error)}, $stackTrace',
+        logLevel: LogLevel.warning,
+      );
+      if (mounted) {
+        dialogs.showBanner(compactError(error), level: BannerLevel.error);
+      }
     } finally {
       if (mounted) {
         setState(() => _saving = false);

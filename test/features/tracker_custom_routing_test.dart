@@ -28,6 +28,7 @@ typedef _SaveSelectionCall = ({
 class _FakeCustomRoutings extends TestCustomRoutings {
   final List<_SaveSelectionCall> saveCalls = [];
   Completer<void>? pendingSave;
+  Exception? saveError;
 
   _FakeCustomRoutings([super.initial]);
 
@@ -47,11 +48,41 @@ class _FakeCustomRoutings extends TestCustomRoutings {
       if (pendingSave != null) {
         await pendingSave!.future;
       }
+      if (saveError case final error?) {
+        throw error;
+      }
       await super.saveWithSelection(
         routing,
         applyProfileId: applyProfileId,
         append: append,
       );
+    } finally {
+      link.close();
+    }
+  }
+}
+
+class _FakeProfileCustomRoutingIds extends TestProfileCustomRoutingIds {
+  final List<int> ensureSelectedCalls = [];
+  Completer<void>? pendingEnsureSelected;
+  Exception? ensureSelectedError;
+
+  _FakeProfileCustomRoutingIds([super.initial]);
+
+  @override
+  Future<void> ensureSelected(int routingId) async {
+    final link = ref.keepAlive();
+    try {
+      ensureSelectedCalls.add(routingId);
+      if (pendingEnsureSelected != null) {
+        await pendingEnsureSelected!.future;
+      }
+      if (ensureSelectedError case final error?) {
+        throw error;
+      }
+      if (!value.contains(routingId)) {
+        state = AsyncData([...value, routingId]);
+      }
     } finally {
       link.close();
     }
@@ -491,7 +522,7 @@ void main() {
     );
 
     test(
-      'detects duplicates across all groups and avoids widening ambiguous AND groups',
+      'detects duplicates across all groups and rejects ambiguous multi-group AND merges',
       () {
         const multiAnd = CustomRouting(
           id: 2,
@@ -518,6 +549,7 @@ void main() {
         ]);
         expect(dupInSecond.addedCount, 0);
         expect(dupInSecond.duplicateCount, 1);
+        expect(dupInSecond.ambiguousAnd, isFalse);
         expect(dupInSecond.routing, multiAnd);
 
         final newValue = mergeCandidatesIntoRouting(multiAnd, const [
@@ -526,12 +558,24 @@ void main() {
             value: 'd.test',
           ),
         ]);
-        expect(newValue.addedCount, 1);
+        expect(newValue.ambiguousAnd, isTrue);
+        expect(newValue.addedCount, 0);
         expect(newValue.duplicateCount, 0);
-        expect(newValue.routing.conditions, hasLength(3));
-        expect(newValue.routing.conditions[0].values, ['a.test', 'c.test']);
-        expect(newValue.routing.conditions[1].values, ['b.test', 'c.test']);
-        expect(newValue.routing.conditions[2].values, ['d.test']);
+        expect(newValue.routing, multiAnd);
+
+        final mixedBatch = mergeCandidatesIntoRouting(multiAnd, const [
+          TrackerRoutingCandidate(
+            ruleAction: RuleAction.DST_PORT,
+            value: '443',
+          ),
+          TrackerRoutingCandidate(
+            ruleAction: RuleAction.DOMAIN_SUFFIX,
+            value: 'd.test',
+          ),
+        ]);
+        expect(mixedBatch.ambiguousAnd, isTrue);
+        expect(mixedBatch.addedCount, 0);
+        expect(mixedBatch.routing, multiAnd);
 
         final multiOr = multiAnd.copyWith(logic: CustomRoutingLogic.or);
         final dupInOrSecond = mergeCandidatesIntoRouting(multiOr, const [
@@ -542,6 +586,7 @@ void main() {
         ]);
         expect(dupInOrSecond.addedCount, 0);
         expect(dupInOrSecond.duplicateCount, 1);
+        expect(dupInOrSecond.ambiguousAnd, isFalse);
 
         final addedInOr = mergeCandidatesIntoRouting(multiOr, const [
           TrackerRoutingCandidate(
@@ -550,12 +595,89 @@ void main() {
           ),
         ]);
         expect(addedInOr.addedCount, 1);
+        expect(addedInOr.ambiguousAnd, isFalse);
         expect(addedInOr.routing.conditions, hasLength(2));
         expect(addedInOr.routing.conditions[0].values, [
           'a.test',
           'c.test',
           'd.test',
         ]);
+      },
+    );
+
+    test(
+      'validateCustomRoutingForSave checks compiled rule and all supported conditions',
+      () {
+        const validWithRegex = CustomRouting(
+          id: 10,
+          label: 'RegexAndDomain',
+          target: 'DIRECT',
+          conditions: [
+            CustomRoutingCondition(
+              ruleAction: RuleAction.DOMAIN_REGEX,
+              values: [r'^(api|cdn)\.example\.com$'],
+            ),
+            CustomRoutingCondition(
+              ruleAction: RuleAction.IP_CIDR,
+              values: ['192.0.2.1/32'],
+              noResolve: true,
+            ),
+          ],
+        );
+        expect(validateCustomRoutingForSave(validWithRegex), isNull);
+
+        const corruptCidr = CustomRouting(
+          id: 11,
+          label: 'CorruptCidr',
+          target: 'DIRECT',
+          conditions: [
+            CustomRoutingCondition(
+              ruleAction: RuleAction.DOMAIN,
+              values: ['api.example.com'],
+            ),
+            CustomRoutingCondition(
+              ruleAction: RuleAction.IP_CIDR,
+              values: ['192.0.2.1/33'],
+              noResolve: true,
+            ),
+          ],
+        );
+        expect(
+          validateCustomRoutingForSave(corruptCidr),
+          currentAppLocalizations.invalidCidrContent,
+        );
+
+        const corruptPort = CustomRouting(
+          id: 12,
+          label: 'CorruptPort',
+          target: 'DIRECT',
+          conditions: [
+            CustomRoutingCondition(
+              ruleAction: RuleAction.DST_PORT,
+              values: ['70000'],
+            ),
+          ],
+        );
+        expect(
+          validateCustomRoutingForSave(corruptPort),
+          currentAppLocalizations.listenerPortInvalid,
+        );
+
+        const missingTarget = CustomRouting(
+          id: 13,
+          label: 'NoTarget',
+          target: '',
+          conditions: [
+            CustomRoutingCondition(
+              ruleAction: RuleAction.DOMAIN,
+              values: ['api.example.com'],
+            ),
+          ],
+        );
+        expect(
+          validateCustomRoutingForSave(missingTarget),
+          currentAppLocalizations.ruleTextInvalid,
+        );
       },
     );
 
@@ -664,10 +786,37 @@ void main() {
       );
       expect(await testDb.customRoutingsDao.query().get(), isEmpty);
     });
+
+    test(
+      'ensureSelected links idempotently without modifying the routing row',
+      () async {
+        const routing = CustomRouting(
+          id: 52,
+          label: 'LinkOnly',
+          target: 'DIRECT',
+          order: 'a',
+          conditions: [
+            CustomRoutingCondition(
+              ruleAction: RuleAction.DOMAIN,
+              values: ['link.example.com'],
+            ),
+          ],
+        );
+        await testDb.customRoutingsDao.put(routing);
+        await testDb.customRoutingsDao.ensureSelected(2, routing.id);
+        await testDb.customRoutingsDao.ensureSelected(1, routing.id);
+        await testDb.customRoutingsDao.ensureSelected(1, routing.id);
+
+        expect(await testDb.customRoutingsDao.query().get(), [routing]);
+        expect(await testDb.customRoutingsDao.querySelectedIds(1).get(), [52]);
+        expect(await testDb.customRoutingsDao.querySelectedIds(2).get(), [52]);
+      },
+    );
   });
 
   group('QuickCustomRouting widgets & flows', () {
     late _FakeCustomRoutings fakeRoutings;
+    late _FakeProfileCustomRoutingIds fakeProfileIds;
     late ProviderContainer container;
 
     void createContainer({
@@ -677,6 +826,7 @@ void main() {
       Profile? profile,
     }) {
       fakeRoutings = _FakeCustomRoutings(routings);
+      fakeProfileIds = _FakeProfileCustomRoutingIds(selectedIds);
       final resolvedProfile =
           profile ?? Profile.normal(label: 'main').copyWith(id: _profileId);
       container = ProviderContainer(
@@ -696,10 +846,11 @@ void main() {
           customRoutingsProvider.overrideWith(() => fakeRoutings),
           profileCustomRoutingIdsProvider(
             _profileId,
-          ).overrideWith(() => TestProfileCustomRoutingIds(selectedIds)),
+          ).overrideWith(() => fakeProfileIds),
         ],
       );
       addTearDown(container.dispose);
+      container.listen(customRoutingsProvider, (_, _) {});
       if (profileId != null) {
         container.listen(profileCustomRoutingIdsProvider(profileId), (_, _) {});
       }
@@ -1102,7 +1253,7 @@ void main() {
     );
 
     testWidgets(
-      'links existing duplicate routing when not yet applied to current profile',
+      'links existing duplicate routing without rewriting routing row',
       (tester) async {
         const existing = CustomRouting(
           id: 102,
@@ -1134,12 +1285,333 @@ void main() {
         await tester.tap(find.byTooltip(currentAppLocalizations.save));
         await tester.pumpAndSettle();
 
-        expect(fakeRoutings.saveCalls, hasLength(1));
-        expect(fakeRoutings.saveCalls.single.routing, existing);
-        expect(fakeRoutings.saveCalls.single.applyProfileId, _profileId);
+        expect(fakeRoutings.saveCalls, isEmpty);
+        expect(fakeProfileIds.ensureSelectedCalls, const [102]);
         expect(
           container.read(profileCustomRoutingIdsProvider(_profileId)).value,
           contains(102),
+        );
+      },
+    );
+
+    testWidgets(
+      'shows error banner and stays open for retry when create, append, or link fails',
+      (tester) async {
+        const existing = CustomRouting(
+          id: 105,
+          label: 'Existing',
+          target: 'DIRECT',
+          conditions: [
+            CustomRoutingCondition(
+              ruleAction: RuleAction.DOMAIN,
+              values: ['other.example.com'],
+            ),
+          ],
+        );
+        const alreadyHas = CustomRouting(
+          id: 106,
+          label: 'LinkOnlyTarget',
+          target: 'DIRECT',
+          conditions: [
+            CustomRoutingCondition(
+              ruleAction: RuleAction.DOMAIN,
+              values: ['api.example.com'],
+            ),
+          ],
+        );
+        createContainer(
+          routings: const [existing, alreadyHas],
+          selectedIds: const [],
+        );
+        final info = _tracker(host: 'api.example.com');
+
+        await tester.pumpWidget(
+          UncontrolledProviderScope(
+            container: container,
+            child: TestApp(
+              child: Center(
+                child: Builder(
+                  builder: (context) => GestureDetector(
+                    onTap: () => Navigator.of(context).push(
+                      HostPageRoute<CustomRouting>(
+                        builder: (_) =>
+                            QuickCustomRoutingSheet(trackerInfo: info),
+                      ),
+                    ),
+                    child: const Text('BaseScreen'),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('BaseScreen'));
+        await tester.pumpAndSettle();
+
+        fakeRoutings.saveError = const MessageException('db rollback create');
+        await tester.tap(find.byTooltip(currentAppLocalizations.save));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(QuickCustomRoutingSheet), findsOneWidget);
+        expect(find.text('db rollback create'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        await tester.pump(const Duration(seconds: 7));
+        await tester.pumpAndSettle();
+
+        await tester.tap(
+          find.text(currentAppLocalizations.quickRoutingModeAppend),
+        );
+        await tester.pumpAndSettle();
+
+        fakeRoutings.saveError = const MessageException('db rollback append');
+        await tester.tap(find.byTooltip(currentAppLocalizations.save));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(QuickCustomRoutingSheet), findsOneWidget);
+        expect(find.text('db rollback append'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        await tester.pump(const Duration(seconds: 7));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('LinkOnlyTarget'));
+        await tester.pumpAndSettle();
+        fakeProfileIds.ensureSelectedError = const MessageException(
+          'db rollback link',
+        );
+        await tester.tap(find.byTooltip(currentAppLocalizations.save));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(QuickCustomRoutingSheet), findsOneWidget);
+        expect(find.text('db rollback link'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        await tester.pump(const Duration(seconds: 7));
+        await tester.pumpAndSettle();
+
+        fakeProfileIds.ensureSelectedError = null;
+        await tester.tap(find.byTooltip(currentAppLocalizations.save));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(QuickCustomRoutingSheet), findsNothing);
+        expect(find.text('BaseScreen'), findsOneWidget);
+        expect(
+          container.read(profileCustomRoutingIdsProvider(_profileId)).value,
+          contains(106),
+        );
+      },
+    );
+
+    testWidgets(
+      'does not pop underlying route when save finishes during sheet exit animation',
+      (tester) async {
+        const existing = CustomRouting(
+          id: 107,
+          label: 'Existing',
+          target: 'DIRECT',
+          conditions: [
+            CustomRoutingCondition(
+              ruleAction: RuleAction.DOMAIN,
+              values: ['other.example.com'],
+            ),
+          ],
+        );
+        createContainer(routings: const [existing]);
+        final info = _tracker(host: 'api.example.com');
+        late BuildContext sheetContext;
+
+        await tester.pumpWidget(
+          UncontrolledProviderScope(
+            container: container,
+            child: TestApp(
+              child: Center(
+                child: Builder(
+                  builder: (rootContext) => GestureDetector(
+                    onTap: () => Navigator.of(rootContext).push(
+                      HostPageRoute<void>(
+                        builder: (detailContext) => Center(
+                          child: GestureDetector(
+                            onTap: () => Navigator.of(detailContext).push(
+                              HostPageRoute<CustomRouting>(
+                                builder: (ctx) {
+                                  sheetContext = ctx;
+                                  return QuickCustomRoutingSheet(
+                                    trackerInfo: info,
+                                  );
+                                },
+                              ),
+                            ),
+                            child: const Text('UnderlyingDetail'),
+                          ),
+                        ),
+                      ),
+                    ),
+                    child: const Text('RootScreen'),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('RootScreen'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('UnderlyingDetail'));
+        await tester.pumpAndSettle();
+
+        final createPending = Completer<void>();
+        fakeRoutings.pendingSave = createPending;
+        await tester.tap(find.byTooltip(currentAppLocalizations.save));
+        await tester.pump();
+        expect(fakeRoutings.saveCalls, hasLength(1));
+
+        Navigator.of(sheetContext).pop();
+        await tester.pump(const Duration(milliseconds: 50));
+        expect(find.byType(QuickCustomRoutingSheet), findsOneWidget);
+
+        createPending.complete();
+        await tester.pumpAndSettle();
+        expect(find.text('UnderlyingDetail'), findsOneWidget);
+        expect(find.byType(QuickCustomRoutingSheet), findsNothing);
+
+        await tester.tap(find.text('UnderlyingDetail'));
+        await tester.pumpAndSettle();
+        expect(find.byType(QuickCustomRoutingSheet), findsOneWidget);
+        await tester.tap(
+          find.text(currentAppLocalizations.quickRoutingModeAppend),
+        );
+        await tester.pumpAndSettle();
+
+        final appendPending = Completer<void>();
+        fakeRoutings.pendingSave = appendPending;
+        await tester.tap(find.byTooltip(currentAppLocalizations.save));
+        await tester.pump();
+        expect(fakeRoutings.saveCalls, hasLength(2));
+
+        Navigator.of(sheetContext).pop();
+        await tester.pump(const Duration(milliseconds: 50));
+        appendPending.complete();
+        await tester.pumpAndSettle();
+        expect(find.text('UnderlyingDetail'), findsOneWidget);
+        expect(find.byType(QuickCustomRoutingSheet), findsNothing);
+      },
+    );
+
+    testWidgets('rejects appending into ambiguous multi-group AND routing', (
+      tester,
+    ) async {
+      const multiAnd = CustomRouting(
+        id: 108,
+        label: 'AmbiguousAnd',
+        logic: CustomRoutingLogic.and,
+        target: 'Proxy',
+        conditions: [
+          CustomRoutingCondition(
+            ruleAction: RuleAction.DOMAIN,
+            values: ['a.example.com'],
+          ),
+          CustomRoutingCondition(
+            ruleAction: RuleAction.DOMAIN,
+            values: ['b.example.com'],
+          ),
+        ],
+      );
+      createContainer(routings: const [multiAnd], selectedIds: const []);
+      final info = _tracker(host: 'c.example.com');
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: TestApp(child: QuickCustomRoutingSheet(trackerInfo: info)),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(
+        find.text(currentAppLocalizations.quickRoutingModeAppend),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip(currentAppLocalizations.save));
+      await tester.pumpAndSettle();
+
+      expect(fakeRoutings.saveCalls, isEmpty);
+      expect(fakeProfileIds.ensureSelectedCalls, isEmpty);
+      expect(find.byType(QuickCustomRoutingSheet), findsOneWidget);
+      expect(
+        container.read(profileCustomRoutingIdsProvider(_profileId)).value,
+        isEmpty,
+      );
+    });
+
+    testWidgets(
+      'blocks corrupt pre-existing routing before appending or linking',
+      (tester) async {
+        const corruptForLink = CustomRouting(
+          id: 110,
+          label: 'CorruptLink',
+          target: 'DIRECT',
+          conditions: [
+            CustomRoutingCondition(
+              ruleAction: RuleAction.DOMAIN,
+              values: ['api.example.com'],
+            ),
+            CustomRoutingCondition(
+              ruleAction: RuleAction.IP_CIDR,
+              values: ['192.0.2.1/33'],
+              noResolve: true,
+            ),
+          ],
+        );
+        const corruptForAppend = CustomRouting(
+          id: 111,
+          label: 'CorruptAppend',
+          target: 'DIRECT',
+          conditions: [
+            CustomRoutingCondition(
+              ruleAction: RuleAction.IP_CIDR,
+              values: ['192.0.2.1/33'],
+              noResolve: true,
+            ),
+          ],
+        );
+        createContainer(
+          routings: const [corruptForLink, corruptForAppend],
+          selectedIds: const [],
+        );
+        final info = _tracker(host: 'api.example.com');
+
+        await tester.pumpWidget(
+          UncontrolledProviderScope(
+            container: container,
+            child: TestApp(child: QuickCustomRoutingSheet(trackerInfo: info)),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(
+          find.text(currentAppLocalizations.quickRoutingModeAppend),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byTooltip(currentAppLocalizations.save));
+        await tester.pumpAndSettle();
+        expect(fakeRoutings.saveCalls, isEmpty);
+        expect(fakeProfileIds.ensureSelectedCalls, isEmpty);
+        expect(
+          find.text(currentAppLocalizations.invalidCidrContent),
+          findsOneWidget,
+        );
+
+        await tester.tap(find.text('CorruptAppend'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byTooltip(currentAppLocalizations.save));
+        await tester.pumpAndSettle();
+        expect(fakeRoutings.saveCalls, isEmpty);
+        expect(fakeProfileIds.ensureSelectedCalls, isEmpty);
+        expect(
+          container.read(profileCustomRoutingIdsProvider(_profileId)).value,
+          isEmpty,
         );
       },
     );
