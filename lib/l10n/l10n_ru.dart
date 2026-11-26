@@ -4855,4 +4855,16 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get quickRoutingAndLogicNote =>
       'Это правило использует логику И: должны совпасть все условия';
+
+  @override
+  String get routingFilterAll => 'Все';
+
+  @override
+  String get routingFilterApplied => 'Применено в текущем профиле';
+
+  @override
+  String get listenerFilterAll => 'Все';
+
+  @override
+  String get listenerFilterIssues => 'С ошибками';
 }

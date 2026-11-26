@@ -4907,4 +4907,16 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get quickRoutingAndLogicNote =>
       'Ce routage utilise la logique ET : toutes les conditions doivent correspondre';
+
+  @override
+  String get routingFilterAll => 'Tout';
+
+  @override
+  String get routingFilterApplied => 'Appliqué au profil actuel';
+
+  @override
+  String get listenerFilterAll => 'Tout';
+
+  @override
+  String get listenerFilterIssues => 'Avec problèmes';
 }

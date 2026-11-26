@@ -1,3 +1,4 @@
+import 'package:fl_clash/common/search.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -196,5 +197,46 @@ void main() {
       ),
       {7890},
     );
+  });
+
+  test('searchFields matches listener metadata and excludes passwords', () {
+    final socks = _item(
+      'a',
+      name: 'Work Socks',
+      type: ListenerType.socks,
+      listen: listenerAnyAddress,
+      port: 1080,
+      proxy: 'JP-01',
+      users: const [
+        ListenerUser(username: 'alice', password: 'super-secret-password'),
+      ],
+    );
+    final http = _item(
+      'b',
+      name: 'Media HTTP',
+      type: ListenerType.http,
+      listen: listenerLoopback,
+      port: 8080,
+      rule: 'streaming',
+    );
+    final items = [socks, http];
+    final cache = Expando<String>();
+
+    List<String> matchIds(String text) => items
+        .whereMatches(
+          SearchQuery(text),
+          (item) => item.searchFields,
+          texts: cache,
+        )
+        .map((item) => item.id)
+        .toList();
+
+    expect(matchIds('work 1080 socks'), ['a']);
+    expect(matchIds('0.0.0.0 jp-01'), ['a']);
+    expect(matchIds('socks5://127.0.0.1:1080'), ['a']);
+    expect(matchIds('ALICE'), ['a']);
+    expect(matchIds('http://127.0.0.1:8080 streaming'), ['b']);
+    expect(matchIds('super-secret-password'), isEmpty);
+    expect(matchIds('secret'), isEmpty);
   });
 }

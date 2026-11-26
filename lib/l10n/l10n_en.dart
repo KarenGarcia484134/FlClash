@@ -4857,4 +4857,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get quickRoutingAndLogicNote =>
       'This routing uses AND logic; every condition must match';
+
+  @override
+  String get routingFilterAll => 'All';
+
+  @override
+  String get routingFilterApplied => 'Applied in current profile';
+
+  @override
+  String get listenerFilterAll => 'All';
+
+  @override
+  String get listenerFilterIssues => 'Issues';
 }

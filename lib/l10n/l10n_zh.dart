@@ -4584,4 +4584,16 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get quickRoutingAndLogicNote => '该分流使用「满足全部 (AND)」逻辑，追加的条件需同时匹配';
+
+  @override
+  String get routingFilterAll => '全部';
+
+  @override
+  String get routingFilterApplied => '当前配置已启用';
+
+  @override
+  String get listenerFilterAll => '全部';
+
+  @override
+  String get listenerFilterIssues => '存在问题';
 }

@@ -1413,5 +1413,9 @@
   "quickRoutingAppended": "Добавлено в «{name}»",
   "quickRoutingAlreadyExists": "Все выбранные условия уже есть в этом правиле",
   "quickRoutingMatchedExisting": "Уже есть в: {names}",
-  "quickRoutingAndLogicNote": "Это правило использует логику И: должны совпасть все условия"
+  "quickRoutingAndLogicNote": "Это правило использует логику И: должны совпасть все условия",
+  "routingFilterAll": "Все",
+  "routingFilterApplied": "Применено в текущем профиле",
+  "listenerFilterAll": "Все",
+  "listenerFilterIssues": "С ошибками"
 }

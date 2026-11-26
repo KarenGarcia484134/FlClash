@@ -1423,5 +1423,9 @@
   "quickRoutingAppended": "Ajouté à « {name} »",
   "quickRoutingAlreadyExists": "Toutes les conditions sélectionnées existent déjà dans ce routage",
   "quickRoutingMatchedExisting": "Déjà présent dans : {names}",
-  "quickRoutingAndLogicNote": "Ce routage utilise la logique ET : toutes les conditions doivent correspondre"
+  "quickRoutingAndLogicNote": "Ce routage utilise la logique ET : toutes les conditions doivent correspondre",
+  "routingFilterAll": "Tout",
+  "routingFilterApplied": "Appliqué au profil actuel",
+  "listenerFilterAll": "Tout",
+  "listenerFilterIssues": "Avec problèmes"
 }

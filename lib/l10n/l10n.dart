@@ -8555,6 +8555,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This routing uses AND logic; every condition must match'**
   String get quickRoutingAndLogicNote;
+
+  /// No description provided for @routingFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get routingFilterAll;
+
+  /// No description provided for @routingFilterApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Applied in current profile'**
+  String get routingFilterApplied;
+
+  /// No description provided for @listenerFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get listenerFilterAll;
+
+  /// No description provided for @listenerFilterIssues.
+  ///
+  /// In en, this message translates to:
+  /// **'Issues'**
+  String get listenerFilterIssues;
 }
 
 class _AppLocalizationsDelegate

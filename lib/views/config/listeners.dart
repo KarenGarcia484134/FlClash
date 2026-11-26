@@ -1,6 +1,7 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/features/features.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/ui/ui.dart';
 import 'package:fl_clash/models/models.dart';
@@ -122,131 +123,290 @@ Future<void> _copy(BuildContext context, String text) async {
   }
 }
 
-class ListenersView extends ConsumerWidget {
+enum _ListenerStatusFilter { all, enabled, disabled, issues }
+
+class ListenersView extends ConsumerStatefulWidget {
   const ListenersView({super.key});
 
-  Future<void> _edit(
-    BuildContext context,
-    WidgetRef ref, [
-    InboundListenerProps? item,
-  ]) async {
+  @override
+  ConsumerState<ListenersView> createState() => _ListenersViewState();
+}
+
+class _ListenersViewState extends ConsumerState<ListenersView> {
+  var _query = SearchQuery('');
+  final _searchTexts = Expando<String>();
+  var _statusFilter = _ListenerStatusFilter.all;
+  ListenerType? _typeFilter;
+  final _keywords = ValueNotifier<List<ScaffoldKeyword>>(const []);
+
+  @override
+  void dispose() {
+    _keywords.dispose();
+    super.dispose();
+  }
+
+  void _handleSearch(String query) {
+    setState(() {
+      _query = SearchQuery(query);
+    });
+  }
+
+  String _statusLabel(AppLocalizations l, _ListenerStatusFilter filter) =>
+      switch (filter) {
+        _ListenerStatusFilter.all => l.listenerFilterAll,
+        _ListenerStatusFilter.enabled => l.enabled,
+        _ListenerStatusFilter.disabled => l.disabled,
+        _ListenerStatusFilter.issues => l.listenerFilterIssues,
+      };
+
+  void _syncKeywords(AppLocalizations l) {
+    _keywords.value = [
+      if (_statusFilter != _ListenerStatusFilter.all)
+        ScaffoldKeyword(
+          key: _statusFilter,
+          label: _statusLabel(l, _statusFilter),
+          onDeleted: () => _setStatusFilter(_ListenerStatusFilter.all, l),
+        ),
+      if (_typeFilter case final type?)
+        ScaffoldKeyword(
+          key: type,
+          label: type.name,
+          onDeleted: () => _setTypeFilter(null, l),
+        ),
+    ];
+  }
+
+  void _setStatusFilter(_ListenerStatusFilter filter, AppLocalizations l) {
+    if (_statusFilter == filter) {
+      return;
+    }
+    setState(() {
+      _statusFilter = filter;
+    });
+    _syncKeywords(l);
+  }
+
+  void _setTypeFilter(ListenerType? type, AppLocalizations l) {
+    if (_typeFilter == type) {
+      return;
+    }
+    setState(() {
+      _typeFilter = type;
+    });
+    _syncKeywords(l);
+  }
+
+  List<PopupMenuItem> _buildMenuItems(BuildContext context) {
+    final l = context.appLocalizations;
+    return [
+      for (final (index, option) in _ListenerStatusFilter.values.indexed)
+        PopupMenuItem(
+          label: _statusLabel(l, option),
+          checked: _statusFilter == option,
+          section: index == 0 ? PopupMenuSection(title: l.status) : null,
+          onPressed: () => _setStatusFilter(option, l),
+        ),
+      PopupMenuItem(
+        glyph: AppGlyphs.filter,
+        label: l.protocol,
+        subtitle: _typeFilter?.name ?? l.listenerFilterAll,
+        section: const PopupMenuSection(),
+        subItems: [
+          PopupMenuItem(
+            label: l.listenerFilterAll,
+            checked: _typeFilter == null,
+            onPressed: () => _setTypeFilter(null, l),
+          ),
+          for (final type in ListenerType.values)
+            PopupMenuItem(
+              label: type.name,
+              checked: _typeFilter == type,
+              onPressed: () => _setTypeFilter(type, l),
+            ),
+        ],
+      ),
+    ];
+  }
+
+  Future<void> _edit([InboundListenerProps? item]) async {
     final notifier = ref.read(listenersSettingProvider.notifier);
     final res = await BaseNavigator.push<InboundListenerProps>(
       context,
       ListenerEditView(item: item),
     );
-    if (res != null && context.mounted) {
+    if (res != null && mounted) {
       notifier.put(res);
     }
   }
 
-  Future<void> _delete(
-    BuildContext context,
-    WidgetRef ref,
-    InboundListenerProps item,
-  ) async {
+  Future<void> _delete(InboundListenerProps item) async {
     final l = context.appLocalizations;
     final notifier = ref.read(listenersSettingProvider.notifier);
     final res = await dialogs.showMessage(
       title: l.tip,
       message: TextSpan(text: l.deleteTip(item.name)),
     );
-    if (res == true && context.mounted) {
+    if (res == true && mounted) {
       notifier.remove(item.id);
     }
   }
 
+  Widget _buildItem(
+    BuildContext context,
+    List<InboundListenerProps> items,
+    int index, {
+    required Map<String, ListenerIssue> issues,
+    required bool running,
+    required bool enabled,
+  }) {
+    final l = context.appLocalizations;
+    final notifier = ref.read(listenersSettingProvider.notifier);
+    final item = items[index];
+    return ContextMenuRegion(
+      key: ValueKey(item.id),
+      menuItems: [
+        for (final address in listenerAddresses(item))
+          PopupMenuItem(
+            glyph: AppGlyphs.copy,
+            label: address,
+            onPressed: () => _copy(context, address),
+          ),
+        PopupMenuItem(
+          glyph: AppGlyphs.edit,
+          label: l.edit,
+          onPressed: () => _edit(item),
+        ),
+        PopupMenuItem(
+          danger: true,
+          glyph: AppGlyphs.delete,
+          label: l.delete,
+          onPressed: () => _delete(item),
+        ),
+      ],
+      child: ItemPositionProvider(
+        position: ItemPosition.get(index, items.length),
+        child: _ListenerItem(
+          item: item,
+          issue: issues[item.id],
+          active:
+              running &&
+              enabled &&
+              item.enabled &&
+              !issues.containsKey(item.id),
+          onPressed: () => _edit(item),
+          onChanged: (value) => notifier.put(item.copyWith(enabled: value)),
+        ),
+      ),
+    );
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l = context.appLocalizations;
     final props = ref.watch(listenersSettingProvider);
     final issues = listenerIssues(props.items, _currentContext(ref));
     final running = ref.watch(isStartProvider);
     final notifier = ref.read(listenersSettingProvider.notifier);
+    final isFiltering =
+        _query.isNotEmpty ||
+        _statusFilter != _ListenerStatusFilter.all ||
+        _typeFilter != null;
+    final filtered = props.items
+        .where(
+          (item) =>
+              (_typeFilter == null || item.type == _typeFilter) &&
+              switch (_statusFilter) {
+                _ListenerStatusFilter.all => true,
+                _ListenerStatusFilter.enabled => item.enabled,
+                _ListenerStatusFilter.disabled => !item.enabled,
+                _ListenerStatusFilter.issues => issues.containsKey(item.id),
+              },
+        )
+        .whereMatches(_query, (item) => item.searchFields, texts: _searchTexts)
+        .toList();
     return Scaffold(
       title: l.listeners,
+      searchState: AppBarSearchState(onSearch: _handleSearch),
+      menuItems: _buildMenuItems(context),
+      keywords: _keywords,
       actions: [
         IconButton(
           tooltip: l.addListener,
-          onPressed: () => _edit(context, ref),
+          onPressed: _edit,
           icon: const GlyphIcon(AppGlyphs.addCircle),
         ),
       ],
-      body: Builder(
-        builder: (context) => ListView(
-          padding: EdgeInsets.fromLTRB(
-            16,
-            context.contentTopPadding,
-            16,
-            16 + context.bottomInset,
+      body: NullStatusSwitcher(
+        isEmpty: filtered.isEmpty,
+        isSearching: isFiltering,
+        nullStatus: NullStatus(
+          label: l.nullTip(l.listeners),
+          illustration: NullStatusIllustration.data,
+        ),
+        child: Builder(
+          builder: (context) => CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: SizedBox(height: context.contentTopPadding),
+              ),
+              if (!isFiltering)
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  sliver: SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        generateSection(
+                          items: [
+                            FormRow(
+                              title: l.listenersEnable,
+                              onPressed: () => notifier.update(
+                                (state) =>
+                                    state.copyWith(enable: !state.enable),
+                              ),
+                              trailing: Switch(
+                                value: props.enable,
+                                onChanged: (value) => notifier.update(
+                                  (state) => state.copyWith(enable: value),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          child: Text(
+                            l.listenersDesc,
+                            style: context.listCaptionStyle,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                      ],
+                    ),
+                  ),
+                ),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                sliver: SliverPrismList(
+                  itemCount: filtered.length,
+                  itemBuilder: (_, index) => _buildItem(
+                    context,
+                    filtered,
+                    index,
+                    issues: issues,
+                    running: running,
+                    enabled: props.enable,
+                  ),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: SizedBox(height: 16 + context.bottomInset),
+              ),
+            ],
           ),
-          children: [
-            generateSection(
-              items: [
-                FormRow(
-                  title: l.listenersEnable,
-                  onPressed: () => notifier.update(
-                    (state) => state.copyWith(enable: !state.enable),
-                  ),
-                  trailing: Switch(
-                    value: props.enable,
-                    onChanged: (value) => notifier.update(
-                      (state) => state.copyWith(enable: value),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Text(l.listenersDesc, style: context.listCaptionStyle),
-            ),
-            const SizedBox(height: 8),
-            if (props.items.isEmpty)
-              NullStatus(
-                label: l.nullTip(l.listeners),
-                illustration: NullStatusIllustration.data,
-              )
-            else
-              for (final (index, item) in props.items.indexed)
-                ContextMenuRegion(
-                  key: ValueKey(item.id),
-                  menuItems: [
-                    for (final address in listenerAddresses(item))
-                      PopupMenuItem(
-                        glyph: AppGlyphs.copy,
-                        label: address,
-                        onPressed: () => _copy(context, address),
-                      ),
-                    PopupMenuItem(
-                      glyph: AppGlyphs.edit,
-                      label: l.edit,
-                      onPressed: () => _edit(context, ref, item),
-                    ),
-                    PopupMenuItem(
-                      danger: true,
-                      glyph: AppGlyphs.delete,
-                      label: l.delete,
-                      onPressed: () => _delete(context, ref, item),
-                    ),
-                  ],
-                  child: ItemPositionProvider(
-                    position: ItemPosition.get(index, props.items.length),
-                    child: _ListenerItem(
-                      item: item,
-                      issue: issues[item.id],
-                      active:
-                          running &&
-                          props.enable &&
-                          item.enabled &&
-                          !issues.containsKey(item.id),
-                      onPressed: () => _edit(context, ref, item),
-                      onChanged: (value) =>
-                          notifier.put(item.copyWith(enabled: value)),
-                    ),
-                  ),
-                ),
-          ],
         ),
       ),
     );

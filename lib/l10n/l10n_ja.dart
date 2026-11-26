@@ -4643,4 +4643,16 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get quickRoutingAndLogicNote =>
       'このルーティングは AND ロジックを使用しており、すべての条件に一致する必要があります';
+
+  @override
+  String get routingFilterAll => 'すべて';
+
+  @override
+  String get routingFilterApplied => '現在のプロファイルで適用中';
+
+  @override
+  String get listenerFilterAll => 'すべて';
+
+  @override
+  String get listenerFilterIssues => '問題あり';
 }

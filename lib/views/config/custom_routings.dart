@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/features/form/form.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/ui/ui.dart';
 import 'package:fl_clash/models/models.dart';
@@ -185,6 +186,8 @@ class _OutboundPickerSheetState extends ConsumerState<OutboundPickerSheet> {
   }
 }
 
+enum _CustomRoutingFilter { all, enabled, disabled, applied }
+
 class CustomRoutingsView extends ConsumerStatefulWidget {
   const CustomRoutingsView({super.key});
 
@@ -194,6 +197,10 @@ class CustomRoutingsView extends ConsumerStatefulWidget {
 
 class _CustomRoutingsViewState extends ConsumerState<CustomRoutingsView> {
   late final SetupAction _setupAction;
+  var _query = SearchQuery('');
+  final _searchTexts = Expando<String>();
+  var _filter = _CustomRoutingFilter.all;
+  final _keywords = ValueNotifier<List<ScaffoldKeyword>>(const []);
 
   @override
   void initState() {
@@ -203,8 +210,64 @@ class _CustomRoutingsViewState extends ConsumerState<CustomRoutingsView> {
 
   @override
   void dispose() {
+    _keywords.dispose();
     _setupAction.autoApplyProfile();
     super.dispose();
+  }
+
+  void _handleSearch(String query) {
+    setState(() {
+      _query = SearchQuery(query);
+    });
+  }
+
+  String _filterLabel(AppLocalizations l, _CustomRoutingFilter filter) =>
+      switch (filter) {
+        _CustomRoutingFilter.all => l.routingFilterAll,
+        _CustomRoutingFilter.enabled => l.enabled,
+        _CustomRoutingFilter.disabled => l.disabled,
+        _CustomRoutingFilter.applied => l.routingFilterApplied,
+      };
+
+  void _setFilter(_CustomRoutingFilter filter, AppLocalizations l) {
+    if (_filter == filter) {
+      return;
+    }
+    setState(() {
+      _filter = filter;
+    });
+    _keywords.value = filter == _CustomRoutingFilter.all
+        ? const []
+        : [
+            ScaffoldKeyword(
+              key: filter,
+              label: _filterLabel(l, filter),
+              onDeleted: () => _setFilter(_CustomRoutingFilter.all, l),
+            ),
+          ];
+  }
+
+  List<PopupMenuItem> _buildMenuItems(
+    BuildContext context, {
+    required int? profileId,
+    required _CustomRoutingFilter activeFilter,
+  }) {
+    final l = context.appLocalizations;
+    final options = [
+      _CustomRoutingFilter.all,
+      _CustomRoutingFilter.enabled,
+      _CustomRoutingFilter.disabled,
+      if (profileId != null) _CustomRoutingFilter.applied,
+    ];
+    return [
+      for (final (index, option) in options.indexed)
+        PopupMenuItem(
+          label: _filterLabel(l, option),
+          checked: activeFilter == option,
+          section: index == 0 ? PopupMenuSection(title: l.status) : null,
+          onPressed: () => _setFilter(option, l),
+        ),
+    ];
   }
 
   Future<void> _handleEdit([CustomRouting? routing]) async {
@@ -232,91 +295,133 @@ class _CustomRoutingsViewState extends ConsumerState<CustomRoutingsView> {
     ref.read(customRoutingsProvider.notifier).del(routing.id);
   }
 
+  EdgeInsets _listPadding(BuildContext context) => EdgeInsets.fromLTRB(
+    16,
+    context.contentTopPadding,
+    16,
+    16 + context.bottomInset,
+  );
+
   Widget _buildItem(
     List<CustomRouting> routings,
     int index, {
     required int? profileId,
     required Set<int> selectedIds,
+    required bool sortable,
   }) {
     final routing = routings[index];
     final appLocalizations = context.appLocalizations;
     final applied = profileId != null && selectedIds.contains(routing.id);
-    return SortableItem(
-      key: ValueKey(routing.id),
-      index: index,
-      child: ContextMenuRegion(
-        menuItems: [
-          PopupMenuItem(
-            glyph: AppGlyphs.edit,
-            label: appLocalizations.edit,
-            onPressed: () {
-              _handleEdit(routing);
-            },
-          ),
-          PopupMenuItem(
-            glyph: AppGlyphs.copy,
-            label: appLocalizations.copy,
-            onPressed: () {
-              ref.read(customRoutingsProvider.notifier).duplicate(routing);
-            },
-          ),
-          PopupMenuItem(
-            danger: true,
-            glyph: AppGlyphs.delete,
-            label: appLocalizations.delete,
-            onPressed: () {
-              _handleDelete(routing);
-            },
-          ),
-        ],
-        child: ItemPositionProvider(
-          position: ItemPosition.get(index, routings.length),
-          child: _CustomRoutingItem(
-            routing: routing,
-            leading: profileId == null
-                ? null
-                : Tooltip(
-                    message: appLocalizations.customRoutingUseInProfile,
-                    child: Checkbox(
-                      value: applied,
-                      onChanged: (_) => ref
-                          .read(
-                            profileCustomRoutingIdsProvider(profileId).notifier,
-                          )
-                          .toggle(routing.id),
-                    ),
+    final row = ContextMenuRegion(
+      key: sortable ? null : ValueKey(routing.id),
+      menuItems: [
+        PopupMenuItem(
+          glyph: AppGlyphs.edit,
+          label: appLocalizations.edit,
+          onPressed: () {
+            _handleEdit(routing);
+          },
+        ),
+        PopupMenuItem(
+          glyph: AppGlyphs.copy,
+          label: appLocalizations.copy,
+          onPressed: () {
+            ref.read(customRoutingsProvider.notifier).duplicate(routing);
+          },
+        ),
+        PopupMenuItem(
+          danger: true,
+          glyph: AppGlyphs.delete,
+          label: appLocalizations.delete,
+          onPressed: () {
+            _handleDelete(routing);
+          },
+        ),
+      ],
+      child: ItemPositionProvider(
+        position: ItemPosition.get(index, routings.length),
+        child: _CustomRoutingItem(
+          routing: routing,
+          leading: profileId == null
+              ? null
+              : Tooltip(
+                  message: appLocalizations.customRoutingUseInProfile,
+                  child: Checkbox(
+                    value: applied,
+                    onChanged: (_) => ref
+                        .read(
+                          profileCustomRoutingIdsProvider(profileId).notifier,
+                        )
+                        .toggle(routing.id),
                   ),
-            trailing: Switch(
-              value: routing.enabled,
-              onChanged: (value) {
-                ref
-                    .read(customRoutingsProvider.notifier)
-                    .put(routing.copyWith(enabled: value));
-              },
-            ),
-            onPressed: () {
-              _handleEdit(routing);
+                ),
+          trailing: Switch(
+            value: routing.enabled,
+            onChanged: (value) {
+              ref
+                  .read(customRoutingsProvider.notifier)
+                  .put(routing.copyWith(enabled: value));
             },
           ),
+          onPressed: () {
+            _handleEdit(routing);
+          },
         ),
       ),
     );
+    if (!sortable) {
+      return row;
+    }
+    return SortableItem(key: ValueKey(routing.id), index: index, child: row);
   }
 
   @override
   Widget build(BuildContext context) {
     final appLocalizations = context.appLocalizations;
+    ref.listen(currentProfileIdProvider, (_, next) {
+      if (next == null && _filter == _CustomRoutingFilter.applied) {
+        _setFilter(_CustomRoutingFilter.all, appLocalizations);
+      }
+    });
     final routingsState = ref.watch(customRoutingsProvider);
-    final routings = routingsState.value ?? [];
+    final allRoutings = routingsState.value ?? [];
     final profileId = ref.watch(currentProfileIdProvider);
     final selectedIds = profileId == null
         ? const <int>{}
         : (ref.watch(profileCustomRoutingIdsProvider(profileId)).value ??
                   const <int>[])
               .toSet();
+    final activeFilter =
+        profileId == null && _filter == _CustomRoutingFilter.applied
+        ? _CustomRoutingFilter.all
+        : _filter;
+    final isFiltering =
+        _query.isNotEmpty || activeFilter != _CustomRoutingFilter.all;
+    final routings = allRoutings
+        .where(
+          (routing) => switch (activeFilter) {
+            _CustomRoutingFilter.all => true,
+            _CustomRoutingFilter.enabled => routing.enabled,
+            _CustomRoutingFilter.disabled => !routing.enabled,
+            _CustomRoutingFilter.applied => selectedIds.contains(routing.id),
+          },
+        )
+        .whereMatches(
+          _query,
+          (routing) => routing.searchFields,
+          texts: _searchTexts,
+        )
+        .toList();
     return Scaffold(
       title: appLocalizations.customRouting,
-      canSort: routings.length > 1,
+      canSort: !isFiltering && allRoutings.length > 1,
+      searchState: AppBarSearchState(onSearch: _handleSearch),
+      menuItems: _buildMenuItems(
+        context,
+        profileId: profileId,
+        activeFilter: activeFilter,
+      ),
+      keywords: _keywords,
       actions: [
         IconButton(
           tooltip: appLocalizations.addCustomRouting,
@@ -327,39 +432,51 @@ class _CustomRoutingsViewState extends ConsumerState<CustomRoutingsView> {
       body: NullStatusSwitcher(
         isLoading: routingsState.isLoading,
         isEmpty: routings.isEmpty,
+        isSearching: isFiltering,
         nullStatus: NullStatus(
           label: appLocalizations.nullTip(appLocalizations.customRouting),
           illustration: NullStatusIllustration.rules,
         ),
         child: Builder(
-          builder: (context) => PrismReorderableListView(
-            padding: EdgeInsets.fromLTRB(
-              16,
-              context.contentTopPadding,
-              16,
-              16 + context.bottomInset,
-            ),
-            itemCount: routings.length,
-            itemBuilder: (_, index) => _buildItem(
-              routings,
-              index,
-              profileId: profileId,
-              selectedIds: selectedIds,
-            ),
-            proxyDecorator: (_, index, animation) {
-              return commonProxyDecorator(
-                _buildItem(
-                  routings,
-                  index,
-                  profileId: profileId,
-                  selectedIds: selectedIds,
+          builder: (context) => isFiltering
+              ? PrismListView(
+                  padding: _listPadding(context),
+                  itemCount: routings.length,
+                  itemBuilder: (_, index) => _buildItem(
+                    routings,
+                    index,
+                    profileId: profileId,
+                    selectedIds: selectedIds,
+                    sortable: false,
+                  ),
+                )
+              : PrismReorderableListView(
+                  padding: _listPadding(context),
+                  itemCount: routings.length,
+                  itemBuilder: (_, index) => _buildItem(
+                    routings,
+                    index,
+                    profileId: profileId,
+                    selectedIds: selectedIds,
+                    sortable: true,
+                  ),
+                  proxyDecorator: (_, index, animation) {
+                    return commonProxyDecorator(
+                      _buildItem(
+                        routings,
+                        index,
+                        profileId: profileId,
+                        selectedIds: selectedIds,
+                        sortable: true,
+                      ),
+                      index,
+                      animation,
+                    );
+                  },
+                  onReorderItem: ref
+                      .read(customRoutingsProvider.notifier)
+                      .order,
                 ),
-                index,
-                animation,
-              );
-            },
-            onReorderItem: ref.read(customRoutingsProvider.notifier).order,
-          ),
         ),
       ),
     );

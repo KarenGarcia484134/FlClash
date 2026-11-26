@@ -4724,4 +4724,16 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get quickRoutingAndLogicNote => '이 라우팅은 AND 논리를 사용하므로 모든 조건이 일치해야 합니다';
+
+  @override
+  String get routingFilterAll => '전체';
+
+  @override
+  String get routingFilterApplied => '현재 프로필에 적용됨';
+
+  @override
+  String get listenerFilterAll => '전체';
+
+  @override
+  String get listenerFilterIssues => '문제 있음';
 }

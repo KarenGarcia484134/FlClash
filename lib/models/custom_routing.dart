@@ -93,6 +93,17 @@ bool _hasUnbalancedParens(String value) {
 }
 
 extension CustomRoutingExt on CustomRouting {
+  Iterable<String?> get searchFields => [
+    label,
+    target,
+    logic.name,
+    for (final condition in conditions) ...[
+      condition.ruleAction.value,
+      ...condition.cleanValues,
+      if (condition.noResolve && condition.ruleAction.hasParams) 'no-resolve',
+    ],
+  ];
+
   CustomRouting duplicated() =>
       copyWith(id: snowflake.id, label: '$label copy', order: null);
 

@@ -1413,5 +1413,9 @@
   "quickRoutingAppended": "已追加到「{name}」",
   "quickRoutingAlreadyExists": "所选条件已全部存在于该分流中",
   "quickRoutingMatchedExisting": "已存在于：{names}",
-  "quickRoutingAndLogicNote": "该分流使用「满足全部 (AND)」逻辑，追加的条件需同时匹配"
+  "quickRoutingAndLogicNote": "该分流使用「满足全部 (AND)」逻辑，追加的条件需同时匹配",
+  "routingFilterAll": "全部",
+  "routingFilterApplied": "当前配置已启用",
+  "listenerFilterAll": "全部",
+  "listenerFilterIssues": "存在问题"
 }

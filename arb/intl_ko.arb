@@ -1423,5 +1423,9 @@
   "quickRoutingAppended": "\"{name}\"에 추가되었습니다",
   "quickRoutingAlreadyExists": "선택한 조건이 모두 이 라우팅에 이미 있습니다",
   "quickRoutingMatchedExisting": "이미 포함됨: {names}",
-  "quickRoutingAndLogicNote": "이 라우팅은 AND 논리를 사용하므로 모든 조건이 일치해야 합니다"
+  "quickRoutingAndLogicNote": "이 라우팅은 AND 논리를 사용하므로 모든 조건이 일치해야 합니다",
+  "routingFilterAll": "전체",
+  "routingFilterApplied": "현재 프로필에 적용됨",
+  "listenerFilterAll": "전체",
+  "listenerFilterIssues": "문제 있음"
 }

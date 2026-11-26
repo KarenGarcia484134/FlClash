@@ -1413,5 +1413,9 @@
   "quickRoutingAppended": "「{name}」に追加しました",
   "quickRoutingAlreadyExists": "選択した条件はすべてこのルーティングに既に存在します",
   "quickRoutingMatchedExisting": "既に含まれています：{names}",
-  "quickRoutingAndLogicNote": "このルーティングは AND ロジックを使用しており、すべての条件に一致する必要があります"
+  "quickRoutingAndLogicNote": "このルーティングは AND ロジックを使用しており、すべての条件に一致する必要があります",
+  "routingFilterAll": "すべて",
+  "routingFilterApplied": "現在のプロファイルで適用中",
+  "listenerFilterAll": "すべて",
+  "listenerFilterIssues": "問題あり"
 }

@@ -4905,4 +4905,16 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get quickRoutingAndLogicNote =>
       'Este enrutamiento usa lógica Y: deben cumplirse todas las condiciones';
+
+  @override
+  String get routingFilterAll => 'Todo';
+
+  @override
+  String get routingFilterApplied => 'Aplicado en el perfil actual';
+
+  @override
+  String get listenerFilterAll => 'Todo';
+
+  @override
+  String get listenerFilterIssues => 'Con problemas';
 }

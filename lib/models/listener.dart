@@ -287,6 +287,19 @@ List<String> listenerAddresses(InboundListenerProps item) {
   };
 }
 
+extension InboundListenerPropsExt on InboundListenerProps {
+  Iterable<String?> get searchFields => [
+    name,
+    type.name,
+    listen,
+    '$port',
+    ...listenerAddresses(this),
+    proxy,
+    rule,
+    for (final user in users) user.username,
+  ];
+}
+
 /// The ports the app itself listens on, which a listener can't take.
 Set<int> appInboundPorts(PatchClashConfig config) => {
   for (final port in [
