@@ -38,6 +38,9 @@ String listenerIssueText(BuildContext context, ListenerIssue issue) {
   };
 }
 
+bool _isReady(AsyncValue<Object?> state) =>
+    state.hasValue && !state.isLoading && !state.hasError;
+
 ListenerContext _buildListenerContext({
   required PatchClashConfig patch,
   required ClashConfig? clashConfig,
@@ -45,6 +48,7 @@ ListenerContext _buildListenerContext({
   List<ProxyGroup> customGroups = const [],
   List<CustomProxy> customProxies = const [],
   bool isCustom = false,
+  bool checkProfileTargets = true,
 }) {
   final referenced = isCustom
       ? {for (final group in customGroups) ...?group.proxies}
@@ -64,6 +68,7 @@ ListenerContext _buildListenerContext({
     },
     subRules: isCustom ? const {} : {...?clashConfig?.subRules},
     linux: _linux,
+    checkProfileTargets: checkProfileTargets,
   );
 }
 
@@ -76,19 +81,26 @@ ListenerContext _currentContext(WidgetRef ref) {
           profileId,
         ).select((state) => state?.type == ProfileType.custom),
       );
+  final clashConfigState = profileId == null || isCustom
+      ? null
+      : ref.watch(clashConfigProvider(profileId));
+  final customGroupsState = profileId != null && isCustom
+      ? ref.watch(proxyGroupsProvider(profileId))
+      : null;
+  final customProxiesState = isCustom ? ref.watch(customProxiesProvider) : null;
+  final checkProfileTargets =
+      profileId == null ||
+      (isCustom
+          ? _isReady(customGroupsState!) && _isReady(customProxiesState!)
+          : _isReady(clashConfigState!));
   return _buildListenerContext(
     patch: ref.watch(patchClashConfigProvider),
-    clashConfig: profileId == null || isCustom
-        ? null
-        : ref.watch(clashConfigProvider(profileId)).value,
+    clashConfig: clashConfigState?.value,
     tailscaleProxy: currentTailscaleProxyName(ref),
-    customGroups: isCustom
-        ? ref.watch(proxyGroupsProvider(profileId)).value ?? const []
-        : const [],
-    customProxies: isCustom
-        ? ref.watch(customProxiesProvider).value ?? const []
-        : const [],
+    customGroups: customGroupsState?.value ?? const [],
+    customProxies: customProxiesState?.value ?? const [],
     isCustom: isCustom,
+    checkProfileTargets: checkProfileTargets,
   );
 }
 
@@ -97,19 +109,26 @@ ListenerContext _readCurrentContext(WidgetRef ref) {
   final isCustom =
       profileId != null &&
       ref.read(profileProvider(profileId))?.type == ProfileType.custom;
+  final clashConfigState = profileId == null || isCustom
+      ? null
+      : ref.read(clashConfigProvider(profileId));
+  final customGroupsState = profileId != null && isCustom
+      ? ref.read(proxyGroupsProvider(profileId))
+      : null;
+  final customProxiesState = isCustom ? ref.read(customProxiesProvider) : null;
+  final checkProfileTargets =
+      profileId == null ||
+      (isCustom
+          ? _isReady(customGroupsState!) && _isReady(customProxiesState!)
+          : _isReady(clashConfigState!));
   return _buildListenerContext(
     patch: ref.read(patchClashConfigProvider),
-    clashConfig: profileId == null || isCustom
-        ? null
-        : ref.read(clashConfigProvider(profileId)).value,
+    clashConfig: clashConfigState?.value,
     tailscaleProxy: readCurrentTailscaleProxyName(ref),
-    customGroups: isCustom
-        ? ref.read(proxyGroupsProvider(profileId)).value ?? const []
-        : const [],
-    customProxies: isCustom
-        ? ref.read(customProxiesProvider).value ?? const []
-        : const [],
+    customGroups: customGroupsState?.value ?? const [],
+    customProxies: customProxiesState?.value ?? const [],
     isCustom: isCustom,
+    checkProfileTargets: checkProfileTargets,
   );
 }
 
@@ -337,7 +356,7 @@ class _ListenersViewState extends ConsumerState<ListenersView> {
         ),
       ],
       body: NullStatusSwitcher(
-        isEmpty: filtered.isEmpty,
+        isEmpty: isFiltering && filtered.isEmpty,
         isSearching: isFiltering,
         nullStatus: NullStatus(
           label: l.nullTip(l.listeners),
@@ -388,23 +407,36 @@ class _ListenersViewState extends ConsumerState<ListenersView> {
                     ),
                   ),
                 ),
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                sliver: SliverPrismList(
-                  itemCount: filtered.length,
-                  itemBuilder: (_, index) => _buildItem(
-                    context,
-                    filtered,
-                    index,
-                    issues: issues,
-                    running: running,
-                    enabled: props.enable,
+              if (filtered.isEmpty)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 16 + context.bottomInset),
+                    child: NullStatus(
+                      label: l.nullTip(l.listeners),
+                      illustration: NullStatusIllustration.data,
+                    ),
+                  ),
+                )
+              else ...[
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  sliver: SliverPrismList(
+                    itemCount: filtered.length,
+                    itemBuilder: (_, index) => _buildItem(
+                      context,
+                      filtered,
+                      index,
+                      issues: issues,
+                      running: running,
+                      enabled: props.enable,
+                    ),
                   ),
                 ),
-              ),
-              SliverToBoxAdapter(
-                child: SizedBox(height: 16 + context.bottomInset),
-              ),
+                SliverToBoxAdapter(
+                  child: SizedBox(height: 16 + context.bottomInset),
+                ),
+              ],
             ],
           ),
         ),

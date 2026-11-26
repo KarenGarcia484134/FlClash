@@ -96,6 +96,27 @@ void main() {
         'f': ListenerIssue.missingRule,
       });
     });
+
+    test(
+      'defers profile target and rule checks when checkProfileTargets is false',
+      () {
+        final issues = listenerIssues([
+          _item('a', port: 7890),
+          _item('b', proxy: 'HK'),
+          _item('c'),
+          _item('d', name: 'b', port: 7892),
+          _item('e', port: 7893, proxy: 'Gone'),
+          _item('f', port: 7894, rule: 'nope'),
+          _item('g', port: 0),
+        ], const ListenerContext(appPorts: {7890}, checkProfileTargets: false));
+        expect(issues, {
+          'a': ListenerIssue.appPort,
+          'c': ListenerIssue.duplicatePort,
+          'd': ListenerIssue.duplicateName,
+          'g': ListenerIssue.invalidPort,
+        });
+      },
+    );
   });
 
   group('injectListeners', () {

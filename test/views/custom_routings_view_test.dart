@@ -61,6 +61,7 @@ Future<ProviderContainer> _pumpRoutings(
   required List<CustomRouting> routings,
   int? profileId = 1,
   List<int> appliedIds = const [1],
+  Map<int, List<int>> extraProfileAppliedIds = const {},
 }) async {
   final container = ProviderContainer(
     overrides: [
@@ -71,6 +72,10 @@ Future<ProviderContainer> _pumpRoutings(
         profileCustomRoutingIdsProvider(
           profileId,
         ).overrideWith(() => TestProfileCustomRoutingIds(appliedIds)),
+      for (final entry in extraProfileAppliedIds.entries)
+        profileCustomRoutingIdsProvider(
+          entry.key,
+        ).overrideWith(() => TestProfileCustomRoutingIds(entry.value)),
     ],
   );
   addTearDown(container.dispose);
@@ -167,4 +172,44 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(l.routingFilterApplied), findsNothing);
   });
+
+  testWidgets(
+    'ignores stale applied filter callback after profile is cleared',
+    (tester) async {
+      final l = currentAppLocalizations;
+      final container = await _pumpRoutings(
+        tester,
+        routings: _sampleRoutings,
+        profileId: 1,
+        appliedIds: const [1],
+        extraProfileAppliedIds: const {
+          2: [2],
+        },
+      );
+
+      await tester.tap(find.byTooltip(l.more));
+      await tester.pumpAndSettle();
+      expect(find.text(l.routingFilterApplied), findsOneWidget);
+
+      container.read(currentProfileIdProvider.notifier).value = null;
+      await tester.pump();
+
+      await tester.tap(find.text(l.routingFilterApplied));
+      await tester.pumpAndSettle();
+
+      expect(find.widgetWithText(Chip, l.routingFilterApplied), findsNothing);
+      expect(find.text('Work LAN'), findsOneWidget);
+      expect(find.text('Streaming'), findsOneWidget);
+      expect(find.text('Legacy Rule'), findsOneWidget);
+
+      container.read(currentProfileIdProvider.notifier).value = 2;
+      await tester.pumpAndSettle();
+
+      expect(find.widgetWithText(Chip, l.routingFilterApplied), findsNothing);
+      expect(find.text('Work LAN'), findsOneWidget);
+      expect(find.text('Streaming'), findsOneWidget);
+      expect(find.text('Legacy Rule'), findsOneWidget);
+      expect(find.byType(PrismReorderableListView), findsOneWidget);
+    },
+  );
 }

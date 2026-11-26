@@ -230,6 +230,13 @@ class _CustomRoutingsViewState extends ConsumerState<CustomRoutingsView> {
       };
 
   void _setFilter(_CustomRoutingFilter filter, AppLocalizations l) {
+    if (!mounted) {
+      return;
+    }
+    if (filter == _CustomRoutingFilter.applied &&
+        ref.read(currentProfileIdProvider) == null) {
+      filter = _CustomRoutingFilter.all;
+    }
     if (_filter == filter) {
       return;
     }

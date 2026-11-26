@@ -127,6 +127,7 @@ class ListenerContext {
     this.outbounds = const {},
     this.subRules = const {},
     this.linux = false,
+    this.checkProfileTargets = true,
   });
 
   factory ListenerContext.fromConfig(
@@ -155,6 +156,7 @@ class ListenerContext {
   final Set<String> outbounds;
   final Set<String> subRules;
   final bool linux;
+  final bool checkProfileTargets;
 }
 
 const _builtinOutbounds = {'DIRECT', 'REJECT', 'REJECT-DROP', 'PASS', 'GLOBAL'};
@@ -199,15 +201,17 @@ ListenerIssue? _issueOf(
   if (context.appPorts.contains(item.port)) {
     return ListenerIssue.appPort;
   }
-  if (item.proxy.isNotEmpty &&
-      !_builtinOutbounds.contains(item.proxy) &&
-      !context.outbounds.contains(item.proxy)) {
-    return ListenerIssue.missingTarget;
-  }
-  if (item.proxy.isEmpty &&
-      item.rule.isNotEmpty &&
-      !context.subRules.contains(item.rule)) {
-    return ListenerIssue.missingRule;
+  if (context.checkProfileTargets) {
+    if (item.proxy.isNotEmpty &&
+        !_builtinOutbounds.contains(item.proxy) &&
+        !context.outbounds.contains(item.proxy)) {
+      return ListenerIssue.missingTarget;
+    }
+    if (item.proxy.isEmpty &&
+        item.rule.isNotEmpty &&
+        !context.subRules.contains(item.rule)) {
+      return ListenerIssue.missingRule;
+    }
   }
   return null;
 }
